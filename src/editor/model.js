@@ -15,6 +15,7 @@ import {
 import {
   DeterministicAgentSimulation,
   MATERIAL_KINDS,
+  MAX_EMITTER_JITTER_Q16,
   MAX_MATERIAL_INTERACTION_RADIUS_Q16,
   createBaselineMaterials
 } from '../sim/index.js';
@@ -43,6 +44,13 @@ function assertFiniteNumber(value, label) {
 function assertPositiveInteger(value, label, max = 1_000_000) {
   if (!Number.isInteger(value) || value < 1 || value > max) {
     throw new RangeError(`${label} must be an integer in [1, ${max}].`);
+  }
+  return value;
+}
+
+function assertNonnegativeInteger(value, label, max = 1_000_000) {
+  if (!Number.isInteger(value) || value < 0 || value > max) {
+    throw new RangeError(`${label} must be an integer in [0, ${max}].`);
   }
   return value;
 }
@@ -132,7 +140,7 @@ function cloneEmitterDefinition(emitter) {
     id: emitter.id,
     materialId: emitter.materialId,
     startTick: emitter.startTick ?? 0,
-    stopTick: emitter.stopTick ?? null,
+    stopTick: emitter.stopTick ?? undefined,
     intervalTicks: emitter.intervalTicks ?? 1,
     rate: emitter.rate ?? 1,
     bursts: (emitter.bursts ?? []).map((burst) => ({ ...burst })),
@@ -148,7 +156,6 @@ function createDefaultEmitter(materialId) {
     id: 1,
     materialId,
     startTick: 0,
-    stopTick: null,
     intervalTicks: 1,
     rate: 2,
     bursts: [],
@@ -477,7 +484,6 @@ export class EditorSession {
       id,
       materialId,
       startTick: 0,
-      stopTick: null,
       intervalTicks: 1,
       rate: 1,
       bursts: [],
@@ -507,11 +513,11 @@ export class EditorSession {
       if (emitter.id !== id) return cloneEmitterDefinition(emitter);
       const next = cloneEmitterDefinition(emitter);
       if (patch.materialId !== undefined) next.materialId = assertUint32(patch.materialId, 'emitter.materialId');
-      if (patch.rate !== undefined) next.rate = assertPositiveInteger(patch.rate, 'emitter.rate', 65535);
+      if (patch.rate !== undefined) next.rate = assertNonnegativeInteger(patch.rate, 'emitter.rate', 65535);
       if (patch.intervalTicks !== undefined) next.intervalTicks = assertPositiveInteger(patch.intervalTicks, 'emitter.intervalTicks', UINT32_MAX);
       if (patch.velocityXQ16 !== undefined) next.velocityXQ16 = assertInt32(patch.velocityXQ16, 'emitter.velocityXQ16');
       if (patch.velocityYQ16 !== undefined) next.velocityYQ16 = assertInt32(patch.velocityYQ16, 'emitter.velocityYQ16');
-      if (patch.velocityJitterQ16 !== undefined) next.velocityJitterQ16 = assertInt32(patch.velocityJitterQ16, 'emitter.velocityJitterQ16');
+      if (patch.velocityJitterQ16 !== undefined) next.velocityJitterQ16 = assertNonnegativeInteger(patch.velocityJitterQ16, 'emitter.velocityJitterQ16', MAX_EMITTER_JITTER_Q16);
       if (patch.origin !== undefined) next.geometry = { ...next.geometry, origin: clonePosition(patch.origin) };
       return next;
     });
@@ -538,13 +544,12 @@ export class EditorSession {
       const next = cloneMaterialDefinition(material);
       if (patch.lifetimeTicks !== undefined) next.lifetimeTicks = assertPositiveInteger(patch.lifetimeTicks, 'material.lifetimeTicks', UINT32_MAX);
       if (patch.depositEvery !== undefined) next.depositEvery = assertPositiveInteger(patch.depositEvery, 'material.depositEvery', UINT32_MAX);
-      if (patch.steeringNumerator !== undefined) next.steeringNumerator = assertPositiveInteger(patch.steeringNumerator, 'material.steeringNumerator');
+      if (patch.steeringNumerator !== undefined) next.steeringNumerator = assertNonnegativeInteger(patch.steeringNumerator, 'material.steeringNumerator');
       if (patch.steeringDenominator !== undefined) next.steeringDenominator = assertPositiveInteger(patch.steeringDenominator, 'material.steeringDenominator');
       if (patch.radiusQ16 !== undefined) {
-        const radiusQ16 = assertPositiveInteger(patch.radiusQ16, 'material.radiusQ16', MAX_MATERIAL_INTERACTION_RADIUS_Q16);
-        next.radiusQ16 = radiusQ16;
+        next.radiusQ16 = assertPositiveInteger(patch.radiusQ16, 'material.radiusQ16', MAX_MATERIAL_INTERACTION_RADIUS_Q16);
       }
-      if (patch.strengthQ16 !== undefined) next.strengthQ16 = assertInt32(patch.strengthQ16, 'material.strengthQ16');
+      if (patch.strengthQ16 !== undefined) next.strengthQ16 = assertNonnegativeInteger(patch.strengthQ16, 'material.strengthQ16', 0x7fffffff);
       return next;
     });
     this._adoptRecipeDefinitions(candidate, this._emitters);
