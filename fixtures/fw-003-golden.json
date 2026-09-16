@@ -1,0 +1,5 @@
+{
+  "format": "fw-fields-v1",
+  "scenario": "mixed sparse scalar/vector field authoring across a negative-to-origin chunk seam",
+  "fieldHash": "4e9f70dedee6da04"
+}
