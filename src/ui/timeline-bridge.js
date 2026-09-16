@@ -15,6 +15,11 @@ function publishTimelineState() {
   return state;
 }
 
+function publishWhenReady(attempt = 0) {
+  if (publishTimelineState()) return;
+  if (attempt < 120) setTimeout(() => publishWhenReady(attempt + 1), 25);
+}
+
 window.addEventListener('fieldweaver-editor-refresh', () => {
   const editor = activeEditor();
   if (!editor) return;
@@ -53,3 +58,5 @@ setInterval(() => {
   document.documentElement.dataset.fieldweaverTimelineTick = String(state.playheadTick);
   document.documentElement.dataset.fieldweaverTimelineCheckpoints = String(diagnostics?.checkpointCount ?? 0);
 }, 100);
+
+publishWhenReady();
