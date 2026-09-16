@@ -18,6 +18,7 @@ export {
   worldPositionToUnits
 };
 export { LUT_EDITOR_VERSION, LutEditorSession } from './lut-session.js';
+export { RECIPE_EDITOR_VERSION, RecipeEditorSession } from './recipe-session.js';
 
 export class EditorSession extends BaseEditorSession {
   authoringHash() {
