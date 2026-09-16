@@ -56,7 +56,7 @@ export class RecipeEditorSession extends LutEditorSession {
   }
 
   recipeHash() {
-    return recipeHash(this._recipeInput());
+    return recipeHash(this.currentRecipe());
   }
 
   authoringHash() {
@@ -73,7 +73,7 @@ export class RecipeEditorSession extends LutEditorSession {
   resetSimulation() {
     if (!this._lutAssets || this._recipeCommands === undefined) return super.resetSimulation();
     this.running = false;
-    this._recipeReplay = createRecipeReplay(this._recipeInput(), {
+    this._recipeReplay = createRecipeReplay(this.currentRecipe(), {
       capacity: this.agentCapacity,
       maxDepositions: this.maxDepositions
     });
@@ -123,7 +123,7 @@ export class RecipeEditorSession extends LutEditorSession {
   }
 
   exportRecipeJson() {
-    return serializeRecipe(this._recipeInput());
+    return serializeRecipe(this.currentRecipe());
   }
 
   importRecipeJson(text) {
