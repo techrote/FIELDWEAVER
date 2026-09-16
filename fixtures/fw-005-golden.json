@@ -1,12 +1,12 @@
 {
   "version": "fw-agents-v1",
   "individual": {
-    "ink": { "stateHash": "pending", "depositionHash": "pending", "resultHash": "pending" },
-    "filament": { "stateHash": "pending", "depositionHash": "pending", "resultHash": "pending" },
-    "dust": { "stateHash": "pending", "depositionHash": "pending", "resultHash": "pending" },
-    "shard": { "stateHash": "pending", "depositionHash": "pending", "resultHash": "pending" }
+    "ink": { "stateHash": "ce337b97f4b074df", "depositionHash": "c1d1f982e37e9944", "resultHash": "d39ffac90d94d097" },
+    "filament": { "stateHash": "01942dea5438143f", "depositionHash": "d06d91c0b3130d56", "resultHash": "5e847fb9bc2599e5" },
+    "dust": { "stateHash": "130e9ab91c3d04b1", "depositionHash": "e339ac9d2b82d248", "resultHash": "b57a72fd3c558f29" },
+    "shard": { "stateHash": "5334665be4919862", "depositionHash": "e20a3b05de1f959f", "resultHash": "c48e138a7dd1c5f7" }
   },
-  "mixed": { "stateHash": "pending", "depositionHash": "pending", "resultHash": "pending" },
-  "chunkCrossing": { "stateHash": "pending", "depositionHash": "pending", "resultHash": "pending" },
-  "longRun": { "stateHash": "pending", "depositionHash": "pending", "resultHash": "pending" }
+  "mixed": { "stateHash": "db2ab4e634472057", "depositionHash": "3d5eb18105d966d0", "resultHash": "61e825d7d3b4f377" },
+  "chunkCrossing": { "stateHash": "307689b3c0c54900", "depositionHash": "8d54794177ec5efc", "resultHash": "c9dd800b0f29ff22" },
+  "longRun": { "stateHash": "c81441e2f7a01fa0", "depositionHash": "ce66fa424acba7a8", "resultHash": "05e77c61a948879a" }
 }
