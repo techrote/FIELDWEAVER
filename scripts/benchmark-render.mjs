@@ -6,6 +6,7 @@ const COUNT = 30_000;
 const WARMUPS = 4;
 const ROUNDS = 12;
 const kinds = ['ink', 'filament', 'dust', 'shard'];
+const STANDARD_RADIUS_Q16 = Math.round(Q16_ONE / 3);
 
 function position(x, y) {
   return { chunkX: 0, chunkY: 0, localX: x * Q16_ONE, localY: y * Q16_ONE };
@@ -27,7 +28,7 @@ function makeDepositions() {
       primitive: kind === 'ink' ? 'disc' : kind === 'dust' ? 'point' : 'segment',
       from: position(x, y),
       to: position(Math.min(255, x + 1), Math.min(255, y + 1)),
-      radiusQ16: kind === 'dust' ? Q16_ONE / 8 : Q16_ONE / 3,
+      radiusQ16: kind === 'dust' ? Q16_ONE / 8 : STANDARD_RADIUS_Q16,
       strengthQ16: Q16_ONE
     });
   }
