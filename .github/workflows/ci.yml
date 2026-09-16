@@ -75,6 +75,17 @@ jobs:
           command -v chromedriver || true
           command -v firefox || true
           command -v geckodriver || true
+          command -v Xvfb || true
+      - name: Start Firefox virtual display
+        if: matrix.browser == 'firefox'
+        shell: bash
+        run: |
+          Xvfb :99 -screen 0 1280x1024x24 > xvfb.log 2>&1 &
+          echo $! > xvfb.pid
+          echo 'DISPLAY=:99' >> "$GITHUB_ENV"
+          echo 'LIBGL_ALWAYS_SOFTWARE=1' >> "$GITHUB_ENV"
+          echo 'MOZ_WEBRENDER=1' >> "$GITHUB_ENV"
+          sleep 1
       - name: Start local FIELDWEAVER server
         shell: bash
         run: |
@@ -97,6 +108,8 @@ jobs:
           name: fw-006-${{ matrix.browser }}-smoke
           path: |
             browser-smoke-${{ matrix.browser }}.png
+            browser-smoke-${{ matrix.browser }}.log
             browser-server.log
+            xvfb.log
           if-no-files-found: ignore
           retention-days: 7
