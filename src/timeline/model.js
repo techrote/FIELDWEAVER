@@ -76,8 +76,6 @@ function checkpointByteEstimate(checkpoint) {
     mappings: checkpoint.lutMappings,
     emitterState: checkpoint.state.emitters
   });
-  // Diagnostic estimate only: typed agent state is approximated at 52 bytes/active record;
-  // deposition records at 120 bytes plus serialized field/runtime metadata.
   return fieldText.length * 2 + runtimeText.length * 2 + agentCount * 52 + depositionCount * 120;
 }
 
@@ -286,7 +284,7 @@ export class TimelineReplayController {
     if (earliest === null) return this.seek(targetTick);
     let removed = 0;
     for (const tick of [...this.checkpoints.keys()]) {
-      if (tick > earliest) {
+      if (tick >= earliest && tick !== 0) {
         this.checkpoints.delete(tick);
         removed += 1;
       }
@@ -307,6 +305,7 @@ export class TimelineReplayController {
   }
 
   replaceRecipe(recipeInput, targetTick = 0) {
+    if (this.checkpoints) this.invalidations += this.checkpoints.size;
     this.reset(recipeInput);
     return this.runToTick(targetTick);
   }
