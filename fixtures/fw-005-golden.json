@@ -1,0 +1,12 @@
+{
+  "version": "fw-agents-v1",
+  "individual": {
+    "ink": { "stateHash": "pending", "depositionHash": "pending", "resultHash": "pending" },
+    "filament": { "stateHash": "pending", "depositionHash": "pending", "resultHash": "pending" },
+    "dust": { "stateHash": "pending", "depositionHash": "pending", "resultHash": "pending" },
+    "shard": { "stateHash": "pending", "depositionHash": "pending", "resultHash": "pending" }
+  },
+  "mixed": { "stateHash": "pending", "depositionHash": "pending", "resultHash": "pending" },
+  "chunkCrossing": { "stateHash": "pending", "depositionHash": "pending", "resultHash": "pending" },
+  "longRun": { "stateHash": "pending", "depositionHash": "pending", "resultHash": "pending" }
+}
