@@ -43,7 +43,7 @@ export const SUBSYSTEM_STATUS = Object.freeze([
     label: 'WebGL2 preview',
     state: 'ready',
     issue: RENDERER_ISSUE,
-    detail: 'Read-only cached WebGL2 deposition preview with pan/zoom, overlays, bounded accumulation, and diagnostics is active.'
+    detail: 'Read-only WebGL2 deposition preview with cached artwork geometry, pan/zoom, overlays, bounded accumulation, and diagnostics is active.'
   }),
   Object.freeze({
     id: 'editor',
