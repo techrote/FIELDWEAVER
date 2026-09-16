@@ -48,10 +48,6 @@ function normalizedAxisAbsoluteQ16(position, axis) {
   return BigInt(chunk) * BI_CHUNK_SPAN_Q16 + BigInt(local);
 }
 
-function axisAbsoluteQ16(position, axis) {
-  return normalizedAxisAbsoluteQ16(normalizeWorldPosition(position), axis);
-}
-
 export function createViewport(options = {}) {
   const widthCssPx = assertPositiveInteger(options.widthCssPx ?? 1280, 'viewport.widthCssPx', 32768);
   const heightCssPx = assertPositiveInteger(options.heightCssPx ?? 720, 'viewport.heightCssPx', 32768);
@@ -163,6 +159,21 @@ function writeWorldVertex(target, offset, position, rgba, pointSizeBase, project
   );
 }
 
+function validateDepositionColor(color, label) {
+  if (!Array.isArray(color) || color.length !== 4) throw new TypeError(`${label} must be a 4-entry RGBA array.`);
+  for (let channel = 0; channel < 4; channel += 1) {
+    const value = color[channel];
+    if (!Number.isInteger(value) || value < 0 || value > 255) throw new RangeError(`${label}[${channel}] must be an integer in [0, 255].`);
+  }
+  return color;
+}
+
+function previewRgba(record, style) {
+  if (record.colorRgba8 === undefined) return style.rgba;
+  const color = validateDepositionColor(record.colorRgba8, 'deposition.colorRgba8');
+  return [color[0] / 255, color[1] / 255, color[2] / 255, color[3] / 255];
+}
+
 function validateDeposition(record, index) {
   if (record === null || typeof record !== 'object') throw new TypeError(`depositions[${index}] must be an object.`);
   if (!MATERIAL_PREVIEW_STYLES[record.materialKind]) throw new RangeError(`Unsupported deposition materialKind: ${String(record.materialKind)}.`);
@@ -170,6 +181,7 @@ function validateDeposition(record, index) {
   validatePositionShape(record.from, `depositions[${index}].from`);
   validatePositionShape(record.to, `depositions[${index}].to`);
   if (!Number.isInteger(record.radiusQ16) || record.radiusQ16 < 0) throw new RangeError(`depositions[${index}].radiusQ16 must be nonnegative integer.`);
+  if (record.colorRgba8 !== undefined) validateDepositionColor(record.colorRgba8, `depositions[${index}].colorRgba8`);
   return record;
 }
 
@@ -280,13 +292,14 @@ export function prepareDepositionGeometry(depositions, viewportInput) {
 
   for (const record of depositions) {
     const style = MATERIAL_PREVIEW_STYLES[record.materialKind];
+    const rgba = previewRgba(record, style);
     const pointSizeBase = (record.radiusQ16 / Q16_ONE) * 2 * style.pointScale;
     if (record.primitive === 'segment') {
-      writeWorldVertex(lines, lineOffset, record.from, style.rgba, pointSizeBase, projection);
-      writeWorldVertex(lines, lineOffset + VERTEX_FLOATS, record.to, style.rgba, pointSizeBase, projection);
+      writeWorldVertex(lines, lineOffset, record.from, rgba, pointSizeBase, projection);
+      writeWorldVertex(lines, lineOffset + VERTEX_FLOATS, record.to, rgba, pointSizeBase, projection);
       lineOffset += VERTEX_FLOATS * 2;
     } else {
-      writeWorldVertex(points, pointOffset, record.to, style.rgba, pointSizeBase, projection);
+      writeWorldVertex(points, pointOffset, record.to, rgba, pointSizeBase, projection);
       pointOffset += VERTEX_FLOATS;
     }
   }
