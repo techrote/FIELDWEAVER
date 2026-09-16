@@ -10,6 +10,7 @@ const driverName = browser === 'chrome' ? 'chromedriver' : 'geckodriver';
 const port = browser === 'chrome' ? 9515 : 4444;
 const baseUrl = `http://127.0.0.1:${port}`;
 const appUrl = process.env.FIELDWEAVER_SMOKE_URL ?? 'http://127.0.0.1:4173/';
+const evidencePath = `browser-smoke-${browser}.log`;
 
 function commandPath(name) {
   const result = spawnSync('bash', ['-lc', `command -v ${name}`], { encoding: 'utf8' });
@@ -88,15 +89,18 @@ function sessionCapabilities() {
       }
     };
   }
+  const args = process.env.DISPLAY ? [] : ['-headless'];
   return {
     capabilities: {
       alwaysMatch: {
         browserName: 'firefox',
         'moz:firefoxOptions': {
-          args: ['-headless'],
+          args,
           prefs: {
             'webgl.disabled': false,
-            'webgl.force-enabled': true
+            'webgl.force-enabled': true,
+            'gfx.webrender.all': true,
+            'gfx.webrender.software': true
           }
         }
       }
@@ -204,10 +208,11 @@ try {
   const screenshotPath = `browser-smoke-${browser}.png`;
   await writeFile(screenshotPath, screenshotBytes);
 
-  console.log(JSON.stringify({
+  const evidence = {
     browser,
     browserVersion: capabilities.browserVersion ?? capabilities.version ?? 'unknown',
     platformName: capabilities.platformName ?? 'unknown',
+    display: process.env.DISPLAY ?? null,
     webglVersion: afterResize.glVersion,
     glslVersion: afterResize.glslVersion,
     renderer: afterResize.renderer,
@@ -216,9 +221,14 @@ try {
     framebuffer: afterFramebuffer,
     screenshotBytes: screenshotBytes.length,
     screenshotPath
-  }, null, 2));
+  };
+  const evidenceText = `${JSON.stringify(evidence, null, 2)}\n\n--- WebDriver log ---\n${driverLog}`;
+  await writeFile(evidencePath, evidenceText);
+  console.log(JSON.stringify(evidence, null, 2));
 } catch (error) {
-  console.error(driverLog);
+  const failureText = `${error?.stack ?? error}\n\n--- WebDriver log ---\n${driverLog}`;
+  await writeFile(evidencePath, failureText);
+  console.error(failureText);
   throw error;
 } finally {
   if (sessionId) {
