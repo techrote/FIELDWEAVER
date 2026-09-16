@@ -280,7 +280,22 @@ function stripLineage(recipe) {
   return { ...recipe, lineage: null };
 }
 
+function diffAtom(value) {
+  return value === undefined ? null : cloneCanonical(value);
+}
+
 function deepDiff(before, after, path, output) {
+  if (before === undefined || after === undefined) {
+    if (before === after) return;
+    output.push(Object.freeze({
+      path,
+      before: diffAtom(before),
+      after: diffAtom(after),
+      beforeMissing: before === undefined,
+      afterMissing: after === undefined
+    }));
+    return;
+  }
   if (canonicalStringify(before) === canonicalStringify(after)) return;
   const beforeObject = before !== null && typeof before === 'object';
   const afterObject = after !== null && typeof after === 'object';
