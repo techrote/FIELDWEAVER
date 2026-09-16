@@ -1,0 +1,17 @@
+{
+  "name": "fieldweaver",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local-first deterministic generative-art laboratory foundation.",
+  "engines": {
+    "node": ">=22 <25"
+  },
+  "scripts": {
+    "check": "node scripts/check.mjs",
+    "test": "node --test",
+    "serve": "node scripts/serve.mjs",
+    "start": "node scripts/serve.mjs --open",
+    "verify": "npm run check && npm test"
+  }
+}
