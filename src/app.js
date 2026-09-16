@@ -5,6 +5,22 @@ import { RendererUnavailableError, createWebGL2Renderer } from './renderer/index
 import { mountApplicationShell } from './ui/shell.js';
 import { APP_VERSION } from './version.js';
 
+function capturePointerIfAvailable(canvas, pointerId) {
+  try {
+    canvas.setPointerCapture?.(pointerId);
+  } catch (error) {
+    if (error?.name !== 'NotFoundError') throw error;
+  }
+}
+
+function releasePointerIfCaptured(canvas, pointerId) {
+  try {
+    if (canvas.hasPointerCapture?.(pointerId)) canvas.releasePointerCapture?.(pointerId);
+  } catch (error) {
+    if (error?.name !== 'NotFoundError') throw error;
+  }
+}
+
 function bootstrap() {
   const root = document.querySelector('#app');
   if (!root) throw new Error('FIELDWEAVER application root #app was not found.');
@@ -58,7 +74,7 @@ function bootstrap() {
     dragging = true;
     lastPointerX = event.clientX;
     lastPointerY = event.clientY;
-    shell.canvas.setPointerCapture?.(event.pointerId);
+    capturePointerIfAvailable(shell.canvas, event.pointerId);
   });
   shell.canvas.addEventListener('pointermove', (event) => {
     if (!dragging) return;
@@ -71,7 +87,7 @@ function bootstrap() {
   });
   const stopDragging = (event) => {
     dragging = false;
-    shell.canvas.releasePointerCapture?.(event.pointerId);
+    releasePointerIfCaptured(shell.canvas, event.pointerId);
   };
   shell.canvas.addEventListener('pointerup', stopDragging);
   shell.canvas.addEventListener('pointercancel', stopDragging);
