@@ -14,7 +14,7 @@ export function mix32(value) {
 }
 
 export function deriveSeed(rootSeed, ...stableParts) {
-  let mixed = mix32(assertUint32(rootSeed, 'rootSeed') ^ 0x6a09e667);
+  let mixed = mix32((assertUint32(rootSeed, 'rootSeed') ^ 0x6a09e667) >>> 0);
   for (const [index, part] of stableParts.entries()) {
     const stable = assertUint32(part, `stableParts[${index}]`);
     mixed = mix32((mixed ^ stable ^ Math.imul(index + 1, 0x9e3779b1)) >>> 0);
