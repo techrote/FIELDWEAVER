@@ -1,0 +1,14 @@
+{
+  "version": "fw-canonical-raster-v1",
+  "widthPx": 8,
+  "heightPx": 8,
+  "rawRgbaHash": "7b3f5d0e656b53e2",
+  "samples": [
+    { "x": 2, "y": 1, "rgba": [179, 82, 35, 255], "meaning": "ink" },
+    { "x": 1, "y": 3, "rgba": [62, 153, 164, 255], "meaning": "filament" },
+    { "x": 3, "y": 4, "rgba": [75, 70, 38, 255], "meaning": "dust" },
+    { "x": 5, "y": 2, "rgba": [185, 111, 231, 255], "meaning": "shard" },
+    { "x": 5, "y": 3, "rgba": [190, 125, 246, 255], "meaning": "filament-shard-overlap" },
+    { "x": 0, "y": 7, "rgba": [132, 133, 132, 255], "meaning": "crop-edge-custom-color" }
+  ]
+}
