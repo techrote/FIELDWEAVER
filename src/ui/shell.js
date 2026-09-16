@@ -80,6 +80,7 @@ export function mountApplicationShell(root, snapshot) {
   if (!(root instanceof HTMLElement)) throw new TypeError('FIELDWEAVER shell root must be an HTMLElement.');
 
   let rendererDiagnostics = null;
+  document.documentElement.dataset.fieldweaverRendererState = 'initializing';
   const shell = element('div', { className: 'app-shell' });
   const header = element('header', { className: 'masthead' });
   const brand = element('div');
@@ -135,6 +136,7 @@ export function mountApplicationShell(root, snapshot) {
   const updateRendererDiagnostics = (diagnostics) => {
     rendererDiagnostics = diagnostics;
     if (diagnostics?.state === 'ready') {
+      document.documentElement.dataset.fieldweaverRendererState = 'ready';
       rendererMessage.hidden = true;
       rendererMessage.textContent = '';
       rendererMessage.setAttribute('role', 'status');
@@ -144,6 +146,7 @@ export function mountApplicationShell(root, snapshot) {
 
   const setRendererError = (message) => {
     rendererDiagnostics = Object.freeze({ state: 'unavailable' });
+    document.documentElement.dataset.fieldweaverRendererState = 'unavailable';
     rendererMessage.hidden = false;
     rendererMessage.textContent = message;
     rendererMessage.setAttribute('role', 'alert');
