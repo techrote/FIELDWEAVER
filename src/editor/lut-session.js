@@ -13,7 +13,7 @@ import {
   serializeLutAsset
 } from '../lut/index.js';
 import { DeterministicAgentSimulation, MAX_MATERIAL_INTERACTION_RADIUS_Q16 } from '../sim/index.js';
-import { EditorSession } from './model.js';
+import { EDITOR_VERSION, EditorSession, worldPositionFromUnits } from './model.js';
 
 export const LUT_EDITOR_VERSION = 'fw-editor-lut-v1';
 
@@ -50,6 +50,26 @@ export class LutEditorSession extends EditorSession {
     super(options);
     this._lutAssets = (options.lutAssets ?? createBuiltinLuts()).map(cloneAsset).sort((a, b) => a.id - b.id);
     this._lutMappings = (options.lutMappings ?? createDefaultLutMappings()).map(createLutMapping).sort((a, b) => a.id - b.id);
+
+    // Fresh FW-008 sessions visibly exercise both LUT roles: Ink receives the
+    // Spectrum colour map and Dust receives the Pulse steering map.
+    if (options.emitters === undefined && !this._emitters.some((emitter) => emitter.materialId === 3)) {
+      this._emitters.push({
+        id: nextId(this._emitters, 'Emitter'),
+        materialId: 3,
+        startTick: 0,
+        stopTick: undefined,
+        intervalTicks: 2,
+        rate: 1,
+        bursts: [],
+        geometry: { type: 'point', origin: worldPositionFromUnits(176, 118) },
+        velocityXQ16: -Math.round(Q16_ONE * 0.45),
+        velocityYQ16: Math.round(Q16_ONE * 0.08),
+        velocityJitterQ16: Math.round(Q16_ONE / 10)
+      });
+      this._emitters.sort((a, b) => a.id - b.id);
+    }
+
     this.selectedLutId = this._lutAssets[0]?.id ?? null;
     this.selectedLutChannel = this._lutAssets[0] ? Object.keys(this._lutAssets[0].channels)[0] : null;
     this._lutHashRevision = 0;
@@ -88,7 +108,13 @@ export class LutEditorSession extends EditorSession {
     if (this._lutAssets && this._lutHashRevision === this._authoringRevision && this._lutCachedAuthoringHash) {
       return this._lutCachedAuthoringHash;
     }
-    const baseHash = super.authoringHash();
+    const baseHash = canonicalHash({
+      version: EDITOR_VERSION,
+      rootSeed: this.rootSeed,
+      fields: this.fieldCollection.toCanonical(),
+      materials: this.simulation.materials,
+      emitters: this.simulation.emitters
+    });
     const lut = this._lutAssets ? this.lutRegistry().toCanonical() : { assets: [], mappings: [] };
     const hash = canonicalHash({ version: LUT_EDITOR_VERSION, baseHash, lut });
     if (this._lutAssets) {
