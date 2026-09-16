@@ -108,6 +108,7 @@ export class TimelineEditorSession extends RecipeEditorSession {
   }
 
   _replaceTimelineCommands(commands) {
+    this.pause();
     const currentTick = this.simulation.tick;
     const normalized = createRecipe({ ...this._recipeInput(), commands });
     this._recipeCommands = normalized.commands;
