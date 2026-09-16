@@ -67,7 +67,7 @@ const MATERIAL_PRESETS = Object.freeze({
     lifetimeTicks: 72,
     depositEvery: 1,
     primitive: 'segment',
-    radiusQ16: Q16_ONE / 6,
+    radiusQ16: 10923,
     strengthQ16: Q16_ONE,
     quantizeAxis: true
   })
@@ -432,10 +432,12 @@ export class DeterministicAgentSimulation {
     if (this.depositions.length >= this.maxDepositions) {
       throw new RangeError('Canonical deposition capacity exhausted; increase maxDepositions explicitly or stop the run.');
     }
+    const agentIndex = this.agents.indexOfActive(agentId);
     this.depositions.push(Object.freeze({
       tick: this.tick,
       sequence: this.nextDepositionSequence,
       agentId,
+      emitterId: this.agents.emitterId[agentIndex],
       materialId: material.id,
       materialKind: material.kind,
       primitive: material.primitive,
