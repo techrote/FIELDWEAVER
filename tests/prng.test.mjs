@@ -19,6 +19,14 @@ test('stable substream seed derivation depends on IDs, not call history', () => 
   assert.notEqual(a1, b);
 });
 
+test('seed derivation accepts the full documented uint32 range', () => {
+  const seed = deriveSeed(0xffffffff, 0x87654321, 0x80000000);
+  assert.equal(Number.isInteger(seed), true);
+  assert.ok(seed >= 0 && seed <= 0xffffffff);
+  const rng = Xoshiro128StarStar.fromSeed(0x87654321, 20);
+  assert.equal(rng.snapshot().length, 4);
+});
+
 test('bounded draws stay within the requested integer range', () => {
   const rng = Xoshiro128StarStar.fromSeed(7, 1);
   for (let index = 0; index < 1000; index += 1) {

@@ -12,6 +12,7 @@
     "test": "node --test",
     "serve": "node scripts/serve.mjs",
     "start": "node scripts/serve.mjs --open",
+    "benchmark:sim": "node scripts/benchmark-sim.mjs",
     "verify": "npm run check && npm test"
   }
 }

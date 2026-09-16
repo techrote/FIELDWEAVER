@@ -1,0 +1,13 @@
+export {
+  SIMULATION_VERSION,
+  MATERIAL_KINDS,
+  EMITTER_GEOMETRIES,
+  MAX_SPEED_Q16,
+  MAX_STEP_DISPLACEMENT_Q16,
+  MAX_MATERIAL_INTERACTION_RADIUS_Q16,
+  MAX_EMITTER_JITTER_Q16,
+  MAX_EMITTER_EXTENT_Q16,
+  createBaselineMaterials,
+  AgentStore,
+  DeterministicAgentSimulation
+} from './model.js';
