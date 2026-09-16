@@ -11,6 +11,11 @@ import {
 import { LutEditorSession } from './lut-session.js';
 
 export const RECIPE_EDITOR_VERSION = 'fw-editor-recipe-v1';
+let activeRecipeEditorSession = null;
+
+export function getActiveRecipeEditorSession() {
+  return activeRecipeEditorSession;
+}
 
 function cloneFraming(framing) {
   return Object.freeze({ ...framing, center: Object.freeze({ ...framing.center }) });
@@ -28,6 +33,7 @@ export class RecipeEditorSession extends LutEditorSession {
     this._recipeLineage = normalized.lineage;
     this._touchAuthoring();
     this.resetSimulation();
+    activeRecipeEditorSession = this;
   }
 
   _recipeInput() {
@@ -162,6 +168,7 @@ export class RecipeEditorSession extends LutEditorSession {
     this.running = false;
     this.simulationRevision += 1;
     this._touchAuthoring();
+    activeRecipeEditorSession = this;
     return this.currentRecipe();
   }
 
