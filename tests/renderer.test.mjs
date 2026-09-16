@@ -172,13 +172,14 @@ test('representative four-material frame preparation leaves canonical simulation
   assert.equal(demo.simulation.depositionHash(), beforeDepositions);
 });
 
-test('browser interaction path coalesces rendering and does not full-rehash canonical depositions per view event', async () => {
+test('browser editor path coalesces view rendering and publishes authoring identity instead of rehashing depositions', async () => {
   const source = await readFile(new URL('../src/app.js', import.meta.url), 'utf8');
   assert.match(source, /const scheduleRender = \(\) =>/);
   assert.match(source, /if \(renderFrame !== 0\) return;/);
   assert.match(source, /requestAnimationFrame\(\(\) =>/);
-  assert.match(source, /Object\.freeze\(\[\.\.\.demo\.simulation\.depositions\]\)/);
-  assert.equal((source.match(/demo\.simulation\.resultHash\(\)/g) ?? []).length, 1);
+  assert.match(source, /fieldweaverCanonicalRecipeHash/);
+  assert.match(source, /editor\.authoringHash\(\)/);
+  assert.equal((source.match(/simulation\.resultHash\(\)/g) ?? []).length, 0);
   assert.doesNotMatch(source, /renderer\.panByPixels\(dx, dy\);\s*render\(\);/);
 });
 

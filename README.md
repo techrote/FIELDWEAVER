@@ -1,16 +1,18 @@
 # FIELDWEAVER
 
-FIELDWEAVER is a local-first deterministic generative-art laboratory for **painting behaviours rather than pixels**.
+FIELDWEAVER is a local-first deterministic generative-art instrument for **painting behaviours rather than pixels**.
 
-Artists paint invisible scalar/vector fields, release material-like agents into them, intervene while the simulation runs, then preserve, mutate, compare, and export the resulting work. The canonical simulation is deterministic: a recipe, seed, timeline and engine/schema version reproduce the same canonical state.
+Artists paint vector fields, place material emitters into them, run an integer fixed-step simulation, then preserve, mutate, compare, and export the resulting work. Canonical state is deterministic: the same authored definitions, concrete seed, and tick sequence reproduce the same simulation/deposition result.
 
 ## Current implementation status
 
-**FW-001 through FW-006 are implemented, with the FW-016 live-preview interaction regression fix applied.** The dependency-free local server, launch helpers, checks and CI remain intact. The DOM-free canonical substrate provides signed Q16.16 arithmetic, chunk-aware coordinates, xoshiro128** PRNG/substreams, stable serialization/hashes, sparse field authoring, five deterministic field operators, independently seeded emitters, four behaviourally distinct materials, bounded movement, and renderer-independent deposition records.
+**FW-001 through FW-007 are implemented on this branch, with the FW-016 live-preview interaction regression fix retained.** The dependency-free local server, launch helpers, tests and CI remain intact. The DOM-free canonical substrate provides signed Q16.16 arithmetic, chunk-aware coordinates, xoshiro128** PRNG/substreams, stable serialization/hashes, sparse field authoring, five deterministic field operators, independently seeded emitters, four behaviourally distinct materials, bounded movement, and renderer-independent deposition records.
 
-FW-006 adds the `fw-webgl2-preview-v1` live preview: read-only WebGL2 rendering of canonical deposition records, distinct Ink/Filament/Dust/Shard display treatment, field/emitter overlays, DPR-aware resize, pan/zoom, bounded reset/rebuild-safe preview accumulation, actionable WebGL2 failure handling, and renderer diagnostics. FW-016 keeps stable artwork geometry and GPU buffers cached across view-only pan/zoom/resize, applies camera changes through cheap shader uniforms, animation-frame-coalesces input renders, and avoids re-hashing the complete deposition history on every pointer event. The browser startup currently displays a fixed seeded four-material demonstration until FW-007 adds the editing instrument.
+FW-007 adds the first usable instrument editor: ordered/enabled field layers; direct paint/erase; field-origin editing; bounded authoring undo/redo; emitter placement/movement/material assignment; baseline material editing; concrete seed controls; run/pause/exact single-step/configurable multi-step/reset; speed as scheduling only; visible scheduler backlog; keyboard shortcuts; and a separate view-only editor overlay.
 
-The WebGL preview is deliberately **noncanonical**. GPU floating point, framebuffer contents, renderer timing, camera state, geometry caches and preview truncation never feed back into simulation state or hashes. Canonical image export remains a later software-raster path.
+FW-006/FW-016 provide the `fw-webgl2-preview-v1` live view: read-only WebGL2 rendering of canonical deposition records, distinct Ink/Filament/Dust/Shard treatment, DPR-aware resize, pan/zoom, bounded reset/rebuild-safe accumulation, cached stable geometry/GPU buffers, actionable failure handling, and renderer diagnostics.
+
+The WebGL preview is deliberately **noncanonical**. GPU floating point, framebuffer contents, renderer timing, camera state, geometry caches, editor overlay and preview truncation never feed back into simulation state or hashes. Canonical image export remains a later software-raster path.
 
 ## Quick start
 
@@ -40,19 +42,30 @@ Then open `http://127.0.0.1:4173/` if you used `npm run serve`. `npm start`, `0P
 
 No package CDN, cloud service, telemetry endpoint, or other external network dependency is required. The local HTTP server exists so native browser modules run under normal browser security instead of relying on `file://` behaviour.
 
+## First creative workflow
+
+1. Choose a field in **Field stack** or add one of the five field operators.
+2. Select **Paint [B]** and drag on the canvas. Brush X/Y define the vector painted into deterministic sparse cells.
+3. Use **Place emitter [N]** to add an emitter, then assign Ink, Filament, Dust or Shard.
+4. Press **Space** to run, `.` to step exactly one tick, or `Shift+.` for the configured multi-step count.
+5. Pause and use authoring undo/redo, reorder/enable fields, move field/emitter origins, edit material controls, or change the recorded seed. Simulation-affecting authoring edits deterministically reset the live simulation to tick 0.
+6. Pan/zoom at any time without changing authoring or canonical simulation identity.
+
+See [`docs/EDITOR.md`](./docs/EDITOR.md) for the complete editor/shortcut/determinism contract.
+
 ## Engineering commands
 
 | Command | Purpose |
 |---|---|
 | `npm run check` | Syntax checks plus version/module/CSP/local-resource policy checks |
-| `npm test` | Node built-in tests, including deterministic canonical/field/operator/simulation fixtures and renderer cache/isolation tests |
+| `npm test` | Node built-in deterministic core/field/operator/simulation/editor/renderer tests |
 | `npm run verify` | Full local correctness gate (`check` then `test`) |
 | `npm run benchmark:sim` | Headless canonical simulation timing/throughput diagnostics; timing is not a correctness gate |
-| `npm run benchmark:render` | ~64k-deposition interaction profile proving one geometry build followed by cached view transforms; timing is diagnostic only |
+| `npm run benchmark:render` | ~64k-deposition interaction profile proving one geometry build followed by cached view transforms |
 | `npm run serve` | Start the local server on `127.0.0.1:4173` |
 | `npm start` | Start the server and attempt to open a browser |
 
-See [`docs/DEVELOPMENT.md`](./docs/DEVELOPMENT.md) for browser smoke checks and developer details. Compatibility-sensitive integer, coordinate, PRNG, tick, ordering and hash rules are frozen in [`docs/CANONICAL.md`](./docs/CANONICAL.md). Sparse field storage/authoring is documented in [`docs/FIELDS.md`](./docs/FIELDS.md), operator parameter/support/composition rules are in [`docs/OPERATORS.md`](./docs/OPERATORS.md), canonical agents/materials/emitters/deposition are in [`docs/SIMULATION.md`](./docs/SIMULATION.md), and the noncanonical WebGL2 preview/cache contract is in [`docs/RENDERER.md`](./docs/RENDERER.md).
+Developer/browser details are in [`docs/DEVELOPMENT.md`](./docs/DEVELOPMENT.md). Compatibility-sensitive integer, coordinate, PRNG, tick, ordering and hash rules are in [`docs/CANONICAL.md`](./docs/CANONICAL.md). Field storage/authoring is in [`docs/FIELDS.md`](./docs/FIELDS.md), operator semantics in [`docs/OPERATORS.md`](./docs/OPERATORS.md), agent/material/emitter/deposition rules in [`docs/SIMULATION.md`](./docs/SIMULATION.md), and preview/cache boundaries in [`docs/RENDERER.md`](./docs/RENDERER.md).
 
 ## Core workflow and roadmap
 
@@ -62,18 +75,17 @@ Initial field families: uniform/gravity, attractor/repulsor, vortex/curl, determ
 
 Initial material families: ink, filament, dust, and shard.
 
-LUTs are not merely palettes: their channels may drive colour, lifetime, turn rate, deposition, glyph/material selection, or other deterministic parameters.
+LUTs are not merely palettes: later issues make their channels capable of driving colour and deterministic behaviour parameters.
 
-The authoritative implementation context is [`RAG.md`](./RAG.md). Repository-agent rules are in [`AGENTS.md`](./AGENTS.md).
-
-GitHub issues are prefixed `FW-###` and are independently executable after their declared prerequisites have merged. FW-001 establishes runtime/quality gates; FW-002 canonical state semantics; FW-003 sparse field authoring; FW-004 deterministic field evaluation; FW-005 agents/materials/emitters/deposition; FW-006 live WebGL2 preview; FW-016 fixes view-interaction scaling before FW-007 editor work. Subsequent work follows the dependency graph in `RAG.md`.
+The authoritative implementation context is [`RAG.md`](./RAG.md). Repository-agent rules are in [`AGENTS.md`](./AGENTS.md). GitHub issues are prefixed `FW-###` and are independently executable after their declared prerequisites merge.
 
 ## Architectural stance
 
 - Local-first and offline-capable; no cloud/service dependency.
-- Dependency-light vanilla browser application using WebGL2 for live rendering.
+- Dependency-light vanilla browser application using WebGL2 only for live rendering.
 - Canonical simulation uses fixed-step integer/fixed-point logic and engine-owned seeded PRNG streams.
 - GPU floating-point simulation is **not** allowed to define canonical deterministic results unless an equivalence proof exists.
-- Simulation, editor state, rendering and export are separate subsystems.
-- Recipe files are versioned, inspectable, portable and provenance-preserving.
+- DOM/widget state is an editor adapter, never canonical truth.
+- Simulation, editor authoring, rendering and export are separate subsystems.
+- Recipe files are versioned, inspectable, portable and provenance-preserving once FW-009 lands.
 - A later canonical software export path will make decoded output pixels reproducible independently of GPU rasterization.
