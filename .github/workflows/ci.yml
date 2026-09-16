@@ -33,7 +33,18 @@ jobs:
       - name: Static checks
         run: npm run check
       - name: Tests
-        run: npm test
+        shell: bash
+        run: |
+          set -o pipefail
+          npm test 2>&1 | tee test-output.txt
+      - name: Upload failing test diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-output-node-${{ matrix.node }}
+          path: test-output.txt
+          if-no-files-found: ignore
+          retention-days: 1
       - name: FW-006 1080p render preparation profile
         if: matrix.node == 22
         run: npm run benchmark:render
