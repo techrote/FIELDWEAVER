@@ -55,10 +55,12 @@ function rendererDiagnosticsText(diagnostics) {
   return [
     'Renderer: WebGL2 preview (noncanonical)',
     `Frame: ${diagnostics.frameMs.toFixed(2)} ms (prepare ${diagnostics.prepareMs.toFixed(2)} / submit ${diagnostics.submitMs.toFixed(2)})`,
+    `Geometry cache: ${diagnostics.geometryRebuilt ? 'rebuilt' : 'reused'} · rebuilds ${diagnostics.geometryRebuildCount} · build ${diagnostics.geometryBuildMs.toFixed(2)} ms`,
     `Draw calls: ${diagnostics.drawCalls}`,
     `Artwork vertices: ${diagnostics.pointVertices + diagnostics.lineVertices}`,
     `Overlay vertices: ${diagnostics.overlayVertices}`,
-    `Transient buffer: ${(diagnostics.bufferBytes / 1024).toFixed(1)} KiB`,
+    `Prepared geometry: ${(diagnostics.cachedArtworkBytes / 1024).toFixed(1)} KiB artwork + ${(diagnostics.overlayBufferBytes / 1024).toFixed(1)} KiB overlays`,
+    `GPU upload this frame: ${(diagnostics.gpuUploadBytes / 1024).toFixed(1)} KiB`,
     `Preview deposition window: ${diagnostics.previewDepositions}/${diagnostics.previewCapacity}${diagnostics.previewTruncated ? ` · ${diagnostics.previewDropped} older records omitted` : ''}`,
     `Preview viewport: ${view.widthCssPx}×${view.heightCssPx} CSS px @ ${view.devicePixelRatio.toFixed(2)} DPR · zoom ${view.zoom.toFixed(2)}`,
     `Framebuffer: ${diagnostics.framebuffer.width}×${diagnostics.framebuffer.height}`,
