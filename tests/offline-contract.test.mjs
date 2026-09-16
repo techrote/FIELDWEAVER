@@ -25,7 +25,7 @@ test('status model reports implemented canonical substrate, noncanonical WebGL2 
   assert.match(core, /Agents and deposition/);
   assert.match(core, /WebGL2 preview/);
   assert.match(core, /Read-only noncanonical WebGL2 deposition preview/);
-  assert.match(core, /Canonical software export/);
+  assert.match(core, /Canonical image export/);
   assert.match(core, /Integer software rasterization/);
   assert.doesNotMatch(core, /state: 'planned'/);
 });
