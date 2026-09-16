@@ -18,12 +18,14 @@ test('browser entry path has no external HTTP resource dependency', async () => 
   }
 });
 
-test('status model reports implemented canonical substrate and noncanonical WebGL2 preview truthfully', async () => {
+test('status model reports implemented canonical substrate, noncanonical WebGL2 preview, and canonical export truthfully', async () => {
   const core = await readFile(new URL('../src/core/foundation.js', import.meta.url), 'utf8');
   assert.match(core, /Canonical simulation kernel/);
   assert.match(core, /Fields and operators/);
   assert.match(core, /Agents and deposition/);
   assert.match(core, /WebGL2 preview/);
-  assert.match(core, /Read-only WebGL2 deposition preview/);
+  assert.match(core, /Read-only noncanonical WebGL2 deposition preview/);
+  assert.match(core, /Canonical software export/);
+  assert.match(core, /Integer software rasterization/);
   assert.doesNotMatch(core, /state: 'planned'/);
 });
