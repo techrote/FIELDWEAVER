@@ -1,4 +1,11 @@
-import { APP_VERSION, FOUNDATION_ISSUE, SIMULATION_ISSUE } from '../version.js';
+import {
+  APP_VERSION,
+  FOUNDATION_ISSUE,
+  SIMULATION_ISSUE,
+  FIELDS_ISSUE,
+  AGENTS_ISSUE,
+  RENDERER_ISSUE
+} from '../version.js';
 import { CANONICAL_ENGINE_VERSION } from './kernel.js';
 
 export const SUBSYSTEM_STATUS = Object.freeze([
@@ -18,17 +25,24 @@ export const SUBSYSTEM_STATUS = Object.freeze([
   }),
   Object.freeze({
     id: 'fields',
-    label: 'Field authoring',
-    state: 'planned',
-    issue: 'FW-003',
-    detail: 'Not implemented yet.'
+    label: 'Fields and operators',
+    state: 'ready',
+    issue: FIELDS_ISSUE,
+    detail: 'Sparse deterministic authoring storage and five canonical field operators are active.'
+  }),
+  Object.freeze({
+    id: 'agents',
+    label: 'Agents and deposition',
+    state: 'ready',
+    issue: AGENTS_ISSUE,
+    detail: 'Deterministic emitters, four material behaviours, and canonical deposition records are active.'
   }),
   Object.freeze({
     id: 'renderer',
     label: 'WebGL2 preview',
-    state: 'planned',
-    issue: 'FW-006',
-    detail: 'Not implemented yet. The workspace is an explicit placeholder.'
+    state: 'ready',
+    issue: RENDERER_ISSUE,
+    detail: 'Read-only WebGL2 deposition preview with pan/zoom, overlays, bounded accumulation, and diagnostics is active.'
   })
 ]);
 
@@ -36,7 +50,7 @@ export function createFoundationSnapshot(overrides = {}) {
   const snapshot = {
     product: 'FIELDWEAVER',
     version: APP_VERSION,
-    phase: SIMULATION_ISSUE,
+    phase: RENDERER_ISSUE,
     runtime: 'browser-es-modules',
     canonicalMode: CANONICAL_ENGINE_VERSION,
     externalNetworkRequired: false,
