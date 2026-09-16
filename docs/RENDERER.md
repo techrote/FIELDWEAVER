@@ -19,7 +19,7 @@ The WebGL framebuffer is never read by simulation code. Frame timing, resize/DPR
 
 `worldToCanvas()` / `worldToClip()` derive display coordinates relative to the view centre. `panViewport()` and `zoomViewport()` return new view objects and never alter field, emitter, agent, deposition, or recipe data.
 
-The WebGL canvas backing dimensions are `CSS size × DPR`; viewport transforms continue to use CSS dimensions so changing DPR improves raster resolution without changing the visible world framing.
+The WebGL canvas backing dimensions are `CSS size × DPR`; viewport transforms continue to use CSS dimensions so changing DPR improves raster resolution without changing the visible world framing. Node tests explicitly verify that changing DPR does not change canonical data or CSS-space world framing.
 
 ## Material display treatment
 
@@ -78,9 +78,23 @@ CI runs this command on the Node 22 matrix job after correctness tests. The benc
 
 Until FW-007 adds the editing instrument, app startup creates a fixed seeded four-material FW-005 scenario, runs it to tick 220, and renders its canonical deposition records. The view supports pointer drag to pan and mouse-wheel/trackpad zoom. Field/emitter overlays remain visible so the relationship between simulation sources and deposits can be inspected.
 
-## Browser smoke procedure
+## Automated browser acceptance gate
 
-Use a current desktop Chromium and Firefox:
+`scripts/browser-smoke.mjs` drives the application through the W3C WebDriver protocol without adding a JavaScript browser-testing dependency. CI executes it independently in Chrome/Chromium and Firefox on the hosted Ubuntu runner. The smoke gate requires all of the following from an actual browser WebGL2 context:
+
+- the renderer reaches the explicit `ready` state;
+- `canvas.getContext('webgl2')` succeeds, the context is not lost, and `gl.getError()` is clean;
+- the four-material legend is present and renderer diagnostics report multiple submitted artwork/overlay draw calls;
+- pointer pan and wheel zoom change view diagnostics without tripping the application's canonical-result-hash guard;
+- a browser-window resize changes the framebuffer dimensions while rendering remains healthy;
+- a real browser screenshot is produced and validated as nontrivial PNG data;
+- browser version, platform, WebGL/GLSL versions, renderer/vendor, framebuffer and screenshot size are emitted to the CI log.
+
+The screenshot and local-server log are uploaded as short-lived CI evidence. This proves the supported browser paths in the exact CI environment actually exercised; it does not claim cross-machine pixel identity or turn the WebGL screenshot into a canonical image oracle.
+
+## Manual browser smoke procedure
+
+For additional desktop/hardware coverage, use a current desktop Chromium and Firefox:
 
 1. `npm run serve` and open the printed localhost URL.
 2. Confirm all four legend colours and visibly different point/line/trail structures appear in the preview.
@@ -88,7 +102,7 @@ Use a current desktop Chromium and Firefox:
 4. Resize the window and, if available, move between monitors with different DPR; the canvas should remain sharp and preserve framing semantics.
 5. Confirm field/emitter overlay markers are visible and visually separate from deposited artwork.
 6. Open diagnostics and confirm draw calls, timings, vertex/buffer counts, preview window, framebuffer size, renderer/vendor, and zoom update.
-7. Open developer tools and confirm no console errors or external-resource failures.
+7. Open developer tools and confirm there are no console errors or external-resource failures.
 8. Disable WebGL2 (or exercise a browser/profile where it is unavailable) and confirm the actionable renderer-unavailable message appears while the app shell/canonical state remain intact.
 
-This repository cannot claim a browser/GPU smoke pass unless those steps have actually been executed in the named browser/hardware environment; Node tests cover the headless preparation and isolation contracts only.
+Manual runs must record browser version, OS/GPU and outcome before being used as evidence. Automated CI evidence is environment-specific and should likewise be reported with its observed browser/renderer metadata rather than generalized into universal hardware support claims.
