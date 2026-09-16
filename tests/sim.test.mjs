@@ -133,7 +133,7 @@ test('independent emitter PRNG substreams survive unrelated emitter insertion', 
     velocityJitterQ16: Q16_ONE / 8,
     stopTick: 3
   });
-  const unrelated = pointEmitter(2, { id: 20, stopTick: 3, velocityJitterQ16: Q16_ONE / 7 });
+  const unrelated = pointEmitter(2, { id: 20, stopTick: 3, velocityJitterQ16: Q16_ONE / 8 });
   const make = (emitters) => new DeterministicAgentSimulation({ rootSeed: 0x87654321, capacity: 64, maxDepositions: 500, emitters });
   const alone = make([primary]);
   const combined = make([primary, unrelated]);
