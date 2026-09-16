@@ -1,9 +1,9 @@
 {
   "name": "fieldweaver",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "type": "module",
-  "description": "Local-first deterministic generative-art instrument with LUT-driven colour and behaviour logic.",
+  "description": "Local-first deterministic generative-art instrument with versioned recipes and checkpoint-assisted timeline replay.",
   "engines": {
     "node": ">=22 <25"
   },

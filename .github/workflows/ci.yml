@@ -101,14 +101,17 @@ jobs:
           exit 1
       - name: Exercise live WebGL2 preview
         run: node scripts/browser-smoke.mjs ${{ matrix.browser }}
+      - name: Exercise deterministic timeline replay
+        run: node scripts/timeline-browser-smoke.mjs ${{ matrix.browser }}
       - name: Upload browser smoke evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: fw-006-${{ matrix.browser }}-smoke
+          name: fw-browser-${{ matrix.browser }}-smoke
           path: |
             browser-smoke-${{ matrix.browser }}.png
             browser-smoke-${{ matrix.browser }}.log
+            timeline-smoke-${{ matrix.browser }}.log
             browser-server.log
             xvfb.log
           if-no-files-found: ignore

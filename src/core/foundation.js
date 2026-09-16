@@ -6,7 +6,9 @@ import {
   AGENTS_ISSUE,
   RENDERER_ISSUE,
   EDITOR_ISSUE,
-  LUT_ISSUE
+  LUT_ISSUE,
+  RECIPE_ISSUE,
+  TIMELINE_ISSUE
 } from '../version.js';
 import { CANONICAL_ENGINE_VERSION } from './kernel.js';
 
@@ -59,6 +61,20 @@ export const SUBSYSTEM_STATUS = Object.freeze([
     state: 'ready',
     issue: LUT_ISSUE,
     detail: 'Versioned deterministic LUT assets drive preview colour and validated canonical material parameters.'
+  }),
+  Object.freeze({
+    id: 'recipe',
+    label: 'Recipe persistence',
+    state: 'ready',
+    issue: RECIPE_ISSUE,
+    detail: 'Versioned validated recipes, normalized identities, save/load, and deterministic command replay are active.'
+  }),
+  Object.freeze({
+    id: 'timeline',
+    label: 'Timeline replay',
+    state: 'ready',
+    issue: TIMELINE_ISSUE,
+    detail: 'Linear event editing, forward-only replay, bounded checkpoints, deterministic seeking, and separate timeline undo/redo are active.'
   })
 ]);
 
@@ -66,7 +82,7 @@ export function createFoundationSnapshot(overrides = {}) {
   const snapshot = {
     product: 'FIELDWEAVER',
     version: APP_VERSION,
-    phase: LUT_ISSUE,
+    phase: TIMELINE_ISSUE,
     runtime: 'browser-es-modules',
     canonicalMode: CANONICAL_ENGINE_VERSION,
     externalNetworkRequired: false,
