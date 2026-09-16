@@ -8,6 +8,7 @@ import {
   createGeneratedLut,
   createLutAsset,
   createLutMapping,
+  hashLutAsset,
   parseLutAsset,
   serializeLutAsset
 } from '../lut/index.js';
@@ -51,6 +52,8 @@ export class LutEditorSession extends EditorSession {
     this._lutMappings = (options.lutMappings ?? createDefaultLutMappings()).map(createLutMapping).sort((a, b) => a.id - b.id);
     this.selectedLutId = this._lutAssets[0]?.id ?? null;
     this.selectedLutChannel = this._lutAssets[0] ? Object.keys(this._lutAssets[0].channels)[0] : null;
+    this._lutHashRevision = 0;
+    this._lutCachedAuthoringHash = '';
     this._validateLuts();
     this._touchAuthoring();
     this.resetSimulation();
@@ -82,9 +85,17 @@ export class LutEditorSession extends EditorSession {
   lutRegistry() { return this._validateLuts(); }
 
   authoringHash() {
+    if (this._lutAssets && this._lutHashRevision === this._authoringRevision && this._lutCachedAuthoringHash) {
+      return this._lutCachedAuthoringHash;
+    }
     const baseHash = super.authoringHash();
     const lut = this._lutAssets ? this.lutRegistry().toCanonical() : { assets: [], mappings: [] };
-    return canonicalHash({ version: LUT_EDITOR_VERSION, baseHash, lut });
+    const hash = canonicalHash({ version: LUT_EDITOR_VERSION, baseHash, lut });
+    if (this._lutAssets) {
+      this._lutHashRevision = this._authoringRevision;
+      this._lutCachedAuthoringHash = hash;
+    }
+    return hash;
   }
 
   selectLut(id) {
@@ -205,9 +216,8 @@ export class LutEditorSession extends EditorSession {
         id: asset.id,
         name: asset.name,
         size: asset.size,
-        hash: this.lutRegistry().asset(asset.id) ? canonicalHash({ asset: cloneAsset(asset) }) : '',
-        channels: Object.freeze(Object.keys(asset.channels)),
-        selectedChannelValue: asset.id === this.selectedLutId && this.selectedLutChannel ? asset.channels[this.selectedLutChannel]?.[0] ?? 0 : 0
+        hash: hashLutAsset(asset),
+        channels: Object.freeze(Object.keys(asset.channels))
       }))),
       lutMappings: Object.freeze(this._lutMappings.map((mapping) => Object.freeze({ ...mapping }))),
       selectedLutId: this.selectedLutId,
