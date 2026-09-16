@@ -1,0 +1,6 @@
+{
+  "schemaVersion": "fw-recipe-v0",
+  "engineVersion": "fw-agents-v1",
+  "seed": 1,
+  "note": "Deliberately incompatible fixture: FW-009 must reject this unless an explicit migration is later registered."
+}
