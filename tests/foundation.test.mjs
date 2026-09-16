@@ -2,23 +2,24 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
 import { CANONICAL_ENGINE_VERSION, createFoundationSnapshot, SUBSYSTEM_STATUS } from '../src/core/index.js';
-import { APP_VERSION, EDITOR_ISSUE } from '../src/version.js';
+import { APP_VERSION, LUT_ISSUE } from '../src/version.js';
 
-test('foundation snapshot reports implemented substrate and editor as ready', () => {
+test('foundation snapshot reports implemented substrate, editor, and LUT logic as ready', () => {
   const snapshot = createFoundationSnapshot();
 
   assert.equal(snapshot.product, 'FIELDWEAVER');
   assert.equal(snapshot.version, APP_VERSION);
-  assert.equal(snapshot.phase, EDITOR_ISSUE);
+  assert.equal(snapshot.phase, LUT_ISSUE);
   assert.equal(snapshot.externalNetworkRequired, false);
   assert.equal(snapshot.canonicalMode, CANONICAL_ENGINE_VERSION);
   assert.equal(snapshot.subsystemStatus, SUBSYSTEM_STATUS);
-  assert.equal(snapshot.subsystemStatus.filter((item) => item.state === 'ready').length, 6);
+  assert.equal(snapshot.subsystemStatus.filter((item) => item.state === 'ready').length, 7);
   assert.equal(snapshot.subsystemStatus.find((item) => item.id === 'simulation')?.state, 'ready');
   assert.equal(snapshot.subsystemStatus.find((item) => item.id === 'fields')?.state, 'ready');
   assert.equal(snapshot.subsystemStatus.find((item) => item.id === 'agents')?.state, 'ready');
   assert.equal(snapshot.subsystemStatus.find((item) => item.id === 'renderer')?.state, 'ready');
   assert.equal(snapshot.subsystemStatus.find((item) => item.id === 'editor')?.state, 'ready');
+  assert.equal(snapshot.subsystemStatus.find((item) => item.id === 'lut')?.state, 'ready');
   assert(Object.isFrozen(snapshot));
 });
 
