@@ -104,7 +104,7 @@ try {
   let initial = null;
   while (Date.now() < deadline) {
     initial = await execute(snapshotScript);
-    if (initial?.rendererState === 'ready' && initial?.editorState === 'ready' && initial?.timelineReady === 'true') break;
+    if (initial?.rendererState === 'ready' && initial?.editorState === 'ready' && initial?.timelineReady === 'true' && initial?.timelineTick === 0) break;
     await sleep(200);
   }
   if (!initial || initial.rendererState !== 'ready' || initial.editorState !== 'ready' || initial.timelineReady !== 'true') {
@@ -176,16 +176,19 @@ try {
   let afterSeek = null;
   while (Date.now() < seekDeadline) {
     afterSeek = await execute(snapshotScript);
-    if (afterSeek?.timelineTick === 35 && afterSeek?.editorTick === 35) break;
+    const modelReady = afterSeek?.timelineTick === 35 && afterSeek?.editorTick === 35 && afterSeek?.playhead === 35;
+    const rendererRebuilt = afterSeek?.geometryRebuilds > beforeSeekRebuilds;
+    const previewShortened = beforeSeekDepositions < 0 || (afterSeek?.previewDepositions >= 0 && afterSeek.previewDepositions < beforeSeekDepositions);
+    if (modelReady && rendererRebuilt && previewShortened) break;
     await sleep(100);
   }
-  if (!afterSeek || afterSeek.timelineTick !== 35 || afterSeek.playhead !== 35) throw new Error(`Backward timeline seek did not reach tick 35: ${JSON.stringify(afterSeek)}`);
+  if (!afterSeek || afterSeek.timelineTick !== 35 || afterSeek.editorTick !== 35 || afterSeek.playhead !== 35) throw new Error(`Backward timeline seek did not reach tick 35: ${JSON.stringify(afterSeek)}`);
   if (afterSeek.recipeHash !== hashBeforeSeek) throw new Error('Seeking changed recipe identity.');
   if (!afterSeek.timelineDiagnostics.some((line) => /Last seek: 40 .* 35 via 32/.test(line))) {
     throw new Error(`Backward seek did not report checkpoint-assisted replay via tick 32: ${JSON.stringify(afterSeek.timelineDiagnostics)}`);
   }
-  if (afterSeek.geometryRebuilds <= beforeSeekRebuilds) throw new Error(`Backward seek did not rebuild preview geometry: ${beforeSeekRebuilds} -> ${afterSeek.geometryRebuilds}`);
-  if (beforeSeekDepositions >= 0 && afterSeek.previewDepositions >= beforeSeekDepositions) throw new Error(`Backward seek did not shorten canonical preview accumulation: ${beforeSeekDepositions} -> ${afterSeek.previewDepositions}`);
+  if (afterSeek.geometryRebuilds <= beforeSeekRebuilds) throw new Error(`Backward seek did not rebuild preview geometry after renderer catch-up: ${beforeSeekRebuilds} -> ${afterSeek.geometryRebuilds}`);
+  if (beforeSeekDepositions >= 0 && afterSeek.previewDepositions >= beforeSeekDepositions) throw new Error(`Backward seek did not shorten canonical preview accumulation after renderer catch-up: ${beforeSeekDepositions} -> ${afterSeek.previewDepositions}`);
 
   await execute(`document.querySelector('#step-once').click();`);
   await sleep(180);
