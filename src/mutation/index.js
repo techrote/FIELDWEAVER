@@ -10,3 +10,4 @@ export {
   mutateRecipe,
   createSiblingVariants
 } from './model.js';
+export { readMutationLineage } from './lineage.js';
