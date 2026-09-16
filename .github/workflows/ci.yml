@@ -48,3 +48,55 @@ jobs:
       - name: FW-006 1080p render preparation profile
         if: matrix.node == 22
         run: npm run benchmark:render
+
+  browser-smoke:
+    name: ${{ matrix.browser }} WebGL2 smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chrome, firefox]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked metadata
+        run: npm ci
+      - name: Report browser tooling
+        shell: bash
+        run: |
+          set -x
+          command -v google-chrome || true
+          command -v chromedriver || true
+          command -v firefox || true
+          command -v geckodriver || true
+      - name: Start local FIELDWEAVER server
+        shell: bash
+        run: |
+          node scripts/serve.mjs > browser-server.log 2>&1 &
+          echo $! > browser-server.pid
+          for attempt in {1..40}; do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then
+              exit 0
+            fi
+            sleep 0.25
+          done
+          cat browser-server.log
+          exit 1
+      - name: Exercise live WebGL2 preview
+        run: node scripts/browser-smoke.mjs ${{ matrix.browser }}
+      - name: Upload browser smoke evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fw-006-${{ matrix.browser }}-smoke
+          path: |
+            browser-smoke-${{ matrix.browser }}.png
+            browser-server.log
+          if-no-files-found: ignore
+          retention-days: 7
