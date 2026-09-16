@@ -45,7 +45,7 @@ jobs:
           path: test-output.txt
           if-no-files-found: ignore
           retention-days: 1
-      - name: FW-006 1080p render preparation profile
+      - name: FW-016 cached 64k interaction profile
         if: matrix.node == 22
         run: npm run benchmark:render
 

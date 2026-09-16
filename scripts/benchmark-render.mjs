@@ -1,10 +1,16 @@
 import { performance } from 'node:perf_hooks';
 import { Q16_ONE } from '../src/core/numeric.js';
-import { createViewport, prepareDepositionGeometry } from '../src/renderer/index.js';
+import {
+  PreviewAccumulator,
+  PreviewGeometryCache,
+  createViewport,
+  createViewportTransform,
+  panViewport,
+  zoomViewport
+} from '../src/renderer/index.js';
 
-const COUNT = 30_000;
-const WARMUPS = 4;
-const ROUNDS = 12;
+const COUNT = 63_726;
+const VIEW_ROUNDS = 120;
 const kinds = ['ink', 'filament', 'dust', 'shard'];
 const STANDARD_RADIUS_Q16 = Math.round(Q16_ONE / 3);
 
@@ -40,39 +46,52 @@ function percentile(sorted, q) {
 }
 
 const depositions = makeDepositions();
-const viewport = createViewport({
-  widthCssPx: 1920,
-  heightCssPx: 1080,
-  devicePixelRatio: 1,
-  zoom: 4,
-  center: position(128, 128)
+const accumulator = new PreviewAccumulator(100_000);
+accumulator.appendMany(depositions);
+const cache = new PreviewGeometryCache();
+const initialViewport = createViewport({
+  widthCssPx: 1118,
+  heightCssPx: 710,
+  devicePixelRatio: 1.13,
+  zoom: 3.25,
+  center: position(132, 128)
 });
 
-for (let index = 0; index < WARMUPS; index += 1) prepareDepositionGeometry(depositions, viewport);
+const buildStarted = performance.now();
+const initial = cache.rebuild(accumulator.snapshot(), accumulator.revision, initialViewport);
+const initialBuildMs = performance.now() - buildStarted;
 
-const timings = [];
-let geometry;
-for (let index = 0; index < ROUNDS; index += 1) {
+const viewTimings = [];
+let viewport = initialViewport;
+for (let index = 0; index < VIEW_ROUNDS; index += 1) {
+  viewport = panViewport(viewport, (index % 7) - 3, (index % 5) - 2);
+  if (index % 6 === 0) viewport = zoomViewport(viewport, 1.003);
   const started = performance.now();
-  geometry = prepareDepositionGeometry(depositions, viewport);
-  timings.push(performance.now() - started);
+  const state = cache.snapshot(false);
+  if (!state || !cache.matches(accumulator.revision)) throw new Error('Stable view interaction unexpectedly invalidated geometry cache.');
+  const transform = createViewportTransform(state.referenceViewport, viewport);
+  if (!Number.isFinite(transform.clipScaleX) || !Number.isFinite(transform.clipOffsetY)) {
+    throw new Error('Viewport transform produced non-finite values.');
+  }
+  viewTimings.push(performance.now() - started);
 }
-timings.sort((a, b) => a - b);
+viewTimings.sort((a, b) => a - b);
+if (cache.rebuildCount !== 1) throw new Error(`View-only benchmark rebuilt geometry ${cache.rebuildCount} times.`);
 
 const result = {
-  scenario: 'FW-006 1080p CPU buffer preparation',
+  scenario: 'FW-016 64k cached preview interaction preparation',
   node: process.version,
   platform: `${process.platform}/${process.arch}`,
   depositions: COUNT,
-  viewport: '1920x1080@1x',
-  rounds: ROUNDS,
-  medianMs: Number(percentile(timings, 0.5).toFixed(3)),
-  p95Ms: Number(percentile(timings, 0.95).toFixed(3)),
-  minMs: Number(timings[0].toFixed(3)),
-  maxMs: Number(timings[timings.length - 1].toFixed(3)),
-  vertices: geometry.pointCount + geometry.lineVertexCount,
-  bufferBytes: geometry.byteLength
+  viewport: '1118x710@1.13x',
+  initialBuildMs: Number(initialBuildMs.toFixed(3)),
+  viewRounds: VIEW_ROUNDS,
+  viewMedianMs: Number(percentile(viewTimings, 0.5).toFixed(4)),
+  viewP95Ms: Number(percentile(viewTimings, 0.95).toFixed(4)),
+  geometryRebuilds: cache.rebuildCount,
+  vertices: initial.artwork.pointCount + initial.artwork.lineVertexCount,
+  bufferBytes: initial.artwork.byteLength
 };
 
 console.log(JSON.stringify(result, null, 2));
-console.log('Timing is diagnostic only; no performance threshold is a correctness gate.');
+console.log('Timing is diagnostic only; structural cache reuse is the correctness gate.');

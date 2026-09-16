@@ -29,6 +29,8 @@ function bootstrap() {
   const shell = mountApplicationShell(root, createFoundationSnapshot());
   const demo = createRendererDemoSimulation();
   const canonicalResultHash = demo.simulation.resultHash();
+  const previewDepositions = Object.freeze([...demo.simulation.depositions]);
+  document.documentElement.dataset.fieldweaverCanonicalResultHash = canonicalResultHash;
 
   let renderer;
   try {
@@ -50,21 +52,38 @@ function bootstrap() {
     throw error;
   }
 
+  let renderFrame = 0;
+  let renderRequestCount = 0;
+  let renderExecutionCount = 0;
+  const publishRenderCounters = () => {
+    document.documentElement.dataset.fieldweaverRenderRequests = String(renderRequestCount);
+    document.documentElement.dataset.fieldweaverRenderExecutions = String(renderExecutionCount);
+  };
+
   const render = () => {
+    renderExecutionCount += 1;
+    publishRenderCounters();
     try {
       const diagnostics = renderer.render({
-        depositions: demo.simulation.depositions,
+        depositions: previewDepositions,
         fieldCollection: demo.fieldCollection,
         emitters: demo.emitters,
         showOverlays: true
       });
-      if (demo.simulation.resultHash() !== canonicalResultHash) {
-        throw new Error('Renderer mutated canonical simulation state; refusing to continue preview.');
-      }
       shell.updateRendererDiagnostics(diagnostics);
     } catch (error) {
       shell.setRendererError(`Preview stopped: ${error.message}`);
     }
+  };
+
+  const scheduleRender = () => {
+    renderRequestCount += 1;
+    publishRenderCounters();
+    if (renderFrame !== 0) return;
+    renderFrame = requestAnimationFrame(() => {
+      renderFrame = 0;
+      render();
+    });
   };
 
   let dragging = false;
@@ -83,7 +102,7 @@ function bootstrap() {
     lastPointerX = event.clientX;
     lastPointerY = event.clientY;
     renderer.panByPixels(dx, dy);
-    render();
+    scheduleRender();
   });
   const stopDragging = (event) => {
     dragging = false;
@@ -94,15 +113,12 @@ function bootstrap() {
   shell.canvas.addEventListener('wheel', (event) => {
     event.preventDefault();
     renderer.zoomBy(Math.exp(-event.deltaY * 0.001));
-    render();
+    scheduleRender();
   }, { passive: false });
 
-  let resizeFrame = 0;
-  window.addEventListener('resize', () => {
-    cancelAnimationFrame(resizeFrame);
-    resizeFrame = requestAnimationFrame(render);
-  }, { passive: true });
+  window.addEventListener('resize', scheduleRender, { passive: true });
 
+  publishRenderCounters();
   render();
 }
 

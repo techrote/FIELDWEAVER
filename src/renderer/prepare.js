@@ -1,5 +1,5 @@
 import { CHUNK_SPAN_Q16, normalizeWorldPosition, translateWorldPosition } from '../core/coordinates.js';
-import { Q16_ONE } from '../core/numeric.js';
+import { Q16_ONE, assertInt32 } from '../core/numeric.js';
 
 export const RENDERER_VERSION = 'fw-webgl2-preview-v1';
 export const DEFAULT_MAX_PREVIEW_DEPOSITIONS = 100_000;
@@ -15,6 +15,7 @@ export const MATERIAL_PREVIEW_STYLES = Object.freeze({
 
 const EMITTER_RGBA = Object.freeze([1.0, 1.0, 1.0, 0.82]);
 const FIELD_RGBA = Object.freeze([0.40, 0.95, 0.52, 0.72]);
+const BI_CHUNK_SPAN_Q16 = BigInt(CHUNK_SPAN_Q16);
 
 function assertFiniteNumber(value, label) {
   if (!Number.isFinite(value)) throw new RangeError(`${label} must be finite.`);
@@ -33,11 +34,22 @@ function assertPosition(position, label = 'position') {
   return normalizeWorldPosition(position);
 }
 
+function validatePositionShape(position, label) {
+  if (position === null || typeof position !== 'object') throw new TypeError(`${label} must be a world position.`);
+  assertInt32(position.chunkX, `${label}.chunkX`);
+  assertInt32(position.chunkY, `${label}.chunkY`);
+  assertInt32(position.localX, `${label}.localX`);
+  assertInt32(position.localY, `${label}.localY`);
+}
+
+function normalizedAxisAbsoluteQ16(position, axis) {
+  const chunk = axis === 'x' ? position.chunkX : position.chunkY;
+  const local = axis === 'x' ? position.localX : position.localY;
+  return BigInt(chunk) * BI_CHUNK_SPAN_Q16 + BigInt(local);
+}
+
 function axisAbsoluteQ16(position, axis) {
-  const normalized = normalizeWorldPosition(position);
-  const chunk = axis === 'x' ? normalized.chunkX : normalized.chunkY;
-  const local = axis === 'x' ? normalized.localX : normalized.localY;
-  return BigInt(chunk) * BigInt(CHUNK_SPAN_Q16) + BigInt(local);
+  return normalizedAxisAbsoluteQ16(normalizeWorldPosition(position), axis);
 }
 
 export function createViewport(options = {}) {
@@ -60,8 +72,8 @@ export function createViewport(options = {}) {
 export function worldToCanvas(position, viewportInput) {
   const viewport = createViewport(viewportInput);
   const normalized = assertPosition(position);
-  const dxQ16 = axisAbsoluteQ16(normalized, 'x') - axisAbsoluteQ16(viewport.center, 'x');
-  const dyQ16 = axisAbsoluteQ16(normalized, 'y') - axisAbsoluteQ16(viewport.center, 'y');
+  const dxQ16 = normalizedAxisAbsoluteQ16(normalized, 'x') - normalizedAxisAbsoluteQ16(viewport.center, 'x');
+  const dyQ16 = normalizedAxisAbsoluteQ16(normalized, 'y') - normalizedAxisAbsoluteQ16(viewport.center, 'y');
   const x = viewport.widthCssPx / 2 + (Number(dxQ16) / Q16_ONE) * viewport.zoom;
   const y = viewport.heightCssPx / 2 - (Number(dyQ16) / Q16_ONE) * viewport.zoom;
   return Object.freeze({ x, y });
@@ -69,10 +81,12 @@ export function worldToCanvas(position, viewportInput) {
 
 export function worldToClip(position, viewportInput) {
   const viewport = createViewport(viewportInput);
-  const canvas = worldToCanvas(position, viewport);
+  const normalized = assertPosition(position);
+  const dxQ16 = normalizedAxisAbsoluteQ16(normalized, 'x') - normalizedAxisAbsoluteQ16(viewport.center, 'x');
+  const dyQ16 = normalizedAxisAbsoluteQ16(normalized, 'y') - normalizedAxisAbsoluteQ16(viewport.center, 'y');
   return Object.freeze({
-    x: (canvas.x / viewport.widthCssPx) * 2 - 1,
-    y: 1 - (canvas.y / viewport.heightCssPx) * 2
+    x: Number(dxQ16) * ((2 * viewport.zoom) / (Q16_ONE * viewport.widthCssPx)),
+    y: Number(dyQ16) * ((2 * viewport.zoom) / (Q16_ONE * viewport.heightCssPx))
   });
 }
 
@@ -97,22 +111,64 @@ export function zoomViewport(viewportInput, factor) {
   return createViewport({ ...viewport, zoom });
 }
 
-function writeVertex(target, offset, clip, rgba, pointSize) {
-  target[offset] = clip.x;
-  target[offset + 1] = clip.y;
+export function createViewportTransform(referenceViewportInput, currentViewportInput) {
+  const reference = createViewport(referenceViewportInput);
+  const current = createViewport(currentViewportInput);
+  const deltaCenterXQ16 = normalizedAxisAbsoluteQ16(reference.center, 'x') - normalizedAxisAbsoluteQ16(current.center, 'x');
+  const deltaCenterYQ16 = normalizedAxisAbsoluteQ16(reference.center, 'y') - normalizedAxisAbsoluteQ16(current.center, 'y');
+  const scaleX = (current.zoom / current.widthCssPx) / (reference.zoom / reference.widthCssPx);
+  const scaleY = (current.zoom / current.heightCssPx) / (reference.zoom / reference.heightCssPx);
+  const offsetX = Number(deltaCenterXQ16) * ((2 * current.zoom) / (Q16_ONE * current.widthCssPx));
+  const offsetY = Number(deltaCenterYQ16) * ((2 * current.zoom) / (Q16_ONE * current.heightCssPx));
+  return Object.freeze({
+    clipScaleX: scaleX,
+    clipScaleY: scaleY,
+    clipOffsetX: offsetX,
+    clipOffsetY: offsetY,
+    artworkPointScale: current.zoom * current.devicePixelRatio,
+    overlayPointScale: current.devicePixelRatio
+  });
+}
+
+function projectionForViewport(viewport) {
+  return {
+    centerXQ16: normalizedAxisAbsoluteQ16(viewport.center, 'x'),
+    centerYQ16: normalizedAxisAbsoluteQ16(viewport.center, 'y'),
+    clipScaleX: (2 * viewport.zoom) / (Q16_ONE * viewport.widthCssPx),
+    clipScaleY: (2 * viewport.zoom) / (Q16_ONE * viewport.heightCssPx)
+  };
+}
+
+function writeVertex(target, offset, clipX, clipY, rgba, pointSizeBase) {
+  target[offset] = clipX;
+  target[offset + 1] = clipY;
   target[offset + 2] = rgba[0];
   target[offset + 3] = rgba[1];
   target[offset + 4] = rgba[2];
   target[offset + 5] = rgba[3];
-  target[offset + 6] = pointSize;
+  target[offset + 6] = pointSizeBase;
+}
+
+function writeWorldVertex(target, offset, position, rgba, pointSizeBase, projection) {
+  const normalized = normalizeWorldPosition(position);
+  const dxQ16 = normalizedAxisAbsoluteQ16(normalized, 'x') - projection.centerXQ16;
+  const dyQ16 = normalizedAxisAbsoluteQ16(normalized, 'y') - projection.centerYQ16;
+  writeVertex(
+    target,
+    offset,
+    Number(dxQ16) * projection.clipScaleX,
+    Number(dyQ16) * projection.clipScaleY,
+    rgba,
+    pointSizeBase
+  );
 }
 
 function validateDeposition(record, index) {
   if (record === null || typeof record !== 'object') throw new TypeError(`depositions[${index}] must be an object.`);
   if (!MATERIAL_PREVIEW_STYLES[record.materialKind]) throw new RangeError(`Unsupported deposition materialKind: ${String(record.materialKind)}.`);
   if (!['point', 'disc', 'segment'].includes(record.primitive)) throw new RangeError(`Unsupported deposition primitive: ${String(record.primitive)}.`);
-  assertPosition(record.from, `depositions[${index}].from`);
-  assertPosition(record.to, `depositions[${index}].to`);
+  validatePositionShape(record.from, `depositions[${index}].from`);
+  validatePositionShape(record.to, `depositions[${index}].to`);
   if (!Number.isInteger(record.radiusQ16) || record.radiusQ16 < 0) throw new RangeError(`depositions[${index}].radiusQ16 must be nonnegative integer.`);
   return record;
 }
@@ -123,14 +179,15 @@ export class PreviewAccumulator {
     this._records = new Array(this.capacity);
     this._start = 0;
     this._size = 0;
+    this._revision = 0;
     this.totalAccepted = 0;
     this.totalDropped = 0;
   }
 
   get size() { return this._size; }
+  get revision() { return this._revision; }
 
-  append(record) {
-    validateDeposition(record, 0);
+  _appendValidated(record) {
     this.totalAccepted += 1;
     if (this._size < this.capacity) {
       this._records[(this._start + this._size) % this.capacity] = record;
@@ -142,10 +199,21 @@ export class PreviewAccumulator {
     this.totalDropped += 1;
   }
 
+  append(record) {
+    validateDeposition(record, 0);
+    this._appendValidated(record);
+    this._revision += 1;
+  }
+
   appendMany(records, startIndex = 0) {
     if (!Array.isArray(records)) throw new TypeError('records must be an array.');
     if (!Number.isInteger(startIndex) || startIndex < 0 || startIndex > records.length) throw new RangeError('startIndex is out of range.');
-    for (let index = startIndex; index < records.length; index += 1) this.append(records[index]);
+    if (startIndex === records.length) return;
+    for (let index = startIndex; index < records.length; index += 1) {
+      const record = validateDeposition(records[index], index);
+      this._appendValidated(record);
+    }
+    this._revision += 1;
   }
 
   reset() {
@@ -154,10 +222,14 @@ export class PreviewAccumulator {
     this._size = 0;
     this.totalAccepted = 0;
     this.totalDropped = 0;
+    this._revision += 1;
   }
 
   rebuild(records) {
-    this.reset();
+    if (!Array.isArray(records)) throw new TypeError('records must be an array.');
+    this._records.fill(undefined);
+    this._start = 0;
+    this._size = 0;
     const start = Math.max(0, records.length - this.capacity);
     this.totalDropped = start;
     this.totalAccepted = records.length;
@@ -166,6 +238,7 @@ export class PreviewAccumulator {
       this._records[this._size] = record;
       this._size += 1;
     }
+    this._revision += 1;
   }
 
   snapshot() {
@@ -180,6 +253,7 @@ export class PreviewAccumulator {
     return Object.freeze({
       capacity: this.capacity,
       size: this._size,
+      revision: this._revision,
       totalAccepted: this.totalAccepted,
       totalDropped: this.totalDropped,
       truncated: this.totalDropped > 0
@@ -190,6 +264,7 @@ export class PreviewAccumulator {
 export function prepareDepositionGeometry(depositions, viewportInput) {
   if (!Array.isArray(depositions)) throw new TypeError('depositions must be an array.');
   const viewport = createViewport(viewportInput);
+  const projection = projectionForViewport(viewport);
   let pointCount = 0;
   let lineVertexCount = 0;
   for (let index = 0; index < depositions.length; index += 1) {
@@ -205,14 +280,13 @@ export function prepareDepositionGeometry(depositions, viewportInput) {
 
   for (const record of depositions) {
     const style = MATERIAL_PREVIEW_STYLES[record.materialKind];
-    const rawSize = Math.max(1, (record.radiusQ16 / Q16_ONE) * viewport.zoom * 2 * viewport.devicePixelRatio * style.pointScale);
-    const pointSize = Math.min(128, rawSize);
+    const pointSizeBase = (record.radiusQ16 / Q16_ONE) * 2 * style.pointScale;
     if (record.primitive === 'segment') {
-      writeVertex(lines, lineOffset, worldToClip(record.from, viewport), style.rgba, pointSize);
-      writeVertex(lines, lineOffset + VERTEX_FLOATS, worldToClip(record.to, viewport), style.rgba, pointSize);
+      writeWorldVertex(lines, lineOffset, record.from, style.rgba, pointSizeBase, projection);
+      writeWorldVertex(lines, lineOffset + VERTEX_FLOATS, record.to, style.rgba, pointSizeBase, projection);
       lineOffset += VERTEX_FLOATS * 2;
     } else {
-      writeVertex(points, pointOffset, worldToClip(record.to, viewport), style.rgba, pointSize);
+      writeWorldVertex(points, pointOffset, record.to, style.rgba, pointSizeBase, projection);
       pointOffset += VERTEX_FLOATS;
     }
   }
@@ -226,11 +300,51 @@ export function prepareDepositionGeometry(depositions, viewportInput) {
   });
 }
 
-function overlayPointVertices(positions, viewport, rgba, pointSize) {
+export class PreviewGeometryCache {
+  constructor() {
+    this.rebuildCount = 0;
+    this.invalidate();
+  }
+
+  invalidate() {
+    this.revision = -1;
+    this.artwork = null;
+    this.referenceViewport = null;
+  }
+
+  matches(revision) {
+    return this.artwork !== null && this.revision === revision;
+  }
+
+  rebuild(records, revision, viewportInput) {
+    if (!Number.isInteger(revision) || revision < 0) throw new RangeError('geometry revision must be a nonnegative integer.');
+    const referenceViewport = createViewport(viewportInput);
+    const artwork = prepareDepositionGeometry(records, referenceViewport);
+    this.revision = revision;
+    this.artwork = artwork;
+    this.referenceViewport = referenceViewport;
+    this.rebuildCount += 1;
+    return this.snapshot(true);
+  }
+
+  snapshot(rebuilt = false) {
+    if (this.artwork === null || this.referenceViewport === null) return null;
+    return Object.freeze({
+      revision: this.revision,
+      rebuildCount: this.rebuildCount,
+      rebuilt,
+      artwork: this.artwork,
+      referenceViewport: this.referenceViewport
+    });
+  }
+}
+
+function overlayPointVertices(positions, viewport, rgba, pointSizeBase) {
+  const projection = projectionForViewport(viewport);
   const data = new Float32Array(positions.length * VERTEX_FLOATS);
   let offset = 0;
   for (const position of positions) {
-    writeVertex(data, offset, worldToClip(position, viewport), rgba, pointSize * viewport.devicePixelRatio);
+    writeWorldVertex(data, offset, position, rgba, pointSizeBase, projection);
     offset += VERTEX_FLOATS;
   }
   return data;

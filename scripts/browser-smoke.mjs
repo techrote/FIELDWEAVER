@@ -108,6 +108,15 @@ function sessionCapabilities() {
   };
 }
 
+function diagnosticLine(snapshot, prefix) {
+  return snapshot.diagnostics.find((line) => line.startsWith(prefix)) ?? '';
+}
+
+function geometryRebuildCount(snapshot) {
+  const match = diagnosticLine(snapshot, 'Geometry cache:').match(/rebuilds\s+(\d+)/);
+  return match ? Number(match[1]) : NaN;
+}
+
 let sessionId = null;
 try {
   await waitForDriver();
@@ -131,6 +140,9 @@ try {
     return {
       readyState: document.readyState,
       rendererState: document.documentElement.dataset.fieldweaverRendererState ?? '',
+      canonicalResultHash: document.documentElement.dataset.fieldweaverCanonicalResultHash ?? '',
+      renderRequests: Number(document.documentElement.dataset.fieldweaverRenderRequests ?? 0),
+      renderExecutions: Number(document.documentElement.dataset.fieldweaverRenderExecutions ?? 0),
       message: document.querySelector('.renderer-message')?.textContent ?? '',
       diagnostics,
       materialLegend: [...document.querySelectorAll('.material-legend [data-material]')].map((node) => node.dataset.material),
@@ -161,43 +173,83 @@ try {
   if (!initial.webgl2 || initial.contextLost || initial.glError !== 0) {
     throw new Error(`WebGL2 context is not healthy: ${JSON.stringify(initial)}`);
   }
+  if (!initial.canonicalResultHash) throw new Error('Canonical demo result hash was not published for browser isolation evidence.');
+  const initialRebuilds = geometryRebuildCount(initial);
+  if (!Number.isInteger(initialRebuilds) || initialRebuilds < 1) {
+    throw new Error(`Initial geometry-cache diagnostics are missing: ${JSON.stringify(initial.diagnostics)}`);
+  }
+
   const expectedMaterials = ['dust', 'filament', 'ink', 'shard'];
   const actualMaterials = [...initial.materialLegend].sort();
   if (JSON.stringify(actualMaterials) !== JSON.stringify(expectedMaterials)) {
     throw new Error(`Four-material legend is incomplete: ${JSON.stringify(actualMaterials)}`);
   }
-  const rendererLine = initial.diagnostics.find((line) => line.startsWith('Renderer:')) ?? '';
-  const drawLine = initial.diagnostics.find((line) => line.startsWith('Draw calls:')) ?? '';
+  const rendererLine = diagnosticLine(initial, 'Renderer:');
+  const drawLine = diagnosticLine(initial, 'Draw calls:');
   const drawCalls = Number(drawLine.split(':')[1]?.trim());
   if (!rendererLine.includes('WebGL2 preview') || !Number.isInteger(drawCalls) || drawCalls < 2) {
     throw new Error(`Renderer diagnostics do not prove submitted artwork: ${JSON.stringify(initial.diagnostics)}`);
   }
 
-  const beforeViewportLine = initial.diagnostics.find((line) => line.startsWith('Preview viewport:')) ?? '';
+  const beforeViewportLine = diagnosticLine(initial, 'Preview viewport:');
+  const burstPointerMoves = 48;
+  const burstWheelEvents = 12;
   await execute(`
     const canvas = document.querySelector('#preview-canvas');
     canvas.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerId: 7, clientX: 300, clientY: 250 }));
-    canvas.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerId: 7, clientX: 345, clientY: 285 }));
-    canvas.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 7, clientX: 345, clientY: 285 }));
-    canvas.dispatchEvent(new WheelEvent('wheel', { bubbles: true, cancelable: true, deltaY: -180 }));
+    for (let index = 1; index <= ${burstPointerMoves}; index += 1) {
+      canvas.dispatchEvent(new PointerEvent('pointermove', {
+        bubbles: true,
+        pointerId: 7,
+        clientX: 300 + index,
+        clientY: 250 + Math.floor(index / 2)
+      }));
+    }
+    canvas.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 7, clientX: 348, clientY: 274 }));
+    for (let index = 0; index < ${burstWheelEvents}; index += 1) {
+      canvas.dispatchEvent(new WheelEvent('wheel', { bubbles: true, cancelable: true, deltaY: index % 2 === 0 ? -20 : -10 }));
+    }
   `);
-  await sleep(150);
+  await sleep(200);
   const afterInteraction = await execute(snapshotScript);
   if (afterInteraction.rendererState !== 'ready' || afterInteraction.glError !== 0) {
     throw new Error(`Pan/zoom caused preview failure: ${JSON.stringify(afterInteraction)}`);
   }
-  const afterViewportLine = afterInteraction.diagnostics.find((line) => line.startsWith('Preview viewport:')) ?? '';
+  const afterViewportLine = diagnosticLine(afterInteraction, 'Preview viewport:');
   if (!beforeViewportLine || !afterViewportLine || beforeViewportLine === afterViewportLine) {
     throw new Error(`Pan/zoom did not update viewport diagnostics: ${beforeViewportLine} -> ${afterViewportLine}`);
   }
+  if (geometryRebuildCount(afterInteraction) !== initialRebuilds) {
+    throw new Error(`View-only interaction rebuilt artwork geometry: ${initialRebuilds} -> ${geometryRebuildCount(afterInteraction)}`);
+  }
+  if (!diagnosticLine(afterInteraction, 'Geometry cache:').includes('reused')) {
+    throw new Error(`View-only interaction did not report geometry-cache reuse: ${JSON.stringify(afterInteraction.diagnostics)}`);
+  }
+  if (afterInteraction.canonicalResultHash !== initial.canonicalResultHash) {
+    throw new Error('View-only interaction changed the published canonical result identity.');
+  }
+  const requestDelta = afterInteraction.renderRequests - initial.renderRequests;
+  const executionDelta = afterInteraction.renderExecutions - initial.renderExecutions;
+  if (requestDelta < burstPointerMoves + burstWheelEvents) {
+    throw new Error(`Interaction render requests were not observed as expected: ${requestDelta}.`);
+  }
+  if (executionDelta > 2) {
+    throw new Error(`RAF coalescing regression: ${requestDelta} requests produced ${executionDelta} render executions.`);
+  }
 
-  const beforeFramebuffer = afterInteraction.diagnostics.find((line) => line.startsWith('Framebuffer:')) ?? '';
+  const beforeFramebuffer = diagnosticLine(afterInteraction, 'Framebuffer:');
   await request('POST', `/session/${sessionId}/window/rect`, { width: 1080, height: 720, x: 0, y: 0 });
   await sleep(250);
   const afterResize = await execute(snapshotScript);
-  const afterFramebuffer = afterResize.diagnostics.find((line) => line.startsWith('Framebuffer:')) ?? '';
+  const afterFramebuffer = diagnosticLine(afterResize, 'Framebuffer:');
   if (afterResize.rendererState !== 'ready' || !afterFramebuffer || beforeFramebuffer === afterFramebuffer) {
     throw new Error(`Resize did not rebuild the framebuffer cleanly: ${beforeFramebuffer} -> ${afterFramebuffer}`);
+  }
+  if (geometryRebuildCount(afterResize) !== initialRebuilds) {
+    throw new Error(`Resize incorrectly rebuilt stable artwork geometry: ${initialRebuilds} -> ${geometryRebuildCount(afterResize)}`);
+  }
+  if (afterResize.canonicalResultHash !== initial.canonicalResultHash) {
+    throw new Error('Resize changed the published canonical result identity.');
   }
 
   const screenshot = await request('GET', `/session/${sessionId}/screenshot`);
@@ -224,6 +276,9 @@ try {
     renderer: afterResize.renderer,
     vendor: afterResize.vendor,
     drawCalls,
+    geometryRebuilds: geometryRebuildCount(afterResize),
+    interactionRenderRequests: requestDelta,
+    interactionRenderExecutions: executionDelta,
     framebuffer: afterFramebuffer,
     screenshotBytes: screenshotBytes.length,
     screenshotPath
