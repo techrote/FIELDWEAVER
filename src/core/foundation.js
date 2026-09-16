@@ -1,4 +1,5 @@
-import { APP_VERSION, FOUNDATION_ISSUE } from '../version.js';
+import { APP_VERSION, FOUNDATION_ISSUE, SIMULATION_ISSUE } from '../version.js';
+import { CANONICAL_ENGINE_VERSION } from './kernel.js';
 
 export const SUBSYSTEM_STATUS = Object.freeze([
   Object.freeze({
@@ -10,10 +11,10 @@ export const SUBSYSTEM_STATUS = Object.freeze([
   }),
   Object.freeze({
     id: 'simulation',
-    label: 'Canonical simulation',
-    state: 'planned',
-    issue: 'FW-002',
-    detail: 'Not implemented yet. This shell does not simulate or fake canonical state.'
+    label: 'Canonical simulation kernel',
+    state: 'ready',
+    issue: SIMULATION_ISSUE,
+    detail: 'DOM-free fixed-step integer kernel, seeded PRNG, canonical hashing, and chunk coordinates are active.'
   }),
   Object.freeze({
     id: 'fields',
@@ -35,9 +36,9 @@ export function createFoundationSnapshot(overrides = {}) {
   const snapshot = {
     product: 'FIELDWEAVER',
     version: APP_VERSION,
-    phase: FOUNDATION_ISSUE,
+    phase: SIMULATION_ISSUE,
     runtime: 'browser-es-modules',
-    canonicalMode: 'not-yet-implemented',
+    canonicalMode: CANONICAL_ENGINE_VERSION,
     externalNetworkRequired: false,
     subsystemStatus: SUBSYSTEM_STATUS,
     ...overrides
