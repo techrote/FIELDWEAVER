@@ -9,7 +9,6 @@ import {
   LutRegistry,
   createBuiltinLuts,
   createDefaultLutMappings,
-  createGeneratedLut,
   createLutAsset,
   createLutMapping,
   hashLutAsset,
@@ -52,6 +51,23 @@ function uniformFields() {
   return fields;
 }
 
+function createMappedBehaviourSimulation() {
+  const materials = createBaselineMaterials();
+  const emitters = [pointEmitter(1, 3)];
+  const [spectrum, pulse] = createBuiltinLuts();
+  const behaviourMapping = createDefaultLutMappings().find((entry) => entry.destination === 'steeringMultiplierQ16');
+  return new DeterministicAgentSimulation({
+    rootSeed: 0x0badf00d,
+    materials,
+    emitters,
+    fieldCollection: uniformFields(),
+    capacity: 256,
+    maxDepositions: 10000,
+    lutAssets: [spectrum, pulse],
+    lutMappings: [behaviourMapping]
+  });
+}
+
 test('built-in 256 and 512 LUTs round-trip with stable hashes', () => {
   const [spectrum, pulse] = createBuiltinLuts();
   assert.equal(spectrum.size, 256);
@@ -61,8 +77,6 @@ test('built-in 256 and 512 LUTs round-trip with stable hashes', () => {
     assert.equal(hashLutAsset(reparsed), hashLutAsset(asset));
     assert.deepEqual(reparsed, asset);
   }
-  assert.equal(hashLutAsset(spectrum), golden.spectrum256Hash);
-  assert.equal(hashLutAsset(pulse), golden.pulse512Hash);
 });
 
 test('clamp/wrap indexing and integer scaling are exact and repeatable', () => {
@@ -120,24 +134,17 @@ test('colour-only LUT changes deposition appearance without perturbing canonical
   assert.deepEqual(simBlue.depositions[0].colorRgba8, [0, 0, 255, 255]);
 });
 
-test('behaviour mapping deterministically changes canonical evolution and has golden hashes', () => {
-  const materials = createBaselineMaterials();
-  const emitters = [pointEmitter(1, 3)];
-  const [spectrum, pulse] = createBuiltinLuts();
-  const behaviourMapping = createDefaultLutMappings().find((entry) => entry.destination === 'steeringMultiplierQ16');
-  const options = {
+test('behaviour mapping deterministically changes canonical evolution', () => {
+  const first = createMappedBehaviourSimulation();
+  const second = createMappedBehaviourSimulation();
+  const baseline = new DeterministicAgentSimulation({
     rootSeed: 0x0badf00d,
-    materials,
-    emitters,
+    materials: createBaselineMaterials(),
+    emitters: [pointEmitter(1, 3)],
     fieldCollection: uniformFields(),
     capacity: 256,
-    maxDepositions: 10000,
-    lutAssets: [spectrum, pulse],
-    lutMappings: [behaviourMapping]
-  };
-  const first = new DeterministicAgentSimulation(options);
-  const second = new DeterministicAgentSimulation({ ...options, fieldCollection: uniformFields() });
-  const baseline = new DeterministicAgentSimulation({ ...options, fieldCollection: uniformFields(), lutAssets: [], lutMappings: [] });
+    maxDepositions: 10000
+  });
   first.runTicks(32);
   second.runTicks(32);
   baseline.runTicks(32);
@@ -145,9 +152,20 @@ test('behaviour mapping deterministically changes canonical evolution and has go
   assert.equal(first.depositionHash(), second.depositionHash());
   assert.equal(first.resultHash(), second.resultHash());
   assert.notEqual(first.stateHash(), baseline.stateHash());
-  assert.equal(first.stateHash(), golden.mappedStateHash);
-  assert.equal(first.depositionHash(), golden.mappedDepositionHash);
-  assert.equal(first.resultHash(), golden.mappedResultHash);
+});
+
+test('FW-008 golden fixture locks LUT assets and behaviour result', () => {
+  const [spectrum, pulse] = createBuiltinLuts();
+  const simulation = createMappedBehaviourSimulation();
+  simulation.runTicks(32);
+  const actual = {
+    spectrum256Hash: hashLutAsset(spectrum),
+    pulse512Hash: hashLutAsset(pulse),
+    mappedStateHash: simulation.stateHash(),
+    mappedDepositionHash: simulation.depositionHash(),
+    mappedResultHash: simulation.resultHash()
+  };
+  assert.deepEqual(actual, golden);
 });
 
 test('radius and deposition-strength LUT destinations flow into canonical deposition records', () => {
