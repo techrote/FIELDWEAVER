@@ -87,6 +87,7 @@ try {
   const snapshotScript = `
     const canvas = document.querySelector('#preview-canvas');
     const gl = canvas?.getContext('webgl2');
+    const controls = [...document.querySelectorAll('button, input, select, textarea')];
     return {
       readyState: document.readyState,
       rendererState: document.documentElement.dataset.fieldweaverRendererState ?? '',
@@ -96,6 +97,10 @@ try {
       editorTick: Number(document.documentElement.dataset.fieldweaverEditorTick ?? -1),
       editorFields: Number(document.documentElement.dataset.fieldweaverEditorFields ?? -1),
       editorEmitters: Number(document.documentElement.dataset.fieldweaverEditorEmitters ?? -1),
+      lutAssets: Number(document.documentElement.dataset.fieldweaverLutAssets ?? -1),
+      lutMappings: Number(document.documentElement.dataset.fieldweaverLutMappings ?? -1),
+      lutPanelReady: document.querySelector('.lut-panel')?.dataset.ready ?? '',
+      lutJson: document.querySelector('#lut-json')?.value ?? '',
       renderRequests: Number(document.documentElement.dataset.fieldweaverRenderRequests ?? 0),
       renderExecutions: Number(document.documentElement.dataset.fieldweaverRenderExecutions ?? 0),
       message: document.querySelector('.renderer-message')?.textContent ?? '',
@@ -107,8 +112,8 @@ try {
       glVersion: gl ? String(gl.getParameter(gl.VERSION)) : '',
       glslVersion: gl ? String(gl.getParameter(gl.SHADING_LANGUAGE_VERSION)) : '',
       renderer: gl ? String(gl.getParameter(gl.RENDERER)) : '', vendor: gl ? String(gl.getParameter(gl.VENDOR)) : '',
-      controlCount: document.querySelectorAll('button, input, select').length,
-      unlabeledControls: [...document.querySelectorAll('button, input, select')].filter((node) => {
+      controlCount: controls.length,
+      unlabeledControls: controls.filter((node) => {
         if (node.tagName === 'BUTTON') return !(node.textContent ?? '').trim() && !node.getAttribute('aria-label');
         return !node.id || !(document.querySelector('label[for="' + node.id + '"]') || node.closest('label') || node.getAttribute('aria-label'));
       }).length
@@ -119,26 +124,64 @@ try {
   let initial = null;
   while (Date.now() < deadline) {
     initial = await execute(snapshotScript);
-    if (initial?.rendererState === 'ready' && initial?.editorState === 'ready') break;
+    if (initial?.rendererState === 'ready' && initial?.editorState === 'ready' && initial?.lutPanelReady === 'true') break;
     if (initial?.rendererState === 'unavailable') break;
     await sleep(200);
   }
-  if (!initial || initial.rendererState !== 'ready' || initial.editorState !== 'ready') throw new Error(`Editor/renderer did not become ready: ${JSON.stringify(initial)}`);
+  if (!initial || initial.rendererState !== 'ready' || initial.editorState !== 'ready' || initial.lutPanelReady !== 'true') throw new Error(`Editor/renderer/LUT panel did not become ready: ${JSON.stringify(initial)}`);
   if (!initial.webgl2 || initial.contextLost || initial.glError !== 0) throw new Error(`WebGL2 context is not healthy: ${JSON.stringify(initial)}`);
   if (!initial.canonicalRecipeHash || initial.canonicalResultHash !== initial.canonicalRecipeHash) throw new Error('Canonical editor identity was not published consistently.');
-  if (initial.controlCount < 20 || initial.unlabeledControls !== 0) throw new Error(`Editor controls are incomplete or unlabeled: ${JSON.stringify(initial)}`);
+  if (initial.controlCount < 30 || initial.unlabeledControls !== 0) throw new Error(`Editor controls are incomplete or unlabeled: ${JSON.stringify(initial)}`);
   if (initial.editorFields < 2 || initial.editorEmitters < 1 || initial.editorTick !== 0) throw new Error(`Fresh editor model is not usable: ${JSON.stringify(initial)}`);
+  if (initial.lutAssets < 2 || initial.lutMappings < 2) throw new Error(`Built-in LUT examples/mappings are missing: ${JSON.stringify(initial)}`);
 
   const expectedMaterials = ['dust', 'filament', 'ink', 'shard'];
   if (JSON.stringify([...initial.materialLegend].sort()) !== JSON.stringify(expectedMaterials)) throw new Error(`Four-material legend is incomplete: ${JSON.stringify(initial.materialLegend)}`);
   const drawCalls = Number(diagnosticLine(initial, 'Draw calls:').split(':')[1]?.trim());
   if (!diagnosticLine(initial, 'Renderer:').includes('WebGL2 preview') || !Number.isInteger(drawCalls) || drawCalls < 2) throw new Error(`Renderer diagnostics do not prove submitted artwork/overlays: ${JSON.stringify(initial.diagnostics)}`);
 
+  // LUT workflow: edit one channel entry, export valid normalized JSON, generate another asset, and assign a canonical mapping.
+  await execute(`
+    const channel = document.querySelector('#lut-channel');
+    channel.value = 'r'; channel.dispatchEvent(new Event('change', { bubbles: true }));
+  `);
+  await sleep(60);
+  await execute(`
+    const index = document.querySelector('#lut-entry-index'); index.value = '0'; index.dispatchEvent(new Event('change', { bubbles: true }));
+    const value = document.querySelector('#lut-entry-value'); value.value = '12345';
+    document.querySelector('#lut-entry-apply').click();
+  `);
+  await sleep(120);
+  const afterLutEdit = await execute(snapshotScript);
+  if (afterLutEdit.canonicalRecipeHash === initial.canonicalRecipeHash || afterLutEdit.editorTick !== 0) throw new Error('LUT entry editing did not change authoring identity/reset semantics.');
+
+  await execute(`document.querySelector('#lut-export-json').click();`);
+  await sleep(60);
+  const afterExport = await execute(snapshotScript);
+  let exportedLut;
+  try { exportedLut = JSON.parse(afterExport.lutJson); } catch { throw new Error('LUT JSON export is not valid JSON.'); }
+  if (exportedLut.schemaVersion !== 'fw-lut-v1' || exportedLut.size !== 256 || exportedLut.channels.r[0] !== 12345) throw new Error(`LUT JSON export does not reflect edited model: ${afterExport.lutJson.slice(0, 300)}`);
+
+  await execute(`document.querySelector('#lut-generate-512').click();`);
+  await sleep(120);
+  const afterGenerate = await execute(snapshotScript);
+  if (afterGenerate.lutAssets !== initial.lutAssets + 1 || afterGenerate.canonicalRecipeHash === afterLutEdit.canonicalRecipeHash) throw new Error('512-entry LUT generation did not update model identity.');
+
+  await execute(`
+    const destination = document.querySelector('#lut-destination'); destination.value = 'depositionStrengthQ16'; destination.dispatchEvent(new Event('change', { bubbles: true }));
+    const source = document.querySelector('#lut-source'); source.value = 'ageTicks';
+    const channel = document.querySelector('#lut-mapping-channel'); channel.value = 'logic';
+    document.querySelector('#lut-mapping-assign').click();
+  `);
+  await sleep(120);
+  const afterMapping = await execute(snapshotScript);
+  if (afterMapping.lutMappings < initial.lutMappings + 1 || afterMapping.canonicalRecipeHash === afterGenerate.canonicalRecipeHash) throw new Error('LUT mapping assignment did not update authoring identity.');
+
   // Real editor workflow: add a field, paint it, undo/redo, place and retarget an emitter, step/run/reset.
   await execute(`document.querySelector('#field-add').click();`);
   await sleep(100);
   const afterAddField = await execute(snapshotScript);
-  if (afterAddField.editorFields !== initial.editorFields + 1 || afterAddField.canonicalRecipeHash === initial.canonicalRecipeHash) throw new Error('Adding a field did not update editor model identity.');
+  if (afterAddField.editorFields !== initial.editorFields + 1 || afterAddField.canonicalRecipeHash === afterMapping.canonicalRecipeHash) throw new Error('Adding a field did not update editor model identity.');
 
   await execute(`
     document.querySelector('#tool-paint').click();
@@ -259,6 +302,8 @@ try {
     drawCalls,
     editorFields: afterResize.editorFields,
     editorEmitters: afterResize.editorEmitters,
+    lutAssets: afterResize.lutAssets,
+    lutMappings: afterResize.lutMappings,
     workflowFinalTick: afterResize.editorTick,
     geometryRebuilds: geometryRebuildCount(afterResize),
     interactionRenderRequests: requestDelta,
