@@ -21,9 +21,15 @@ export { LUT_EDITOR_VERSION, LutEditorSession as LegacyLutEditorSession } from '
 export {
   RECIPE_EDITOR_VERSION,
   RecipeEditorSession,
-  RecipeEditorSession as LutEditorSession,
   getActiveRecipeEditorSession
 } from './recipe-session.js';
+export {
+  TIMELINE_EDITOR_VERSION,
+  DEFAULT_TIMELINE_HISTORY_ENTRIES,
+  TimelineEditHistory,
+  TimelineEditorSession,
+  TimelineEditorSession as LutEditorSession
+} from './timeline-session.js';
 
 export class EditorSession extends BaseEditorSession {
   authoringHash() {
