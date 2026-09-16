@@ -192,11 +192,12 @@ test('deposition stream is renderer-sufficient canonical data', () => {
   const sim = runScenario(2, 2);
   const event = sim.depositions[0];
   assert.deepEqual(Object.keys(event), [
-    'tick', 'sequence', 'agentId', 'materialId', 'materialKind', 'primitive',
+    'tick', 'sequence', 'agentId', 'emitterId', 'materialId', 'materialKind', 'primitive',
     'from', 'to', 'radiusQ16', 'strengthQ16'
   ]);
   assert.equal(typeof event.tick, 'number');
   assert.equal(typeof event.sequence, 'number');
+  assert.equal(typeof event.emitterId, 'number');
   assert.equal(event.primitive, 'segment');
   assert.ok(event.from && event.to);
 });
