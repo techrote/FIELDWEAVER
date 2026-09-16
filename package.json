@@ -1,9 +1,9 @@
 {
   "name": "fieldweaver",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
-  "description": "Local-first deterministic generative-art laboratory with a canonical fixed-step simulation kernel.",
+  "description": "Local-first deterministic generative-art laboratory with a canonical fixed-step simulation kernel and read-only WebGL2 preview.",
   "engines": {
     "node": ">=22 <25"
   },
@@ -13,6 +13,7 @@
     "serve": "node scripts/serve.mjs",
     "start": "node scripts/serve.mjs --open",
     "benchmark:sim": "node scripts/benchmark-sim.mjs",
+    "benchmark:render": "node scripts/benchmark-render.mjs",
     "verify": "npm run check && npm test"
   }
 }
