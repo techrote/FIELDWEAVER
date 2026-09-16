@@ -5,7 +5,8 @@ import {
   FIELDS_ISSUE,
   AGENTS_ISSUE,
   RENDERER_ISSUE,
-  EDITOR_ISSUE
+  EDITOR_ISSUE,
+  LUT_ISSUE
 } from '../version.js';
 import { CANONICAL_ENGINE_VERSION } from './kernel.js';
 
@@ -51,6 +52,13 @@ export const SUBSYSTEM_STATUS = Object.freeze([
     state: 'ready',
     issue: EDITOR_ISSUE,
     detail: 'Field painting, emitter/material editing, deterministic transport, seed control, and authoring undo/redo are active.'
+  }),
+  Object.freeze({
+    id: 'lut',
+    label: 'LUT logic',
+    state: 'ready',
+    issue: LUT_ISSUE,
+    detail: 'Versioned deterministic LUT assets drive preview colour and validated canonical material parameters.'
   })
 ]);
 
@@ -58,7 +66,7 @@ export function createFoundationSnapshot(overrides = {}) {
   const snapshot = {
     product: 'FIELDWEAVER',
     version: APP_VERSION,
-    phase: EDITOR_ISSUE,
+    phase: LUT_ISSUE,
     runtime: 'browser-es-modules',
     canonicalMode: CANONICAL_ENGINE_VERSION,
     externalNetworkRequired: false,

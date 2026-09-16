@@ -17,6 +17,7 @@ export {
   worldPositionFromUnits,
   worldPositionToUnits
 };
+export { LUT_EDITOR_VERSION, LutEditorSession } from './lut-session.js';
 
 export class EditorSession extends BaseEditorSession {
   authoringHash() {

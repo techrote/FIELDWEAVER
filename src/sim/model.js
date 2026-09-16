@@ -5,12 +5,14 @@ import {
   addSaturatedInt32,
   assertInt32,
   assertUint32,
+  q16Multiply,
   q16ScaleByRatio
 } from '../core/numeric.js';
 import { normalizeWorldPosition, translateWorldPosition } from '../core/coordinates.js';
 import { canonicalHash } from '../core/canonical.js';
 import { Xoshiro128StarStar } from '../core/prng.js';
 import { sampleFieldStack } from '../fields/operators.js';
+import { LutRegistry } from '../lut/model.js';
 
 export const SIMULATION_VERSION = 'fw-agents-v1';
 export const MATERIAL_KINDS = Object.freeze(['ink', 'filament', 'dust', 'shard']);
@@ -348,14 +350,26 @@ function sampleEmitterPosition(emitter, rng) {
   return translateWorldPosition(geometry.origin, offsetX, offsetY);
 }
 
-function materialVelocity(material, velocityXQ16, velocityYQ16, field) {
+function scaleLifetimeTicks(baseTicks, multiplierQ16) {
+  assertPositiveInteger(baseTicks, 'base lifetime', UINT32_MAX);
+  assertNonnegativeInteger(multiplierQ16, 'lifetime multiplier', INT32_MAX);
+  const rounded = (BigInt(baseTicks) * BigInt(multiplierQ16) + BigInt(Q16_ONE / 2)) / BigInt(Q16_ONE);
+  if (rounded < 1n) return 1;
+  if (rounded > BigInt(UINT32_MAX)) return UINT32_MAX;
+  return Number(rounded);
+}
+
+function materialVelocity(material, velocityXQ16, velocityYQ16, field, steeringMultiplierQ16 = Q16_ONE) {
+  assertNonnegativeInteger(steeringMultiplierQ16, 'steering multiplier', INT32_MAX);
+  const mappedFieldX = q16Multiply(field.xQ16, steeringMultiplierQ16);
+  const mappedFieldY = q16Multiply(field.yQ16, steeringMultiplierQ16);
   let xQ16 = addSaturatedInt32(
     q16ScaleByRatio(velocityXQ16, material.inertiaNumerator, material.inertiaDenominator),
-    q16ScaleByRatio(field.xQ16, material.steeringNumerator, material.steeringDenominator)
+    q16ScaleByRatio(mappedFieldX, material.steeringNumerator, material.steeringDenominator)
   );
   let yQ16 = addSaturatedInt32(
     q16ScaleByRatio(velocityYQ16, material.inertiaNumerator, material.inertiaDenominator),
-    q16ScaleByRatio(field.yQ16, material.steeringNumerator, material.steeringDenominator)
+    q16ScaleByRatio(mappedFieldY, material.steeringNumerator, material.steeringDenominator)
   );
   xQ16 = clampSpeedComponent(xQ16);
   yQ16 = clampSpeedComponent(yQ16);
@@ -377,6 +391,14 @@ export class DeterministicAgentSimulation {
     this.fieldCollection = options.fieldCollection ?? null;
     if (this.fieldCollection !== null && (typeof this.fieldCollection !== 'object' || typeof this.fieldCollection.orderedLayers !== 'function')) {
       throw new TypeError('fieldCollection must be null or expose orderedLayers().');
+    }
+    this.lutRegistry = options.lutRegistry instanceof LutRegistry
+      ? options.lutRegistry
+      : new LutRegistry(options.lutAssets ?? [], options.lutMappings ?? []);
+    for (const mapping of this.lutRegistry.mappings) {
+      if (!this.materialById.has(mapping.materialId)) {
+        throw new RangeError(`LUT mapping ${mapping.id} references unknown material ${mapping.materialId}.`);
+      }
     }
     this.agents = new AgentStore(options.capacity ?? 4096);
     this.maxDepositions = assertPositiveInteger(options.maxDepositions ?? 1_000_000, 'maxDepositions', 10_000_000);
@@ -400,6 +422,18 @@ export class DeterministicAgentSimulation {
     return this.fieldCollection === null ? ZERO_FIELD : sampleFieldStack(this.fieldCollection, position);
   }
 
+  _mappingContext(agentId, index, extra = {}) {
+    return {
+      agentId,
+      emitterId: this.agents.emitterId[index],
+      ageTicks: this.agents.ageTicks[index],
+      lifetimeTicks: this.agents.lifetimeTicks[index],
+      velocityXQ16: this.agents.velocityXQ16[index],
+      velocityYQ16: this.agents.velocityYQ16[index],
+      ...extra
+    };
+  }
+
   spawnEmitterTick(emitter) {
     const count = spawnCountForTick(emitter, this.tick);
     const runtime = this.emitterRuntime.get(emitter.id);
@@ -409,14 +443,24 @@ export class DeterministicAgentSimulation {
       const jitter = emitter.velocityJitterQ16;
       const velocityXQ16 = clampSpeedComponent(addSaturatedInt32(emitter.velocityXQ16, randomSignedOffset(runtime.rng, jitter)));
       const velocityYQ16 = clampSpeedComponent(addSaturatedInt32(emitter.velocityYQ16, randomSignedOffset(runtime.rng, jitter)));
+      const spawnOrdinal = runtime.spawnOrdinal;
       runtime.spawnOrdinal += 1;
+      const lifetimeMultiplier = this.lutRegistry.sample(material.id, 'lifetimeMultiplierQ16', {
+        emitterId: emitter.id,
+        spawnOrdinal,
+        ageTicks: 0,
+        lifetimeTicks: material.lifetimeTicks,
+        velocityXQ16,
+        velocityYQ16
+      }) ?? Q16_ONE;
+      const lifetimeTicks = scaleLifetimeTicks(material.lifetimeTicks, lifetimeMultiplier);
       const id = this.agents.allocate({
         emitterId: emitter.id,
         materialId: material.id,
         position,
         velocityXQ16,
         velocityYQ16,
-        lifetimeTicks: material.lifetimeTicks
+        lifetimeTicks
       });
       if (id === null) {
         runtime.dropped += 1;
@@ -433,7 +477,19 @@ export class DeterministicAgentSimulation {
       throw new RangeError('Canonical deposition capacity exhausted; increase maxDepositions explicitly or stop the run.');
     }
     const agentIndex = this.agents.indexOfActive(agentId);
-    this.depositions.push(Object.freeze({
+    const context = this._mappingContext(agentId, agentIndex);
+    const mappedRadius = this.lutRegistry.sample(material.id, 'radiusQ16', context);
+    const mappedStrength = this.lutRegistry.sample(material.id, 'depositionStrengthQ16', context);
+    const colorRgba8 = this.lutRegistry.sample(material.id, 'color', context);
+    const radiusQ16 = mappedRadius ?? material.radiusQ16;
+    const strengthQ16 = mappedStrength ?? material.strengthQ16;
+    if (!Number.isInteger(radiusQ16) || radiusQ16 < 1 || radiusQ16 > MAX_MATERIAL_INTERACTION_RADIUS_Q16) {
+      throw new RangeError(`LUT-mapped radiusQ16 must be in [1, ${MAX_MATERIAL_INTERACTION_RADIUS_Q16}].`);
+    }
+    if (!Number.isInteger(strengthQ16) || strengthQ16 < 0 || strengthQ16 > INT32_MAX) {
+      throw new RangeError(`LUT-mapped depositionStrengthQ16 must be in [0, ${INT32_MAX}].`);
+    }
+    const record = {
       tick: this.tick,
       sequence: this.nextDepositionSequence,
       agentId,
@@ -443,9 +499,11 @@ export class DeterministicAgentSimulation {
       primitive: material.primitive,
       from: clonePosition(from),
       to: clonePosition(to),
-      radiusQ16: material.radiusQ16,
-      strengthQ16: material.strengthQ16
-    }));
+      radiusQ16,
+      strengthQ16
+    };
+    if (colorRgba8 !== null) record.colorRgba8 = colorRgba8;
+    this.depositions.push(Object.freeze(record));
     this.nextDepositionSequence += 1;
   }
 
@@ -454,7 +512,18 @@ export class DeterministicAgentSimulation {
       const material = this.materialById.get(this.agents.materialId[index]);
       const before = this.agents.positionAtIndex(index);
       const field = this.sampleField(before);
-      const velocity = materialVelocity(material, this.agents.velocityXQ16[index], this.agents.velocityYQ16[index], field);
+      const context = this._mappingContext(id, index);
+      const steeringMultiplier = this.lutRegistry.sample(material.id, 'steeringMultiplierQ16', context) ?? Q16_ONE;
+      if (!Number.isInteger(steeringMultiplier) || steeringMultiplier < 0 || steeringMultiplier > INT32_MAX) {
+        throw new RangeError(`LUT-mapped steeringMultiplierQ16 must be in [0, ${INT32_MAX}].`);
+      }
+      const velocity = materialVelocity(
+        material,
+        this.agents.velocityXQ16[index],
+        this.agents.velocityYQ16[index],
+        field,
+        steeringMultiplier
+      );
       const after = translateWorldPosition(before, velocity.xQ16, velocity.yQ16);
       this.agents.velocityXQ16[index] = velocity.xQ16;
       this.agents.velocityYQ16[index] = velocity.yQ16;
