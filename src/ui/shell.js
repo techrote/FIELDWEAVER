@@ -62,12 +62,12 @@ export function mountApplicationShell(root, snapshot) {
   const shell = element('div', { className: 'app-shell' });
   const header = element('header', { className: 'masthead' });
   const brand = element('div');
-  const eyebrow = element('p', { className: 'eyebrow' }, `${snapshot.phase} · foundation`);
+  const eyebrow = element('p', { className: 'eyebrow' }, `${snapshot.phase} · deterministic core`);
   const title = element('h1', {}, snapshot.product);
   const subtitle = element(
     'p',
     { className: 'subtitle' },
-    'Paint behaviours, not pixels. The runtime foundation is live; simulation features remain explicitly unimplemented.'
+    'The canonical deterministic kernel is live; field authoring and rendering remain explicitly unimplemented.'
   );
   brand.append(eyebrow, title, subtitle);
 
@@ -79,7 +79,7 @@ export function mountApplicationShell(root, snapshot) {
   const workspaceTitle = element('h2', { id: 'workspace-title' }, 'Workspace');
   const canvasPlaceholder = element('div', { className: 'canvas-placeholder', role: 'img', 'aria-label': 'Reserved workspace for future deterministic field and renderer implementation' });
   const fieldGlyph = element('div', { className: 'field-glyph', 'aria-hidden': 'true' }, '⇝  ⟳  ⋰  ⤢');
-  const placeholderText = element('p', {}, 'Renderer and direct field tools arrive in later roadmap issues. Nothing here is presented as simulated output.');
+  const placeholderText = element('p', {}, 'Field authoring and renderer arrive in later roadmap issues. Nothing here is presented as simulated artwork.');
   canvasPlaceholder.append(fieldGlyph, placeholderText);
   workspace.append(workspaceTitle, canvasPlaceholder);
 
@@ -111,7 +111,7 @@ export function mountApplicationShell(root, snapshot) {
   const footer = element('footer', { className: 'footer' });
   footer.append(
     element('span', {}, 'Local-first · no external service dependency'),
-    element('span', {}, 'Headless core boundary preserved')
+    element('span', {}, 'Headless canonical core active')
   );
 
   shell.append(header, main, footer);

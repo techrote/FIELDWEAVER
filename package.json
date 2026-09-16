@@ -1,9 +1,9 @@
 {
   "name": "fieldweaver",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "Local-first deterministic generative-art laboratory foundation.",
+  "description": "Local-first deterministic generative-art laboratory with a canonical fixed-step simulation kernel.",
   "engines": {
     "node": ">=22 <25"
   },

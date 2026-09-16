@@ -6,7 +6,9 @@ Artists paint invisible scalar/vector fields, release material-like agents into 
 
 ## Current implementation status
 
-**FW-001 foundation is implemented.** The repository now contains a real native-ES-module browser shell, dependency-free local server, launch helpers, tests, static checks, and CI. The shell deliberately labels canonical simulation, field authoring, and WebGL rendering as **not yet implemented** rather than faking roadmap functionality.
+**FW-001 runtime foundation and FW-002 canonical simulation kernel are implemented.** The browser shell, dependency-free local server, launch helpers, checks and CI remain intact. The DOM-free core now also provides the `fw-canonical-v1` compatibility contract: signed Q16.16 arithmetic, chunk-aware coordinates, xoshiro128** PRNG/substreams, fixed-step scheduling, stable SoA IDs/order, canonical serialization and golden state hashes.
+
+Field authoring, material behaviour and WebGL rendering remain explicitly **not yet implemented**; the application does not fake them.
 
 ## Quick start
 
@@ -41,12 +43,12 @@ No package CDN, cloud service, telemetry endpoint, or other external network dep
 | Command | Purpose |
 |---|---|
 | `npm run check` | Syntax checks plus version/module/CSP/local-resource policy checks |
-| `npm test` | Node built-in tests for the headless foundation and local server |
+| `npm test` | Node built-in tests, including deterministic FW-002 golden fixtures |
 | `npm run verify` | Full local correctness gate (`check` then `test`) |
 | `npm run serve` | Start the local server on `127.0.0.1:4173` |
 | `npm start` | Start the server and attempt to open a browser |
 
-See [`docs/DEVELOPMENT.md`](./docs/DEVELOPMENT.md) for browser smoke checks and developer details.
+See [`docs/DEVELOPMENT.md`](./docs/DEVELOPMENT.md) for browser smoke checks and developer details. The compatibility-sensitive integer, coordinate, PRNG, tick, ordering and hash rules are frozen in [`docs/CANONICAL.md`](./docs/CANONICAL.md).
 
 ## Core workflow and roadmap
 
@@ -60,7 +62,7 @@ LUTs are not merely palettes: their channels may drive colour, lifetime, turn ra
 
 The authoritative implementation context is [`RAG.md`](./RAG.md). Repository-agent rules are in [`AGENTS.md`](./AGENTS.md).
 
-GitHub issues are prefixed `FW-###` and are independently executable after their declared prerequisites have merged. FW-001 establishes the foundation; subsequent work follows the dependency graph in `RAG.md`.
+GitHub issues are prefixed `FW-###` and are independently executable after their declared prerequisites have merged. FW-001 establishes the runtime foundation; FW-002 establishes canonical deterministic state semantics; subsequent work follows the dependency graph in `RAG.md`.
 
 ## Architectural stance
 
