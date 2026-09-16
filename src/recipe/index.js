@@ -5,14 +5,18 @@ export {
   COMMAND_TYPES,
   MATERIAL_COMMAND_PARAMETERS,
   DEFAULT_RECIPE_FRAMING,
-  registerRecipeMigration,
+  registerRecipeMigration
+} from './model.js';
+export {
   migrateRecipe,
   normalizeRecipe,
   createRecipe,
   recipeHash,
   serializeRecipe,
-  parseRecipe,
+  parseRecipe
+} from './public.js';
+export {
   RecipeReplay,
   createRecipeReplay,
   replayRecipeToTick
-} from './model.js';
+} from './replay.js';
