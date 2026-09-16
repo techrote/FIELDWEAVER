@@ -1,0 +1,14 @@
+{
+  "version": "fw-operators-v1",
+  "uniform": { "xQ16": 65536, "yQ16": -32768 },
+  "attractorAtOne": { "xQ16": -49152, "yQ16": 0 },
+  "vortexAtOne": { "xQ16": 0, "yQ16": 49152 },
+  "turbulenceOrigin": { "xQ16": 55024, "yQ16": -5942 },
+  "quantizedFour": { "xQ16": 65536, "yQ16": 0 },
+  "composedSamples": [
+    { "xQ16": 46341, "yQ16": 46341 },
+    { "xQ16": 23171, "yQ16": 23171 },
+    { "xQ16": 46341, "yQ16": 46341 }
+  ],
+  "composedHash": "bb17330a01d8edb0"
+}

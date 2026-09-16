@@ -29,3 +29,12 @@ export {
   createLayerEnabledCommand,
   createLayerMoveCommand
 } from './history.js';
+export {
+  FIELD_OPERATOR_VERSION,
+  FIELD_OPERATORS,
+  FIELD_OPERATOR_REGISTRY,
+  validateFieldOperatorLayer,
+  sampleFieldOperator,
+  sampleFieldStack,
+  sampleFieldStackHash
+} from './operators.js';
