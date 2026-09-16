@@ -1,15 +1,17 @@
 # Recipes, command timelines, and compatibility
 
-FW-009 establishes the portable canonical creative-work format and the first replayable intervention model.
+FW-009 establishes the portable canonical creative-work format and the replayable intervention model. FW-010 adds timeline navigation and checkpoint-assisted execution **without changing the persistent recipe schema**.
 
 ## Format identity
 
-Current versions:
+Current persistent versions:
 
 - recipe schema: `fw-recipe-v1`
 - canonical simulation engine compatibility: `fw-agents-v1`
 - command schema: `fw-command-v1`
 - migration framework: `fw-recipe-migrations-v1`
+
+FW-010 runtime timeline/checkpoint identifiers (`fw-timeline-v1`, `fw-replay-checkpoint-v1`) are transient implementation contracts, not recipe fields. See [`TIMELINE.md`](./TIMELINE.md).
 
 A recipe is accepted only after complete validation. An unknown recipe schema or engine compatibility version fails loudly. The migration registry is explicit: a historical schema is never guessed or silently reinterpreted. The checked-in `fixtures/fw-009-incompatible-recipe.json` fixture proves the deliberately unsupported `fw-recipe-v0` path remains rejected until a real migration is registered and tested.
 
@@ -47,7 +49,7 @@ Optional lineage currently records a 16-character parent recipe hash, child seed
 
 `serializeRecipe()` emits normalized, human-readable JSON with a trailing newline. Parsing and reserializing an accepted recipe is stable. The hash covers the root seed, field data/order, materials, emitters, LUT assets/mappings, framing, command timeline and lineage.
 
-Authoring undo/redo history is intentionally excluded. Undo state is transient editor workflow; the resulting authored field data is canonical and is included.
+Authoring undo/redo history, timeline edit undo/redo history, and replay checkpoints are intentionally excluded. Those are transient editor/runtime workflow state; the resulting authored field data and command list are canonical and are included.
 
 ## Command ordering and tick semantics
 
@@ -64,7 +66,9 @@ The initial command set is:
 - `set-simulation-frozen` — freezes or resumes canonical evolution. Timeline ticks continue while frozen so a later resume command has an exact reachable tick; agents, emitters and deposition do not advance during frozen transitions.
 - `set-lut-mapping` — atomically replaces or removes one material/destination LUT mapping after full LUT/material validation.
 
-The base authoring definitions remain separate from replay state. Running a timeline mutates only the replay instance; resetting reconstructs replay from the current normalized recipe.
+The base authoring definitions remain separate from replay state. Running a timeline mutates only the replay instance; resetting reconstructs or seeks replay from the current normalized recipe.
+
+FW-010 exposes same-tick reordering by swapping the numeric IDs of adjacent same-tick commands. No second hidden order field exists, so save/load preserves exactly the order shown by the timeline UI.
 
 ## Transactional load
 
@@ -72,8 +76,12 @@ Browser load/import parses and validates the complete candidate recipe and const
 
 The editor exposes **Save recipe** and **Load recipe** controls. Save downloads normalized JSON named with its canonical recipe hash. Load accepts local JSON, performs transactional import, then resets the live view to tick zero under the imported recipe. No network service is involved.
 
+Loading a recipe also replaces transient timeline checkpoint/edit-history state. Saved recipes do not depend on previously cached snapshots.
+
 ## Replay guarantee
 
-For the same normalized recipe, capacities and target tick, fresh replays apply the same command sequence and produce identical canonical simulation state and deposition hashes. Tests exercise a nontrivial recipe containing multiple fields, all baseline materials, multiple emitters, multiple LUT assets/mappings and commands, then compare original and save/load replay hashes at the same tick.
+For the same normalized recipe, capacities and target tick, fresh replays apply the same command sequence and produce identical canonical simulation state and deposition hashes. FW-010 extends this guarantee: direct forward execution, replay from tick zero, and checkpoint-assisted seek must reach identical state/deposition/result hashes for the same target tick. Cache size, checkpoint spacing, eviction, and prior navigation history are nonsemantic.
 
-Recipe identity is not a renderer identity. The WebGL2 preview remains noncanonical; later canonical software export consumes canonical simulation/deposition data plus framing.
+Tests exercise a nontrivial recipe containing multiple fields, all baseline materials, multiple emitters, multiple LUT assets/mappings and commands, then compare original/save-load and timeline replay paths at the same ticks.
+
+Recipe identity is not a renderer identity. The WebGL2 preview remains noncanonical; after a backward seek it rebuilds from the new canonical deposition stream when its previous accumulation no longer matches. Later canonical software export consumes canonical simulation/deposition data plus framing.
