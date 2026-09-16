@@ -1,8 +1,9 @@
 import { createFoundationSnapshot } from './core/index.js';
 import { translateWorldPosition } from './core/coordinates.js';
 import { Q16_ONE } from './core/numeric.js';
-import { EditorSession, worldPositionFromUnits, worldPositionToUnits } from './editor/index.js';
+import { LutEditorSession, worldPositionFromUnits } from './editor/index.js';
 import { RendererUnavailableError, createWebGL2Renderer, worldToCanvas } from './renderer/index.js';
+import { mountLutPanel } from './ui/lut-panel.js';
 import { mountApplicationShell } from './ui/shell.js';
 import { APP_VERSION } from './version.js';
 
@@ -27,7 +28,8 @@ function bootstrap() {
 
   document.documentElement.dataset.fieldweaverVersion = APP_VERSION;
   const shell = mountApplicationShell(root, createFoundationSnapshot());
-  const editor = new EditorSession();
+  const lutPanel = mountLutPanel(document.querySelector('.editor-sidebar'));
+  const editor = new LutEditorSession();
 
   let renderer;
   try {
@@ -44,7 +46,9 @@ function bootstrap() {
   } catch (error) {
     if (error instanceof RendererUnavailableError) {
       shell.setRendererError(error.message);
-      shell.updateEditorState(editor.snapshot());
+      const state = editor.snapshot();
+      shell.updateEditorState(state);
+      lutPanel.update(state);
       return;
     }
     throw error;
@@ -66,7 +70,6 @@ function bootstrap() {
   const publishEditorIdentity = () => {
     const hash = editor.authoringHash();
     document.documentElement.dataset.fieldweaverCanonicalRecipeHash = hash;
-    // Retain the pre-editor dataset name for renderer-isolation acceptance compatibility.
     document.documentElement.dataset.fieldweaverCanonicalResultHash = hash;
   };
 
@@ -149,7 +152,11 @@ function bootstrap() {
 
   const updateEditorUi = () => {
     publishEditorIdentity();
-    shell.updateEditorState(editor.snapshot(schedulerBacklogTicks));
+    const state = editor.snapshot(schedulerBacklogTicks);
+    shell.updateEditorState(state);
+    lutPanel.update(state);
+    document.documentElement.dataset.fieldweaverLutAssets = String(state.lutAssets.length);
+    document.documentElement.dataset.fieldweaverLutMappings = String(state.lutMappings.length);
     if (editorError) document.querySelector('#canvas-status').textContent = editorError;
   };
 
@@ -260,6 +267,28 @@ function bootstrap() {
   controls.materialLifetime.addEventListener('change', updateMaterial);
   controls.materialDepositEvery.addEventListener('change', updateMaterial);
   controls.materialSteering.addEventListener('change', updateMaterial);
+
+  const lutControls = lutPanel.controls;
+  lutControls.assetSelect.addEventListener('change', () => action(() => editor.selectLut(Number(lutControls.assetSelect.value))));
+  lutControls.channelSelect.addEventListener('change', () => action(() => editor.selectLutChannel(lutControls.channelSelect.value)));
+  lutControls.entryApply.addEventListener('click', () => action(() => editor.updateSelectedLutEntry(
+    lutControls.channelSelect.value,
+    Number(lutControls.entryIndex.value),
+    Number(lutControls.entryValue.value)
+  ), { authoring: true }));
+  lutControls.generate256.addEventListener('click', () => action(() => editor.generateLut(256, 'spectrum'), { authoring: true }));
+  lutControls.generate512.addEventListener('click', () => action(() => editor.generateLut(512, 'pulse'), { authoring: true }));
+  lutControls.assignMapping.addEventListener('click', () => action(() => editor.assignSelectedMaterialLut({
+    destination: lutControls.destination.value,
+    source: lutControls.source.value,
+    channel: lutControls.mappingChannel.value,
+    addressMode: lutControls.addressMode.value
+  }), { authoring: true }));
+  lutControls.removeMapping.addEventListener('click', () => action(() => editor.removeSelectedMaterialLutMapping(lutControls.destination.value), { authoring: true }));
+  lutControls.exportJson.addEventListener('click', () => action(() => {
+    lutControls.json.value = editor.exportSelectedLutJson();
+  }));
+  lutControls.importJson.addEventListener('click', () => action(() => editor.importLutJson(lutControls.json.value), { authoring: true }));
 
   controls.seedApply.addEventListener('click', () => action(() => editor.setRootSeed(Number(controls.seedInput.value)), { authoring: true }));
   controls.seedRandom.addEventListener('click', () => action(() => {
