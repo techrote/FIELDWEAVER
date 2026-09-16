@@ -8,6 +8,7 @@ import {
 } from '../core/numeric.js';
 import { CHUNK_SPAN_Q16, normalizeWorldPosition } from '../core/coordinates.js';
 import { canonicalHash } from '../core/canonical.js';
+import { worldPositionToFieldCell } from './model.js';
 
 export const FIELD_OPERATOR_VERSION = 'fw-operators-v1';
 export const FIELD_OPERATORS = Object.freeze([
@@ -283,13 +284,27 @@ function blendVector(accumulator, sampled, blend) {
   }
 }
 
+function paintedVectorSample(layer, position) {
+  if (typeof layer.readCell !== 'function' || !Number.isInteger(layer.cellsPerChunk)) return ZERO_VECTOR;
+  const cell = worldPositionToFieldCell(position, layer.cellsPerChunk);
+  const value = layer.readCell(cell);
+  if (!Array.isArray(value) && !(value instanceof Int32Array)) return ZERO_VECTOR;
+  if (value.length !== 2) return ZERO_VECTOR;
+  return vector(value[0], value[1]);
+}
+
 export function sampleFieldOperator(layer, position, input = ZERO_VECTOR) {
   validateFieldOperatorLayer(layer);
   const normalizedPosition = normalizeWorldPosition(position);
   if (layer.operator === 'direction-quantizer') {
     return quantizeVector(input, parameter(layer, 'sectors', 8));
   }
-  return sampleSourceOperator(layer, normalizedPosition);
+  const procedural = sampleSourceOperator(layer, normalizedPosition);
+  const painted = paintedVectorSample(layer, normalizedPosition);
+  return vector(
+    addSaturatedInt32(procedural.xQ16, painted.xQ16),
+    addSaturatedInt32(procedural.yQ16, painted.yQ16)
+  );
 }
 
 export function sampleFieldStack(collection, position, options = {}) {
