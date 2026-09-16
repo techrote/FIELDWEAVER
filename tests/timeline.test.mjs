@@ -101,7 +101,7 @@ test('checkpoint eviction changes cache performance only, never target results',
 });
 
 test('same-tick event ordering is visibly reproducible and timeline undo/redo is separate from authoring history', () => {
-  const editor = new TimelineEditorSession({ checkpointInterval: 4, maxCheckpoints: 8 });
+  const editor = new TimelineEditorSession({ agentCapacity: 1024, maxDepositions: 50_000, checkpointInterval: 4, maxCheckpoints: 8 });
   const authoringUndoDepth = editor.snapshot().history.undoDepth;
   editor.applyTimelineCommands([
     { id: 10, tick: 4, type: 'set-emitter-rate', emitterId: 1, rate: 3 },
@@ -120,7 +120,7 @@ test('same-tick event ordering is visibly reproducible and timeline undo/redo is
   assert.equal(editor.snapshot().commands[0].rate, 0, 'swapping numeric IDs changes the canonical same-tick order');
   assert.equal(editor.snapshot().commands[1].rate, 3);
   const reorderedHash = editor.simulation.resultHash();
-  assertSameCanonical(editor._timelineController.replay, freshAt(editor.currentRecipe(), 12), 'same-tick reorder');
+  assertSameCanonical(editor._timelineController.replay, freshAt(editor.currentRecipe(), 12, { capacity: 1024, maxDepositions: 50_000 }), 'same-tick reorder');
 
   assert.equal(editor.undoTimeline(), true);
   assert.equal(editor.snapshot().playheadTick, 12);
