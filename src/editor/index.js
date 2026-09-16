@@ -27,9 +27,15 @@ export {
   TIMELINE_EDITOR_VERSION,
   DEFAULT_TIMELINE_HISTORY_ENTRIES,
   TimelineEditHistory,
-  TimelineEditorSession,
-  TimelineEditorSession as LutEditorSession
+  TimelineEditorSession
 } from './timeline-session.js';
+export {
+  MUTATION_EDITOR_VERSION,
+  DEFAULT_VARIANT_COUNT,
+  MAX_VARIANT_COUNT,
+  MutationEditorSession,
+  MutationEditorSession as LutEditorSession
+} from './mutation-session.js';
 
 export class EditorSession extends BaseEditorSession {
   authoringHash() {
