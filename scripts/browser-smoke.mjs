@@ -208,6 +208,12 @@ try {
   const screenshotPath = `browser-smoke-${browser}.png`;
   await writeFile(screenshotPath, screenshotBytes);
 
+  await sleep(100);
+  const appErrorPattern = /JavaScript error: http:\/\/127\.0\.0\.1:4173\/src\//;
+  if (appErrorPattern.test(driverLog)) {
+    throw new Error(`Application JavaScript error observed in ${browser} WebDriver log.`);
+  }
+
   const evidence = {
     browser,
     browserVersion: capabilities.browserVersion ?? capabilities.version ?? 'unknown',
