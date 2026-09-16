@@ -37,7 +37,7 @@ function deposition(kind, primitive, x, y) {
   });
 }
 
-test('viewport transform centers canonical world coordinates and pan/zoom are view-only', () => {
+test('viewport transform centers canonical world coordinates and pan/zoom/DPR are view-only', () => {
   const viewport = createViewport({ widthCssPx: 1000, heightCssPx: 500, zoom: 2, center: pos(128, 128) });
   assert.deepEqual(worldToCanvas(pos(128, 128), viewport), { x: 500, y: 250 });
   assert.deepEqual(worldToCanvas(pos(130, 126), viewport), { x: 504, y: 254 });
@@ -46,9 +46,13 @@ test('viewport transform centers canonical world coordinates and pan/zoom are vi
   const before = canonicalHash(canonical);
   const panned = panViewport(viewport, 20, -10);
   const zoomed = zoomViewport(panned, 1.5);
+  const higherDpr = createViewport({ ...viewport, devicePixelRatio: 2 });
   assert.equal(canonicalHash(canonical), before);
   assert.notDeepEqual(panned.center, viewport.center);
   assert.equal(zoomed.zoom, 3);
+  assert.deepEqual(worldToCanvas(pos(130, 126), higherDpr), { x: 504, y: 254 });
+  assert.equal(higherDpr.devicePixelRatio, 2);
+  assert.equal(canonicalHash(canonical), before);
 });
 
 test('preview accumulation is bounded and reset/rebuild cannot retain stale records', () => {
