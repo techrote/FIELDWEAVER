@@ -101,8 +101,10 @@ export class WebGL2PreviewRenderer {
     this.view = createViewport(options.viewport ?? {});
     this.showOverlays = options.showOverlays ?? true;
     this.lastConsumedDepositionCount = 0;
+    this.lastConsumedRecord = null;
     this.lastDiagnostics = Object.freeze({ state: 'initializing' });
     this._contextLost = false;
+    this._contextRequiresReload = false;
 
     const gl = this.canvas.getContext('webgl2', {
       alpha: false,
@@ -137,6 +139,7 @@ export class WebGL2PreviewRenderer {
     };
     this._onContextRestored = () => {
       this._contextLost = false;
+      this._contextRequiresReload = true;
       this.lastDiagnostics = Object.freeze({ ...this.lastDiagnostics, state: 'context-restored-reload-required' });
     };
     this.canvas.addEventListener?.('webglcontextlost', this._onContextLost, false);
@@ -192,22 +195,27 @@ export class WebGL2PreviewRenderer {
   resetPreview() {
     this.accumulator.reset();
     this.lastConsumedDepositionCount = 0;
+    this.lastConsumedRecord = null;
     this.gl.clear(this.gl.COLOR_BUFFER_BIT);
   }
 
   rebuildPreview(depositions) {
     this.accumulator.rebuild(depositions);
     this.lastConsumedDepositionCount = depositions.length;
+    this.lastConsumedRecord = depositions.length === 0 ? null : depositions[depositions.length - 1];
   }
 
   _synchronizeDepositions(depositions) {
     if (!Array.isArray(depositions)) throw new TypeError('depositions must be an array.');
-    if (depositions.length < this.lastConsumedDepositionCount) {
+    const priorTailStillMatches = this.lastConsumedDepositionCount === 0 ||
+      depositions[this.lastConsumedDepositionCount - 1] === this.lastConsumedRecord;
+    if (depositions.length < this.lastConsumedDepositionCount || !priorTailStillMatches) {
       this.rebuildPreview(depositions);
       return;
     }
     this.accumulator.appendMany(depositions, this.lastConsumedDepositionCount);
     this.lastConsumedDepositionCount = depositions.length;
+    this.lastConsumedRecord = depositions.length === 0 ? null : depositions[depositions.length - 1];
   }
 
   _draw(vertices, mode, pointMode) {
@@ -222,6 +230,7 @@ export class WebGL2PreviewRenderer {
 
   render({ depositions = [], fieldCollection = null, emitters = [], showOverlays = this.showOverlays } = {}) {
     if (this._contextLost) throw new RendererUnavailableError('WebGL2 context is currently lost; canonical simulation state was not modified.');
+    if (this._contextRequiresReload) throw new RendererUnavailableError('WebGL2 context was restored, but renderer resources must be reinitialized by reloading the local app; canonical state remains intact.');
     const started = clockNow();
     this.resize();
     this._synchronizeDepositions(depositions);
