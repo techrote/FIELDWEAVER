@@ -6,7 +6,7 @@ Artists paint vector fields, place material emitters into them, run an integer f
 
 ## Current implementation status
 
-**FW-001 through FW-010 are implemented on this branch, with the FW-016 live-preview interaction regression fix retained.** The dependency-free local server, launch helpers, tests and CI remain intact. The DOM-free canonical substrate provides signed Q16.16 arithmetic, chunk-aware coordinates, xoshiro128** PRNG/substreams, stable serialization/hashes, sparse field authoring, five deterministic field operators, independently seeded emitters, four behaviourally distinct materials, bounded movement, renderer-independent deposition records, deterministic LUT sampling, versioned recipes, explicit commands, and deterministic timeline replay.
+**FW-001 through FW-011 are implemented on this branch, with the FW-016 live-preview interaction regression fix retained.** The dependency-free local server, launch helpers, tests and CI remain intact. The DOM-free canonical substrate provides signed Q16.16 arithmetic, chunk-aware coordinates, xoshiro128** PRNG/substreams, stable serialization/hashes, sparse field authoring, five deterministic field operators, independently seeded emitters, four behaviourally distinct materials, bounded movement, renderer-independent deposition records, deterministic LUT sampling, versioned recipes, explicit commands, deterministic timeline replay, and recipe-level mutation lineage.
 
 FW-007 provides the first usable instrument editor: ordered/enabled field layers; direct paint/erase; field-origin editing; bounded authoring undo/redo; emitter placement/movement/material assignment; baseline material editing; concrete seed controls; run/pause/exact single-step/configurable multi-step/reset; speed as scheduling only; visible scheduler backlog; keyboard shortcuts; and a separate view-only editor overlay.
 
@@ -15,6 +15,8 @@ FW-008 adds `fw-lut-v1` assets and `fw-lut-map-v1` mappings. LUT channels may dr
 FW-009 adds `fw-recipe-v1` persistence plus `fw-command-v1` deterministic intervention timelines. Complete recipes include seed, framing, ordered sparse fields, materials, emitters, LUT assets/mappings, commands and optional lineage. Same-tick commands execute by numeric command ID; malformed or incompatible imports are rejected transactionally. The browser exposes local **Save recipe** / **Load recipe** controls.
 
 FW-010 adds `fw-timeline-v1`: a linear playhead/event editor, deterministic arbitrary-tick replay, bounded transient checkpoints, conservative cache invalidation after timeline edits, separate timeline undo/redo, same-tick ordering controls, and checkpoint/replay diagnostics. Backward seeking never reverses physics; it restores a valid checkpoint (or tick 0) and executes ordinary canonical replay forward. Checkpoint presence, spacing and eviction affect performance only.
+
+FW-011 adds `fw-mutation-v1` deterministic recipe mutation and `fw-lineage-v1` provenance records. Explicit mutation seeds/substreams drive bounded material, field, emitter, layer-order, LUT, and sibling-seed operators. The editor can fork multiple immutable siblings, inspect exact normalized diffs, navigate/restore variants, and render replay-isolated A/B or small-grid comparisons without sharing mutable canonical simulation state.
 
 FW-006/FW-016 provide the `fw-webgl2-preview-v1` live view: read-only WebGL2 rendering of canonical deposition records, LUT-resolved deposition colour, DPR-aware resize, pan/zoom, bounded reset/rebuild-safe accumulation, cached stable geometry/GPU buffers, actionable failure handling, and renderer diagnostics. After a backward timeline seek, a changed/shortened canonical deposition tail automatically causes the preview accumulator to rebuild rather than retain stale artwork.
 
@@ -58,23 +60,24 @@ No package CDN, cloud service, telemetry endpoint, or other external network dep
 6. In **Timeline**, add/edit deterministic intervention events, seek to arbitrary ticks, or move backward knowing FIELDWEAVER is restoring/replaying rather than numerically reversing the simulation. Timeline undo/redo changes event authoring only.
 7. Pause and use field authoring undo/redo, reorder/enable fields, move field/emitter origins, edit material/LUT controls, or change the recorded seed. Non-command recipe edits establish a new initial state and reset timeline checkpoint memoization.
 8. Use **Save recipe** to download the complete normalized project or **Load recipe** to validate and restore a saved recipe without partial mutation on failure.
-9. Pan/zoom at any time without changing recipe identity or canonical simulation results.
+9. In **Mutation & variants**, choose an explicit mutation seed/scope/intensity, fork siblings, inspect exact diffs, restore a variant, or compare up to four independently replayed variants at one tick.
+10. Pan/zoom at any time without changing recipe identity or canonical simulation results.
 
-See [`docs/EDITOR.md`](./docs/EDITOR.md) for the editor/shortcut/determinism contract, [`docs/LUTS.md`](./docs/LUTS.md) for exact LUT sampling semantics, [`docs/RECIPES.md`](./docs/RECIPES.md) for recipe/command compatibility, and [`docs/TIMELINE.md`](./docs/TIMELINE.md) for seek/checkpoint/invalidation semantics.
+See [`docs/EDITOR.md`](./docs/EDITOR.md) for the editor/shortcut/determinism contract, [`docs/LUTS.md`](./docs/LUTS.md) for exact LUT sampling semantics, [`docs/RECIPES.md`](./docs/RECIPES.md) for recipe/command compatibility, [`docs/TIMELINE.md`](./docs/TIMELINE.md) for seek/checkpoint/invalidation semantics, and [`docs/MUTATION.md`](./docs/MUTATION.md) for deterministic mutation, lineage, rejection, and comparison-isolation semantics.
 
 ## Engineering commands
 
 | Command | Purpose |
 |---|---|
 | `npm run check` | Syntax checks plus version/module/CSP/local-resource policy checks |
-| `npm test` | Node built-in deterministic core/field/operator/simulation/editor/LUT/recipe/timeline/renderer tests |
+| `npm test` | Node built-in deterministic core/field/operator/simulation/editor/LUT/recipe/timeline/mutation/renderer tests |
 | `npm run verify` | Full local correctness gate (`check` then `test`) |
 | `npm run benchmark:sim` | Headless canonical simulation timing/throughput diagnostics; timing is not a correctness gate |
 | `npm run benchmark:render` | ~64k-deposition interaction profile proving one geometry build followed by cached view transforms |
 | `npm run serve` | Start the local server on `127.0.0.1:4173` |
 | `npm start` | Start the server and attempt to open a browser |
 
-Developer/browser details are in [`docs/DEVELOPMENT.md`](./docs/DEVELOPMENT.md). Compatibility-sensitive integer, coordinate, PRNG, tick, ordering and hash rules are in [`docs/CANONICAL.md`](./docs/CANONICAL.md). Field storage/authoring is in [`docs/FIELDS.md`](./docs/FIELDS.md), operator semantics in [`docs/OPERATORS.md`](./docs/OPERATORS.md), agent/material/emitter/deposition rules in [`docs/SIMULATION.md`](./docs/SIMULATION.md), LUT semantics in [`docs/LUTS.md`](./docs/LUTS.md), recipe/command semantics in [`docs/RECIPES.md`](./docs/RECIPES.md), timeline semantics in [`docs/TIMELINE.md`](./docs/TIMELINE.md), and preview/cache boundaries in [`docs/RENDERER.md`](./docs/RENDERER.md).
+Developer/browser details are in [`docs/DEVELOPMENT.md`](./docs/DEVELOPMENT.md). Compatibility-sensitive integer, coordinate, PRNG, tick, ordering and hash rules are in [`docs/CANONICAL.md`](./docs/CANONICAL.md). Field storage/authoring is in [`docs/FIELDS.md`](./docs/FIELDS.md), operator semantics in [`docs/OPERATORS.md`](./docs/OPERATORS.md), agent/material/emitter/deposition rules in [`docs/SIMULATION.md`](./docs/SIMULATION.md), LUT semantics in [`docs/LUTS.md`](./docs/LUTS.md), recipe/command semantics in [`docs/RECIPES.md`](./docs/RECIPES.md), timeline semantics in [`docs/TIMELINE.md`](./docs/TIMELINE.md), mutation/lineage semantics in [`docs/MUTATION.md`](./docs/MUTATION.md), and preview/cache boundaries in [`docs/RENDERER.md`](./docs/RENDERER.md).
 
 ## Core workflow and roadmap
 
@@ -96,7 +99,8 @@ The authoritative implementation context is [`RAG.md`](./RAG.md). Repository-age
 - LUT sampling for behaviour uses validated integer data and explicit deterministic mapping rules.
 - GPU floating-point simulation is **not** allowed to define canonical deterministic results unless an equivalence proof exists.
 - DOM/widget state is an editor adapter, never canonical truth.
-- Simulation, editor authoring, timeline replay, rendering and export are separate subsystems.
+- Simulation, editor authoring, timeline replay, mutation, rendering and export are separate subsystems.
 - Recipe files are versioned, inspectable, portable, provenance-preserving and replayable.
+- Mutation operates on detached recipe snapshots; parent and sibling ancestry is immutable from a created child.
 - Timeline checkpoints are bounded transient memoization and are never recipe truth.
 - A later canonical software export path will make decoded output pixels reproducible independently of GPU rasterization.
