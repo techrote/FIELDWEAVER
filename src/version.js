@@ -1,4 +1,4 @@
-export const APP_VERSION = '0.7.0';
+export const APP_VERSION = '0.8.0';
 export const FOUNDATION_ISSUE = 'FW-001';
 export const SIMULATION_ISSUE = 'FW-002';
 export const FIELDS_ISSUE = 'FW-003/FW-004';
@@ -8,3 +8,4 @@ export const EDITOR_ISSUE = 'FW-007';
 export const LUT_ISSUE = 'FW-008';
 export const RECIPE_ISSUE = 'FW-009';
 export const TIMELINE_ISSUE = 'FW-010';
+export const MUTATION_ISSUE = 'FW-011';

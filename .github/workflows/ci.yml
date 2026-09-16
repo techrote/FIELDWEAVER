@@ -103,6 +103,8 @@ jobs:
         run: node scripts/browser-smoke.mjs ${{ matrix.browser }}
       - name: Exercise deterministic timeline replay
         run: node scripts/timeline-browser-smoke.mjs ${{ matrix.browser }}
+      - name: Exercise deterministic mutation variants
+        run: node scripts/mutation-browser-smoke.mjs ${{ matrix.browser }}
       - name: Upload browser smoke evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -112,6 +114,7 @@ jobs:
             browser-smoke-${{ matrix.browser }}.png
             browser-smoke-${{ matrix.browser }}.log
             timeline-smoke-${{ matrix.browser }}.log
+            mutation-smoke-${{ matrix.browser }}.log
             browser-server.log
             xvfb.log
           if-no-files-found: ignore

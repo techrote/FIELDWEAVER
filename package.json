@@ -1,9 +1,9 @@
 {
   "name": "fieldweaver",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
   "type": "module",
-  "description": "Local-first deterministic generative-art instrument with versioned recipes and checkpoint-assisted timeline replay.",
+  "description": "Local-first deterministic generative-art instrument with versioned recipes, replayable timelines, and mutation lineage.",
   "engines": {
     "node": ">=22 <25"
   },

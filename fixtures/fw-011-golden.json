@@ -1,0 +1,16 @@
+{
+  "mutationVersion": "fw-mutation-v1",
+  "parentRecipeHash": "752a74caa10dc58b",
+  "childIdentity": "186f6dd0152bfad1",
+  "childRecipeHash": "fe59afbb9a1a284f",
+  "operationHash": "3a5ee2f4a715c755",
+  "diffHash": "c4cb74966432f7a7",
+  "operationTypes": [
+    "adjust-field-strength-scale",
+    "derive-sibling-seed",
+    "perturb-material-parameter",
+    "move-emitter",
+    "substitute-lut",
+    "swap-adjacent-fields"
+  ]
+}

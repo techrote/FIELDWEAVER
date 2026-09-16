@@ -13,9 +13,35 @@ function withoutNullStopTick(emitter) {
   return rest;
 }
 
+function sanitizeLineage(lineage) {
+  if (lineage === null || lineage === undefined || typeof lineage !== 'object' || Array.isArray(lineage)) return lineage;
+  if (lineage.version === undefined) return lineage;
+  const {
+    version,
+    parentRecipeHash,
+    childIdentity,
+    mutationSeed,
+    siblingIndex,
+    childSeed,
+    operations = []
+  } = lineage;
+  if (version !== 'fw-lineage-v1') return lineage;
+  const identityOperation = {
+    version,
+    type: 'lineage-identity',
+    childIdentity,
+    mutationSeed,
+    siblingIndex
+  };
+  return { parentRecipeHash, childSeed, operations: [identityOperation, ...operations] };
+}
+
 function sanitizeRecipeInput(input) {
-  if (input === null || typeof input !== 'object' || Array.isArray(input) || !Array.isArray(input.emitters)) return input;
-  return { ...input, emitters: input.emitters.map(withoutNullStopTick) };
+  if (input === null || typeof input !== 'object' || Array.isArray(input)) return input;
+  const emitters = Array.isArray(input.emitters) ? input.emitters.map(withoutNullStopTick) : input.emitters;
+  const lineage = sanitizeLineage(input.lineage);
+  if (emitters === input.emitters && lineage === input.lineage) return input;
+  return { ...input, emitters, lineage };
 }
 
 function sanitizeNormalizedRecipe(recipe) {
