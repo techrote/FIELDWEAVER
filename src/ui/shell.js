@@ -11,38 +11,31 @@ function element(tag, attributes = {}, text = '') {
     }
   }
 
-  if (text) {
-    node.textContent = text;
-  }
-
+  if (text) node.textContent = text;
   return node;
 }
 
 function buildStatusList(snapshot) {
   const list = element('ul', { className: 'status-list' });
-
   for (const subsystem of snapshot.subsystemStatus) {
     const item = element('li', {
       className: 'status-row',
       dataset: { state: subsystem.state }
     });
     const heading = element('div', { className: 'status-row__heading' });
-    const name = element('strong', {}, subsystem.label);
-    const badge = element('span', { className: 'status-badge' }, subsystem.state);
-    const detail = element('p', {}, `${subsystem.issue}: ${subsystem.detail}`);
-
-    heading.append(name, badge);
-    item.append(heading, detail);
+    heading.append(
+      element('strong', {}, subsystem.label),
+      element('span', { className: 'status-badge' }, subsystem.state)
+    );
+    item.append(heading, element('p', {}, `${subsystem.issue}: ${subsystem.detail}`));
     list.append(item);
   }
-
   return list;
 }
 
-function diagnosticsText(snapshot) {
+function baseDiagnosticsText(snapshot) {
   const viewport = `${window.innerWidth}×${window.innerHeight}`;
   const connection = navigator.onLine ? 'available (not required)' : 'offline';
-
   return [
     `Version: ${snapshot.version}`,
     `Phase: ${snapshot.phase}`,
@@ -50,38 +43,80 @@ function diagnosticsText(snapshot) {
     `Canonical mode: ${snapshot.canonicalMode}`,
     `External network: ${snapshot.externalNetworkRequired ? 'required' : 'not required'}`,
     `Browser network state: ${connection}`,
-    `Viewport: ${viewport}`
+    `Browser viewport: ${viewport}`
   ];
 }
 
-export function mountApplicationShell(root, snapshot) {
-  if (!(root instanceof HTMLElement)) {
-    throw new TypeError('FIELDWEAVER shell root must be an HTMLElement.');
+function rendererDiagnosticsText(diagnostics) {
+  if (!diagnostics || diagnostics.state !== 'ready') {
+    return [`Renderer: ${diagnostics?.state ?? 'not initialized'}`];
   }
+  const view = diagnostics.viewport;
+  return [
+    'Renderer: WebGL2 preview (noncanonical)',
+    `Frame: ${diagnostics.frameMs.toFixed(2)} ms (prepare ${diagnostics.prepareMs.toFixed(2)} / submit ${diagnostics.submitMs.toFixed(2)})`,
+    `Draw calls: ${diagnostics.drawCalls}`,
+    `Artwork vertices: ${diagnostics.pointVertices + diagnostics.lineVertices}`,
+    `Overlay vertices: ${diagnostics.overlayVertices}`,
+    `Transient buffer: ${(diagnostics.bufferBytes / 1024).toFixed(1)} KiB`,
+    `Preview deposition window: ${diagnostics.previewDepositions}/${diagnostics.previewCapacity}${diagnostics.previewTruncated ? ` · ${diagnostics.previewDropped} older records omitted` : ''}`,
+    `Preview viewport: ${view.widthCssPx}×${view.heightCssPx} CSS px @ ${view.devicePixelRatio.toFixed(2)} DPR · zoom ${view.zoom.toFixed(2)}`,
+    `Framebuffer: ${diagnostics.framebuffer.width}×${diagnostics.framebuffer.height}`,
+    `GPU: ${diagnostics.renderer} · ${diagnostics.vendor}`
+  ];
+}
 
+function buildLegend() {
+  const legend = element('ul', { className: 'material-legend', 'aria-label': 'Material preview legend' });
+  for (const [kind, label] of [['ink', 'Ink'], ['filament', 'Filament'], ['dust', 'Dust'], ['shard', 'Shard']]) {
+    const item = element('li', { dataset: { material: kind } });
+    item.append(element('span', { className: 'legend-swatch', 'aria-hidden': 'true' }), element('span', {}, label));
+    legend.append(item);
+  }
+  return legend;
+}
+
+export function mountApplicationShell(root, snapshot) {
+  if (!(root instanceof HTMLElement)) throw new TypeError('FIELDWEAVER shell root must be an HTMLElement.');
+
+  let rendererDiagnostics = null;
   const shell = element('div', { className: 'app-shell' });
   const header = element('header', { className: 'masthead' });
   const brand = element('div');
-  const eyebrow = element('p', { className: 'eyebrow' }, `${snapshot.phase} · deterministic core`);
+  const eyebrow = element('p', { className: 'eyebrow' }, `${snapshot.phase} · deterministic simulation + noncanonical preview`);
   const title = element('h1', {}, snapshot.product);
   const subtitle = element(
     'p',
     { className: 'subtitle' },
-    'The canonical deterministic kernel is live; field authoring and rendering remain explicitly unimplemented.'
+    'Canonical agent/deposition state is rendered by a read-only WebGL2 preview. GPU output is intentionally not the canonical pixel oracle.'
   );
   brand.append(eyebrow, title, subtitle);
-
-  const version = element('div', { className: 'version-chip', 'aria-label': `Application version ${snapshot.version}` }, `v${snapshot.version}`);
-  header.append(brand, version);
+  header.append(
+    brand,
+    element('div', { className: 'version-chip', 'aria-label': `Application version ${snapshot.version}` }, `v${snapshot.version}`)
+  );
 
   const main = element('main', { id: 'main', className: 'workspace-grid', tabindex: '-1' });
   const workspace = element('section', { className: 'workspace-card', 'aria-labelledby': 'workspace-title' });
-  const workspaceTitle = element('h2', { id: 'workspace-title' }, 'Workspace');
-  const canvasPlaceholder = element('div', { className: 'canvas-placeholder', role: 'img', 'aria-label': 'Reserved workspace for future deterministic field and renderer implementation' });
-  const fieldGlyph = element('div', { className: 'field-glyph', 'aria-hidden': 'true' }, '⇝  ⟳  ⋰  ⤢');
-  const placeholderText = element('p', {}, 'Field authoring and renderer arrive in later roadmap issues. Nothing here is presented as simulated artwork.');
-  canvasPlaceholder.append(fieldGlyph, placeholderText);
-  workspace.append(workspaceTitle, canvasPlaceholder);
+  const workspaceHeading = element('div', { className: 'workspace-heading' });
+  const workspaceTitleBlock = element('div');
+  workspaceTitleBlock.append(
+    element('h2', { id: 'workspace-title' }, 'Live deposition preview'),
+    element('p', { className: 'workspace-note' }, 'Drag to pan · wheel to zoom · overlays are view-only. Seeded FW-005 demo shown until the editor lands in FW-007.')
+  );
+  workspaceHeading.append(workspaceTitleBlock, buildLegend());
+
+  const previewFrame = element('div', { className: 'preview-frame' });
+  const canvas = element('canvas', {
+    id: 'preview-canvas',
+    className: 'preview-canvas',
+    tabindex: '0',
+    role: 'img',
+    'aria-label': 'WebGL2 preview of deterministic Ink, Filament, Dust, and Shard deposition records'
+  });
+  const rendererMessage = element('p', { className: 'renderer-message', role: 'status', 'aria-live': 'polite' }, 'Initializing WebGL2 preview…');
+  previewFrame.append(canvas, rendererMessage);
+  workspace.append(workspaceHeading, previewFrame);
 
   const sidebar = element('aside', { className: 'sidebar', 'aria-label': 'Runtime status and diagnostics' });
   const statusPanel = element('section', { className: 'panel', 'aria-labelledby': 'status-title' });
@@ -93,9 +128,26 @@ export function mountApplicationShell(root, snapshot) {
   const refreshButton = element('button', { type: 'button', className: 'button' }, 'Refresh diagnostics');
 
   const renderDiagnostics = () => {
-    diagnosticList.replaceChildren(
-      ...diagnosticsText(snapshot).map((line) => element('li', {}, line))
-    );
+    const lines = [...baseDiagnosticsText(snapshot), ...rendererDiagnosticsText(rendererDiagnostics)];
+    diagnosticList.replaceChildren(...lines.map((line) => element('li', {}, line)));
+  };
+
+  const updateRendererDiagnostics = (diagnostics) => {
+    rendererDiagnostics = diagnostics;
+    if (diagnostics?.state === 'ready') {
+      rendererMessage.hidden = true;
+      rendererMessage.textContent = '';
+      rendererMessage.setAttribute('role', 'status');
+    }
+    renderDiagnostics();
+  };
+
+  const setRendererError = (message) => {
+    rendererDiagnostics = Object.freeze({ state: 'unavailable' });
+    rendererMessage.hidden = false;
+    rendererMessage.textContent = message;
+    rendererMessage.setAttribute('role', 'alert');
+    renderDiagnostics();
   };
 
   refreshButton.addEventListener('click', renderDiagnostics);
@@ -111,11 +163,11 @@ export function mountApplicationShell(root, snapshot) {
   const footer = element('footer', { className: 'footer' });
   footer.append(
     element('span', {}, 'Local-first · no external service dependency'),
-    element('span', {}, 'Headless canonical core active')
+    element('span', {}, 'Canonical simulation remains DOM/GPU-free')
   );
 
   shell.append(header, main, footer);
   root.replaceChildren(shell);
 
-  return Object.freeze({ refreshDiagnostics: renderDiagnostics });
+  return Object.freeze({ canvas, refreshDiagnostics: renderDiagnostics, updateRendererDiagnostics, setRendererError });
 }
