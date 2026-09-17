@@ -140,18 +140,26 @@ function mountReleaseDiagnostics(editor, telemetry) {
   const refresh = () => {
     const state = editor.snapshot();
     const timeline = state.timelineDiagnostics;
+    const rendererDiagnostics = getActiveWebGL2Renderer()?.diagnostics?.() ?? null;
     const root = document.documentElement.dataset;
     const simMsPerTick = telemetry.lastTicks > 0 ? telemetry.lastMs / telemetry.lastTicks : 0;
     const exportMs = finiteNumber(root.fieldweaverCanonicalExportMs);
     const exportRate = finiteNumber(root.fieldweaverCanonicalExportMegapixelsPerSecond);
     const plateMs = finiteNumber(root.fieldweaverInfiniteEvaluationMs);
     const variantCount = state.variantFamily?.variants?.length ?? 0;
+    const frameMs = finiteNumber(rendererDiagnostics?.frameMs);
+    const previewFps = frameMs !== null && frameMs > 0 ? 1000 / frameMs : null;
+    const averageReplayTicks = timeline?.seekCount > 0 ? timeline.totalReplayTicks / timeline.seekCount : 0;
     const lines = [
+      `Preview rate: ${previewFps === null ? 'not sampled' : `~${previewFps.toFixed(1)} FPS`} · last render ${frameMs === null ? 'n/a' : `${frameMs.toFixed(2)} ms`}${rendererDiagnostics?.prepareMs === undefined ? '' : ` (prepare ${rendererDiagnostics.prepareMs.toFixed(2)} / submit ${rendererDiagnostics.submitMs.toFixed(2)})`}`,
       `Simulation batch: ${telemetry.lastTicks} tick(s) / ${telemetry.lastMs.toFixed(2)} ms${telemetry.lastTicks ? ` · ${simMsPerTick.toFixed(3)} ms/tick` : ''}`,
-      `Simulation totals: ${telemetry.ticks} instrumented ticks · ${state.activeAgents} active agents · ${state.depositions} retained depositions`,
+      `Simulation totals: ${telemetry.ticks} instrumented ticks · ${state.activeAgents} active agents · ${state.depositions} retained depositions · backlog ${state.backlogTicks} ticks`,
       timeline
         ? `Replay checkpoints: ${timeline.checkpointCount}/${timeline.maxCheckpoints} · ${(timeline.checkpointBytes / 1024).toFixed(1)} KiB estimate · ${timeline.evictions} evictions`
         : 'Replay checkpoints: unavailable',
+      timeline
+        ? `Replay work: ${timeline.totalReplayTicks} replayed ticks across ${timeline.seekCount} seeks${timeline.seekCount ? ` · ${averageReplayTicks.toFixed(1)} ticks/seek` : ''}`
+        : 'Replay work: unavailable',
       `Variant family: ${variantCount || 'none'} · comparison execution remains isolated per recipe`,
       `Infinite Plate: ${root.fieldweaverInfiniteState ?? 'idle'} · ${root.fieldweaverInfiniteChunks ?? 0} active/requested chunks · cache ${root.fieldweaverInfiniteCacheSize ?? 0}/4096 entries${plateMs === null ? '' : ` · ${plateMs.toFixed(2)} ms last evaluation`}`,
       `Canonical export: ${root.fieldweaverExportState ?? 'idle'}${exportMs === null ? '' : ` · ${exportMs.toFixed(2)} ms`}${exportRate === null ? '' : ` · ${exportRate.toFixed(2)} MP/s`} · raw RGBA ${root.fieldweaverCanonicalExportHash ?? 'not prepared'}`,
