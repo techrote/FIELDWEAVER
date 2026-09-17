@@ -2,9 +2,9 @@
   "version": "fw-infinite-plate-v1",
   "method": "full-replay-reference-v1",
   "targetTick": 12,
-  "rawRgbaHash": "0000000000000000",
-  "domainHash": "0000000000000000",
-  "sourceStateHash": "0000000000000000",
-  "regionalDepositionHash": "0000000000000000",
-  "regionalResultHash": "0000000000000000"
+  "rawRgbaHash": "0e2855184d644325",
+  "domainHash": "95aa8cf595ea89d1",
+  "sourceStateHash": "b74f0d62524e7fb8",
+  "regionalDepositionHash": "2c7aa073ce622ab5",
+  "regionalResultHash": "28069c6767a143b2"
 }
