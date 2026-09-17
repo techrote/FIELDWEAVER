@@ -331,19 +331,27 @@ Mutation creates validated recipe children. Lineage records parent recipe identi
 
 FW-011 supports deterministic bounded mutation across numeric parameters, fields, emitter/control placement, adjacent field order, LUT/mapping choice, and sibling seed derivation. Mutation selection/magnitude uses explicit seed/substream configuration. Parent/sibling snapshots remain isolated and immutable from child editing.
 
-### Infinite Plate
+### Infinite Plate — FW-013 deterministic regional contract
 
-The later Infinite Plate feature presents an effectively unbounded chunked plane. Requirements:
+FW-013 exposes effectively unbounded chunk-addressed navigation while keeping canonical evaluation explicitly finite. Camera/navigation state is presentation-only: panning, zooming, request order, and framing the current view do not mutate the recipe or select simulation truth.
 
-- chunk identity derives only from world coordinates and recipe/seed data;
-- simulation activation/culling must not change results inside a requested canonical region;
-- field data remains sparse and chunk-addressed;
-- camera/navigation never defines simulation truth;
-- user can pan far from origin, discover structures, and frame a crop without rebasing world coordinates;
-- finite crop export must not require the whole plate in memory;
-- chunk cache eviction is nonsemantic.
+The canonical regional reference method is `fw-infinite-plate-v1` / `full-replay-reference-v1`. For a requested target tick and finite crop, FIELDWEAVER replays the complete normalized finite recipe from tick 0 to the target before spatial filtering. This is deliberately conservative: explicit finite emitters share stable agent allocation/capacity and deposition sequence, so pruning a distant emitter merely because its geometry appears remote could alter canonical identities. A future causal-pruned implementation may replace this reference method only after adversarial equivalence tests prove identical results against the oracle.
 
-The early core does not expose endless navigation yet, but its chunk/world/export contracts must not preclude these guarantees.
+The evaluator nevertheless publishes the formal conservative causal halo used to reason about regional influence:
+
+`targetTick * MAX_STEP_DISPLACEMENT_Q16 + maxFiniteFieldSupportQ16 + MAX_MATERIAL_INTERACTION_RADIUS_Q16`
+
+Attractor and vortex radii contribute finite field support. Sparse painted data is local. `uniform` and `turbulence` may act globally only because they are pure deterministic functions of recipe/world coordinates with no neighboring mutable state. `direction-quantizer` is a local stack transform. Unknown global/stateful operators are rejected until their causal semantics are explicit.
+
+Requested chunks derive only from the explicit crop's stable chunk-aware world coordinates. Regional chunk-cache keys bind evaluator/method version, simulation version, recipe hash/schema/engine version, target tick, agent/deposition capacities, and chunk coordinate. Camera path, request order, cache size, eviction history, raster tile shape, browser/GPU state, and wall-clock timing are excluded. Cache entries are memoization only; a miss falls back to the deterministic reference replay. Deposition records retain their global numeric sequence, and regional assembly deduplicates/sorts by that sequence before rasterization.
+
+A regional result exposes both complete-replay source state/deposition/result hashes and explicit domain/regional identities. The domain hash binds the finite crop, requested chunks, and causal-halo contract. Regional deposition/result hashes bind the ordered intersecting deposition stream and raw image identity. For the same recipe/seed/tick/crop/capacity contract, these hashes and FW-012 `rawRgbaHash` must be invariant under camera history, chunk request order, cache capacity/eviction, and tile shape.
+
+`evaluateAsync()` and deterministic prefetch perform the same fixed-step reference work in interruptible foreground tick batches. Yield timing is nonsemantic; cancellation occurs before publishing a result and never changes recipe truth. Interactive safeguards bound requested chunk count, assembled raster pixels, and an explicit targetTick×agentCapacity work estimate; canonical deposition exhaustion still fails loudly rather than truncating.
+
+**Frame current view** copies the current noncanonical camera centre and scale into an explicit crop without rebasing world coordinates or mutating the recipe, and synchronizes that crop with FW-012 export controls. Regional canonical export reuses the FW-012 software raster, raw-RGBA image oracle, PNG package, and provenance model, adding the Infinite Plate method/domain/regional identities. A finite crop therefore never requires allocating an image for the whole conceptual plate.
+
+See `docs/INFINITE_PLATE.md` for the exact reference-evaluation, causality, cache, cancellation, and export contract.
 
 ---
 
