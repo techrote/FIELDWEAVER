@@ -1,0 +1,33 @@
+{
+  "version": "fw-presets-golden-v1",
+  "presets": {
+    "first-weave": {
+      "recipeHash": "0000000000000000",
+      "stateHash": "0000000000000000",
+      "depositionHash": "0000000000000000",
+      "resultHash": "0000000000000000",
+      "rawRgbaHash": "0000000000000000"
+    },
+    "operator-atlas": {
+      "recipeHash": "0000000000000000",
+      "stateHash": "0000000000000000",
+      "depositionHash": "0000000000000000",
+      "resultHash": "0000000000000000",
+      "rawRgbaHash": "0000000000000000"
+    },
+    "timeline-pulse": {
+      "recipeHash": "0000000000000000",
+      "stateHash": "0000000000000000",
+      "depositionHash": "0000000000000000",
+      "resultHash": "0000000000000000",
+      "rawRgbaHash": "0000000000000000"
+    },
+    "infinite-lineage": {
+      "recipeHash": "0000000000000000",
+      "stateHash": "0000000000000000",
+      "depositionHash": "0000000000000000",
+      "resultHash": "0000000000000000",
+      "rawRgbaHash": "0000000000000000"
+    }
+  }
+}
