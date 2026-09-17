@@ -15,7 +15,7 @@ jobs:
   verify:
     name: Node ${{ matrix.node }} verify
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
     strategy:
       fail-fast: false
       matrix:
@@ -48,6 +48,9 @@ jobs:
       - name: FW-016 cached 64k interaction profile
         if: matrix.node == 22
         run: npm run benchmark:render
+      - name: FW-014 30k-agent release profile
+        if: matrix.node == 22
+        run: npm run benchmark:release
 
   browser-smoke:
     name: ${{ matrix.browser }} WebGL2 smoke
