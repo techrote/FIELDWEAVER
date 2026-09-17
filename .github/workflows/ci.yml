@@ -107,6 +107,8 @@ jobs:
         run: node scripts/mutation-browser-smoke.mjs ${{ matrix.browser }}
       - name: Exercise canonical software export
         run: node scripts/export-browser-smoke.mjs ${{ matrix.browser }}
+      - name: Exercise Infinite Plate deterministic regional evaluation
+        run: node scripts/infinite-browser-smoke.mjs ${{ matrix.browser }}
       - name: Upload browser smoke evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -118,6 +120,7 @@ jobs:
             timeline-smoke-${{ matrix.browser }}.log
             mutation-smoke-${{ matrix.browser }}.log
             export-smoke-${{ matrix.browser }}.log
+            infinite-smoke-${{ matrix.browser }}.log
             browser-server.log
             xvfb.log
           if-no-files-found: ignore
