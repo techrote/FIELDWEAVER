@@ -15,7 +15,7 @@ jobs:
   verify:
     name: Node ${{ matrix.node }} verify
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
     strategy:
       fail-fast: false
       matrix:
@@ -47,7 +47,26 @@ jobs:
           retention-days: 1
       - name: FW-016 cached 64k interaction profile
         if: matrix.node == 22
-        run: npm run benchmark:render
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run benchmark:render 2>&1 | tee render-profile.txt
+      - name: FW-014 30k-agent release profile
+        if: matrix.node == 22
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run benchmark:release 2>&1 | tee release-profile.txt
+      - name: Upload release performance evidence
+        if: always() && matrix.node == 22
+        uses: actions/upload-artifact@v4
+        with:
+          name: fw-release-performance-node-22
+          path: |
+            render-profile.txt
+            release-profile.txt
+          if-no-files-found: ignore
+          retention-days: 7
 
   browser-smoke:
     name: ${{ matrix.browser }} WebGL2 smoke
@@ -109,6 +128,8 @@ jobs:
         run: node scripts/export-browser-smoke.mjs ${{ matrix.browser }}
       - name: Exercise Infinite Plate deterministic regional evaluation
         run: node scripts/infinite-browser-smoke.mjs ${{ matrix.browser }}
+      - name: Exercise FW-014 presets, telemetry, and keyboard accessibility
+        run: node scripts/release-browser-smoke.mjs ${{ matrix.browser }}
       - name: Upload browser smoke evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -121,6 +142,7 @@ jobs:
             mutation-smoke-${{ matrix.browser }}.log
             export-smoke-${{ matrix.browser }}.log
             infinite-smoke-${{ matrix.browser }}.log
+            release-smoke-${{ matrix.browser }}.log
             browser-server.log
             xvfb.log
           if-no-files-found: ignore

@@ -6,7 +6,7 @@ Artists paint vector fields, place material emitters into them, run an integer f
 
 ## Current implementation status
 
-**FW-001 through FW-013 are implemented on this branch, with the FW-016 live-preview interaction regression fix retained.** The dependency-free local server, launch helpers, tests and CI remain intact. The DOM-free canonical substrate provides signed Q16.16 arithmetic, chunk-aware coordinates, xoshiro128** PRNG/substreams, stable serialization/hashes, sparse field authoring, five deterministic field operators, independently seeded emitters, four behaviourally distinct materials, bounded movement, renderer-independent deposition records, deterministic LUT sampling, versioned recipes, explicit commands, deterministic timeline replay, recipe-level mutation lineage, deterministic software-raster export, and deterministic regional Infinite Plate evaluation.
+**FW-001 through FW-014 are implemented on this branch, with the FW-016 live-preview interaction regression fix retained.** The dependency-free local server, launch helpers, tests and CI remain intact. The DOM-free canonical substrate provides signed Q16.16 arithmetic, chunk-aware coordinates, xoshiro128** PRNG/substreams, stable serialization/hashes, sparse field authoring, five deterministic field operators, independently seeded emitters, four behaviourally distinct materials, bounded movement, renderer-independent deposition records, deterministic LUT sampling, versioned recipes, explicit commands, deterministic timeline replay, recipe-level mutation lineage, deterministic software-raster export, and deterministic regional Infinite Plate evaluation.
 
 FW-007 provides the first usable instrument editor: ordered/enabled field layers; direct paint/erase; field-origin editing; bounded authoring undo/redo; emitter placement/movement/material assignment; baseline material editing; concrete seed controls; run/pause/exact single-step/configurable multi-step/reset; speed as scheduling only; visible scheduler backlog; keyboard shortcuts; and a separate view-only editor overlay.
 
@@ -22,9 +22,11 @@ FW-012 adds `fw-canonical-raster-v1` and `fw-canonical-export-v1`: canonical rec
 
 FW-013 adds `fw-infinite-plate-v1` deterministic regional evaluation. The live camera can travel across stable chunk coordinates without becoming simulation truth. **Frame current view** turns a discovered region into an explicit crop without rebasing authored coordinates, then deterministic foreground replay evaluates/cache-indexes the requested chunks and feeds the existing FW-012 software raster. Cache size, eviction, camera history, request order, raster tile order, and browser/GPU timing are nonsemantic. The panel exposes evaluation progress/cancellation, cache eviction, canonical regional hashes, PNG/provenance download, and documented work/chunk/image safeguards.
 
+FW-014 adds release-readiness hardening: four curated deterministic presets with checked-in recipe/state/deposition/result/raw-RGBA identities; consolidated simulation/replay/cache/export/renderer diagnostics; explicit memory/work bounds; a repeatable 30,000-active-agent canonical simulation profile; Chrome and Firefox acceptance for the complete browser workflow; and accessibility corrections for field controls, the interactive canvas, labels, focus semantics and keyboard authoring. The focused canvas can apply a Paint/Erase stamp at the current view centre with **Enter**. See [`docs/RELEASE_READINESS.md`](./docs/RELEASE_READINESS.md) and [`docs/ACCESSIBILITY.md`](./docs/ACCESSIBILITY.md).
+
 FW-006/FW-016 provide the `fw-webgl2-preview-v1` live view: read-only WebGL2 rendering of canonical deposition records, LUT-resolved deposition colour, DPR-aware resize, pan/zoom, bounded reset/rebuild-safe accumulation, cached stable geometry/GPU buffers, actionable failure handling, and renderer diagnostics. After a backward timeline seek, a changed/shortened canonical deposition tail automatically causes the preview accumulator to rebuild rather than retain stale artwork.
 
-The WebGL preview is deliberately **noncanonical**. GPU floating point, framebuffer contents, renderer timing, camera state, geometry caches, editor overlay and preview truncation never feed back into simulation state or hashes. Canonical image identity is the decoded row-major RGBA8 buffer from the FW-012 software rasterizer; PNG file bytes are packaging rather than the pixel oracle.
+The WebGL preview is deliberately **noncanonical**. GPU floating point, framebuffer contents, renderer timing, camera state, geometry caches, editor overlay, wall-clock telemetry and preview truncation never feed back into simulation state or hashes. Canonical image identity is the decoded row-major RGBA8 buffer from the FW-012 software rasterizer; PNG file bytes are packaging rather than the pixel oracle.
 
 ## Quick start
 
@@ -56,38 +58,39 @@ No package CDN, cloud service, telemetry endpoint, or other external network dep
 
 ## First creative workflow
 
-1. Choose a field in **Field stack** or add one of the five field operators.
-2. Select **Paint [B]** and drag on the canvas. Brush X/Y define the vector painted into deterministic sparse cells.
-3. Use **Place emitter [N]** to add an emitter, then assign Ink, Filament, Dust or Shard.
-4. In **LUT logic**, inspect/edit a built-in LUT or generate a 256/512-entry asset, then assign its colour or behaviour channel to the selected material.
-5. Press **Space** to run, `.` to step exactly one tick, or `Shift+.` for the configured multi-step count.
-6. In **Timeline**, add/edit deterministic intervention events, seek to arbitrary ticks, or move backward knowing FIELDWEAVER is restoring/replaying rather than numerically reversing the simulation. Timeline undo/redo changes event authoring only.
-7. Pause and use field authoring undo/redo, reorder/enable fields, move field/emitter origins, edit material/LUT controls, or change the recorded seed. Non-command recipe edits establish a new initial state and reset timeline checkpoint memoization.
-8. Use **Save recipe** to download the complete normalized project or **Load recipe** to validate and restore a saved recipe without partial mutation on failure.
-9. In **Mutation & variants**, choose an explicit mutation seed/scope/intensity, fork siblings, inspect exact diffs, restore a variant, or compare up to four independently replayed variants at one tick.
-10. Pan/zoom to explore stable world chunks. In **Infinite Plate**, choose **Frame current view** to copy the camera into an explicit crop, set the target tick/cache bound, and **Evaluate selected crop**. You can cancel foreground evaluation or evict the memo cache without changing canonical results.
-11. Download the Infinite Plate canonical PNG/provenance directly, or use the synchronized **Canonical export** controls to prepare the same FW-012 software-raster crop and verify its raw RGBA hash.
-12. Pan/zoom at any time without changing recipe identity, canonical simulation results, or canonical export pixels.
+1. In **Built-in presets**, select **First Weave** (or another shipped example) and choose **Load preset** for an immediate deterministic starting point. Preset selection itself does not mutate the work; loading adopts the validated recipe.
+2. Choose a field in **Field stack** or add one of the five field operators.
+3. Select **Paint [B]** and drag on the canvas. For keyboard-only authoring, focus the canvas and press **Enter** to apply one Paint/Erase brush stamp at the current view centre.
+4. Use **Place emitter [N]** to add an emitter, then assign Ink, Filament, Dust or Shard. The sidebar also exposes a keyboard-reachable add-at-view-centre path.
+5. In **LUT logic**, inspect/edit a built-in LUT or generate a 256/512-entry asset, then assign its colour or behaviour channel to the selected material.
+6. Press **Space** to run, `.` to step exactly one tick, or `Shift+.` for the configured multi-step count.
+7. In **Timeline**, add/edit deterministic intervention events, seek to arbitrary ticks, or move backward knowing FIELDWEAVER is restoring/replaying rather than numerically reversing the simulation. Timeline undo/redo changes event authoring only.
+8. Pause and use field authoring undo/redo, reorder/enable fields, move field/emitter origins, edit material/LUT controls, or change the recorded seed. Non-command recipe edits establish a new initial state and reset timeline checkpoint memoization.
+9. Use **Save recipe** to download the complete normalized project or **Load recipe** to validate and restore a saved recipe without partial mutation on failure.
+10. In **Mutation & variants**, choose an explicit mutation seed/scope/intensity, fork siblings, inspect exact diffs, restore a variant, or compare up to four independently replayed variants at one tick.
+11. Pan/zoom to explore stable world chunks. In **Infinite Plate**, choose **Frame current view** to copy the camera into an explicit crop, set the target tick/cache bound, and **Evaluate selected crop**. You can cancel foreground evaluation or evict the memo cache without changing canonical results.
+12. Download the Infinite Plate canonical PNG/provenance directly, or use the synchronized **Canonical export** controls to prepare the same FW-012 software-raster crop and verify its raw RGBA hash. The **Diagnostics** panel distinguishes canonical identities from noncanonical renderer/performance telemetry.
 
-See [`docs/EDITOR.md`](./docs/EDITOR.md) for the editor/shortcut/determinism contract, [`docs/LUTS.md`](./docs/LUTS.md) for exact LUT sampling semantics, [`docs/RECIPES.md`](./docs/RECIPES.md) for recipe/command compatibility, [`docs/TIMELINE.md`](./docs/TIMELINE.md) for seek/checkpoint/invalidation semantics, [`docs/MUTATION.md`](./docs/MUTATION.md) for deterministic mutation, lineage, rejection, and comparison-isolation semantics, [`docs/EXPORT.md`](./docs/EXPORT.md) for canonical pixel, tiling, PNG, provenance, and failure semantics, and [`docs/INFINITE_PLATE.md`](./docs/INFINITE_PLATE.md) for regional causality, cache identity, framing, cancellation, and export semantics.
+See [`docs/EDITOR.md`](./docs/EDITOR.md) for the editor/shortcut/determinism contract, [`docs/LUTS.md`](./docs/LUTS.md) for exact LUT sampling semantics, [`docs/RECIPES.md`](./docs/RECIPES.md) for recipe/command compatibility, [`docs/TIMELINE.md`](./docs/TIMELINE.md) for seek/checkpoint/invalidation semantics, [`docs/MUTATION.md`](./docs/MUTATION.md) for deterministic mutation, lineage, rejection, and comparison-isolation semantics, [`docs/EXPORT.md`](./docs/EXPORT.md) for canonical pixel, tiling, PNG, provenance, and failure semantics, [`docs/INFINITE_PLATE.md`](./docs/INFINITE_PLATE.md) for regional causality/cache/framing/cancellation/export semantics, [`docs/RELEASE_READINESS.md`](./docs/RELEASE_READINESS.md) for presets/performance/memory/browser/error-handling evidence, and [`docs/ACCESSIBILITY.md`](./docs/ACCESSIBILITY.md) for the keyboard and semantics audit.
 
 ## Engineering commands
 
 | Command | Purpose |
 |---|---|
 | `npm run check` | Syntax checks plus version/module/CSP/local-resource policy checks |
-| `npm test` | Node built-in deterministic core/field/operator/simulation/editor/LUT/recipe/timeline/mutation/export/Infinite Plate/renderer tests |
+| `npm test` | Node built-in deterministic core/field/operator/simulation/editor/LUT/recipe/timeline/mutation/export/Infinite Plate/preset/renderer tests |
 | `npm run verify` | Full local correctness gate (`check` then `test`) |
 | `npm run benchmark:sim` | Headless canonical simulation timing/throughput diagnostics; timing is not a correctness gate |
 | `npm run benchmark:render` | ~64k-deposition interaction profile proving one geometry build followed by cached view transforms |
+| `npm run benchmark:release` | Repeated 30k-active-agent canonical simulation pressure profile with deterministic hash-equivalence assertions |
 | `npm run serve` | Start the local server on `127.0.0.1:4173` |
 | `npm start` | Start the server and attempt to open a browser |
 
-Developer/browser details are in [`docs/DEVELOPMENT.md`](./docs/DEVELOPMENT.md). Compatibility-sensitive integer, coordinate, PRNG, tick, ordering and hash rules are in [`docs/CANONICAL.md`](./docs/CANONICAL.md). Field storage/authoring is in [`docs/FIELDS.md`](./docs/FIELDS.md), operator semantics in [`docs/OPERATORS.md`](./docs/OPERATORS.md), agent/material/emitter/deposition rules in [`docs/SIMULATION.md`](./docs/SIMULATION.md), LUT semantics in [`docs/LUTS.md`](./docs/LUTS.md), recipe/command semantics in [`docs/RECIPES.md`](./docs/RECIPES.md), timeline semantics in [`docs/TIMELINE.md`](./docs/TIMELINE.md), mutation/lineage semantics in [`docs/MUTATION.md`](./docs/MUTATION.md), canonical output semantics in [`docs/EXPORT.md`](./docs/EXPORT.md), Infinite Plate semantics in [`docs/INFINITE_PLATE.md`](./docs/INFINITE_PLATE.md), and preview/cache boundaries in [`docs/RENDERER.md`](./docs/RENDERER.md).
+Developer/browser details are in [`docs/DEVELOPMENT.md`](./docs/DEVELOPMENT.md). Compatibility-sensitive integer, coordinate, PRNG, tick, ordering and hash rules are in [`docs/CANONICAL.md`](./docs/CANONICAL.md). Field storage/authoring is in [`docs/FIELDS.md`](./docs/FIELDS.md), operator semantics in [`docs/OPERATORS.md`](./docs/OPERATORS.md), agent/material/emitter/deposition rules in [`docs/SIMULATION.md`](./docs/SIMULATION.md), LUT semantics in [`docs/LUTS.md`](./docs/LUTS.md), recipe/command semantics in [`docs/RECIPES.md`](./docs/RECIPES.md), timeline semantics in [`docs/TIMELINE.md`](./docs/TIMELINE.md), mutation/lineage semantics in [`docs/MUTATION.md`](./docs/MUTATION.md), canonical output semantics in [`docs/EXPORT.md`](./docs/EXPORT.md), Infinite Plate semantics in [`docs/INFINITE_PLATE.md`](./docs/INFINITE_PLATE.md), preview/cache boundaries in [`docs/RENDERER.md`](./docs/RENDERER.md), and release bounds/support/troubleshooting in [`docs/RELEASE_READINESS.md`](./docs/RELEASE_READINESS.md).
 
 ## Core workflow and roadmap
 
-**Paint field → release material → run → intervene → freeze/layer → mutate → explore → export**
+**Load or paint → release material → run → intervene → freeze/layer → mutate → explore → export**
 
 Initial field families: uniform/gravity, attractor/repulsor, vortex/curl, deterministic turbulence/noise, and direction quantization.
 
@@ -109,4 +112,5 @@ The authoritative implementation context is [`RAG.md`](./RAG.md). Repository-age
 - Recipe files are versioned, inspectable, portable, provenance-preserving and replayable.
 - Mutation operates on detached recipe snapshots; parent and sibling ancestry is immutable from a created child.
 - Timeline checkpoints and Infinite Plate chunk caches are bounded transient memoization and are never recipe truth.
-- Canonical image identity is the decoded software-raster RGBA8 byte buffer; WebGL framebuffer contents and PNG compression are not canonical state.
+- Presets are ordinary validated recipes with checked-in deterministic golden identities, not hidden special cases.
+- Canonical image identity is the decoded software-raster RGBA8 byte buffer; WebGL framebuffer contents, wall-clock timing and PNG compression are not canonical state.

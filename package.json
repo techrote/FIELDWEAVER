@@ -1,9 +1,9 @@
 {
   "name": "fieldweaver",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "private": true,
   "type": "module",
-  "description": "Local-first deterministic generative-art instrument with canonical software raster export and Infinite Plate regional evaluation.",
+  "description": "Local-first deterministic generative-art instrument with curated presets, canonical software raster export, and Infinite Plate regional evaluation.",
   "engines": {
     "node": ">=22 <25"
   },
@@ -14,6 +14,7 @@
     "start": "node scripts/serve.mjs --open",
     "benchmark:sim": "node scripts/benchmark-sim.mjs",
     "benchmark:render": "node scripts/benchmark-render.mjs",
+    "benchmark:release": "node scripts/benchmark-release.mjs",
     "verify": "npm run check && npm test"
   }
 }
