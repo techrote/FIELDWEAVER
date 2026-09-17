@@ -10,7 +10,8 @@ import {
   RECIPE_ISSUE,
   TIMELINE_ISSUE,
   MUTATION_ISSUE,
-  EXPORT_ISSUE
+  EXPORT_ISSUE,
+  INFINITE_PLATE_ISSUE
 } from '../version.js';
 import { CANONICAL_ENGINE_VERSION } from './kernel.js';
 
@@ -25,14 +26,15 @@ export const SUBSYSTEM_STATUS = Object.freeze([
   Object.freeze({ id: 'recipe', label: 'Recipe persistence', state: 'ready', issue: RECIPE_ISSUE, detail: 'Versioned validated recipes, normalized identities, save/load, and deterministic command replay are active.' }),
   Object.freeze({ id: 'timeline', label: 'Timeline replay', state: 'ready', issue: TIMELINE_ISSUE, detail: 'Linear event editing, forward-only replay, bounded checkpoints, deterministic seeking, and separate timeline undo/redo are active.' }),
   Object.freeze({ id: 'mutation', label: 'Mutation lineage', state: 'ready', issue: MUTATION_ISSUE, detail: 'Deterministic recipe mutation, immutable lineage, sibling generation, exact diffs, and isolated variant comparison are active.' }),
-  Object.freeze({ id: 'export', label: 'Canonical image export', state: 'ready', issue: EXPORT_ISSUE, detail: 'Integer software rasterization, raw RGBA identity, dependency-free PNG packaging, tiled evaluation, and provenance sidecars are active.' })
+  Object.freeze({ id: 'export', label: 'Canonical image export', state: 'ready', issue: EXPORT_ISSUE, detail: 'Integer software rasterization, raw RGBA identity, dependency-free PNG packaging, tiled evaluation, and provenance sidecars are active.' }),
+  Object.freeze({ id: 'infinite-plate', label: 'Infinite Plate', state: 'ready', issue: INFINITE_PLATE_ISSUE, detail: 'Explicit finite domains, deterministic reference replay, sparse chunk memoization, cache-independent hashes, framing, cancellation, and regional canonical export are active.' })
 ]);
 
 export function createFoundationSnapshot(overrides = {}) {
   const snapshot = {
     product: 'FIELDWEAVER',
     version: APP_VERSION,
-    phase: EXPORT_ISSUE,
+    phase: INFINITE_PLATE_ISSUE,
     runtime: 'browser-es-modules',
     canonicalMode: CANONICAL_ENGINE_VERSION,
     externalNetworkRequired: false,
