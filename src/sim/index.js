@@ -11,3 +11,23 @@ export {
   AgentStore,
   DeterministicAgentSimulation
 } from './model.js';
+
+export {
+  GPU_RESEARCH_VERSION,
+  GPU_TRANSLATION_KERNEL_VERSION,
+  GPU_TRANSLATION_INPUT_STRIDE,
+  GPU_TRANSLATION_OUTPUT_STRIDE,
+  GPU_TRANSLATION_WORKGROUP_SIZE,
+  CANONICAL_GPU_ACCELERATION_ENABLED,
+  GPU_RESEARCH_INT_LIMITS,
+  CpuTranslationCandidate,
+  WebGpuTranslationCandidate,
+  packTranslationRecords,
+  unpackTranslationOutput,
+  translatePackedCpu,
+  createWebGpuTranslationCandidate,
+  runTranslationShadowConformance,
+  benchmarkTranslationCandidate,
+  evaluateCanonicalGpuAcceleration,
+  gpuArithmeticAudit
+} from './gpu-research.js';
