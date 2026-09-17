@@ -45,6 +45,26 @@ function percentile(sorted, q) {
   return sorted[Math.min(sorted.length - 1, Math.floor((sorted.length - 1) * q))];
 }
 
+function measureViewTransforms(cache, startingViewport) {
+  const timings = [];
+  let viewport = startingViewport;
+  for (let index = 0; index < VIEW_ROUNDS; index += 1) {
+    viewport = panViewport(viewport, (index % 7) - 3, (index % 5) - 2);
+    if (index % 6 === 0) viewport = zoomViewport(viewport, 1.003);
+    const started = performance.now();
+    const state = cache.snapshot(false);
+    if (!state || !cache.matches(1)) throw new Error('Stable view interaction unexpectedly invalidated geometry cache.');
+    const transform = createViewportTransform(state.referenceViewport, viewport);
+    if (!Number.isFinite(transform.clipScaleX) || !Number.isFinite(transform.clipOffsetY)) throw new Error('Viewport transform produced non-finite values.');
+    timings.push(performance.now() - started);
+  }
+  timings.sort((a, b) => a - b);
+  return Object.freeze({
+    medianMs: Number(percentile(timings, 0.5).toFixed(4)),
+    p95Ms: Number(percentile(timings, 0.95).toFixed(4))
+  });
+}
+
 const depositions = makeDepositions();
 const accumulator = new PreviewAccumulator(100_000);
 accumulator.appendMany(depositions);
@@ -60,38 +80,36 @@ const initialViewport = createViewport({
 const buildStarted = performance.now();
 const initial = cache.rebuild(accumulator.snapshot(), accumulator.revision, initialViewport);
 const initialBuildMs = performance.now() - buildStarted;
+const originalInteraction = measureViewTransforms(cache, initialViewport);
 
-const viewTimings = [];
-let viewport = initialViewport;
-for (let index = 0; index < VIEW_ROUNDS; index += 1) {
-  viewport = panViewport(viewport, (index % 7) - 3, (index % 5) - 2);
-  if (index % 6 === 0) viewport = zoomViewport(viewport, 1.003);
-  const started = performance.now();
-  const state = cache.snapshot(false);
-  if (!state || !cache.matches(accumulator.revision)) throw new Error('Stable view interaction unexpectedly invalidated geometry cache.');
-  const transform = createViewportTransform(state.referenceViewport, viewport);
-  if (!Number.isFinite(transform.clipScaleX) || !Number.isFinite(transform.clipOffsetY)) {
-    throw new Error('Viewport transform produced non-finite values.');
-  }
-  viewTimings.push(performance.now() - started);
-}
-viewTimings.sort((a, b) => a - b);
+const fullHdViewport = createViewport({
+  widthCssPx: 1920,
+  heightCssPx: 1080,
+  devicePixelRatio: 1,
+  zoom: 3.25,
+  center: position(132, 128)
+});
+const fullHdInteraction = measureViewTransforms(cache, fullHdViewport);
+
 if (cache.rebuildCount !== 1) throw new Error(`View-only benchmark rebuilt geometry ${cache.rebuildCount} times.`);
 
 const result = {
-  scenario: 'FW-016 64k cached preview interaction preparation',
+  scenario: 'FW-016/FW-014 64k cached preview interaction preparation',
   node: process.version,
   platform: `${process.platform}/${process.arch}`,
   depositions: COUNT,
-  viewport: '1118x710@1.13x',
+  originalEvidenceViewport: '1118x710@1.13x',
+  fullHdTargetViewport: '1920x1080@1x',
   initialBuildMs: Number(initialBuildMs.toFixed(3)),
-  viewRounds: VIEW_ROUNDS,
-  viewMedianMs: Number(percentile(viewTimings, 0.5).toFixed(4)),
-  viewP95Ms: Number(percentile(viewTimings, 0.95).toFixed(4)),
+  viewRoundsPerViewport: VIEW_ROUNDS,
+  originalViewMedianMs: originalInteraction.medianMs,
+  originalViewP95Ms: originalInteraction.p95Ms,
+  fullHdViewMedianMs: fullHdInteraction.medianMs,
+  fullHdViewP95Ms: fullHdInteraction.p95Ms,
   geometryRebuilds: cache.rebuildCount,
   vertices: initial.artwork.pointCount + initial.artwork.lineVertexCount,
   bufferBytes: initial.artwork.byteLength
 };
 
 console.log(JSON.stringify(result, null, 2));
-console.log('Timing is diagnostic only; structural cache reuse is the correctness gate.');
+console.log('Timing is diagnostic only; exactly one geometry build across both view-transform workloads is the correctness gate.');
