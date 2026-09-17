@@ -19,44 +19,12 @@ function world(localUnitsX, localUnitsY, chunkX = 0, chunkY = 0) {
 
 function fieldStack(seed, { allOperators = false, chunkX = 0, chunkY = 0 } = {}) {
   const fields = new FieldLayerCollection();
-  fields.createLayer({
-    id: 1,
-    kind: 'vector',
-    operator: 'uniform',
-    blend: 'add',
-    parameters: { vectorXQ16: Math.round(Q16_ONE / 18), vectorYQ16: Math.round(Q16_ONE / 64) }
-  });
-  fields.createLayer({
-    id: 2,
-    kind: 'vector',
-    operator: 'vortex',
-    blend: 'add',
-    transform: { origin: world(142, 128, chunkX, chunkY) },
-    parameters: { strengthQ16: Math.round(Q16_ONE / 2), radiusQ16: 88 * Q16_ONE }
-  });
+  fields.createLayer({ id: 1, kind: 'vector', operator: 'uniform', blend: 'add', parameters: { vectorXQ16: Math.round(Q16_ONE / 18), vectorYQ16: Math.round(Q16_ONE / 64) } });
+  fields.createLayer({ id: 2, kind: 'vector', operator: 'vortex', blend: 'add', transform: { origin: world(142, 128, chunkX, chunkY) }, parameters: { strengthQ16: Math.round(Q16_ONE / 2), radiusQ16: 88 * Q16_ONE } });
   if (allOperators) {
-    fields.createLayer({
-      id: 3,
-      kind: 'vector',
-      operator: 'attractor',
-      blend: 'add',
-      transform: { origin: world(102, 154, chunkX, chunkY) },
-      parameters: { strengthQ16: Math.round(Q16_ONE / 3), radiusQ16: 72 * Q16_ONE }
-    });
-    fields.createLayer({
-      id: 4,
-      kind: 'vector',
-      operator: 'turbulence',
-      blend: 'add',
-      parameters: { seed: seed | 0, amplitudeQ16: Math.round(Q16_ONE / 5), cellSizeQ16: 12 * Q16_ONE }
-    });
-    fields.createLayer({
-      id: 5,
-      kind: 'vector',
-      operator: 'direction-quantizer',
-      blend: 'add',
-      parameters: { sectors: 8 }
-    });
+    fields.createLayer({ id: 3, kind: 'vector', operator: 'attractor', blend: 'add', transform: { origin: world(102, 154, chunkX, chunkY) }, parameters: { strengthQ16: Math.round(Q16_ONE / 3), radiusQ16: 72 * Q16_ONE } });
+    fields.createLayer({ id: 4, kind: 'vector', operator: 'turbulence', blend: 'add', parameters: { seed: seed | 0, amplitudeQ16: Math.round(Q16_ONE / 5), cellSizeQ16: 16 * Q16_ONE } });
+    fields.createLayer({ id: 5, kind: 'vector', operator: 'direction-quantizer', blend: 'add', parameters: { sectors: 8 } });
   }
   return fields.toCanonical();
 }
@@ -70,12 +38,7 @@ function fourMaterialEmitters({ chunkX = 0, chunkY = 0 } = {}) {
     intervalTicks: material.kind === 'dust' ? 2 : 1,
     rate: material.kind === 'filament' ? 1 : 2,
     bursts: [{ tick: 10 + index * 5, count: 4 + index * 2 }],
-    geometry: {
-      type: 'box',
-      origin: world(58, 78 + index * 31, chunkX, chunkY),
-      widthQ16: 6 * Q16_ONE,
-      heightQ16: 6 * Q16_ONE
-    },
+    geometry: { type: 'box', origin: world(58, 78 + index * 31, chunkX, chunkY), widthQ16: 6 * Q16_ONE, heightQ16: 6 * Q16_ONE },
     velocityXQ16: material.kind === 'shard' ? Math.round(Q16_ONE * 1.15) : Math.round(Q16_ONE * 0.8),
     velocityYQ16: Math.round((index - 1.5) * Q16_ONE / 16),
     velocityJitterQ16: Math.round(Q16_ONE / 10)
@@ -115,81 +78,24 @@ const infiniteParent = commonRecipe(0x1f1e7e55, {
   allOperators: true,
   chunkX: farChunkX,
   chunkY: farChunkY,
-  framing: {
-    widthPx: 960,
-    heightPx: 640,
-    center: world(128, 128, farChunkX, farChunkY),
-    unitsPerPixelQ16: Math.round(Q16_ONE / 4)
-  }
+  framing: { widthPx: 960, heightPx: 640, center: world(128, 128, farChunkX, farChunkY), unitsPerPixelQ16: Math.round(Q16_ONE / 4) }
 });
-const infiniteLineage = mutateRecipe(infiniteParent, {
-  mutationSeed: 0x5eed014,
-  siblingIndex: 2,
-  scope: 'seed',
-  intensity: 'subtle',
-  operationCount: 1
-}).recipe;
+const infiniteLineage = mutateRecipe(infiniteParent, { mutationSeed: 0x5eed014, siblingIndex: 2, scope: 'seed', intensity: 'subtle', operationCount: 1 }).recipe;
 
 function exportCrop(recipe, widthPx = 96, heightPx = 64, unitsPerPixelQ16 = 2 * Q16_ONE) {
-  return Object.freeze({
-    widthPx,
-    heightPx,
-    center: Object.freeze({ ...recipe.framing.center }),
-    unitsPerPixelQ16
-  });
+  return Object.freeze({ widthPx, heightPx, center: Object.freeze({ ...recipe.framing.center }), unitsPerPixelQ16 });
 }
-
 function entry({ id, name, description, recipe, targetTick, coverage }) {
-  return Object.freeze({
-    id,
-    name,
-    description,
-    catalogVersion: PRESET_CATALOG_VERSION,
-    targetTick,
-    coverage: Object.freeze([...coverage]),
-    recipe,
-    recipeHash: recipeHash(recipe),
-    exportCrop: exportCrop(recipe)
-  });
+  return Object.freeze({ id, name, description, catalogVersion: PRESET_CATALOG_VERSION, targetTick, coverage: Object.freeze([...coverage]), recipe, recipeHash: recipeHash(recipe), exportCrop: exportCrop(recipe) });
 }
 
 export const BUILTIN_PRESETS = Object.freeze([
-  entry({
-    id: 'first-weave',
-    name: 'First Weave',
-    description: 'Immediate four-material composition using a uniform drift, vortex, colour LUT, and behaviour LUT.',
-    recipe: firstWeave,
-    targetTick: 48,
-    coverage: ['uniform', 'vortex', 'ink', 'filament', 'dust', 'shard', 'lut-color', 'lut-behaviour']
-  }),
-  entry({
-    id: 'operator-atlas',
-    name: 'Operator Atlas',
-    description: 'All five deterministic field operators composed in one compact recipe.',
-    recipe: operatorAtlas,
-    targetTick: 40,
-    coverage: ['uniform', 'vortex', 'attractor', 'turbulence', 'direction-quantizer', 'mixed-field-stack']
-  }),
-  entry({
-    id: 'timeline-pulse',
-    name: 'Timeline Pulse',
-    description: 'A command-rich score demonstrating intervention replay, freeze/resume, bursts, and parameter edits.',
-    recipe: timelinePulse,
-    targetTick: 44,
-    coverage: ['timeline', 'commands', 'freeze-resume', 'burst', 'lut-behaviour']
-  }),
-  entry({
-    id: 'infinite-lineage',
-    name: 'Infinite Lineage',
-    description: 'A far-world crop with deterministic mutation lineage for Infinite Plate framing and provenance.',
-    recipe: infiniteLineage,
-    targetTick: 36,
-    coverage: ['infinite-plate', 'far-chunk', 'lineage', 'mutation', 'canonical-export']
-  })
+  entry({ id: 'first-weave', name: 'First Weave', description: 'Immediate four-material composition using a uniform drift, vortex, colour LUT, and behaviour LUT.', recipe: firstWeave, targetTick: 48, coverage: ['uniform', 'vortex', 'ink', 'filament', 'dust', 'shard', 'lut-color', 'lut-behaviour'] }),
+  entry({ id: 'operator-atlas', name: 'Operator Atlas', description: 'All five deterministic field operators composed in one compact recipe.', recipe: operatorAtlas, targetTick: 40, coverage: ['uniform', 'vortex', 'attractor', 'turbulence', 'direction-quantizer', 'mixed-field-stack'] }),
+  entry({ id: 'timeline-pulse', name: 'Timeline Pulse', description: 'A command-rich score demonstrating intervention replay, freeze/resume, bursts, and parameter edits.', recipe: timelinePulse, targetTick: 44, coverage: ['timeline', 'commands', 'freeze-resume', 'burst', 'lut-behaviour'] }),
+  entry({ id: 'infinite-lineage', name: 'Infinite Lineage', description: 'A far-world crop with deterministic mutation lineage for Infinite Plate framing and provenance.', recipe: infiniteLineage, targetTick: 36, coverage: ['infinite-plate', 'far-chunk', 'lineage', 'mutation', 'canonical-export'] })
 ]);
-
 const PRESET_BY_ID = new Map(BUILTIN_PRESETS.map((preset) => [preset.id, preset]));
-
 export function getBuiltinPreset(id) {
   const preset = PRESET_BY_ID.get(String(id));
   if (!preset) throw new RangeError(`Unknown FIELDWEAVER preset: ${String(id)}.`);
