@@ -2,32 +2,32 @@
   "version": "fw-presets-golden-v1",
   "presets": {
     "first-weave": {
-      "recipeHash": "0000000000000000",
-      "stateHash": "0000000000000000",
-      "depositionHash": "0000000000000000",
-      "resultHash": "0000000000000000",
-      "rawRgbaHash": "0000000000000000"
+      "recipeHash": "bb1a24bc2c9cf0bc",
+      "stateHash": "ea3430305de3d92c",
+      "depositionHash": "e3e937d5b2b713c7",
+      "resultHash": "ae8685e656be3c19",
+      "rawRgbaHash": "8d83d52e732a5825"
     },
     "operator-atlas": {
-      "recipeHash": "0000000000000000",
-      "stateHash": "0000000000000000",
-      "depositionHash": "0000000000000000",
-      "resultHash": "0000000000000000",
-      "rawRgbaHash": "0000000000000000"
+      "recipeHash": "ab6f4e5af5842f3a",
+      "stateHash": "730274d24f4a7438",
+      "depositionHash": "964679d5aacc3fef",
+      "resultHash": "80bf120ced7f2f09",
+      "rawRgbaHash": "a81a48274451ee73"
     },
     "timeline-pulse": {
-      "recipeHash": "0000000000000000",
-      "stateHash": "0000000000000000",
-      "depositionHash": "0000000000000000",
-      "resultHash": "0000000000000000",
-      "rawRgbaHash": "0000000000000000"
+      "recipeHash": "c94aed7bfc18a40d",
+      "stateHash": "61e62cce50a0519b",
+      "depositionHash": "58318fb3b2256715",
+      "resultHash": "3eadd520f967bf60",
+      "rawRgbaHash": "21bacb31376d4c84"
     },
     "infinite-lineage": {
-      "recipeHash": "0000000000000000",
-      "stateHash": "0000000000000000",
-      "depositionHash": "0000000000000000",
-      "resultHash": "0000000000000000",
-      "rawRgbaHash": "0000000000000000"
+      "recipeHash": "de66b6d2160b2011",
+      "stateHash": "3250ac787317ad02",
+      "depositionHash": "a79d8a90914fdb42",
+      "resultHash": "7f343be6ca4c9318",
+      "rawRgbaHash": "2c289570ca01defe"
     }
   }
 }
