@@ -1,9 +1,9 @@
 {
   "name": "fieldweaver",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "private": true,
   "type": "module",
-  "description": "Local-first deterministic generative-art instrument with canonical software raster export and provenance.",
+  "description": "Local-first deterministic generative-art instrument with canonical software raster export and Infinite Plate regional evaluation.",
   "engines": {
     "node": ">=22 <25"
   },
