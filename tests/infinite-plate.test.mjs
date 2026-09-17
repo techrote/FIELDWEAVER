@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
 import { Q16_ONE } from '../src/core/numeric.js';
@@ -29,6 +30,26 @@ function cropAt(center = world(128, 128)) {
 function options(crop = cropAt()) {
   return { targetTick: 12, crop, agentCapacity: 1024, maxDepositions: 100_000, tileWidthPx: 7, tileHeightPx: 5 };
 }
+
+async function readGolden() {
+  return JSON.parse(await readFile(new URL('../fixtures/fw-013-golden.json', import.meta.url), 'utf8'));
+}
+
+test('FW-013 checked-in golden identities lock the deterministic regional oracle', async () => {
+  const golden = await readGolden();
+  const editor = new MutationEditorSession({ agentCapacity: 1024, maxDepositions: 100_000 });
+  const regional = new InfinitePlateEvaluator({ cacheChunks: 8 }).evaluate(editor.currentRecipe(), options());
+  assert.deepEqual({
+    version: regional.version,
+    method: regional.method,
+    targetTick: regional.targetTick,
+    rawRgbaHash: regional.rawRgbaHash,
+    domainHash: regional.domainHash,
+    sourceStateHash: regional.sourceStateHash,
+    regionalDepositionHash: regional.depositionHash,
+    regionalResultHash: regional.resultHash
+  }, golden);
+});
 
 test('regional evaluation matches the FW-012 canonical software export oracle', () => {
   const editor = new MutationEditorSession({ agentCapacity: 1024, maxDepositions: 100_000 });
