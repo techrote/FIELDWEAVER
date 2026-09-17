@@ -1,6 +1,7 @@
 import { Q16_ONE } from '../core/numeric.js';
 import { getActiveRecipeEditorSession } from '../editor/index.js';
 import { createInfinitePlateExport, InfinitePlateEvaluator, PlateEvaluationAbortedError } from '../infinite/index.js';
+import { getActiveWebGL2Renderer } from '../renderer/index.js';
 
 function element(tag, attributes = {}, text = '') {
   const node = document.createElement(tag);
@@ -148,19 +149,31 @@ export function mountInfinitePlatePanel(parent) {
   };
 
   const frameCurrentView = () => {
-    const data = document.documentElement.dataset;
-    if (data.fieldweaverViewChunkX === undefined) throw new Error('Renderer view coordinates are not available yet.');
-    width.value = String(Math.max(1, Math.round(Number(data.fieldweaverViewWidthCssPx ?? 960))));
-    height.value = String(Math.max(1, Math.round(Number(data.fieldweaverViewHeightCssPx ?? 640))));
-    const zoom = Number(data.fieldweaverViewZoom ?? 1);
-    unitsPerPixel.value = String(Math.max(1, Math.round(Q16_ONE / Math.max(0.000001, zoom))));
-    chunkX.value = data.fieldweaverViewChunkX;
-    chunkY.value = data.fieldweaverViewChunkY;
-    localX.value = data.fieldweaverViewLocalX;
-    localY.value = data.fieldweaverViewLocalY;
+    const renderer = getActiveWebGL2Renderer();
+    if (!renderer) throw new Error('Renderer view coordinates are not available yet.');
+    const view = renderer.view;
+    width.value = String(Math.max(1, Math.round(view.widthCssPx)));
+    height.value = String(Math.max(1, Math.round(view.heightCssPx)));
+    unitsPerPixel.value = String(Math.max(1, Math.round(Q16_ONE / Math.max(0.000001, view.zoom))));
+    chunkX.value = String(view.center.chunkX);
+    chunkY.value = String(view.center.chunkY);
+    localX.value = String(view.center.localX);
+    localY.value = String(view.center.localY);
     const editor = getEditor();
     targetTick.value = String(editor.simulation?.tick ?? 0);
     syncFw012Crop();
+  };
+
+  const renderPreview = (depositions) => {
+    const renderer = getActiveWebGL2Renderer();
+    const editor = getEditor();
+    if (!renderer) return;
+    renderer.render({
+      depositions,
+      fieldCollection: editor.fieldCollection,
+      emitters: editor.simulation.emitters,
+      showOverlays: true
+    });
   };
 
   frameView.addEventListener('click', () => {
@@ -178,7 +191,8 @@ export function mountInfinitePlatePanel(parent) {
   });
 
   livePreview.addEventListener('click', () => {
-    window.dispatchEvent(new CustomEvent('fieldweaver:infinite-preview-clear'));
+    const editor = getEditor();
+    renderPreview(editor.simulation.depositions);
     publish('ready', 'Live editor preview restored.');
   });
 
@@ -228,7 +242,7 @@ export function mountInfinitePlatePanel(parent) {
       );
       pngDownload.disabled = false;
       provenanceDownload.disabled = false;
-      window.dispatchEvent(new CustomEvent('fieldweaver:infinite-preview', { detail: { depositions: evaluation.depositions, domainHash: evaluation.domainHash } }));
+      renderPreview(evaluation.depositions);
       publish('ready', `Infinite Plate crop ready: ${evaluation.rawRgbaHash}`);
     } catch (error) {
       if (error instanceof PlateEvaluationAbortedError || controller.signal.aborted) publish('cancelled', 'Evaluation cancelled before publishing a canonical result.');
