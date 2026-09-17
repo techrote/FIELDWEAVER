@@ -1,0 +1,10 @@
+{
+  "version": "fw-infinite-plate-v1",
+  "method": "full-replay-reference-v1",
+  "targetTick": 12,
+  "rawRgbaHash": "0000000000000000",
+  "domainHash": "0000000000000000",
+  "sourceStateHash": "0000000000000000",
+  "regionalDepositionHash": "0000000000000000",
+  "regionalResultHash": "0000000000000000"
+}
