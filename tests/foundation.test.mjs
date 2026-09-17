@@ -2,19 +2,19 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
 import { CANONICAL_ENGINE_VERSION, createFoundationSnapshot, SUBSYSTEM_STATUS } from '../src/core/index.js';
-import { APP_VERSION, INFINITE_PLATE_ISSUE } from '../src/version.js';
+import { APP_VERSION, RELEASE_ISSUE } from '../src/version.js';
 
-test('foundation snapshot reports canonical export and Infinite Plate as ready', () => {
+test('foundation snapshot reports release-ready subsystems', () => {
   const snapshot = createFoundationSnapshot();
 
   assert.equal(snapshot.product, 'FIELDWEAVER');
   assert.equal(snapshot.version, APP_VERSION);
-  assert.equal(snapshot.phase, INFINITE_PLATE_ISSUE);
+  assert.equal(snapshot.phase, RELEASE_ISSUE);
   assert.equal(snapshot.externalNetworkRequired, false);
   assert.equal(snapshot.canonicalMode, CANONICAL_ENGINE_VERSION);
   assert.equal(snapshot.subsystemStatus, SUBSYSTEM_STATUS);
-  assert.equal(snapshot.subsystemStatus.filter((item) => item.state === 'ready').length, 12);
-  for (const id of ['simulation', 'fields', 'agents', 'renderer', 'editor', 'lut', 'recipe', 'timeline', 'mutation', 'export', 'infinite-plate']) {
+  assert.equal(snapshot.subsystemStatus.filter((item) => item.state === 'ready').length, 13);
+  for (const id of ['simulation', 'fields', 'agents', 'renderer', 'editor', 'lut', 'recipe', 'timeline', 'mutation', 'export', 'infinite-plate', 'release']) {
     assert.equal(snapshot.subsystemStatus.find((item) => item.id === id)?.state, 'ready');
   }
   assert(Object.isFrozen(snapshot));
