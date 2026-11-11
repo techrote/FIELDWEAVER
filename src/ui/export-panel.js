@@ -130,6 +130,21 @@ export function mountExportPanel(parent) {
     }
   };
 
+  // A recipe adoption changes the canonical source. Prior prepared downloads
+  // must not remain enabled under a newly selected exhibition work.
+  window.addEventListener('fieldweaver:recipe-adopted', () => {
+    lastExport = null;
+    pngDownload.disabled = true;
+    provenanceDownload.disabled = true;
+    hash.textContent = '—';
+    diagnostics.replaceChildren();
+    delete document.documentElement.dataset.fieldweaverCanonicalExportHash;
+    delete document.documentElement.dataset.fieldweaverCanonicalExportTick;
+    delete document.documentElement.dataset.fieldweaverCanonicalExportPngBytes;
+    delete document.documentElement.dataset.fieldweaverCanonicalExportDepositions;
+    publish('ready', 'Recipe changed; prepare a new canonical export.');
+  });
+
   useFraming.addEventListener('click', () => {
     try {
       applyRecipeFraming();
