@@ -20,8 +20,8 @@ const TARGET_TICK = 164, EARLY_TICK = 30, SAMPLES = 24;
 const parent = getBuiltinPreset(PRESET);
 const CROP = Object.freeze({
   widthPx: 192, heightPx: 144,
-  center: {chunkX: 0, chunkY: 0, localX: 172 * 65536, localY: 128 * 65536},
-  unitsPerPixelQ16: 65536
+  center: {chunkX: 0, chunkY: 0, localX: 122 * 65536, localY: 122 * 65536},
+  unitsPerPixelQ16: 49152
 });
 const OPTIONS = {crop: CROP, targetTick: TARGET_TICK, agentCapacity: 4096,
   maxDepositions: 250000, tileWidthPx: 31, tileHeightPx: 23};
@@ -116,7 +116,7 @@ function build(){
   assert.deepEqual(decodePngRgba(sheet.png).rgba,sheet.rgba);
   const manifest={
     version:'fw-variant-atlas-v1',
-    title:'The Faulted Confluence — four channels after the crossing',
+    title:'Faulted Confluence — double-generation field displacement',
     sourceMainCommit:SOURCE_MAIN,
     parent:{presetId:PRESET,recipeHash:parent.recipeHash,rawRgbaHash:parentProof.rawRgbaHash},
     mutationVersion:'fw-mutation-v1',mutationSeed:ROOT_SEED,
@@ -151,7 +151,7 @@ function build(){
     '',
     'SOURCE: exact accepted main '+SOURCE_MAIN+'. Parent: '+PRESET+' '+PARENT_HASH+'.',
     'MUTATION: bridge seed '+(ROOT_SEED^0x418b322b)+' followed by child seed '+ROOT_SEED+'. Each bridge and final mutation is fully reproducible by recorded sibling index, scope, intensity and operation count.',
-    'FW-012 CPU canonical requested at tick '+TARGET_TICK+', early tick '+EARLY_TICK+', 192x144 crop centred (172,128) in chunk (0,0), 1 world unit/pixel.',
+    'FW-012 CPU canonical requested at tick '+TARGET_TICK+', early tick '+EARLY_TICK+', 192x144 crop centred (122,122) in chunk (0,0), 0.75 world units/pixel.',
     'All twenty-four candidates are generated at identical canonical bounds. Finalists must differ by occupied-pixel morphology rather than colour alone. Each final recipe retains exact immediate-parent FW-011 lineage; the selected bridge recipe separately closes the ancestry to the admitted Operator Atlas parent.',
     '',
     '## Qualification',
@@ -160,7 +160,7 @@ function build(){
     '',
     'Run npm run verify or node --test gallery/variants/05-faulted-confluence/atlas.test.mjs.',
     ''
-  ].join('\\n');
+  ].join('\n');
   const files=[
     file('README.md',note),file('atlas.manifest.json',JSON.stringify(manifest,null,2)+'\n'),
     file('parent.png',parentProof.png),file('atlas.png',sheet.png),
