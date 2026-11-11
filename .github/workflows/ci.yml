@@ -150,6 +150,8 @@ jobs:
             release-exhibition-${{ matrix.browser }}.png
             release-exhibition-inspector-${{ matrix.browser }}.png
             release-exhibition-recipe-${{ matrix.browser }}.png
+            release-exhibition-recipe-download-${{ matrix.browser }}.json
+            release-exhibition-recipe-download-${{ matrix.browser }}.fwrecipe.json
             gallery-review-smoke-${{ matrix.browser }}.log
             gallery-review-smoke-${{ matrix.browser }}.png
             gpu-research-smoke-${{ matrix.browser }}.log
