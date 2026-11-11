@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 import { parseRecipe, serializeRecipe, recipeHash, replayRecipeToTick } from '../../../src/recipe/index.js';
 import { createCanonicalExport, decodePngRgba, rawRgbaHash } from '../../../src/export/index.js';
-export const ART_ID='05-the-unmoored-kite',SEED=432525989,TICK=160,EXPECTED_RECIPE_HASH='67d01a98bb1b3ba3';
+export const ART_ID='05-the-unmoored-kite',SEED=432525989,TICK=160,EXPECTED_RECIPE_HASH='4da3820eb1f7139d';
 export async function qualify({write=false}={}){
  const text=await readFile(new URL('./recipe.json',import.meta.url),'utf8'),recipe=parseRecipe(text);
  assert.equal(serializeRecipe(recipe),text,'serialized recipe not normalized');

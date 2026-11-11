@@ -193,29 +193,29 @@
     {
       "id": 1,
       "kind": "ink",
-      "inertiaNumerator": 3,
-      "inertiaDenominator": 4,
+      "inertiaNumerator": 1,
+      "inertiaDenominator": 1,
       "steeringNumerator": 1,
-      "steeringDenominator": 2,
+      "steeringDenominator": 12,
       "lifetimeTicks": 94,
       "depositEvery": 1,
       "primitive": "disc",
-      "radiusQ16": 13900,
-      "strengthQ16": 59000,
+      "radiusQ16": 24000,
+      "strengthQ16": 65536,
       "quantizeAxis": false
     },
     {
       "id": 2,
       "kind": "filament",
-      "inertiaNumerator": 7,
-      "inertiaDenominator": 8,
+      "inertiaNumerator": 1,
+      "inertiaDenominator": 1,
       "steeringNumerator": 1,
-      "steeringDenominator": 4,
+      "steeringDenominator": 16,
       "lifetimeTicks": 119,
       "depositEvery": 1,
       "primitive": "segment",
-      "radiusQ16": 8700,
-      "strengthQ16": 62000,
+      "radiusQ16": 26000,
+      "strengthQ16": 65536,
       "quantizeAxis": false
     },
     {
@@ -236,14 +236,14 @@
       "id": 4,
       "kind": "shard",
       "inertiaNumerator": 1,
-      "inertiaDenominator": 2,
+      "inertiaDenominator": 1,
       "steeringNumerator": 1,
-      "steeringDenominator": 1,
+      "steeringDenominator": 9,
       "lifetimeTicks": 63,
       "depositEvery": 1,
       "primitive": "segment",
-      "radiusQ16": 11000,
-      "strengthQ16": 59000,
+      "radiusQ16": 22000,
+      "strengthQ16": 65000,
       "quantizeAxis": true
     }
   ],
@@ -254,7 +254,7 @@
       "startTick": 0,
       "stopTick": 13,
       "intervalTicks": 2,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -277,7 +277,7 @@
       "startTick": 6,
       "stopTick": 14,
       "intervalTicks": 3,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -300,7 +300,7 @@
       "startTick": 3,
       "stopTick": 16,
       "intervalTicks": 2,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -323,7 +323,7 @@
       "startTick": 9,
       "stopTick": 17,
       "intervalTicks": 3,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -346,7 +346,7 @@
       "startTick": 6,
       "stopTick": 19,
       "intervalTicks": 2,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -369,7 +369,7 @@
       "startTick": 12,
       "stopTick": 20,
       "intervalTicks": 3,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -392,7 +392,7 @@
       "startTick": 9,
       "stopTick": 22,
       "intervalTicks": 2,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -415,7 +415,7 @@
       "startTick": 15,
       "stopTick": 23,
       "intervalTicks": 3,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -438,7 +438,7 @@
       "startTick": 17,
       "stopTick": 22,
       "intervalTicks": 3,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -461,7 +461,7 @@
       "startTick": 25,
       "stopTick": 30,
       "intervalTicks": 3,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -484,7 +484,7 @@
       "startTick": 20,
       "stopTick": 25,
       "intervalTicks": 3,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -507,7 +507,7 @@
       "startTick": 23,
       "stopTick": 28,
       "intervalTicks": 3,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -530,7 +530,7 @@
       "startTick": 33,
       "stopTick": 38,
       "intervalTicks": 3,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -553,7 +553,7 @@
       "startTick": 26,
       "stopTick": 31,
       "intervalTicks": 3,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -576,7 +576,7 @@
       "startTick": 29,
       "stopTick": 34,
       "intervalTicks": 3,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -599,7 +599,7 @@
       "startTick": 41,
       "stopTick": 46,
       "intervalTicks": 3,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -622,7 +622,7 @@
       "startTick": 32,
       "stopTick": 37,
       "intervalTicks": 3,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -645,7 +645,7 @@
       "startTick": 12,
       "stopTick": 26,
       "intervalTicks": 2,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -668,7 +668,7 @@
       "startTick": 24,
       "stopTick": 33,
       "intervalTicks": 2,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -691,7 +691,7 @@
       "startTick": 39,
       "stopTick": 45,
       "intervalTicks": 2,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -714,7 +714,7 @@
       "startTick": 35,
       "stopTick": 42,
       "intervalTicks": 2,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -737,7 +737,7 @@
       "startTick": 67,
       "stopTick": 72,
       "intervalTicks": 2,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -783,7 +783,7 @@
       "startTick": 83,
       "stopTick": 88,
       "intervalTicks": 2,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -829,7 +829,7 @@
       "startTick": 99,
       "stopTick": 104,
       "intervalTicks": 2,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
