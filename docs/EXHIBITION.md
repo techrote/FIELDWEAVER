@@ -22,7 +22,7 @@ The gallery currently enumerates **only the four immutable built-in release pres
 
 **Browser CSP:** gallery PNGs are local `blob:` object URLs produced from actual canonical export bytes. both `index.html` and the local server's HTTP security header explicitly permit `blob:` in **image sources only**; remote resources, scripts, navigation and telemetry remain disallowed. Browser smoke verifies nonzero decoded 96×64 PNG dimensions, not merely image visibility flags or matching hashes.
 
-**Accessibility:** native buttons/select, visible focus outlines, aria-pressed single selection, described selection metadata, and live status; no auto-playing animation or network activity.
+**Accessibility:** native buttons/select, visible focus outlines, aria-pressed single selection, described selection metadata, and live status; no auto-playing animation or network activity. The Chrome/Firefox accepted-recipe handoff regression additionally checks native keyboard selection and download at a narrow viewport, verifies a second accepted recipe was saved rather than stale previous-selection bytes, and preserves the editor identity. Physical owner operation remains a separate check.
 
 **Limitations:** proof generation runs on the main thread after one animation frame so it is synchronous canonical replay, not a continuously updating live thumbnail. The small 96×64 raster is a validation preview; users can increase output resolution through canonical export, but changing the crop or scale produces a different canonical pixel hash. No gallery screenshot or aesthetics claim is made without browser rendering evidence.
 
