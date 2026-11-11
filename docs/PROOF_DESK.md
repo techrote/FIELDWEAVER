@@ -30,4 +30,4 @@ A successful receipt check produces an **actual regenerated canonical PNG** and 
 
 `tests/proof-desk.test.mjs` replays an accepted golden work through two different raster tile dimensions, checks provenance and optional native PNG, and rejects altered hashes, forged fields, oversized crops/ticks and corrupt PNGs. `npm run verify` includes these tests. The dedicated browser smoke exercises upload/replay/image decoding and invalidation in real Firefox and Chrome via `scripts/proof-desk-browser-smoke.mjs` when browser drivers are available.
 
-The new page deliberately does not modify simulation, recipe schema, GPU preview, existing export, accepted artwork assets, or the pending two-up comparison in PR #39.
+The new page deliberately does not modify simulation, recipe schema, GPU preview, existing export, accepted artwork assets, or the pinned two-up comparison of accepted works.
