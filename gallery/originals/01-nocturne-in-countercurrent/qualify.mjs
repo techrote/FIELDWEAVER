@@ -49,6 +49,15 @@ export async function qualifyArtwork({ write = false } = {}) {
   assert.deepEqual(first.rgba, second.rgba, 'full pixel buffer differs across tile shapes');
   assert(first.depositionCount > 100, 'composition generated too few depositions');
 
+  // TEMPORARY CI image transport; remove immediately after exact canonical PNG is archived.
+  const printablePng = Buffer.from(first.png).toString('base64');
+  const chunkSize = 8000;
+  const numberOfChunks = Math.ceil(printablePng.length / chunkSize);
+  console.log('FW_ORIGINAL_PNG_BASE64_PARTS:' + numberOfChunks);
+  for (let i = 0; i < numberOfChunks; i++) {
+    console.log('FW_ORIGINAL_PNG_BASE64_' + String(i).padStart(4, '0') + ':' + printablePng.slice(i * chunkSize, (i + 1) * chunkSize));
+  }
+
   const decoded = decodePngRgba(first.png);
   assert.equal(decoded.widthPx, recipe.framing.widthPx);
   assert.equal(decoded.heightPx, recipe.framing.heightPx);
