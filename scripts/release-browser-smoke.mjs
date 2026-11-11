@@ -110,7 +110,44 @@ try {
   const afterStamp = await snapshot();
   if (!afterStamp.canonicalHash || afterStamp.canonicalHash === beforeStamp) throw new Error('Keyboard canvas stamp did not perform a canonical authoring edit.');
 
-  const evidence = { browser, initial, loaded, afterStamp, driverLog: driverLog.slice(-3000) };
+  // Exhibit exactly the accepted recipe, not the edited working canvas or WebGL pixels.
+  await execute(`
+    document.querySelector('[data-exhibition-id="first-weave"]').click();
+    document.querySelector('#exhibition-render').click();
+  `);
+  let exhibition = null;
+  const exhibitionDeadline = Date.now() + 15_000;
+  while (Date.now() < exhibitionDeadline) {
+    exhibition = await execute(`
+      const root = document.documentElement;
+      return {
+        selected: root.dataset.fieldweaverPresetId,
+        hash: root.dataset.fieldweaverExhibitionProofHash ?? '',
+        imageReady: !document.querySelector('#exhibition-preview').hidden,
+        pngEnabled: !document.querySelector('#exhibition-download-png').disabled,
+        status: document.querySelector('#preset-status').textContent
+      };
+    `);
+    if (exhibition.hash || exhibition.status.includes('failed')) break;
+    await sleep(200);
+  }
+  if (exhibition?.selected !== 'first-weave' || exhibition.hash !== '8d83d52e732a5825' || !exhibition.imageReady || !exhibition.pngEnabled) {
+    throw new Error(`Exhibition did not render canonical golden PNG: ${JSON.stringify(exhibition)}`);
+  }
+  const moved = await execute(`
+    document.querySelector('#exhibition-next').click();
+    return {
+      selected: document.documentElement.dataset.fieldweaverPresetId,
+      hash: document.documentElement.dataset.fieldweaverExhibitionProofHash,
+      pngDisabled: document.querySelector('#exhibition-download-png').disabled,
+      pressed: [...document.querySelectorAll('.exhibition-card[aria-pressed="true"]')].map((node) => node.dataset.exhibitionId)
+    };
+  `);
+  if (moved.selected !== 'operator-atlas' || moved.hash || !moved.pngDisabled || moved.pressed.join(',') !== 'operator-atlas') {
+    throw new Error(`Exhibition navigation retained stale canonical proof: ${JSON.stringify(moved)}`);
+  }
+
+  const evidence = { browser, initial, loaded, afterStamp, exhibition, moved, driverLog: driverLog.slice(-3000) };
   await writeFile(evidencePath, `${JSON.stringify(evidence, null, 2)}\n`);
   console.log(JSON.stringify({ browser, preset: loaded.presetId, presetHash: loaded.presetHash, keyboardStampHash: afterStamp.canonicalHash, releaseDiagnostics: afterStamp.releaseDiagnostics }, null, 2));
 } finally {
