@@ -44,7 +44,7 @@
         },
         "parameters": {
           "vectorXQ16": 0,
-          "vectorYQ16": -7000
+          "vectorYQ16": -24800
         },
         "chunks": []
       },
@@ -244,7 +244,7 @@
         "heightQ16": 91750
       },
       "velocityXQ16": -4200,
-      "velocityYQ16": -73000,
+      "velocityYQ16": -105000,
       "velocityJitterQ16": 1200
     },
     {
@@ -267,7 +267,7 @@
         "heightQ16": 91750
       },
       "velocityXQ16": -2800,
-      "velocityYQ16": -73000,
+      "velocityYQ16": -105000,
       "velocityJitterQ16": 1200
     },
     {
@@ -290,7 +290,7 @@
         "heightQ16": 91750
       },
       "velocityXQ16": -1400,
-      "velocityYQ16": -73000,
+      "velocityYQ16": -105000,
       "velocityJitterQ16": 1200
     },
     {
@@ -313,7 +313,7 @@
         "heightQ16": 91750
       },
       "velocityXQ16": 0,
-      "velocityYQ16": -73000,
+      "velocityYQ16": -105000,
       "velocityJitterQ16": 1200
     },
     {
@@ -336,7 +336,7 @@
         "heightQ16": 91750
       },
       "velocityXQ16": 1400,
-      "velocityYQ16": -73000,
+      "velocityYQ16": -105000,
       "velocityJitterQ16": 1200
     },
     {
@@ -359,7 +359,7 @@
         "heightQ16": 91750
       },
       "velocityXQ16": 2800,
-      "velocityYQ16": -73000,
+      "velocityYQ16": -105000,
       "velocityJitterQ16": 1200
     },
     {
@@ -382,7 +382,7 @@
         "heightQ16": 91750
       },
       "velocityXQ16": 4200,
-      "velocityYQ16": -73000,
+      "velocityYQ16": -105000,
       "velocityJitterQ16": 1200
     },
     {
@@ -405,7 +405,7 @@
         "heightQ16": 91750
       },
       "velocityXQ16": 5600,
-      "velocityYQ16": -73000,
+      "velocityYQ16": -105000,
       "velocityJitterQ16": 1200
     },
     {
@@ -428,7 +428,7 @@
         "heightQ16": 91750
       },
       "velocityXQ16": -3000,
-      "velocityYQ16": -69000,
+      "velocityYQ16": -94000,
       "velocityJitterQ16": 3500
     },
     {
@@ -451,7 +451,7 @@
         "heightQ16": 91750
       },
       "velocityXQ16": 3000,
-      "velocityYQ16": -69000,
+      "velocityYQ16": -94000,
       "velocityJitterQ16": 3500
     },
     {
@@ -474,7 +474,7 @@
         "heightQ16": 91750
       },
       "velocityXQ16": -3000,
-      "velocityYQ16": -69000,
+      "velocityYQ16": -94000,
       "velocityJitterQ16": 3500
     },
     {
@@ -497,16 +497,16 @@
         "heightQ16": 91750
       },
       "velocityXQ16": 3000,
-      "velocityYQ16": -69000,
+      "velocityYQ16": -94000,
       "velocityJitterQ16": 3500
     },
     {
       "id": 13,
       "materialId": 3,
       "startTick": 44,
-      "stopTick": 128,
+      "stopTick": 139,
       "intervalTicks": 3,
-      "rate": 2,
+      "rate": 4,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -527,9 +527,9 @@
       "id": 14,
       "materialId": 3,
       "startTick": 54,
-      "stopTick": 132,
+      "stopTick": 139,
       "intervalTicks": 3,
-      "rate": 2,
+      "rate": 4,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -552,21 +552,21 @@
       "startTick": 93,
       "stopTick": 145,
       "intervalTicks": 2,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
         "origin": {
           "chunkX": 0,
           "chunkY": 0,
-          "localX": 1572864,
-          "localY": 4915200
+          "localX": 1966080,
+          "localY": 8716288
         },
         "widthQ16": 104858,
         "heightQ16": 91750
       },
-      "velocityXQ16": 77000,
-      "velocityYQ16": 2400,
+      "velocityXQ16": 61000,
+      "velocityYQ16": -8000,
       "velocityJitterQ16": 2200
     },
     {
@@ -575,21 +575,21 @@
       "startTick": 82,
       "stopTick": 149,
       "intervalTicks": 2,
-      "rate": 1,
+      "rate": 2,
       "bursts": [],
       "geometry": {
         "type": "box",
         "origin": {
           "chunkX": 0,
           "chunkY": 0,
-          "localX": 14680064,
-          "localY": 10616832
+          "localX": 14548992,
+          "localY": 8716288
         },
         "widthQ16": 104858,
         "heightQ16": 91750
       },
-      "velocityXQ16": -74000,
-      "velocityYQ16": -1800,
+      "velocityXQ16": -61000,
+      "velocityYQ16": -8000,
       "velocityJitterQ16": 2200
     }
   ],
