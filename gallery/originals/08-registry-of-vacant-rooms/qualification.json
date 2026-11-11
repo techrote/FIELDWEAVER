@@ -1,0 +1,24 @@
+{
+  "artwork": "08-registry-of-vacant-rooms",
+  "seed": 1839365913,
+  "recipeHash": "3a2c43dd7f49d9aa",
+  "targetTick": 162,
+  "crop": {
+    "widthPx": 432,
+    "heightPx": 304,
+    "center": {
+      "chunkX": 0,
+      "chunkY": 0,
+      "localX": 10289152,
+      "localY": 8192000
+    },
+    "unitsPerPixelQ16": 49807
+  },
+  "emitters": 118,
+  "occupiedPixels": 8452,
+  "depositionCount": 11059,
+  "rawRgbaHash": "56286fc4c1a47bb8",
+  "stateHash": "6570a3a9701a96ee",
+  "depositionHash": "049bdf31300411f8",
+  "resultHash": "ededfccadff3acae"
+}
