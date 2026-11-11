@@ -19,3 +19,21 @@ Load `selected.recipe.json` in FIELDWEAVER. `selected-bridge.recipe.json` suppli
 The manifest includes all 18 configs, recipe and raw RGBA identities, parent silhouette XOR, spatial coverage, selected early/late difference and both mutation generations. Five finalists have separate decoded identities and at least 120 pixels of pairwise silhouette difference, so colour-only substitutions do not count.
 
 Run `npm run verify`, or `node --test gallery/variants/06-unwound-metronome/atlas.test.mjs`. Its self-contained regeneration checks exact committed asset bytes, selected recipe import/export, ancestry, replay and alternate raster tiling. No shared engine, UI, original-art, catalog or other worker files have been modified. Draft for Integration and human aesthetic acceptance.
+
+## Independent admission shortlist — 11 November 2026
+
+**Recommend this existing specimen for first owner/Integration review, not automatic admission.** I reopened the actual archived canonical CPU PNGs: this family's accepted parent, selected sibling 17 and all five finalists; the competing selections in mutation Drafts #62 (including its parent and finalists 00/11/13), #58, #55, #48 and #38. These are source-image observations, not photographs of the live editor or physical Firefox acceptance.
+
+Sibling 17 is the only finalist here with a substantial continuous **folded cyan basin**: closely spaced inner arcs descend, flatten across the bottom, then rise to the right. That coherent, broad silhouette is visibly more developed than the accepted Timeline Pulse parent's descending diagonal; the pinned same-crop parent-mask XOR is **3,561**. The other finalists either retain a short descending strand, break into separate scraps or evacuate the central region. The inherited clipped violet left register is an artistic liability, not evidence of new structure.
+
+The competing #62 selected sibling 01 preserves the parent's combination of an upright violet mark, descending cyan trace and short rainbow ribbon in nearly the same arrangement; despite its nontrivial within-crop mask difference, it reads less independent than this basin. #58 has a stronger arch but repeats the violet terminal vocabulary. #55 is a dramatically simpler cyan hook; #48 is a short lateral carrier, and #38 a more compact broken orbit. **Prioritize #50 for a single human admit/reject decision; defer #62 and #58 as potentially overlapping gestures.** Do not merge the alternatives simply because their hashes differ. The compared works have different crops and ticks, so no cross-PR mask-XOR claim is made.
+
+**Fast physical review from current `main`** (leave this Draft unmerged and preserve separate worktrees):
+
+```sh
+git fetch origin pull/50/head:refs/heads/review/pr50
+git worktree add ../FIELDWEAVER-pr50 review/pr50
+node scripts/review-gallery.mjs --out fw-unwound-review.html --preset timeline-pulse --preset operator-atlas --provenance ../FIELDWEAVER-pr50/gallery/variants/06-unwound-metronome/selected.provenance.json
+```
+
+Open `fw-unwound-review.html` in Firefox for accepted-versus-proposed source-pinned comparison. The already committed `atlas.png` gives the parent and five real same-tick finalists; inspect `selected.png` at native pixels. Then import `selected.recipe.json` in the live editor, replay **tick 148** at the exact declared crop, and compare with `selected.png`/`selected.provenance.json`. This final physical import/export and aesthetic judgement are **still pending**. Integration's next action is **admit or reject #50 after that one browser check**, not commission more mutations.
