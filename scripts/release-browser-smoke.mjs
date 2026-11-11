@@ -1,5 +1,7 @@
 import { spawn, spawnSync } from 'node:child_process';
 import { writeFile } from 'node:fs/promises';
+import { getBuiltinPreset } from '../src/presets/index.js';
+import { parseRecipe, recipeHash, serializeRecipe } from '../src/recipe/index.js';
 
 const browser = process.argv[2];
 if (!['chrome', 'firefox'].includes(browser)) throw new Error('Usage: node scripts/release-browser-smoke.mjs <chrome|firefox>');
@@ -88,6 +90,60 @@ try {
   if (initial.presetOptions !== 4) throw new Error(`Expected four curated presets, found ${initial.presetOptions}.`);
   if (initial.canvasRole !== 'region' || !initial.canvasDescribedBy || initial.fieldRole !== 'group' || initial.badFieldRoles !== 0) throw new Error(`Accessibility normalization failed: ${JSON.stringify(initial)}`);
   if (!initial.releaseDiagnostics.some((line) => line.includes('Mode boundary: canonical CPU'))) throw new Error(`Release diagnostics lack canonical/noncanonical boundary: ${JSON.stringify(initial.releaseDiagnostics)}`);
+
+  // Actual browser click; capture the generated local JSON Blob before the
+  // browser's download manager takes over. This does NOT claim OS persistence.
+  const editorBeforeHandoff = (await snapshot()).canonicalHash;
+  await execute(`
+    window.__fwRecipeHandoff = { filename: '', text: null };
+    const originalCreate = URL.createObjectURL;
+    const originalClick = HTMLAnchorElement.prototype.click;
+    URL.createObjectURL = function(blob) {
+      if (blob.type === 'application/json') {
+        void blob.text().then((text) => { window.__fwRecipeHandoff.text = text; });
+      }
+      return originalCreate.call(URL, blob);
+    };
+    HTMLAnchorElement.prototype.click = function() {
+      if (this.download.endsWith('.fwrecipe.json')) {
+        window.__fwRecipeHandoff.filename = this.download;
+        return; // Intercept only the test's recipe file download.
+      }
+      return originalClick.call(this);
+    };
+    document.querySelector('[data-exhibition-id="first-weave"]').click();
+    document.querySelector('#exhibition-download-recipe').click();
+    URL.createObjectURL = originalCreate;
+    HTMLAnchorElement.prototype.click = originalClick;
+  `);
+  let recipeHandoff;
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    recipeHandoff = await execute(`
+      return {
+        filename: window.__fwRecipeHandoff?.filename ?? '',
+        text: window.__fwRecipeHandoff?.text ?? null,
+        status: document.querySelector('#preset-status').textContent,
+        proofPending: document.querySelector('#exhibition-download-png').disabled
+      };
+    `);
+    if (recipeHandoff?.text) break;
+    await sleep(50);
+  }
+  const accepted = getBuiltinPreset('first-weave');
+  if (!recipeHandoff?.text ||
+      recipeHandoff.filename !== 'fieldweaver-first-weave-' + accepted.recipeHash + '.fwrecipe.json' ||
+      recipeHandoff.text !== serializeRecipe(accepted.recipe) ||
+      recipeHash(parseRecipe(recipeHandoff.text)) !== accepted.recipeHash ||
+      !recipeHandoff.proofPending ||
+      !recipeHandoff.status.includes('editor unchanged') ||
+      (await snapshot()).canonicalHash !== editorBeforeHandoff) {
+    throw new Error('Gallery recipe download did not preserve the importable accepted identity or live work: ' +
+      JSON.stringify({ filename: recipeHandoff?.filename, status: recipeHandoff?.status, proofPending: recipeHandoff?.proofPending }));
+  }
+  await execute(`document.querySelector('#exhibition-download-recipe').scrollIntoView({ block: 'center' });`);
+  const recipeCapture = await request('GET', `/session/${sessionId}/screenshot`);
+  if (!recipeCapture?.value) throw new Error('Browser did not return gallery recipe handoff screenshot.');
+  await writeFile('release-exhibition-recipe-' + browser + '.png', Buffer.from(recipeCapture.value, 'base64'));
 
   await execute(`
     const select = document.querySelector('#preset-select');
@@ -288,7 +344,7 @@ try {
     throw new Error(`Clearing A retained stale comparison artifacts: ${JSON.stringify(cleared)}`);
   }
 
-  const evidence = { browser, initial, loaded, afterStamp, exhibition, pinned, moved, compared, decoded, inspected, invalidated, cleared, driverLog: driverLog.slice(-3000) };
+  const evidence = { browser, initial, recipeHandoff: { filename: recipeHandoff.filename, recipeHash: accepted.recipeHash, browserBlobVerified: true, editorPreserved: true }, loaded, afterStamp, exhibition, pinned, moved, compared, decoded, inspected, invalidated, cleared, driverLog: driverLog.slice(-3000) };
   await writeFile(evidencePath, `${JSON.stringify(evidence, null, 2)}\n`);
   console.log(JSON.stringify({ browser, preset: loaded.presetId, presetHash: loaded.presetHash, keyboardStampHash: afterStamp.canonicalHash, releaseDiagnostics: afterStamp.releaseDiagnostics }, null, 2));
 } finally {
