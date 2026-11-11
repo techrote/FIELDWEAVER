@@ -100,18 +100,39 @@ try {
     });
     await request('DELETE', '/session/' + sessionId + '/actions');
   };
-  const readSaved = async (name) => {
+  const readSaved = async (name, validBytes) => {
+    // Firefox may expose the destination file before it has finished writing.
+    // Wait for a *complete parseable and identity-checked* file, not existence.
+    let last = 'not created';
     for (let n = 0; n < 100; n++) {
-      try { return await readFile(join(downloadDir, name)); } catch { await sleep(100); }
+      try {
+        const bytes = await readFile(join(downloadDir, name));
+        if (validBytes(bytes)) return bytes;
+        last = 'incomplete or invalid (' + bytes.length + ' bytes)';
+      } catch (error) { last = error?.message ?? String(error); }
+      await sleep(100);
     }
-    throw new Error('Browser did not save study download: ' + name);
+    throw new Error('Browser did not finish verified study download ' + name + ': ' + last);
   };
   const pngName = 'fieldweaver-timeline-pulse-' + selectedHash + '.png';
   const recipeName = 'fieldweaver-timeline-pulse-' + selectedEntry.recipeHash + '.fwrecipe.json';
   await saveByKeyboard('exhibition-study-save-png');
-  const savedPng = decodePngRgba(new Uint8Array(await readSaved(pngName)));
+  const pngBytes = await readSaved(pngName, (bytes) => {
+    try {
+      const decoded = decodePngRgba(new Uint8Array(bytes));
+      return decoded.widthPx === 96 && decoded.heightPx === 64 &&
+        rawRgbaHash(decoded.rgba) === selectedHash;
+    } catch { return false; }
+  });
+  const savedPng = decodePngRgba(new Uint8Array(pngBytes));
   await saveByKeyboard('exhibition-study-save-recipe');
-  const studySavedRecipe = parseRecipe((await readSaved(recipeName)).toString('utf8'));
+  const recipeBytes = await readSaved(recipeName, (bytes) => {
+    try {
+      const recipe = parseRecipe(bytes.toString('utf8'));
+      return recipeHash(recipe) === selectedEntry.recipeHash && recipe.seed === selectedEntry.seed;
+    } catch { return false; }
+  });
+  const studySavedRecipe = parseRecipe(recipeBytes.toString('utf8'));
   const editorAfterDirectExport = await execute("return {hash:document.documentElement.dataset.fieldweaverCanonicalRecipeHash,selected:document.getElementById('preset-select').value,open:document.getElementById('exhibition-study-dialog').open,status:document.getElementById('exhibition-study-status').textContent}");
   if (savedPng.widthPx !== 96 || savedPng.heightPx !== 64 ||
       rawRgbaHash(savedPng.rgba) !== selectedHash ||
