@@ -70,8 +70,11 @@ export function mountExhibitionStudy(panel) {
   const indexStatus = panel.querySelector('#exhibition-index-status');
   const indexRender = panel.querySelector('#exhibition-index-render');
   const indexCancel = panel.querySelector('#exhibition-index-cancel');
+  const saveBoard = panel.querySelector('#exhibition-board-save');
+  const boardStatus = panel.querySelector('#exhibition-board-status');
   const select = panel.querySelector('#preset-select');
-  if (!grid || !controls || !indexStatus || !indexRender || !indexCancel || !select) {
+  if (!grid || !controls || !indexStatus || !indexRender || !indexCancel ||
+      !saveBoard || !boardStatus || !select) {
     throw new Error('The accepted canonical visual index must mount first.');
   }
   const entries = exhibitionEntries();
@@ -96,7 +99,9 @@ export function mountExhibitionStudy(panel) {
   const load = make('button', { id: 'exhibition-study-load', type: 'button', class: 'button' }, 'Load selected into editor');
   const inspect = make('button', { id: 'exhibition-study-pixel-toggle', type: 'button',
   class: 'button', 'aria-expanded': 'false', 'aria-controls': 'exhibition-study-pixel-desk' }, 'Inspect exact pixels');
-toolbar.append(back, forward, pin, unpin, load, inspect);
+  const exportBoard = make('button', { id: 'exhibition-study-save-board', type: 'button', class: 'button' },
+    'Save accepted board (HTML)');
+  toolbar.append(back, forward, pin, unpin, load, inspect, exportBoard);
   const description = make('p', { class: 'workspace-note', id: 'exhibition-study-help' },
     'Left/Right: browse when outside images · P: pin A · Tab to image, Enter: inspect centre, arrows: move one source pixel, Shift+arrows: move ten · Escape: close. Canonical CPU only.');
   const gallery = make('div', { class: 'exhibition-study-frames', role: 'group',
@@ -329,6 +334,13 @@ toolbar.append(back, forward, pin, unpin, load, inspect);
     paint();
     if (pixelOpen) void updatePixel();
   }
+  function pinCurrent() {
+    if (pinnedId === currentId) return;
+    pinnedId = currentId;
+    paint();
+    // Keyboard P must invalidate the old A reading just like the visible button.
+    if (pixelOpen) void updatePixel(true);
+  }
   const updateLaunch = () => { launch.disabled = !snapshot(); };
   const observer = new MutationObserver(updateLaunch);
   observer.observe(indexStatus, { childList: true, characterData: true, subtree: true });
@@ -343,9 +355,19 @@ toolbar.append(back, forward, pin, unpin, load, inspect);
   });
   back.addEventListener('click', () => move(-1));
   forward.addEventListener('click', () => move(1));
-  pin.addEventListener('click', () => { pinnedId = currentId; paint(); if (pixelOpen) void updatePixel(true); });
+  pin.addEventListener('click', pinCurrent);
   unpin.addEventListener('click', () => { pinnedId = null; paint(); if (pixelOpen) void updatePixel(true); });
   closeButton.addEventListener('click', close);
+  exportBoard.addEventListener('click', () => {
+    if (!snapshot() || saveBoard.disabled) {
+      announce.textContent = 'Offline export unavailable; regenerate four verified accepted CPU proofs.';
+      return;
+    }
+    // Reuse the accepted source-verified offline board; retain inspected pixels
+    // and the A/B composition. No new gallery, renderer or recipe adoption.
+    saveBoard.click();
+    announce.textContent = boardStatus.textContent || 'Accepted board export requested.';
+  });
   dialog.addEventListener('close', clearImages);
   dialog.addEventListener('keydown', (event) => {
     if (event.ctrlKey || event.altKey || event.metaKey) return;
@@ -353,7 +375,7 @@ toolbar.append(back, forward, pin, unpin, load, inspect);
     if (event.key === 'ArrowRight') { event.preventDefault(); move(1); }
     if (event.key === 'ArrowLeft') { event.preventDefault(); move(-1); }
     if (event.key.toLowerCase() === 'p' && event.target.tagName !== 'INPUT') {
-      event.preventDefault(); pinnedId = currentId; paint();
+      event.preventDefault(); pinCurrent();
     }
   });
   load.addEventListener('click', () => {
