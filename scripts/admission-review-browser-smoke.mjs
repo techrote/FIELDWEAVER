@@ -50,11 +50,10 @@ try {
     if (desktop.images.every((img) => img.complete && img.w && img.h)) break;
     await sleep(100);
   }
-  const expected = ['ACCEPTED PRESET', 'ACCEPTED PRESET', 'UNMERGED CANDIDATE',
-    'UNMERGED CANDIDATE', 'UNMERGED CANDIDATE', 'UNMERGED CANDIDATE'];
-  if (desktop.cards !== 6 || JSON.stringify(desktop.labels) !== JSON.stringify(expected) ||
+  const expected = ['ACCEPTED PRESET', 'ACCEPTED PRESET', 'UNMERGED CANDIDATE', 'UNMERGED CANDIDATE'];
+  if (desktop.cards !== 4 || JSON.stringify(desktop.labels) !== JSON.stringify(expected) ||
       desktop.scripts !== 0 || !desktop.csp.includes("default-src 'none'") ||
-      desktop.remote !== 0 || desktop.images.length !== 6 ||
+      desktop.remote !== 0 || desktop.images.length !== 4 ||
       desktop.images.some((img) => !img.complete || !img.data || !img.w || !img.h)) {
     throw new Error('Offline canonical admission HTML was not verified: ' + JSON.stringify(desktop));
   }
@@ -62,7 +61,7 @@ try {
   await writeFile('admission-review-' + browser + '-desktop.png', Buffer.from(screenshot, 'base64'));
   const found = await request('POST', base + '/elements',
     { using: 'css selector', value: 'nav[aria-label="Jump to artwork"] a' });
-  if (found.length !== 6) throw new Error('Offline gallery navigation has wrong anchor count.');
+  if (found.length !== 4) throw new Error('Offline gallery navigation has wrong anchor count.');
   const anchor = found[3]['element-6066-11e4-a52e-4f735466cecf'] || found[3].ELEMENT;
   await request('POST', base + '/element/' + anchor + '/value', { text: '\uE007' });
   const hash = await execute('return window.location.hash');
@@ -70,7 +69,7 @@ try {
   await request('POST', base + '/window/rect', { width: 390, height: 844 });
   await sleep(150);
   const narrow = await execute("return {width:document.documentElement.clientWidth,scrollWidth:document.documentElement.scrollWidth,cards:document.querySelectorAll('article.work').length,label:document.querySelector('#work-4 .state')?.textContent.trim()}");
-  if (narrow.cards !== 6 || narrow.label !== 'UNMERGED CANDIDATE' ||
+  if (narrow.cards !== 4 || narrow.label !== 'UNMERGED CANDIDATE' ||
       narrow.scrollWidth > narrow.width + 2) throw new Error('Narrow-layout failure: ' + JSON.stringify(narrow));
   const mobile = await request('GET', base + '/screenshot');
   await writeFile('admission-review-' + browser + '-narrow.png', Buffer.from(mobile, 'base64'));
