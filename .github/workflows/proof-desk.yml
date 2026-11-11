@@ -1,0 +1,66 @@
+name: Proof Desk browser acceptance
+
+on:
+  pull_request:
+    paths:
+      - 'proof-desk.html'
+      - 'src/ui/proof-desk*'
+      - 'scripts/proof-desk-browser-smoke.mjs'
+      - 'tests/proof-desk.test.mjs'
+      - '.github/workflows/proof-desk.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  proof-desk-browser:
+    name: ${{ matrix.browser }} local canonical proof desk
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chrome, firefox]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Report available browsers
+        run: |
+          command -v google-chrome || true
+          command -v chromedriver || true
+          command -v firefox || true
+          command -v geckodriver || true
+      - name: Start virtual display for Firefox
+        if: matrix.browser == 'firefox'
+        run: |
+          Xvfb :99 -screen 0 1280x1024x24 > proof-desk-xvfb.log 2>&1 &
+          echo 'DISPLAY=:99' >> "$GITHUB_ENV"
+          sleep 1
+      - name: Start offline-capable local server
+        run: |
+          node scripts/serve.mjs > proof-desk-server.log 2>&1 &
+          for attempt in {1..40}; do
+            if curl -fsS http://127.0.0.1:4173/proof-desk.html > /dev/null; then exit 0; fi
+            sleep 0.25
+          done
+          cat proof-desk-server.log
+          exit 1
+      - name: Upload real provenance and verify canonical image in browser
+        run: node scripts/proof-desk-browser-smoke.mjs ${{ matrix.browser }}
+      - name: Archive evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: proof-desk-${{ matrix.browser }}
+          path: |
+            proof-desk-smoke-${{ matrix.browser }}.png
+            proof-desk-smoke-${{ matrix.browser }}.log
+            proof-desk-server.log
+            proof-desk-xvfb.log
+          if-no-files-found: ignore
+          retention-days: 7
