@@ -5,7 +5,7 @@ import test from 'node:test';
 import { decodePngRgba } from '../src/export/index.js';
 import { BUILTIN_PRESETS } from '../src/presets/index.js';
 import { recipeHash } from '../src/recipe/index.js';
-import { EXHIBITION_VERSION, exhibitionEntries, nextExhibitionId, renderExhibitionProof } from '../src/ui/exhibition-catalog.js';
+import { EXHIBITION_VERSION, compareExhibitionProofs, exhibitionEntries, nextExhibitionId, renderExhibitionProof } from '../src/ui/exhibition-catalog.js';
 
 test('exhibition navigation exposes the accepted immutable recipes and wraps both directions', () => {
   const entries = exhibitionEntries();
@@ -55,4 +55,28 @@ test('exhibition proof is decoded canonical RGBA8 at the exact golden tick/crop 
   assert.equal(provenance.seed, entry.seed);
   assert.equal(recipeHash(BUILTIN_PRESETS[0].recipe), before, 'gallery must not touch the accepted recipe');
   assert.throws(() => renderExhibitionProof('missing'), /Unknown FIELDWEAVER preset/);
+});
+
+test('pinned comparison preserves two independent accepted proofs and rejects mismatched provenance', () => {
+  const left = renderExhibitionProof('first-weave');
+  const right = renderExhibitionProof('operator-atlas');
+  const before = BUILTIN_PRESETS.map((preset) => recipeHash(preset.recipe));
+  const comparison = compareExhibitionProofs(left, right);
+  assert.deepEqual([comparison.leftId, comparison.rightId], ['first-weave', 'operator-atlas']);
+  assert.equal(comparison.leftHash, left.rawRgbaHash);
+  assert.equal(comparison.rightHash, right.rawRgbaHash);
+  assert.equal(comparison.sameRecipe, false);
+  assert.equal(comparison.sameRawRgbaHash, false);
+  assert.equal(comparison.sameCrop, true);
+  assert.equal(left.rawRgbaHash, '8d83d52e732a5825');
+  assert.deepEqual(decodePngRgba(left.png).rgba, left.rgba);
+  assert.deepEqual(decodePngRgba(right.png).rgba, right.rgba);
+  assert.deepEqual(BUILTIN_PRESETS.map((preset) => recipeHash(preset.recipe)), before);
+  assert.deepEqual(compareExhibitionProofs(left, left).sameRawRgbaHash, true);
+  assert.throws(() => compareExhibitionProofs(null, right), /completed canonical exhibition proof/);
+  assert.throws(() => compareExhibitionProofs({ ...left, exhibitionVersion: 'proxy-v1' }, right), /completed canonical exhibition proof/);
+  assert.throws(() => compareExhibitionProofs({ ...left, recipeHash: '0000000000000000' }, right), /does not match/);
+  assert.throws(() => compareExhibitionProofs({ ...left, targetTick: left.targetTick + 1 }, right), /does not match/);
+  assert.throws(() => compareExhibitionProofs({ ...left, crop: { ...left.crop, widthPx: left.crop.widthPx + 1 } }, right), /does not match/);
+  assert.throws(() => compareExhibitionProofs({ ...left, rawRgbaHash: 'ffffffffffffffff' }, left), /Conflicting canonical/);
 });
