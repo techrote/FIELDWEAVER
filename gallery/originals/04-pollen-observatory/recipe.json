@@ -229,7 +229,7 @@
       "materialId": 2,
       "startTick": 3,
       "stopTick": 54,
-      "intervalTicks": 2,
+      "intervalTicks": 1,
       "rate": 1,
       "bursts": [],
       "geometry": {
@@ -243,16 +243,16 @@
         "widthQ16": 18000,
         "heightQ16": 18000
       },
-      "velocityXQ16": 45600,
-      "velocityYQ16": -1100,
-      "velocityJitterQ16": 1550
+      "velocityXQ16": 29184,
+      "velocityYQ16": -704,
+      "velocityJitterQ16": 3200
     },
     {
       "id": 2,
       "materialId": 2,
       "startTick": 5,
       "stopTick": 56,
-      "intervalTicks": 2,
+      "intervalTicks": 1,
       "rate": 1,
       "bursts": [],
       "geometry": {
@@ -266,16 +266,16 @@
         "widthQ16": 18000,
         "heightQ16": 18000
       },
-      "velocityXQ16": 22950,
-      "velocityYQ16": -40520,
-      "velocityJitterQ16": 1550
+      "velocityXQ16": 14688,
+      "velocityYQ16": -25933,
+      "velocityJitterQ16": 3200
     },
     {
       "id": 3,
       "materialId": 2,
       "startTick": 7,
       "stopTick": 58,
-      "intervalTicks": 2,
+      "intervalTicks": 1,
       "rate": 1,
       "bursts": [],
       "geometry": {
@@ -289,16 +289,16 @@
         "widthQ16": 18000,
         "heightQ16": 18000
       },
-      "velocityXQ16": -21750,
-      "velocityYQ16": -40520,
-      "velocityJitterQ16": 1550
+      "velocityXQ16": -13920,
+      "velocityYQ16": -25933,
+      "velocityJitterQ16": 3200
     },
     {
       "id": 4,
       "materialId": 2,
       "startTick": 3,
       "stopTick": 54,
-      "intervalTicks": 2,
+      "intervalTicks": 1,
       "rate": 1,
       "bursts": [],
       "geometry": {
@@ -312,16 +312,16 @@
         "widthQ16": 18000,
         "heightQ16": 18000
       },
-      "velocityXQ16": -48000,
-      "velocityYQ16": -1100,
-      "velocityJitterQ16": 1550
+      "velocityXQ16": -30720,
+      "velocityYQ16": -704,
+      "velocityJitterQ16": 3200
     },
     {
       "id": 5,
       "materialId": 2,
       "startTick": 5,
       "stopTick": 56,
-      "intervalTicks": 2,
+      "intervalTicks": 1,
       "rate": 1,
       "bursts": [],
       "geometry": {
@@ -335,16 +335,16 @@
         "widthQ16": 18000,
         "heightQ16": 18000
       },
-      "velocityXQ16": -22950,
-      "velocityYQ16": 38320,
-      "velocityJitterQ16": 1550
+      "velocityXQ16": -14688,
+      "velocityYQ16": 24525,
+      "velocityJitterQ16": 3200
     },
     {
       "id": 6,
       "materialId": 2,
       "startTick": 7,
       "stopTick": 58,
-      "intervalTicks": 2,
+      "intervalTicks": 1,
       "rate": 1,
       "bursts": [],
       "geometry": {
@@ -358,9 +358,9 @@
         "widthQ16": 18000,
         "heightQ16": 18000
       },
-      "velocityXQ16": 24150,
-      "velocityYQ16": 38320,
-      "velocityJitterQ16": 1550
+      "velocityXQ16": 15456,
+      "velocityYQ16": 24525,
+      "velocityJitterQ16": 3200
     },
     {
       "id": 7,
@@ -505,7 +505,7 @@
       "materialId": 2,
       "startTick": 11,
       "stopTick": 62,
-      "intervalTicks": 2,
+      "intervalTicks": 1,
       "rate": 1,
       "bursts": [],
       "geometry": {
@@ -519,16 +519,16 @@
         "widthQ16": 18000,
         "heightQ16": 18000
       },
-      "velocityXQ16": -26700,
-      "velocityYQ16": -42700,
-      "velocityJitterQ16": 2230
+      "velocityXQ16": -17088,
+      "velocityYQ16": -27328,
+      "velocityJitterQ16": 3880
     },
     {
       "id": 14,
       "materialId": 2,
       "startTick": 13,
       "stopTick": 64,
-      "intervalTicks": 2,
+      "intervalTicks": 1,
       "rate": 1,
       "bursts": [],
       "geometry": {
@@ -542,16 +542,16 @@
         "widthQ16": 18000,
         "heightQ16": 18000
       },
-      "velocityXQ16": -52000,
-      "velocityYQ16": 1100,
-      "velocityJitterQ16": 2230
+      "velocityXQ16": -33280,
+      "velocityYQ16": 704,
+      "velocityJitterQ16": 3880
     },
     {
       "id": 15,
       "materialId": 2,
       "startTick": 15,
       "stopTick": 66,
-      "intervalTicks": 2,
+      "intervalTicks": 1,
       "rate": 1,
       "bursts": [],
       "geometry": {
@@ -565,16 +565,16 @@
         "widthQ16": 18000,
         "heightQ16": 18000
       },
-      "velocityXQ16": -24300,
-      "velocityYQ16": 44900,
-      "velocityJitterQ16": 2230
+      "velocityXQ16": -15552,
+      "velocityYQ16": 28736,
+      "velocityJitterQ16": 3880
     },
     {
       "id": 16,
       "materialId": 2,
       "startTick": 11,
       "stopTick": 62,
-      "intervalTicks": 2,
+      "intervalTicks": 1,
       "rate": 1,
       "bursts": [],
       "geometry": {
@@ -588,16 +588,16 @@
         "widthQ16": 18000,
         "heightQ16": 18000
       },
-      "velocityXQ16": 24300,
-      "velocityYQ16": 44900,
-      "velocityJitterQ16": 2230
+      "velocityXQ16": 15552,
+      "velocityYQ16": 28736,
+      "velocityJitterQ16": 3880
     },
     {
       "id": 17,
       "materialId": 2,
       "startTick": 13,
       "stopTick": 64,
-      "intervalTicks": 2,
+      "intervalTicks": 1,
       "rate": 1,
       "bursts": [],
       "geometry": {
@@ -611,16 +611,16 @@
         "widthQ16": 18000,
         "heightQ16": 18000
       },
-      "velocityXQ16": 52000,
-      "velocityYQ16": 1100,
-      "velocityJitterQ16": 2230
+      "velocityXQ16": 33280,
+      "velocityYQ16": 704,
+      "velocityJitterQ16": 3880
     },
     {
       "id": 18,
       "materialId": 2,
       "startTick": 15,
       "stopTick": 66,
-      "intervalTicks": 2,
+      "intervalTicks": 1,
       "rate": 1,
       "bursts": [],
       "geometry": {
@@ -634,9 +634,9 @@
         "widthQ16": 18000,
         "heightQ16": 18000
       },
-      "velocityXQ16": 26700,
-      "velocityYQ16": -42700,
-      "velocityJitterQ16": 2230
+      "velocityXQ16": 17088,
+      "velocityYQ16": -27328,
+      "velocityJitterQ16": 3880
     },
     {
       "id": 19,
@@ -781,7 +781,7 @@
       "materialId": 2,
       "startTick": 17,
       "stopTick": 68,
-      "intervalTicks": 2,
+      "intervalTicks": 1,
       "rate": 1,
       "bursts": [],
       "geometry": {
@@ -795,16 +795,16 @@
         "widthQ16": 18000,
         "heightQ16": 18000
       },
-      "velocityXQ16": 19965,
-      "velocityYQ16": 36354,
-      "velocityJitterQ16": 2910
+      "velocityXQ16": 12778,
+      "velocityYQ16": 23267,
+      "velocityJitterQ16": 4560
     },
     {
       "id": 26,
       "materialId": 2,
       "startTick": 19,
       "stopTick": 70,
-      "intervalTicks": 2,
+      "intervalTicks": 1,
       "rate": 1,
       "bursts": [],
       "geometry": {
@@ -818,16 +818,16 @@
         "widthQ16": 18000,
         "heightQ16": 18000
       },
-      "velocityXQ16": 43160,
+      "velocityXQ16": 27622,
       "velocityYQ16": 0,
-      "velocityJitterQ16": 2910
+      "velocityJitterQ16": 4560
     },
     {
       "id": 27,
       "materialId": 2,
       "startTick": 21,
       "stopTick": 72,
-      "intervalTicks": 2,
+      "intervalTicks": 1,
       "rate": 1,
       "bursts": [],
       "geometry": {
@@ -841,16 +841,16 @@
         "widthQ16": 18000,
         "heightQ16": 18000
       },
-      "velocityXQ16": 22365,
-      "velocityYQ16": -36354,
-      "velocityJitterQ16": 2910
+      "velocityXQ16": 14314,
+      "velocityYQ16": -23267,
+      "velocityJitterQ16": 4560
     },
     {
       "id": 28,
       "materialId": 2,
       "startTick": 17,
       "stopTick": 68,
-      "intervalTicks": 2,
+      "intervalTicks": 1,
       "rate": 1,
       "bursts": [],
       "geometry": {
@@ -864,16 +864,16 @@
         "widthQ16": 18000,
         "heightQ16": 18000
       },
-      "velocityXQ16": -22365,
-      "velocityYQ16": -36354,
-      "velocityJitterQ16": 2910
+      "velocityXQ16": -14314,
+      "velocityYQ16": -23267,
+      "velocityJitterQ16": 4560
     },
     {
       "id": 29,
       "materialId": 2,
       "startTick": 19,
       "stopTick": 70,
-      "intervalTicks": 2,
+      "intervalTicks": 1,
       "rate": 1,
       "bursts": [],
       "geometry": {
@@ -887,16 +887,16 @@
         "widthQ16": 18000,
         "heightQ16": 18000
       },
-      "velocityXQ16": -43160,
+      "velocityXQ16": -27622,
       "velocityYQ16": 0,
-      "velocityJitterQ16": 2910
+      "velocityJitterQ16": 4560
     },
     {
       "id": 30,
       "materialId": 2,
       "startTick": 21,
       "stopTick": 72,
-      "intervalTicks": 2,
+      "intervalTicks": 1,
       "rate": 1,
       "bursts": [],
       "geometry": {
@@ -910,16 +910,16 @@
         "widthQ16": 18000,
         "heightQ16": 18000
       },
-      "velocityXQ16": -19965,
-      "velocityYQ16": 36354,
-      "velocityJitterQ16": 2910
+      "velocityXQ16": -12778,
+      "velocityYQ16": 23267,
+      "velocityJitterQ16": 4560
     },
     {
       "id": 31,
       "materialId": 1,
       "startTick": 8,
       "stopTick": 80,
-      "intervalTicks": 4,
+      "intervalTicks": 3,
       "rate": 1,
       "bursts": [],
       "geometry": {
@@ -965,7 +965,7 @@
       "materialId": 1,
       "startTick": 14,
       "stopTick": 84,
-      "intervalTicks": 4,
+      "intervalTicks": 3,
       "rate": 1,
       "bursts": [],
       "geometry": {
@@ -1011,7 +1011,7 @@
       "materialId": 1,
       "startTick": 20,
       "stopTick": 88,
-      "intervalTicks": 4,
+      "intervalTicks": 3,
       "rate": 1,
       "bursts": [],
       "geometry": {
@@ -1035,7 +1035,7 @@
       "startTick": 43,
       "stopTick": 118,
       "intervalTicks": 3,
-      "rate": 2,
+      "rate": 3,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -1050,7 +1050,7 @@
       },
       "velocityXQ16": -27000,
       "velocityYQ16": -22000,
-      "velocityJitterQ16": 11500
+      "velocityJitterQ16": 19000
     },
     {
       "id": 37,
@@ -1081,7 +1081,7 @@
       "startTick": 51,
       "stopTick": 122,
       "intervalTicks": 3,
-      "rate": 2,
+      "rate": 3,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -1096,7 +1096,7 @@
       },
       "velocityXQ16": 0,
       "velocityYQ16": -22000,
-      "velocityJitterQ16": 11500
+      "velocityJitterQ16": 19000
     },
     {
       "id": 39,
@@ -1127,7 +1127,7 @@
       "startTick": 59,
       "stopTick": 126,
       "intervalTicks": 3,
-      "rate": 2,
+      "rate": 3,
       "bursts": [],
       "geometry": {
         "type": "box",
@@ -1142,7 +1142,7 @@
       },
       "velocityXQ16": 27000,
       "velocityYQ16": -22000,
-      "velocityJitterQ16": 11500
+      "velocityJitterQ16": 19000
     },
     {
       "id": 41,
