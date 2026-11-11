@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'src/ui/exhibition-visual-index*'
+      - 'src/ui/exhibition-offline-board.js'
       - 'src/ui/exhibition-study*'
       - 'src/ui/exhibition-pixel-probe.js'
       - 'tests/exhibition-pixel-probe.test.mjs'
