@@ -149,6 +149,60 @@ try {
   if (!recipeCapture?.value) throw new Error('Browser did not return gallery recipe handoff screenshot.');
   await writeFile('release-exhibition-recipe-' + browser + '.png', Buffer.from(recipeCapture.value, 'base64'));
 
+  // Narrow-viewport, keyboard-only selection after a successful download.
+  // This also guards against exporting the previous selected recipe from a stale closure.
+  await request('POST', '/session/' + sessionId + '/window/rect', { width: 390, height: 780 });
+  await execute("document.querySelector('[data-exhibition-id=\"operator-atlas\"]').focus()");
+  await request('POST', '/session/' + sessionId + '/actions', {
+    actions: [{ type: 'key', id: 'gallery-switch-key', actions: [
+      { type: 'keyDown', value: enter }, { type: 'keyUp', value: enter }
+    ] }]
+  });
+  await request('DELETE', '/session/' + sessionId + '/actions');
+  const switched = await execute("return {selected:document.querySelector('#preset-select').value,pressed:document.querySelector('.exhibition-card[aria-pressed=\"true\"]')?.dataset.exhibitionId,focus:document.activeElement.dataset.exhibitionId||'',proofDisabled:document.querySelector('#exhibition-download-png').disabled,proofHash:document.documentElement.dataset.fieldweaverExhibitionProofHash||'',width:window.innerWidth}");
+  if (switched.selected !== 'operator-atlas' || switched.pressed !== 'operator-atlas' ||
+      switched.focus !== 'operator-atlas' || !switched.proofDisabled || switched.proofHash ||
+      switched.width > 500) {
+    throw new Error('Narrow keyboard selection retained stale gallery state: ' + JSON.stringify(switched));
+  }
+  const switchedPreset = getBuiltinPreset('operator-atlas');
+  const switchedFilename = 'fieldweaver-operator-atlas-' + switchedPreset.recipeHash + '.fwrecipe.json';
+  const switchedPath = join(downloadDir, switchedFilename);
+  await execute("document.querySelector('#exhibition-download-recipe').focus()");
+  await request('POST', '/session/' + sessionId + '/actions', {
+    actions: [{ type: 'key', id: 'gallery-switched-download-key', actions: [
+      { type: 'keyDown', value: enter }, { type: 'keyUp', value: enter }
+    ] }]
+  });
+  await request('DELETE', '/session/' + sessionId + '/actions');
+  let switchedBytes = null;
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    try { switchedBytes = await readFile(switchedPath, 'utf8'); } catch { /* browser still writing */ }
+    if (switchedBytes === serializeRecipe(switchedPreset.recipe)) break;
+    await sleep(100);
+  }
+  const switchedStatus = await execute("return {text:document.querySelector('#preset-status').textContent,selected:document.querySelector('#preset-select').value,focus:document.activeElement.id}");
+  if (switchedBytes !== serializeRecipe(switchedPreset.recipe) ||
+      recipeHash(parseRecipe(switchedBytes)) !== switchedPreset.recipeHash ||
+      switchedStatus.selected !== 'operator-atlas' ||
+      switchedStatus.focus !== 'exhibition-download-recipe' ||
+      !switchedStatus.text.includes(switchedFilename) ||
+      (await snapshot()).canonicalHash !== editorBeforeHandoff ||
+      (await readFile(savedPath, 'utf8')) !== downloaded) {
+    throw new Error('Switched accepted recipe was not a source-exact, isolated keyboard download: ' +
+      JSON.stringify({ switched, switchedStatus, savedBytes: switchedBytes?.length }));
+  }
+  await writeFile('release-exhibition-recipe-switched-' + browser + '.fwrecipe.json', switchedBytes);
+  await writeFile('release-exhibition-recipe-switched-' + browser + '.json',
+    JSON.stringify({ browser, switched, switchedStatus, filename: switchedFilename,
+      recipeHash: switchedPreset.recipeHash, bytes: Buffer.byteLength(switchedBytes),
+      realKeyboardSelection: true, realKeyboardDownload: true, editorPreserved: true }, null, 2) + '\n');
+  const narrowCapture = await request('GET', '/session/' + sessionId + '/screenshot');
+  if (!narrowCapture?.value) throw new Error('Narrow gallery recipe screenshot absent.');
+  await writeFile('release-exhibition-recipe-narrow-' + browser + '.png',
+    Buffer.from(narrowCapture.value, 'base64'));
+  await request('POST', '/session/' + sessionId + '/window/rect', { width: 1280, height: 900 });
+
   await execute(`
     const select = document.querySelector('#preset-select');
     select.value = 'timeline-pulse';
