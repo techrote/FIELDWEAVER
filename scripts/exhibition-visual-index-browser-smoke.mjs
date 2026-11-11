@@ -1,5 +1,7 @@
 import { spawn, spawnSync } from 'node:child_process';
 import { writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 const browser = process.argv[2] ?? 'firefox';
 if (!['chrome', 'firefox'].includes(browser)) throw new Error('Expected chrome or firefox.');
@@ -88,7 +90,24 @@ try {
   const screenshot = await request('GET', '/session/' + sessionId + '/screenshot');
   if (!screenshot?.value) throw new Error('Browser screenshot absent.');
   await writeFile('exhibition-visual-index-' + browser + '.png', Buffer.from(screenshot.value, 'base64'));
-  await writeFile('exhibition-visual-index-' + browser + '.json', JSON.stringify({ browser, initial, result, board, selected }, null, 2) + '\n');
+  const offlinePath = resolve('exhibition-offline-board-' + browser + '.html');
+  await writeFile(offlinePath, boardHtml);
+  await request('POST', '/session/' + sessionId + '/url', { url: pathToFileURL(offlinePath).href });
+  let offline = null;
+  for (let i = 0; i < 25; i += 1) {
+    offline = await execute("return {title:document.title,works:document.querySelectorAll('article.work').length,images:[...document.images].map(img=>({complete:img.complete,width:img.naturalWidth,height:img.naturalHeight})),scripts:document.scripts.length,origin:location.protocol,background:getComputedStyle(document.body).backgroundColor}");
+    if (offline?.images?.length === 4 && offline.images.every(img=>img.complete && img.width===96 && img.height===64)) break;
+    await sleep(160);
+  }
+  if (offline.origin !== 'file:' || offline.works !== 4 || offline.scripts !== 0 ||
+      offline.images.length !== 4 ||
+      offline.images.some(img=>!img.complete || img.width!==96 || img.height!==64)) {
+    throw new Error('Saved offline HTML failed real browser file rendering: ' + JSON.stringify(offline));
+  }
+  const boardScreenshot = await request('GET', '/session/' + sessionId + '/screenshot');
+  if (!boardScreenshot?.value) throw new Error('Offline board screenshot absent.');
+  await writeFile('exhibition-offline-board-' + browser + '.png', Buffer.from(boardScreenshot.value, 'base64'));
+  await writeFile('exhibition-visual-index-' + browser + '.json', JSON.stringify({ browser, initial, result, board, selected, offline }, null, 2) + '\n');
   console.log(JSON.stringify({ browser, status:'four actual decoded canonical CPU images', hashes:result.tiles.map((tile) => tile.hash), selected:selected.id }, null, 2));
 } finally {
   if (sessionId) { try { await request('DELETE', '/session/' + sessionId); } catch { /* cleanup */ } }
