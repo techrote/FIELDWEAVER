@@ -94,6 +94,13 @@ try {
   ].join('\n');
   const observed = (await request('POST', '/session/' + sessionId + '/execute/sync',
     { script: evaluation, args: [] }))?.value;
+  // Firefox schedules same-document hash navigation after the synchronous
+  // WebDriver script returns. Poll the observable URL, not the click stack.
+  for (let attempt = 0; observed?.target !== '#work-2' && attempt < 20; attempt += 1) {
+    await sleep(100);
+    observed.target = (await request('POST', '/session/' + sessionId + '/execute/sync',
+      { script: 'return location.hash;', args: [] }))?.value;
+  }
   if (observed.cards !== 2 ||
       observed.labels.join('|') !== 'ACCEPTED PRESET|ACCEPTED PRESET' ||
       observed.images.some((item) => !item.complete || !item.data || item.width <= 0 || item.height <= 0) ||
