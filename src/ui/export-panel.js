@@ -74,6 +74,8 @@ export function mountExportPanel(parent) {
   const actionGrid = element('div', { className: 'button-grid' });
   actionGrid.append(useFraming, prepare, pngDownload, provenanceDownload);
   panel.append(actionGrid);
+  panel.append(element('a', { href: './proof-desk.html', className: 'workspace-note' },
+    'Inspect a downloaded canonical export in the offline Proof Desk'));
 
   const diagnostics = element('ul', { id: 'export-diagnostics', className: 'diagnostic-list', 'aria-live': 'polite' });
   const hash = element('code', { id: 'export-rgba-hash', className: 'hash-readout' }, '—');
