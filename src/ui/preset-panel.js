@@ -2,6 +2,7 @@ import { getActiveRecipeEditorSession } from '../editor/index.js';
 import { BUILTIN_PRESETS, getBuiltinPreset } from '../presets/index.js';
 import { compareExhibitionProofs, exhibitionEntries, nextExhibitionId, renderExhibitionProof } from './exhibition-catalog.js';
 import { mountExhibitionInspector } from './exhibition-inspector.js';
+import { buildAcceptedRecipeHandoff } from './exhibition-recipe-handoff.js';
 
 function element(tag, attributes = {}, text = '') {
   const node = document.createElement(tag);
@@ -114,15 +115,19 @@ export function mountPresetPanel(parent) {
 
   const renderButton = element('button', { id: 'exhibition-render', type: 'button', className: 'button' }, 'Render canonical proof');
   const load = element('button', { id: 'preset-load', type: 'button', className: 'button' }, 'Load preset');
+  const recipeDownload = element('button', { id: 'exhibition-download-recipe', type: 'button', className: 'button',
+    'aria-describedby': 'exhibition-recipe-help' }, 'Save selected recipe');
   const pngDownload = element('button', { id: 'exhibition-download-png', type: 'button', className: 'button' }, 'Download proof PNG');
   const provenanceDownload = element('button', { id: 'exhibition-download-provenance', type: 'button', className: 'button' }, 'Download provenance');
   pngDownload.disabled = true;
   provenanceDownload.disabled = true;
   const actions = element('div', { className: 'exhibition-actions' });
-  actions.append(renderButton, load, pngDownload, provenanceDownload);
+  actions.append(renderButton, load, recipeDownload, pngDownload, provenanceDownload);
+  const recipeHelp = element('p', { id: 'exhibition-recipe-help', className: 'workspace-note' },
+    'Save an importable, versioned recipe without replacing current editor work or rendering a proof. Exact exhibition tick and crop are recorded above.');
   const proofIdentity = element('code', { id: 'exhibition-proof-hash', className: 'hash-readout' }, 'Proof: not rendered');
   const status = element('output', { id: 'preset-status', className: 'hash-readout', 'aria-live': 'polite' }, 'Ready');
-  panel.append(actions, proofIdentity, status);
+  panel.append(actions, recipeHelp, proofIdentity, status);
 
   // An explicit pinned proof survives gallery navigation; B always means the
   // currently rendered selection. Neither side ever samples the WebGL view.
@@ -328,6 +333,18 @@ export function mountPresetPanel(parent) {
     }
   });
 
+  recipeDownload.addEventListener('click', () => {
+    try {
+      const handoff = buildAcceptedRecipeHandoff(select.value);
+      download(new TextEncoder().encode(handoff.json), 'application/json', handoff.filename);
+      setStatus('Requested recipe download: ' + handoff.filename +
+        ' · editor unchanged; reproduce at tick ' + handoff.targetTick +
+        ' using the accepted crop above.');
+    } catch (error) {
+      setStatus('Recipe download refused: ' + (error?.message ?? String(error)));
+    }
+  });
+
   pngDownload.addEventListener('click', () => {
     if (currentProof && currentProof.presetId === select.value) {
       download(currentProof.png, 'image/png', 'fieldweaver-' + currentProof.presetId + '-' + currentProof.rawRgbaHash + '.png');
@@ -380,7 +397,7 @@ export function mountPresetPanel(parent) {
 
   refresh();
   panel.dataset.ready = 'true';
-  return Object.freeze({ panel, select, load, status, description, coverage, grid, renderButton, preview, pngDownload, provenanceDownload, comparePanel, pinButton, clearPinButton, inspectButton, inspector, slotA, slotB });
+  return Object.freeze({ panel, select, load, recipeDownload, status, description, coverage, grid, renderButton, preview, pngDownload, provenanceDownload, comparePanel, pinButton, clearPinButton, inspectButton, inspector, slotA, slotB });
 }
 
 function mountWhenReady(attempt = 0) {

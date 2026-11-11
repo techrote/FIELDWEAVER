@@ -149,6 +149,12 @@ jobs:
             release-smoke-${{ matrix.browser }}.log
             release-exhibition-${{ matrix.browser }}.png
             release-exhibition-inspector-${{ matrix.browser }}.png
+            release-exhibition-recipe-${{ matrix.browser }}.png
+            release-exhibition-recipe-download-${{ matrix.browser }}.json
+            release-exhibition-recipe-download-${{ matrix.browser }}.fwrecipe.json
+            release-exhibition-recipe-switched-${{ matrix.browser }}.json
+            release-exhibition-recipe-switched-${{ matrix.browser }}.fwrecipe.json
+            release-exhibition-recipe-narrow-${{ matrix.browser }}.png
             gallery-review-smoke-${{ matrix.browser }}.log
             gallery-review-smoke-${{ matrix.browser }}.png
             gpu-research-smoke-${{ matrix.browser }}.log
