@@ -17,10 +17,10 @@ const PREFIX = 'gallery/variants/02-broken-orbit/';
 const PARENT_ID = 'timeline-pulse';
 const EXPECTED_PARENT_HASH = 'c94aed7bfc18a40d';
 const MUTATION_SEED = 0x92f4c671;
-const TARGET_TICK = 56;
+const TARGET_TICK = 180;
 const EARLY_TICK = 16;
 const CROP = Object.freeze({ widthPx: 144, heightPx: 112,
-  center: { chunkX: 0, chunkY: 0, localX: 138 * 65536, localY: 128 * 65536 },
+  center: { chunkX: 0, chunkY: 0, localX: 100 * 65536, localY: 116 * 65536 },
   unitsPerPixelQ16: 65536 });
 const REPLAY = { targetTick: TARGET_TICK, crop: CROP, agentCapacity: 4096,
   maxDepositions: 250000, tileWidthPx: 29, tileHeightPx: 23 };
@@ -111,7 +111,7 @@ function make() {
     mutationSeed:MUTATION_SEED,targetTick:TARGET_TICK,earlierComparisonTick:EARLY_TICK,crop:CROP,
     agentCapacity:REPLAY.agentCapacity,maxDepositions:REPLAY.maxDepositions,
     candidateCount:samples.length,
-    criterion:'Late-tick spatial silhouette XOR from immutable Timeline Pulse parent, temporal change from tick 16 to 56, spatial coverage and pairwise morphology novelty; palette-only differences rejected',
+    criterion:'Late-tick spatial silhouette XOR from immutable Timeline Pulse parent, temporal change from tick 16 to 180, spatial coverage and pairwise morphology novelty; palette-only differences rejected',
     selectedSiblingIndex:chosen.siblingIndex,selectedRecipeHash:chosen.recipeHash,
     selectedRawRgbaHash:chosen.rawRgbaHash,
     candidates:samples.map(s=>({siblingIndex:s.siblingIndex,config:s.config,recipeHash:s.recipeHash,
@@ -130,7 +130,7 @@ function make() {
     'A deterministic evolutionary study of the Timeline Pulse preset: the deliberately scheduled freeze, release and burst interventions fracture otherwise continuous motion. This family seeks broken orbits and delayed reconnection, rather than the opposing-current morphology of Countercurrent Canticle.','',
     'Immutable parent: shipped timeline-pulse preset; recipe hash '+EXPECTED_PARENT_HASH+'.',
     'Mutation: fw-mutation-v1; explicit seed '+MUTATION_SEED+'; 16 isolated siblings covering field, emitter, order, seed, material and compound operators.',
-    'Canonical comparison: tick '+TARGET_TICK+', with an earlier reference at tick '+EARLY_TICK+'; 144×112 crop centred on (138,128) at one world unit per pixel.',
+    'Canonical comparison: tick '+TARGET_TICK+', with an earlier reference at tick '+EARLY_TICK+'; 144×112 crop centred on (100,116) at one world unit per pixel.',
     'Chosen sibling '+chosen.siblingIndex+'; normalized recipe '+chosen.recipeHash+'; decoded RGBA8 '+chosen.rawRgbaHash+'.','',
     '## Delivered artifacts','',
     '- selected.recipe.json: loadable lineage-bearing child recipe; selected.png: genuine FW-012 canonical CPU render.',
