@@ -175,7 +175,7 @@ try {
     throw new Error('Index failed to recover after cleared and rejected proof leases: ' + JSON.stringify({recovered,recoveredState}));
   }
   await writeFile('exhibition-index-lifecycle-' + browser + '.json',
-    JSON.stringify({ lifecycle, lateTiles, failedIndex, failedState, recovered, recoveredState }, null, 2) + '\\n');
+    JSON.stringify({ lifecycle, lateTiles, failedIndex, failedState, recovered, recoveredState }, null, 2) + '\n');
   const offlinePath = resolve('exhibition-offline-board-' + browser + '.html');
   await writeFile(offlinePath, boardHtml);
   await request('POST', '/session/' + sessionId + '/url', { url: pathToFileURL(offlinePath).href });
