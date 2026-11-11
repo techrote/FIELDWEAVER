@@ -26,17 +26,14 @@ test('Original 08: candidate enters offline accepted-preset exhibition with exac
   const {tmpdir}=await import('node:os');
   const {join}=await import('node:path');
   const {fileURLToPath}=await import('node:url');
-  const {runCli}=await import('../../../scripts/review-gallery.mjs');
+  const {createRoomsReview}=await import('./review.mjs');
   const folder=await mkdtemp(join(tmpdir(),'fw-original08-curation-'));
   try{
     const output=join(folder,'review.html');
     const provenance=fileURLToPath(new URL('./the-vacant-rooms.provenance.json',import.meta.url));
-    const result=await runCli([
-      '--out',output,
-      '--preset','operator-atlas',
-      '--preset','timeline-pulse',
-      '--provenance',provenance
-    ]);
+    const result=await createRoomsReview(output);
+    assert(result.url.startsWith('file:'),'Owner receives a local file URL');
+    assert.equal(result.output,output);
     assert.deepEqual(result.entries.map(x=>x.accepted),[true,true,false]);
     assert.equal(result.entries[2].recipeHash,'3a2c43dd7f49d9aa');
     assert.equal(result.entries[2].rawRgbaHash,'56286fc4c1a47bb8');
@@ -49,6 +46,11 @@ test('Original 08: candidate enters offline accepted-preset exhibition with exac
     const images=[...html.matchAll(/<img[^>]+src="data:image\/png;base64,([^"]+)"/g)];
     assert.equal(images.length,3,'two accepted CPU proofs and one proposed original');
     const archived=await readFile(new URL('./the-vacant-rooms.png',import.meta.url));
+    const recipeDownload=html.match(/<a href="data:application\/json;base64,([^"]+)" download="fieldweaver-work-3\.recipe\.json"/);
+    assert(recipeDownload,'The proposed original must expose its importable recipe');
+    const savedRecipe=JSON.parse(Buffer.from(recipeDownload[1],'base64').toString('utf8'));
+    const sourceRecipe=JSON.parse(await readFile(new URL('./recipe.json',import.meta.url),'utf8'));
+    assert.deepEqual(savedRecipe,sourceRecipe,'Downloaded review recipe must match archived author recipe');
     assert.deepEqual(Buffer.from(images[2][1],'base64'),archived,
       'Review entry must show exact source-archived canonical pixels');
   }finally{
