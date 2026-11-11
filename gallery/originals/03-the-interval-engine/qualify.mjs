@@ -24,7 +24,7 @@ export async function qualify({write=false,bootstrap=false}={}) {
  const recipe=parseRecipe(text);
  assert.equal(serializeRecipe(recipe),text,'Recipe must be canonical normalized JSON');
  assert.equal(recipe.seed,SEED);assert.equal(recipe.lineage,null);
- assert.equal(recipe.fields.layers.length,6);assert.equal(recipe.emitters.length,20);
+ assert.equal(recipe.fields.layers.length,6);assert.equal(recipe.emitters.length,40);
  assert.equal(recipe.commands.length,15);assert.equal(recipe.lut.assets.length,5);
  const args={targetTick:TARGET_TICK,crop:recipe.framing,agentCapacity:CAPACITY,maxDepositions:MAX_DEPOSITIONS};
  const a=createCanonicalExport(recipe,{...args,tileWidthPx:53,tileHeightPx:41});

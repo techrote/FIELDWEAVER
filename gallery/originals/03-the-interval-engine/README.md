@@ -4,9 +4,9 @@
 
 ## Formal premise
 
-Six opposed pairs of fine sediment registers enter from opposite horizontal margins. Their almost-parallel trajectories are timed to overlap without obeying a perfect mirror: short iron-coloured ink records interrupt each seam. At the centre, copper particulate and two sparsely deposited orthogonal splinters introduce a temporal fissure. The piece treats a gap as an event rather than filling an empty canvas with vortices.
+Six opposed pairs of fine sediment registers enter from opposite horizontal margins. Sixteen staggered inner relays form four interrupted intermediate bands, while four additional fine-ink contacts act as punctuation across those bands. Their almost-parallel trajectories are timed to overlap without obeying a perfect mirror: short iron-coloured ink records interrupt each seam. At the centre, copper particulate and two sparsely deposited orthogonal splinters introduce a temporal fissure. The piece treats a gap as an event rather than filling an empty canvas with vortices.
 
-Five active/dormant field behaviours are assembled across six explicitly ordered layers: neutral lateral bias; two separately gated, counter-rotating disturbances about different vertical coordinates; deterministic fine turbulence; an initially active cardinal direction quantizer; and a late downward secondary force. Four materially distinct deposition behaviours use four independent authored colour LUTs, while the fifth LUT modulates dust steering as a function of age. All 20 emitter definitions and all LUT channels are embedded in the loadable recipe; no external art assets.
+Five active/dormant field behaviours are assembled across six explicitly ordered layers: neutral lateral bias; two separately gated, counter-rotating disturbances about different vertical coordinates; deterministic fine turbulence; an initially active cardinal direction quantizer; and a late downward secondary force. Four materially distinct deposition behaviours use four independent authored colour LUTs, while the fifth LUT modulates dust steering as a function of age. All 40 emitter definitions and all LUT channels are embedded in the loadable recipe; no external art assets.
 
 ## Intervention score
 

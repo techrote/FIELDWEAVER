@@ -43,7 +43,7 @@
           "scaleYQ16": 65536
         },
         "parameters": {
-          "vectorXQ16": 1100,
+          "vectorXQ16": 6200,
           "vectorYQ16": 0
         },
         "chunks": []
@@ -683,6 +683,466 @@
       "velocityXQ16": -2800,
       "velocityYQ16": -92000,
       "velocityJitterQ16": 1400
+    },
+    {
+      "id": 21,
+      "materialId": 2,
+      "startTick": 29,
+      "stopTick": 76,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 3604480,
+          "localY": 4456448
+        },
+        "widthQ16": 60000,
+        "heightQ16": 45000
+      },
+      "velocityXQ16": 119000,
+      "velocityYQ16": -4500,
+      "velocityJitterQ16": 1800
+    },
+    {
+      "id": 22,
+      "materialId": 2,
+      "startTick": 31,
+      "stopTick": 76,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 6815744,
+          "localY": 4456448
+        },
+        "widthQ16": 60000,
+        "heightQ16": 45000
+      },
+      "velocityXQ16": 119000,
+      "velocityYQ16": -4500,
+      "velocityJitterQ16": 1800
+    },
+    {
+      "id": 23,
+      "materialId": 2,
+      "startTick": 33,
+      "stopTick": 76,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 9633792,
+          "localY": 4456448
+        },
+        "widthQ16": 60000,
+        "heightQ16": 45000
+      },
+      "velocityXQ16": -121000,
+      "velocityYQ16": -4500,
+      "velocityJitterQ16": 1800
+    },
+    {
+      "id": 24,
+      "materialId": 2,
+      "startTick": 35,
+      "stopTick": 76,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 12713984,
+          "localY": 4456448
+        },
+        "widthQ16": 60000,
+        "heightQ16": 45000
+      },
+      "velocityXQ16": -121000,
+      "velocityYQ16": -4500,
+      "velocityJitterQ16": 1800
+    },
+    {
+      "id": 25,
+      "materialId": 2,
+      "startTick": 35,
+      "stopTick": 82,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 4063232,
+          "localY": 7012352
+        },
+        "widthQ16": 60000,
+        "heightQ16": 45000
+      },
+      "velocityXQ16": 119000,
+      "velocityYQ16": 0,
+      "velocityJitterQ16": 1800
+    },
+    {
+      "id": 26,
+      "materialId": 2,
+      "startTick": 37,
+      "stopTick": 82,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 7274496,
+          "localY": 7012352
+        },
+        "widthQ16": 60000,
+        "heightQ16": 45000
+      },
+      "velocityXQ16": 119000,
+      "velocityYQ16": 0,
+      "velocityJitterQ16": 1800
+    },
+    {
+      "id": 27,
+      "materialId": 2,
+      "startTick": 39,
+      "stopTick": 82,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10092544,
+          "localY": 7012352
+        },
+        "widthQ16": 60000,
+        "heightQ16": 45000
+      },
+      "velocityXQ16": -121000,
+      "velocityYQ16": 0,
+      "velocityJitterQ16": 1800
+    },
+    {
+      "id": 28,
+      "materialId": 2,
+      "startTick": 41,
+      "stopTick": 82,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 13172736,
+          "localY": 7012352
+        },
+        "widthQ16": 60000,
+        "heightQ16": 45000
+      },
+      "velocityXQ16": -121000,
+      "velocityYQ16": 0,
+      "velocityJitterQ16": 1800
+    },
+    {
+      "id": 29,
+      "materialId": 2,
+      "startTick": 41,
+      "stopTick": 88,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 3604480,
+          "localY": 9699328
+        },
+        "widthQ16": 60000,
+        "heightQ16": 45000
+      },
+      "velocityXQ16": 119000,
+      "velocityYQ16": 4500,
+      "velocityJitterQ16": 1800
+    },
+    {
+      "id": 30,
+      "materialId": 2,
+      "startTick": 43,
+      "stopTick": 88,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 6815744,
+          "localY": 9699328
+        },
+        "widthQ16": 60000,
+        "heightQ16": 45000
+      },
+      "velocityXQ16": 119000,
+      "velocityYQ16": 4500,
+      "velocityJitterQ16": 1800
+    },
+    {
+      "id": 31,
+      "materialId": 2,
+      "startTick": 45,
+      "stopTick": 88,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 9633792,
+          "localY": 9699328
+        },
+        "widthQ16": 60000,
+        "heightQ16": 45000
+      },
+      "velocityXQ16": -121000,
+      "velocityYQ16": 4500,
+      "velocityJitterQ16": 1800
+    },
+    {
+      "id": 32,
+      "materialId": 2,
+      "startTick": 47,
+      "stopTick": 88,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 12713984,
+          "localY": 9699328
+        },
+        "widthQ16": 60000,
+        "heightQ16": 45000
+      },
+      "velocityXQ16": -121000,
+      "velocityYQ16": 4500,
+      "velocityJitterQ16": 1800
+    },
+    {
+      "id": 33,
+      "materialId": 2,
+      "startTick": 47,
+      "stopTick": 94,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 4063232,
+          "localY": 12124160
+        },
+        "widthQ16": 60000,
+        "heightQ16": 45000
+      },
+      "velocityXQ16": 119000,
+      "velocityYQ16": 9000,
+      "velocityJitterQ16": 1800
+    },
+    {
+      "id": 34,
+      "materialId": 2,
+      "startTick": 49,
+      "stopTick": 94,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 7274496,
+          "localY": 12124160
+        },
+        "widthQ16": 60000,
+        "heightQ16": 45000
+      },
+      "velocityXQ16": 119000,
+      "velocityYQ16": 9000,
+      "velocityJitterQ16": 1800
+    },
+    {
+      "id": 35,
+      "materialId": 2,
+      "startTick": 51,
+      "stopTick": 94,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10092544,
+          "localY": 12124160
+        },
+        "widthQ16": 60000,
+        "heightQ16": 45000
+      },
+      "velocityXQ16": -121000,
+      "velocityYQ16": 9000,
+      "velocityJitterQ16": 1800
+    },
+    {
+      "id": 36,
+      "materialId": 2,
+      "startTick": 53,
+      "stopTick": 94,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 13172736,
+          "localY": 12124160
+        },
+        "widthQ16": 60000,
+        "heightQ16": 45000
+      },
+      "velocityXQ16": -121000,
+      "velocityYQ16": 9000,
+      "velocityJitterQ16": 1800
+    },
+    {
+      "id": 37,
+      "materialId": 1,
+      "startTick": 66,
+      "stopTick": 106,
+      "intervalTicks": 2,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 5505024,
+          "localY": 6422528
+        },
+        "widthQ16": 55000,
+        "heightQ16": 45000
+      },
+      "velocityXQ16": 96000,
+      "velocityYQ16": -4700,
+      "velocityJitterQ16": 2600
+    },
+    {
+      "id": 38,
+      "materialId": 1,
+      "startTick": 66,
+      "stopTick": 106,
+      "intervalTicks": 2,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11272192,
+          "localY": 6422528
+        },
+        "widthQ16": 55000,
+        "heightQ16": 45000
+      },
+      "velocityXQ16": -95000,
+      "velocityYQ16": -4700,
+      "velocityJitterQ16": 2600
+    },
+    {
+      "id": 39,
+      "materialId": 1,
+      "startTick": 74,
+      "stopTick": 112,
+      "intervalTicks": 2,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 5505024,
+          "localY": 10616832
+        },
+        "widthQ16": 55000,
+        "heightQ16": 45000
+      },
+      "velocityXQ16": 96000,
+      "velocityYQ16": 4800,
+      "velocityJitterQ16": 2600
+    },
+    {
+      "id": 40,
+      "materialId": 1,
+      "startTick": 74,
+      "stopTick": 112,
+      "intervalTicks": 2,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11272192,
+          "localY": 10616832
+        },
+        "widthQ16": 55000,
+        "heightQ16": 45000
+      },
+      "velocityXQ16": -95000,
+      "velocityYQ16": 4800,
+      "velocityJitterQ16": 2600
     }
   ],
   "lut": {
@@ -1335,7 +1795,7 @@
         "destination": "color",
         "addressMode": "clamp",
         "inputMin": 1,
-        "inputMax": 12,
+        "inputMax": 40,
         "scaleNumerator": 1,
         "scaleDenominator": 1,
         "bias": 0,
