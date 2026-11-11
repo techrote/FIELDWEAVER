@@ -141,7 +141,11 @@ export function buildAtlas() {
     if(finalists.length===FINALISTS) break;
   }
   if(finalists.length!==FINALISTS) throw new Error('Insufficient morphologically independent canonical finalists: '+finalists.length);
-  const selected=finalists[0];
+  // Artistic selection after inspecting the genuine CPU sheet: #03 maintains a
+  // legible sheared bridge and a right-hand violet termination, whereas #15
+  // maximizes mask change but loses too much compositional continuity.
+  const selected=finalists.find(c=>c.i===3);
+  if(!selected) throw new Error('Curated sibling 03 must survive geometric qualification');
   const panels=[{label:'P',export:parentExport},...finalists.map(c=>({label:(c.i===selected.i?'S':'')+String(c.i).padStart(2,'0'),export:c.export}))];
   const sheet=contactSheet(panels);
   const manifest={
@@ -175,7 +179,7 @@ export function buildAtlas() {
     asset('manifest.json',JSON.stringify(manifest,null,2)+'\n')
   ];
   // Distinguish archive bytes from the normalized canonical image hashes in manifest.
-  const archive={...manifest,files:files.map(({path,sha256,bytes})=>({path,sha256,bytes:bytes.length}))};
+  const archive={...manifest,files:files.slice(0,-1).map(({path,sha256,bytes})=>({path,sha256,bytes:bytes.length}))};
   files[files.length-1]=asset('manifest.json',JSON.stringify(archive,null,2)+'\n');
   if(serializeRecipe(parseRecipe(files[0].bytes.toString())) !== files[0].bytes.toString())
     throw new Error('selected recipe did not survive normalized roundtrip');
