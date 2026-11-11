@@ -84,6 +84,6 @@ test('pinned comparison preserves two independent accepted proofs and rejects mi
 test('local CSP permits CPU-exported blob PNG images without external image sources', async () => {
   const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
   const directive = html.match(/img-src[^;]*;/)?.[0] ?? '';
-  assert.match(directive, /\\bblob:/);
+  assert.match(directive, /\bblob:/);
   assert.doesNotMatch(directive, /https?:/);
 });
