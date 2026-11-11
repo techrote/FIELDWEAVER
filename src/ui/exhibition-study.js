@@ -1,6 +1,7 @@
 import { exhibitionEntries } from './exhibition-catalog.js';
 import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel } from './exhibition-pixel-probe.js';
 import { getAcceptedVisualIndexPng } from './exhibition-visual-index.js';
+import { buildAcceptedRecipeHandoff } from './exhibition-recipe-handoff.js';
 
 // Read-only exhibition navigation. The gallery's existing visual-index
 // verifier owns CPU replay, PNG decoding, provenance and image URL lifetime.
@@ -99,9 +100,13 @@ export function mountExhibitionStudy(panel) {
   const load = make('button', { id: 'exhibition-study-load', type: 'button', class: 'button' }, 'Load selected into editor');
   const inspect = make('button', { id: 'exhibition-study-pixel-toggle', type: 'button',
   class: 'button', 'aria-expanded': 'false', 'aria-controls': 'exhibition-study-pixel-desk' }, 'Inspect exact pixels');
+  const exportPng = make('button', { id: 'exhibition-study-save-png', type: 'button', class: 'button' },
+    'Save selected CPU PNG');
+  const exportRecipe = make('button', { id: 'exhibition-study-save-recipe', type: 'button', class: 'button' },
+    'Save selected recipe');
   const exportBoard = make('button', { id: 'exhibition-study-save-board', type: 'button', class: 'button' },
     'Save accepted board (HTML)');
-  toolbar.append(back, forward, pin, unpin, load, inspect, exportBoard);
+  toolbar.append(back, forward, pin, unpin, load, inspect, exportPng, exportRecipe, exportBoard);
   const description = make('p', { class: 'workspace-note', id: 'exhibition-study-help' },
     'Left/Right: browse when outside images · P: pin A · Tab to image, Enter: inspect centre, arrows: move one source pixel, Shift+arrows: move ten · Escape: close. Canonical CPU only.');
   const gallery = make('div', { class: 'exhibition-study-frames', role: 'group',
@@ -194,11 +199,13 @@ export function mountExhibitionStudy(panel) {
     const id = pixelId(), record = snapshot()?.get(id), entry = lookup.get(id);
     if (!record) { reading.textContent = 'Verified CPU image unavailable.'; gridPixels.replaceChildren(); return; }
     try {
+      // Renew the live proof lease on *every* sample, including cache hits.
+      // A forged hash/rebuilt proof cannot retain an old decoded readout.
+      const currentPng = getAcceptedVisualIndexPng(panel, id, record.url, record.hash);
       let pixels = pixelCache.get(record.url);
-      if (!pixels) {
-        // Reuse the exact verified PNG bytes already held for offline board
-        // export; CSP deliberately disallows independent blob: fetch.
-        pixels = verifyStudyPng(getAcceptedVisualIndexPng(panel, id, record.url, record.hash),
+      if (!pixels || pixels.hash !== record.hash) {
+        // In-memory FW-012 PNG bytes. CSP forbids fetch(blob:).
+        pixels = verifyStudyPng(currentPng,
           entry.exportCrop.widthPx, entry.exportCrop.heightPx, record.hash);
         if (token !== pixelToken || !dialog.open) return;
         pixelCache.set(record.url, pixels);
@@ -358,6 +365,43 @@ export function mountExhibitionStudy(panel) {
   pin.addEventListener('click', pinCurrent);
   unpin.addEventListener('click', () => { pinnedId = null; paint(); if (pixelOpen) void updatePixel(true); });
   closeButton.addEventListener('click', close);
+  function saveSelectedBytes(bytes, mime, filename) {
+    const url = URL.createObjectURL(new Blob([bytes], { type: mime }));
+    const link = make('a', { href: url, download: filename });
+    document.body.append(link);
+    try { link.click(); } finally {
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 2000);
+    }
+  }
+  exportPng.addEventListener('click', () => {
+    try {
+      const entry = lookup.get(currentId), record = snapshot()?.get(currentId);
+      if (!entry || !record) throw new Error('Rebuild the verified accepted CPU index.');
+      const png = getAcceptedVisualIndexPng(panel, currentId, record.url, record.hash);
+      verifyStudyPng(png, entry.exportCrop.widthPx, entry.exportCrop.heightPx, record.hash);
+      saveSelectedBytes(png, 'image/png',
+        'fieldweaver-' + currentId + '-' + record.hash + '.png');
+      announce.textContent = 'Requested verified CPU PNG for ' + entry.name +
+        '; file delivery is browser-controlled.';
+    } catch (error) {
+      announce.textContent = 'PNG export refused: ' + (error?.message ?? String(error));
+    }
+  });
+  exportRecipe.addEventListener('click', () => {
+    try {
+      const entry = lookup.get(currentId), record = snapshot()?.get(currentId);
+      if (!entry || !record) throw new Error('Rebuild the verified accepted CPU index.');
+      // B is the currently browsed work when A is pinned. No editor adoption.
+      const handoff = buildAcceptedRecipeHandoff(currentId);
+      if (handoff.recipeHash !== entry.recipeHash) throw new Error('Accepted recipe identity mismatch.');
+      saveSelectedBytes(new TextEncoder().encode(handoff.json), 'application/json', handoff.filename);
+      announce.textContent = 'Requested importable recipe for ' + entry.name +
+        ' · reproduce at tick ' + handoff.targetTick + ' with its accepted crop.';
+    } catch (error) {
+      announce.textContent = 'Recipe export refused: ' + (error?.message ?? String(error));
+    }
+  });
   exportBoard.addEventListener('click', () => {
     if (!snapshot() || saveBoard.disabled) {
       announce.textContent = 'Offline export unavailable; regenerate four verified accepted CPU proofs.';
