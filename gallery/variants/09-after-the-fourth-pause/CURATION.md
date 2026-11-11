@@ -46,3 +46,17 @@ node scripts/review-gallery.mjs --out fw-curate-09-08.html \
 Open `fw-curate-09-08.html` in Firefox. Inspect actual works, recorded provenance, downloadable canonical PNG/recipe, then import 09's recipe to the real editor and confirm save/load. This has **not** been performed physically by this worker. The review builder does not accept or merge Draft works.
 
 **Integration decides aesthetic admission and guarded merge.** Do not change earlier art, shared code or accepted catalog. No new variants until the backlog is triaged.
+
+## Single-command, replay-verified owner entrypoint
+
+For an isolated checkout of this exact PR head (Node 22 or 24), from the repository root:
+
+```sh
+node gallery/variants/09-after-the-fourth-pause/review.mjs
+```
+
+Open the printed `file://` URL in Firefox. The generated local HTML uses the **existing** `scripts/review-gallery.mjs` exporter, which independently replays the archived variant-09 recipe at tick 124, checks its recorded provenance and decoded RGBA8 against `selected.png`, and includes two genuinely accepted baseline presets for direct comparison. It labels variant 09 **UNMERGED CANDIDATE**; its recipe, canonical PNG and provenance can each be saved from the board without promoting it to the accepted catalog. A previously generated output is not silently overwritten; supply a different filename as an optional argument.
+
+`review.test.mjs` exercises the owner command on the branch, verifies the generated accepted/unadmitted distinction, proves the downloaded normalized recipe is the submitted child and the embedded image decodes identically to the original canonical archive, and fails on corrupt archived PNG bytes. This is CI/source-verified evidence, **not** owner physical Firefox import/save acceptance. The separate five-PR comparison `cross-variant-review.html` remains a read-only curatorial reference, not a second gallery system.
+
+**Required human action:** visually compare 09 with 06 and 08, import the downloadable 09 recipe in the actual editor, replay tick 124 at the 256×192 crop, and admit, revise or reject. Keep all other mutation Drafts deferred until the backlog is closed.
