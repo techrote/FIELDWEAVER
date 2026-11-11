@@ -1,3 +1,4 @@
+import './exhibition-recipe-ledger.js';
 import { exhibitionEntries } from './exhibition-catalog.js';
 import { renderVisualIndexProof } from './exhibition-visual-index-model.js';
 import { buildOfflineExhibitionBoard } from './exhibition-offline-board.js';

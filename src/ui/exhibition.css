@@ -198,3 +198,34 @@
   .exhibition-inspector { padding: 0.5rem; }
   .exhibition-inspector-frame { max-height: 40vh; }
 }
+
+/* Read-only accepted-recipe anatomy, subordinate to genuine CPU artwork proofs. */
+.exhibition-recipe-ledger {
+  border: 1px solid var(--line);
+  padding: 0.55rem 0.7rem;
+  margin: 0.6rem 0;
+  background: #0c110c;
+}
+.exhibition-recipe-ledger[hidden] { display: none; }
+.exhibition-recipe-ledger summary { cursor: pointer; color: #eaeedc; font-weight: 600; }
+.exhibition-recipe-ledger summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.exhibition-ledger-table { border-collapse: collapse; width: 100%; margin: 0.65rem 0; font-size: 0.72rem; table-layout: fixed; }
+.exhibition-ledger-table th, .exhibition-ledger-table td {
+  border-bottom: 1px solid #30372b;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  padding: 0.45rem;
+}
+.exhibition-ledger-table thead th { color: #eaeedc; font-size: 0.76rem; }
+.exhibition-ledger-table tbody th { color: #b5c4a6; }
+.exhibition-ledger-table .exhibition-ledger-different { background: #22271a; }
+.exhibition-ledger-commands { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 0.65rem; }
+.exhibition-ledger-commands section { min-width: 0; }
+.exhibition-ledger-commands h3 { margin: 0.4rem 0; font-size: 0.78rem; }
+.exhibition-ledger-commands ol { font-size: 0.68rem; overflow-wrap: anywhere; padding-left: 1.5rem; line-height: 1.6; }
+#exhibition-recipe-ledger-status { display: block; margin-top: 0.5rem; }
+@media (max-width: 760px) {
+  .exhibition-ledger-table { display: block; overflow-x: auto; table-layout: auto; }
+  .exhibition-ledger-table th, .exhibition-ledger-table td { min-width: 7rem; }
+}
