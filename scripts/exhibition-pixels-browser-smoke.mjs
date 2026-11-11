@@ -167,6 +167,61 @@ try {
   await writeFile('exhibition-pixel-keyboard-' + browser + '.json',
     JSON.stringify({ browser, pixelRight, pixelDown, pixelB, pixelBLeft, narrow }, null, 2) + '\n');
   await request('POST', '/session/' + sessionId + '/window/rect', { width: 1250, height: 900 });
+  // Keyboard P re-pins the current B artwork as A. The visible pixel reading
+  // must switch from the old A PNG identity to the current accepted CPU proof.
+  await execute("const pick=document.getElementById('exhibition-study-pixel-source');pick.value='A';pick.dispatchEvent(new Event('change',{bubbles:true}));document.querySelectorAll('.exhibition-study-frame img')[0].focus()");
+  let beforeRepin = '';
+  for (let i = 0; i < 35; i += 1) {
+    beforeRepin = await execute("return document.getElementById('exhibition-study-pixel-reading').textContent");
+    if (beforeRepin.includes('Operator Atlas · (48, 32)')) break;
+    await sleep(100);
+  }
+  if (!beforeRepin.includes('Operator Atlas · (48, 32)')) {
+    throw new Error('Old A canonical pixel was not bound before keyboard re-pin: ' + beforeRepin);
+  }
+  await pressPixelKey('p');
+  let repin;
+  for (let i = 0; i < 35; i += 1) {
+    repin = await execute("return {reading:document.getElementById('exhibition-study-pixel-reading').textContent,status:document.getElementById('exhibition-study-status').textContent,source:document.getElementById('exhibition-study-pixel-source').value,open:document.getElementById('exhibition-study-dialog').open}");
+    if (repin.reading.includes('Timeline Pulse · (48, 32)')) break;
+    await sleep(100);
+  }
+  const timelineHash = result.tiles.find((tile) => tile.id === 'timeline-pulse').hash;
+  if (!repin?.reading.includes('Timeline Pulse · (48, 32)') ||
+      !repin.reading.includes('image identity ' + timelineHash) ||
+      repin.reading.includes('Operator Atlas') || repin.source !== 'A' ||
+      !repin.status.includes('A pinned: Timeline Pulse') || !repin.open) {
+    throw new Error('Keyboard re-pin left stale A canonical source bytes or readout: ' + JSON.stringify(repin));
+  }
+  // Complete browse -> A/B -> source-pixel inspection -> offline export from
+  // the same modal. Capture the real HTML Blob without fetch(blob:), which CSP
+  // intentionally denies; the accepted board exporter remains authoritative.
+  await execute("window.__studyBoardHtml=null;const native=URL.createObjectURL;URL.createObjectURL=function(blob){if(blob.type.startsWith('text/html'))blob.text().then(value=>{window.__studyBoardHtml=value});return native.call(this,blob)};document.getElementById('exhibition-study-save-board').click();URL.createObjectURL=native");
+  let boardHtml = null;
+  for (let i = 0; i < 40; i += 1) {
+    boardHtml = await execute("return window.__studyBoardHtml");
+    if (boardHtml) break;
+    await sleep(100);
+  }
+  const boardResult = await execute("return {dialogOpen:document.getElementById('exhibition-study-dialog').open,status:document.getElementById('exhibition-study-status').textContent,source:document.getElementById('exhibition-study-pixel-reading').textContent,editor:document.getElementById('preset-status').textContent}");
+  if (!boardHtml || !boardResult.dialogOpen ||
+      !boardResult.status.includes('Offline canonical board download requested: 4 accepted proofs') ||
+      !boardResult.source.includes('Timeline Pulse · (48, 32)') ||
+      (boardHtml.match(/<article id="work-/g) ?? []).length !== 4 ||
+      (boardHtml.match(/src="data:image\/png;base64,/g) ?? []).length !== 4 ||
+      !boardHtml.includes('default-src &#39;none&#39;') ||
+      /UNMERGED CANDIDATE/i.test(boardHtml) ||
+      result.tiles.some((tile) => !boardHtml.includes(tile.hash))) {
+    throw new Error('Study board export changed source pixels or used unsupported artwork: ' +
+      JSON.stringify({ boardResult, htmlLength: boardHtml?.length, hasCsp: boardHtml?.includes('default-src &#39;none&#39;') }));
+  }
+  const exportShot = await request('GET', '/session/' + sessionId + '/screenshot');
+  if (!exportShot?.value) throw new Error('Study export screenshot absent.');
+  await writeFile('exhibition-study-export-' + browser + '.png', Buffer.from(exportShot.value, 'base64'));
+  await writeFile('exhibition-study-export-' + browser + '.json',
+    JSON.stringify({ browser, beforeRepin, repin, boardResult,
+      boardHtmlBytes: new TextEncoder().encode(boardHtml).length,
+      acceptedHashes: result.tiles.map((tile) => tile.hash) }, null, 2) + '\n');
   const keyboard = await execute("const dialog=document.getElementById('exhibition-study-dialog');dialog.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true,cancelable:true}));const back=document.getElementById('exhibition-study-status').textContent;dialog.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true}));return {back,forward:document.getElementById('exhibition-study-status').textContent}");
   if (!keyboard.back.includes('Operator Atlas') || !keyboard.forward.includes('Timeline Pulse')) {
     throw new Error('Study keyboard navigation failed: ' + JSON.stringify(keyboard));
