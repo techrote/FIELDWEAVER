@@ -1,6 +1,5 @@
 // Artwork-only canonical qualification; source simulation/export modules remain authoritative.
 import assert from 'node:assert/strict';
-import { existsSync } from 'node:fs';
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
@@ -9,15 +8,19 @@ import { createCanonicalExport, decodePngRgba, rawRgbaHash } from '../../../src/
 
 export const ARTWORK_ID = '02-the-luminous-ledger';
 export const TARGET_TICK = 168;
+export const EXPECTED_RECIPE_HASH = 'e60f9467e69750b9';
+export const EXPECTED_RAW_RGBA_HASH = '3b821e3737598e0a';
+export const EXPECTED_RESULT_HASH = '8ff150b7d713ab3c';
 export const SEED = 1800529875;
 export const CAPACITY = 4096;
 export const MAX_DEPOSITIONS = 250000;
 
-export async function qualifyArtwork({ write = false, transfer = false } = {}) {
+export async function qualifyArtwork({ write = false } = {}) {
   const source = await readFile(new URL('./recipe.json', import.meta.url), 'utf8');
   const recipe = parseRecipe(source);
   assert.equal(serializeRecipe(recipe), source, 'recipe.json is not normalized');
   assert.equal(recipe.seed, SEED);
+  assert.equal(recipeHash(recipe), EXPECTED_RECIPE_HASH, 'recipe golden mismatch');
   assert.equal(recipe.schemaVersion, 'fw-recipe-v1');
   assert.equal(recipe.engineVersion, 'fw-agents-v1');
   assert.equal(recipe.lineage, null, 'Original work must have no mutation parent');
@@ -48,6 +51,8 @@ export async function qualifyArtwork({ write = false, transfer = false } = {}) {
   assert.equal(mid.resultHash(), mid2.resultHash(), 'mid-composition replay drifted after roundtrip');
   assert.notEqual(mid.resultHash(), first.resultHash, 'interventions failed to advance the composition');
   assert(first.depositionCount > 500, 'not enough marks generated');
+  assert.equal(first.rawRgbaHash, EXPECTED_RAW_RGBA_HASH, 'canonical RGBA golden mismatch');
+  assert.equal(first.resultHash, EXPECTED_RESULT_HASH, 'canonical replay golden mismatch');
   assert(first.depositionCount < MAX_DEPOSITIONS, 'deposition cap exhausted');
   const receipt = {
     artwork: ARTWORK_ID, recipeHash: recipeHash(recipe), seed: SEED, targetTick: TARGET_TICK,
@@ -57,35 +62,21 @@ export async function qualifyArtwork({ write = false, transfer = false } = {}) {
   const outputPng = new URL('./the-luminous-ledger.png', import.meta.url);
   const outputProvenance = new URL('./the-luminous-ledger.provenance.json', import.meta.url);
   const outputReceipt = new URL('./qualification.json', import.meta.url);
-  if (existsSync(outputPng)) {
-    assert.deepEqual(await readFile(outputPng), Buffer.from(first.png), 'archived PNG != canonical renderer');
-    assert.equal(await readFile(outputProvenance, 'utf8'), first.provenanceJson, 'provenance mismatch');
-    const archived = JSON.parse(await readFile(outputReceipt, 'utf8'));
-    assert.deepEqual(archived, receipt, 'qualification receipt differs');
-  }
+  assert.deepEqual(await readFile(outputPng), Buffer.from(first.png), 'archived PNG != canonical renderer');
+  assert.equal(await readFile(outputProvenance, 'utf8'), first.provenanceJson, 'provenance mismatch');
+  const archived = JSON.parse(await readFile(outputReceipt, 'utf8'));
+  assert.deepEqual(archived, receipt, 'qualification receipt differs');
   if (write) {
     await mkdir(new URL('./rendered/', import.meta.url), { recursive: true });
     await writeFile(new URL('./rendered/the-luminous-ledger.png', import.meta.url), first.png);
     await writeFile(new URL('./rendered/the-luminous-ledger.provenance.json', import.meta.url), first.provenanceJson);
     await writeFile(new URL('./rendered/qualification.json', import.meta.url), JSON.stringify(receipt,null,2) + '\n');
   }
-  if (transfer) {
-    const emit = (name, buffer) => {
-      const b64=Buffer.from(buffer).toString('base64');
-      for(let offset=0;offset<b64.length;offset+=8192){
-        console.log('FW_TRANSFER_' + name + '_' + String(offset/8192).padStart(4,'0') + ':'+b64.slice(offset,offset+8192));
-      }
-      console.log('FW_TRANSFER_' + name + '_END:' + b64.length);
-    };
-    emit('PNG', first.png);
-    emit('PROVENANCE', Buffer.from(first.provenanceJson,'utf8'));
-    console.log('FW_TRANSFER_RECEIPT:'+JSON.stringify(receipt));
-  }
   return receipt;
 }
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const args=process.argv.slice(2);
-  if(args.some(arg=>!['--write','--transfer'].includes(arg))) throw new RangeError('Allowed: --write, --transfer');
-  const receipt=await qualifyArtwork({write:args.includes('--write'),transfer:args.includes('--transfer')});
+  if(args.some(arg=>arg!=='--write')) throw new RangeError('Only --write is supported');
+  const receipt=await qualifyArtwork({write:args.includes('--write')});
   console.log(JSON.stringify(receipt,null,2));
 }
