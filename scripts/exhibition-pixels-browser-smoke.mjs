@@ -298,11 +298,11 @@ try {
   await writeFile('exhibition-accepted-offline-' + browser + '.png',
     Buffer.from(offlineScreenshot.value,'base64'));
   await request('POST', '/session/' + sessionId + '/window/rect', { width:390, height:844 });
-  await execute("document.querySelector('nav a[href=\"#work-operator-atlas\"]').focus()");
-  await pressPixelKey('\uE007'); // Enter on a real in-document navigation link
-  const offlineNarrow = await execute("return {hash:location.hash,focus:document.activeElement.getAttribute('href'),width:innerWidth,scrollWidth:document.documentElement.scrollWidth,articleCount:document.querySelectorAll('main article.work').length}");
+  const navFocus = await execute("document.querySelector('nav a[href=\"#work-operator-atlas\"]').focus();return document.activeElement.getAttribute('href')");
+  if (navFocus !== '#work-operator-atlas') throw new Error('Offline navigation link could not receive keyboard focus.');
+  await pressPixelKey('\uE007'); // Browser may transfer focus to the anchor target.
+  const offlineNarrow = await execute("return {hash:location.hash,width:innerWidth,scrollWidth:document.documentElement.scrollWidth,articleCount:document.querySelectorAll('main article.work').length}");
   if (offlineNarrow.hash !== '#work-operator-atlas' ||
-      offlineNarrow.focus !== '#work-operator-atlas' ||
       offlineNarrow.width > 550 || offlineNarrow.scrollWidth > offlineNarrow.width + 1 ||
       offlineNarrow.articleCount !== 4) {
     throw new Error('Offline keyboard navigation or narrow layout failed: ' +
