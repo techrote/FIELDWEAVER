@@ -3,7 +3,7 @@ import test from 'node:test';
 import { BUILTIN_PRESETS } from '../src/presets/index.js';
 import { recipeHash } from '../src/recipe/index.js';
 import { renderVisualIndexProof } from '../src/ui/exhibition-visual-index-model.js';
-import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel } from '../src/ui/exhibition-pixel-probe.js';
+import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel } from '../src/ui/exhibition-pixel-probe.js';
 
 test('inspection samples real verified CPU PNG bytes without changing accepted recipes', () => {
   const before = BUILTIN_PRESETS.map(p => recipeHash(p.recipe));
@@ -39,4 +39,21 @@ test('pointer mapping accounts for object-fit contain letterbox and boundaries',
   assert.equal(studyImageClickPixel(rect,100,50,100,50), null);
   assert.equal(studyImageClickPixel(rect,100,50,100,170), null);
   assert.equal(studyImageClickPixel({...rect, height:0},100,50,100,100), null);
+});
+
+
+test('find next visible mark uses actual canonical decoded pixel bytes, wraps and rejects empty crops', () => {
+  for (const preset of BUILTIN_PRESETS) {
+    const proof = renderVisualIndexProof(preset.id);
+    const pixels = verifyStudyPng(proof.png, proof.widthPx, proof.heightPx, proof.rawRgbaHash);
+    const mark = nextVisibleStudyPixel(pixels, 48, 32);
+    assert.ok(mark, preset.name + ' must contain visible deposition');
+    const sample = sampleStudyPixel(pixels, mark.x, mark.y);
+    assert.notDeepEqual(sample.rgba, [9, 11, 8, 255]);
+    const after = nextVisibleStudyPixel(pixels, mark.x, mark.y);
+    assert.ok(after);
+  }
+  assert.equal(nextVisibleStudyPixel({ width: 1, height: 1, rgba: Uint8Array.of(9,11,8,255) }, 0, 0), null);
+  assert.deepEqual(nextVisibleStudyPixel({ width: 1, height: 1, rgba: Uint8Array.of(240,20,30,255) }, 0, 0), {x:0,y:0});
+  assert.throws(() => nextVisibleStudyPixel({ width: 1, height: 1, rgba: Uint8Array.of(9,11,8,255) }, 1, 0), /outside/);
 });

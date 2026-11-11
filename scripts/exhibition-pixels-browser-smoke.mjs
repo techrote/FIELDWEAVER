@@ -103,10 +103,21 @@ try {
      !sampled.text.includes('Timeline Pulse')) {
     throw new Error('Independent A/B pixel inspection failed: '+JSON.stringify({aPixel,sampled}));
   }
+  // Use a real decoded non-background mark for the archived visual sample.
+  await execute("document.getElementById('exhibition-study-pixel-next').click()");
+  let marked = '';
+  for (let i = 0; i < 45; i += 1) {
+    marked = await execute("return document.getElementById('exhibition-study-pixel-reading').textContent");
+    if (marked.includes('RGBA8') && !marked.includes('#090b08')) break;
+    await sleep(100);
+  }
+  if (!marked.includes('Operator Atlas') || marked.includes('#090b08')) {
+    throw new Error('Cannot inspect a visible canonical painted pixel: ' + marked);
+  }
   const pixelShot=await request('GET','/session/'+sessionId+'/screenshot');
   if(!pixelShot?.value) throw new Error('Decoded pixel screenshot not captured');
   await writeFile('exhibition-pixels-'+browser+'.png',Buffer.from(pixelShot.value,'base64'));
-  await writeFile('exhibition-pixels-'+browser+'.json',JSON.stringify({browser,sampled,aPixel},null,2)+'\n');
+  await writeFile('exhibition-pixels-'+browser+'.json',JSON.stringify({browser,sampled,aPixel,marked},null,2)+'\n');
   const keyboard = await execute("const dialog=document.getElementById('exhibition-study-dialog');dialog.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true,cancelable:true}));const back=document.getElementById('exhibition-study-status').textContent;dialog.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true}));return {back,forward:document.getElementById('exhibition-study-status').textContent}");
   if (!keyboard.back.includes('Operator Atlas') || !keyboard.forward.includes('Timeline Pulse')) {
     throw new Error('Study keyboard navigation failed: ' + JSON.stringify(keyboard));

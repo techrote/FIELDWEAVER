@@ -1,4 +1,4 @@
-import { decodePngRgba, rawRgbaHash } from '../export/index.js';
+import { decodePngRgba, rawRgbaHash, DEFAULT_EXPORT_BACKGROUND_RGBA8 } from '../export/index.js';
 
 // Decode only actual FW-012 CPU PNG bytes; independently bind the stored
 // decoded-image oracle before exposing pixels to a gallery inspector.
@@ -37,4 +37,21 @@ export function studyImageClickPixel(rect, width, height, clientX, clientY) {
   const top = rect.top + (rect.height - height * scale) / 2;
   const x = Math.floor((clientX - left) / scale), y = Math.floor((clientY - top) / scale);
   return (x >= 0 && y >= 0 && x < width && y < height) ? Object.freeze({ x, y }) : null;
+}
+
+
+// Scan the authoritative decoded raster, not the enlarged CSS image. The
+// versioned FW-012 background is the only exclusion; hidden marks are not
+// inferred from a WebGL preview or presentation colour transform.
+export function nextVisibleStudyPixel(pixels, x, y) {
+  sampleStudyPixel(pixels, x, y);
+  const count = pixels.width * pixels.height;
+  const start = y * pixels.width + x;
+  for (let delta = 1; delta <= count; delta += 1) {
+    const index = (start + delta) % count, offset = index * 4;
+    if (DEFAULT_EXPORT_BACKGROUND_RGBA8.some((value, channel) => pixels.rgba[offset + channel] !== value)) {
+      return Object.freeze({ x: index % pixels.width, y: Math.floor(index / pixels.width) });
+    }
+  }
+  return null; // Entire canonical crop is blank.
 }

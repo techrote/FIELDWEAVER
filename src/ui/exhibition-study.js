@@ -1,5 +1,5 @@
 import { exhibitionEntries } from './exhibition-catalog.js';
-import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel } from './exhibition-pixel-probe.js';
+import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel } from './exhibition-pixel-probe.js';
 import { getAcceptedVisualIndexPng } from './exhibition-visual-index.js';
 
 // Read-only exhibition navigation. The gallery's existing visual-index
@@ -107,7 +107,9 @@ toolbar.append(back, forward, pin, unpin, load, inspect);
   const yLabel = make('label', {}, 'Row ');
   const y = make('input', { id: 'exhibition-study-pixel-y', type: 'number', min: '0', step: '1' });
   yLabel.append(y);
-  fields.append(sourceLabel, xLabel, yLabel);
+  const nextMark = make('button', { id: 'exhibition-study-pixel-next', class: 'button',
+    type: 'button' }, 'Next visible mark');
+  fields.append(sourceLabel, xLabel, yLabel, nextMark);
   const reading = make('output', { id: 'exhibition-study-pixel-reading',
     class: 'workspace-note', 'aria-live': 'polite' }, 'Choose a pixel.');
   const gridPixels = make('div', { id: 'exhibition-study-pixel-neighbours',
@@ -158,7 +160,7 @@ toolbar.append(back, forward, pin, unpin, load, inspect);
     frameNode.caption.textContent = record.label.details;
   }
   const pixelId = () => source.value === 'B' && pinnedId ? currentId : (pinnedId ?? currentId);
-  async function updatePixel(resetCoordinates = false) {
+  async function updatePixel(resetCoordinates = false, findNextMark = false) {
     if (!pixelOpen || !dialog.open) return;
     const token = ++pixelToken;
     const id = pixelId(), record = snapshot()?.get(id), entry = lookup.get(id);
@@ -182,15 +184,25 @@ toolbar.append(back, forward, pin, unpin, load, inspect);
       x.max = String(pixels.width - 1); y.max = String(pixels.height - 1);
       const col = Math.max(0, Math.min(pixels.width - 1, Math.trunc(Number(x.value) || 0)));
       const row = Math.max(0, Math.min(pixels.height - 1, Math.trunc(Number(y.value) || 0)));
-      x.value = String(col); y.value = String(row);
-      const sample = sampleStudyPixel(pixels, col, row);
-      reading.textContent = entry.name + ' · (' + col + ', ' + row + ') · ' + sample.hex +
+      let nextCol = col, nextRow = row;
+      if (findNextMark) {
+        const next = nextVisibleStudyPixel(pixels, col, row);
+        if (next) { nextCol = next.x; nextRow = next.y; }
+        else {
+          reading.textContent = entry.name + ' has no visible non-background pixels at this accepted crop.';
+          gridPixels.replaceChildren();
+          return;
+        }
+      }
+      x.value = String(nextCol); y.value = String(nextRow);
+      const sample = sampleStudyPixel(pixels, nextCol, nextRow);
+      reading.textContent = entry.name + ' · (' + nextCol + ', ' + nextRow + ') · ' + sample.hex +
         ' · RGBA8 ' + sample.rgba.join(', ') + ' · image identity ' + pixels.hash;
       const cells = [];
       for (let dy = -4; dy <= 4; dy += 1) {
         for (let dx = -4; dx <= 4; dx += 1) {
           const cell = make('span', { class: 'exhibition-study-pixel-cell' + (dx === 0 && dy === 0 ? ' is-centre' : '') });
-          const px = col + dx, py = row + dy;
+          const px = nextCol + dx, py = nextRow + dy;
           if (px < 0 || py < 0 || px >= pixels.width || py >= pixels.height) cell.classList.add('is-outside');
           else {
             const color = sampleStudyPixel(pixels, px, py);
@@ -224,6 +236,7 @@ toolbar.append(back, forward, pin, unpin, load, inspect);
   });
   source.addEventListener('change', () => { lastPixelId = null; void updatePixel(true); });
   for (const input of [x, y]) input.addEventListener('input', () => void updatePixel());
+  nextMark.addEventListener('click', () => void updatePixel(false, true));
   for (const [side, frameNode] of [['A', left], ['B', right]]) {
     frameNode.img.title = 'Click to inspect a canonical decoded pixel';
     frameNode.img.addEventListener('click', (event) => {
