@@ -125,3 +125,76 @@
   min-height: 5rem;
   margin: 0.4rem 0;
 }
+
+/* Full-window proof inspection only enlarges existing canonical PNG object URLs. */
+.exhibition-inspector {
+  box-sizing: border-box;
+  width: min(95vw, 1350px);
+  max-width: 1350px;
+  max-height: 94vh;
+  margin: auto;
+  padding: 1rem;
+  border: 1px solid var(--accent);
+  border-radius: 0;
+  background: #121711;
+  color: #eaeedc;
+  box-shadow: 0 1rem 4rem #000c;
+}
+.exhibition-inspector::backdrop { background: #020400de; }
+.exhibition-inspector-header,
+.exhibition-inspector-toolbar {
+  display: flex;
+  gap: 0.8rem;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.85rem;
+}
+.exhibition-inspector-header h2 { margin: 0; font-size: 1.25rem; }
+.exhibition-inspector-toolbar label { font-size: 0.83rem; }
+.exhibition-inspector-toolbar select {
+  min-height: 2.5rem;
+  background: #11180f;
+  border: 1px solid var(--line);
+  color: #eaeedc;
+  border-radius: 0;
+  padding: 0.35rem;
+}
+.exhibition-inspector-toolbar select:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+.exhibition-inspector-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+  align-items: start;
+  gap: 0.75rem;
+}
+.exhibition-inspector-frame {
+  margin: 0;
+  padding: 0.6rem;
+  min-width: 0;
+  max-height: 66vh;
+  overflow: auto;
+  border: 1px solid var(--line);
+  background: #060806;
+  text-align: center;
+}
+.exhibition-inspector-frame[hidden] { display: none; }
+.exhibition-inspector-frame h3 { margin: 0 0 0.6rem; font-size: 0.86rem; }
+.exhibition-inspector-frame img {
+  display: block;
+  height: auto;
+  max-width: none;
+  margin: auto;
+  image-rendering: pixelated;
+}
+.exhibition-inspector-frame figcaption {
+  margin-top: 0.7rem;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 760px) {
+  .exhibition-inspector { padding: 0.5rem; }
+  .exhibition-inspector-frame { max-height: 40vh; }
+}

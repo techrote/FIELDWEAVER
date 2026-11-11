@@ -223,6 +223,47 @@ try {
   if (!capture?.value) throw new Error('Browser did not return an exhibition comparison screenshot.');
   await writeFile(`release-exhibition-${browser}.png`, Buffer.from(capture.value, 'base64'));
 
+
+  // Exercise the actual native modal, both decoded CPU images and CSS-only pixel zoom.
+  await execute(`document.querySelector('#exhibition-inspect').click();`);
+  let inspected = null;
+  for (let i = 0; i < 80; i += 1) {
+    inspected = await execute(`
+      const dialog = document.querySelector('#exhibition-inspector');
+      const images = [...dialog.querySelectorAll('.exhibition-inspector-frame img')];
+      const scale = document.querySelector('#exhibition-inspector-zoom');
+      scale.value = '4';
+      scale.dispatchEvent(new Event('change', { bubbles: true }));
+      return {
+        open: dialog.open,
+        a: [images[0].naturalWidth, images[0].naturalHeight, images[0].complete, images[0].style.width],
+        b: [images[1].naturalWidth, images[1].naturalHeight, images[1].complete, images[1].style.width],
+        captions: [...dialog.querySelectorAll('figcaption')].map((n) => n.textContent),
+        urls: images.map((n) => n.getAttribute('src'))
+      };
+    `);
+    if (inspected.open && inspected.a[0] === 96 && inspected.b[0] === 96 &&
+        inspected.a[2] && inspected.b[2]) break;
+    await sleep(150);
+  }
+  if (!inspected?.open ||
+      inspected.a.join(',') !== '96,64,true,384px' ||
+      inspected.b.join(',') !== '96,64,true,384px' ||
+      !inspected.captions[0].includes(exhibition.hash) ||
+      !inspected.captions[1].includes(compared.hash) ||
+      inspected.urls[0] !== compared.aSource || inspected.urls[1] !== compared.bSource) {
+    throw new Error(`Full-window canonical inspection failed: ${JSON.stringify(inspected)}`);
+  }
+  const inspectorCapture = await request('GET', `/session/${sessionId}/screenshot`);
+  if (!inspectorCapture?.value) throw new Error('Browser did not return an inspection screenshot.');
+  await writeFile(`release-exhibition-inspector-${browser}.png`, Buffer.from(inspectorCapture.value, 'base64'));
+  const inspectionClosed = await execute(`
+    document.querySelector('#exhibition-inspector-close').click();
+    const dialog = document.querySelector('#exhibition-inspector');
+    return !dialog.open && [...dialog.querySelectorAll('img')].every((img) => !img.hasAttribute('src'));
+  `);
+  if (!inspectionClosed) throw new Error('Inspector did not release its stale image references on close.');
+
   const invalidated = await execute(`
     document.querySelector('#exhibition-next').click();
     return {
@@ -247,7 +288,7 @@ try {
     throw new Error(`Clearing A retained stale comparison artifacts: ${JSON.stringify(cleared)}`);
   }
 
-  const evidence = { browser, initial, loaded, afterStamp, exhibition, pinned, moved, compared, decoded, invalidated, cleared, driverLog: driverLog.slice(-3000) };
+  const evidence = { browser, initial, loaded, afterStamp, exhibition, pinned, moved, compared, decoded, inspected, invalidated, cleared, driverLog: driverLog.slice(-3000) };
   await writeFile(evidencePath, `${JSON.stringify(evidence, null, 2)}\n`);
   console.log(JSON.stringify({ browser, preset: loaded.presetId, presetHash: loaded.presetHash, keyboardStampHash: afterStamp.canonicalHash, releaseDiagnostics: afterStamp.releaseDiagnostics }, null, 2));
 } finally {
