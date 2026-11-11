@@ -52,6 +52,8 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
   assert.equal((board.html.match(/<pre>/g) ?? []).length, 4);
   assert.doesNotMatch(board.html, /<script\b|(?:src|href)="https?:\/\//i);
   assert.match(board.html, /default-src &#39;none&#39;/);
+  assert.match(board.html, /\.work figcaption,footer\{color:#333\}/,
+    'Printed captions and footer must retain readable contrast on white paper');
   for (const tile of tiles) {
     assert(board.html.includes(tile.rawRgbaHash));
     assert(board.html.includes(tile.recipeHash));
