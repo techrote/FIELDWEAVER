@@ -13,3 +13,10 @@ This is an optional full-window browsing and comparison view over the **four acc
 The images are neither generated twice nor substituted with WebGL, stock images or a simulated picture. This view **reuses only the object URLs already created by the opt-in canonical visual index** after its software-raster, PNG decoding, receipt and catalog checks. It accepts no URLs from other sources. Rebuilding the index closes the study before the index may revoke old image URLs. The readout does not infer image similarity or quietly align differing crops. It never admits pending Original Compositions or Mutation Atlas PRs.
 
 Native dialog, buttons, visible focus indicators and keyboard shortcuts support accessibility; there is no autoplay, polling network API, telemetry or external asset. The source-only regression checks verify catalog cycling, display metadata, actual golden CPU proof identities and recipe immutability. The dedicated Chrome/Firefox smoke opens the dialog, browses, pins and loads, captures a real screenshot, and records image decoding. Those browser observations must be qualified separately from Node tests.
+
+
+## Inspect actual decoded pixels
+
+Open the canonical gallery study after generating the four verified CPU proofs. Choose **Inspect exact pixels** or click an image. Column and row inputs are keyboard-editable and report its exact source pixel RGBA8 tuple, RGB hexadecimal colour and the complete decoded-image identity. The 9×9 magnification is a noncanonical nearest-neighbour presentation of the original PNG bytes, never a new export.
+
+A/B comparison samples each image independently; their authored world crops must not be mistaken for aligned coordinates. The inspector retrieves only the visual index's already-verified, in-memory FW-012 PNG bytes (bound to the displayed local blob URL); it re-decodes using FW-012 and rejects dimensions or decoded-pixel hashes that disagree with accepted records. Rebuild, cancellation, closing and page disposal invalidate its cache. No WebGL readback, external resource, telemetry or recipe changes.
