@@ -111,7 +111,7 @@ export function createLastManta(){
   const materials=[
     {id:1,kind:'ink',inertiaNumerator:1,inertiaDenominator:1,steeringNumerator:1,
       steeringDenominator:48,lifetimeTicks:104,depositEvery:1,primitive:'disc',
-      radiusQ16:41500,strengthQ16:64000,quantizeAxis:false},
+      radiusQ16:32000,strengthQ16:64000,quantizeAxis:false},
     {id:2,kind:'filament',inertiaNumerator:1,inertiaDenominator:1,steeringNumerator:1,
       steeringDenominator:55,lifetimeTicks:103,depositEvery:1,primitive:'segment',
       radiusQ16:25500,strengthQ16:57000,quantizeAxis:false},
