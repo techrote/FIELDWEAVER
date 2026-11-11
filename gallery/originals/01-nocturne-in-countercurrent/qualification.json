@@ -1,0 +1,26 @@
+{
+  "artwork": "01-nocturne-in-countercurrent",
+  "qualification": "canonical software replay, dual tile shapes, PNG decode, normalized recipe",
+  "recipeHash": "ee1696765f96ef0c",
+  "seed": 2010505889,
+  "targetTick": 156,
+  "crop": {
+    "widthPx": 512,
+    "heightPx": 320,
+    "center": {
+      "chunkX": 0,
+      "chunkY": 0,
+      "localX": 10485760,
+      "localY": 8388608
+    },
+    "unitsPerPixelQ16": 40960
+  },
+  "depositionCount": 41463,
+  "rawRgbaHash": "1427da2094a6b26a",
+  "stateHash": "63741f7a46f5c192",
+  "depositionHash": "e4ddc803285b4552",
+  "resultHash": "070f9ce6df0a8ca4",
+  "ciRun": "https://github.com/techrote/FIELDWEAVER/actions/runs/42931225797",
+  "ciJob": 130230167998,
+  "sourceCommit": "96c87df1377a3aaeada32e66efc1f6ee59267742"
+}
