@@ -28,6 +28,14 @@ Sibling 17 is the only finalist here with a substantial continuous **folded cyan
 
 The competing #62 selected sibling 01 preserves the parent's combination of an upright violet mark, descending cyan trace and short rainbow ribbon in nearly the same arrangement; despite its nontrivial within-crop mask difference, it reads less independent than this basin. #58 has a stronger arch but repeats the violet terminal vocabulary. #55 is a dramatically simpler cyan hook; #48 is a short lateral carrier, and #38 a more compact broken orbit. **Prioritize #50 for a single human admit/reject decision; defer #62 and #58 as potentially overlapping gestures.** Do not merge the alternatives simply because their hashes differ. The compared works have different crops and ticks, so no cross-PR mask-XOR claim is made.
 
+**One-command owner review from the Draft #50 checkout** (Node 22/24, repository root):
+
+```sh
+node gallery/variants/06-unwound-metronome/review.mjs
+```
+
+This uses the existing, independently checked offline board to re-render two genuinely **ACCEPTED** presets (Timeline Pulse and Operator Atlas) and this one **UNMERGED** candidate. It verifies the archived `selected.png` pixel-for-pixel against a fresh CPU replay, embeds actual canonical PNGs, and offers recipe/provenance downloads. Open the printed HTML path directly in Firefox, then load the downloaded candidate recipe in the live FIELDWEAVER editor and replay tick 148. The generated filename is protected against overwriting an earlier review; an alternate path may be passed as a single argument. This is not a gallery admission or physical Firefox acceptance result.
+
 **Fast physical review from current `main`** (leave this Draft unmerged and preserve separate worktrees):
 
 ```sh
