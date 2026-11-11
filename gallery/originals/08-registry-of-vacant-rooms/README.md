@@ -38,3 +38,34 @@ Direct inspection of the canonical 432×304 pixels finds a narrow ochre left-han
 | Canonical frame | 162 (432×304) |
 
 Every `npm run verify` now regenerates and checks the committed normalized `recipe.json`, `the-vacant-rooms.png`, complete `fw-export-provenance-v1` JSON and independent `qualification.json`; alternate tile sizes and early replay are checked separately. The content is still a **Draft original** until independent Integration acceptance and physical browser loading.
+
+## Offline owner/Integration review — proposed, not accepted
+
+From a checkout of this **Draft PR branch**, with Node 22 or 24:
+
+```sh
+npm ci
+npm run verify
+node gallery/originals/08-registry-of-vacant-rooms/qualify.mjs --archived
+node scripts/review-gallery.mjs --out rooms-review.html --preset operator-atlas --preset timeline-pulse --provenance gallery/originals/08-registry-of-vacant-rooms/the-vacant-rooms.provenance.json
+```
+
+Open `rooms-review.html` directly in Firefox. The existing repository tool creates one offline, keyboard-navigable review with two **ACCEPTED PRESET** CPU proofs and this **UNMERGED CANDIDATE**, including recipe, canonical PNG and provenance downloads. It independently replays and checks the candidate's twenty canonical provenance fields and decoded pixels against the archived PNG before producing the page. This does not enroll the artwork into the accepted catalog or replace a working editor recipe. The output path is create-only; use another filename if the first review already exists.
+
+For a direct comparison against Original 09 `The Last Manta` while preserving isolated branches:
+
+```sh
+git fetch origin pull/61/head:refs/heads/review/original-09
+git worktree add ../FIELDWEAVER-review-09 review/original-09
+node scripts/review-gallery.mjs --out rooms-manta-review.html --preset operator-atlas --provenance gallery/originals/08-registry-of-vacant-rooms/the-vacant-rooms.provenance.json --provenance ../FIELDWEAVER-review-09/gallery/originals/09-the-last-manta/the-last-manta.provenance.json
+```
+
+No source artwork, accepted preset or authored canonical identity is modified by either comparison.
+
+### Actual native-pixel curatorial examination, 11 November 2026
+
+The archived **432×304 FW-012 CPU PNG** was opened at source size. Its three separated upright geometries have genuinely different subdivisions: ochre tightly spaced horizontal ledger lines, mostly vacant chalk/mint central frame, and a violet eastern frame with a slanted mint intrusion. Bottom detached horizontal strokes preserve the gaps rather than suggesting a continuous floor. The main strength is **large-scale architectural segmentation** and a legible distribution of silence between three unrelated structures. The limitation is that the middle space is almost without interior development, while the right register's small lavender dashes can disappear at reduced display size.
+
+The **actual** competing CPU PNGs were also visually examined: Original 09 *The Last Manta* (`#61`) resolves into long paired cyan wing contours and very small central body, Original 07 *Zero Meridian* (`#54`) is an incomplete pair of circular bearings traversed by a needle, and Original 04 *Pollen Observatory* (`#47`) comprises five isolated warm-toned whorls. Rooms has a distinct rectilinear, vertically grouped silhouette and clearly separated ochre/chalk/violet structures; it is not an image duplicate. Its occupied fraction, 8,452/131,328 (6.44%), exceeds Manta's 4,431/153,600 (2.88%), but **these are different crops, not a perceptual-quality comparison**. Pollen's warm curved clusters and Meridian's circular ring are structurally different, although all four pieces employ very dark negative space and fine strokes.
+
+**Recommendation: prioritize Rooms for physical selection before Manta, but do not auto-admit.** It has a more developed internal rhythm and better separation between colour-coded regions, while the slight surface thinness and limited dramatic progression remain reasonable grounds for rejection. The two built-in accepted works can be re-rendered by the review command; their full-size canonical outputs were **not** newly viewed during this source-level comparison. Human Firefox import/canonical export and aesthetic acceptance remain open gates, not claimed tests.
