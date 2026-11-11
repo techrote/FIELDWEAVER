@@ -141,9 +141,12 @@ export function buildAtlas() {
     if(finalists.length===FINALISTS) break;
   }
   if(finalists.length!==FINALISTS) throw new Error('Insufficient morphologically independent canonical finalists: '+finalists.length);
-  // Provisional selection by occupancy-mask geometry only. Artistic selection
-  // must be revised after genuine FW-012 rendered images have been inspected.
-  const selected=finalists[0];
+  // Curated after inspection of actual FW-012 CPU contact sheet and finalists:
+  // 01 keeps two counter-moving chromatic currents and the isolated magenta
+  // upper staff; 13, while scoring higher, repeats variant 08's horizontal
+  // violet termination, and 00 collapses into excessive emptiness.
+  const selected=finalists.find(c=>c.i===1);
+  if (!selected) throw new Error('Curated sibling 01 must survive geometric qualification');
   const panels=[{label:'P',export:parentExport},...finalists.map(c=>({label:(c.i===selected.i?'S':'')+String(c.i).padStart(2,'0'),export:c.export}))];
   const sheet=contactSheet(panels);
   const manifest={
