@@ -1,5 +1,8 @@
 import { spawn, spawnSync } from 'node:child_process';
 import { writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { decodePngRgba, rawRgbaHash } from '../src/export/index.js';
 
 const browser = process.argv[2] ?? 'firefox';
 if (!['chrome', 'firefox'].includes(browser)) throw new Error('Expected chrome or firefox.');
@@ -238,6 +241,83 @@ try {
   if (!screenshot?.value) throw new Error('Browser screenshot absent.');
   await writeFile('exhibition-visual-index-' + browser + '.png', Buffer.from(screenshot.value, 'base64'));
   await writeFile('exhibition-visual-index-' + browser + '.json', JSON.stringify({ browser, initial, result, selected }, null, 2) + '\n');
+
+  // Export is not complete until the same authored HTML opens as a genuine
+  // file:// document. The existing gallery-review test covers two different
+  // accepted records; here we check all four from the study export itself.
+  // This verifies offline rendering, not OS download-manager persistence.
+  const offlineName = 'exhibition-accepted-offline-' + browser + '.html';
+  await writeFile(offlineName, boardHtml, 'utf8');
+  const encoded = [...boardHtml.matchAll(/<article id="work-([^"]+)"[\s\S]*?src="data:image\/png;base64,([^"]+)"/g)];
+  if (encoded.length !== result.tiles.length) {
+    throw new Error('Offline export did not embed one canonical PNG per accepted work.');
+  }
+  const offlineDecoded = encoded.map((match) => {
+    const id = match[1];
+    const pixels = decodePngRgba(new Uint8Array(Buffer.from(match[2], 'base64')));
+    const hash = rawRgbaHash(pixels.rgba);
+    const accepted = result.tiles.find((tile) => tile.id === id);
+    if (!accepted || hash !== accepted.hash || pixels.widthPx !== 96 || pixels.heightPx !== 64) {
+      throw new Error('Exported file has mismatched canonical decoded pixels: ' + id + ' / ' + hash);
+    }
+    return { id, hash, width: pixels.widthPx, height: pixels.heightPx };
+  });
+  await request('POST', '/session/' + sessionId + '/url',
+    { url: pathToFileURL(resolve(offlineName)).href });
+  let offlineImages = [];
+  for (let i = 0; i < 100; i += 1) {
+    offlineImages = await execute("return [...document.querySelectorAll('.work figure img')].map(img=>({complete:img.complete,width:img.naturalWidth,height:img.naturalHeight,src:img.currentSrc}))");
+    if (offlineImages.length === 4 && offlineImages.every((img) =>
+      img.complete && img.width === 96 && img.height === 64 &&
+      img.src.startsWith('data:image/png;base64,'))) break;
+    await sleep(100); // Firefox file: decode is asynchronous after navigation.
+  }
+  if (offlineImages.length !== 4 || offlineImages.some((img) =>
+    !img.complete || img.width !== 96 || img.height !== 64 ||
+    !img.src.startsWith('data:image/png;base64,'))) {
+    throw new Error('Exported HTML did not display genuine embedded PNGs offline: ' +
+      JSON.stringify(offlineImages.map(({ complete, width, height, src }) =>
+        ({ complete, width, height, isInline:src.startsWith('data:image/png;base64,') }))));
+  }
+  const offlinePage = await execute("return {title:document.title,heading:document.querySelector('h1')?.textContent,csp:document.querySelector('meta[http-equiv=\"Content-Security-Policy\"]')?.content,articleIds:[...document.querySelectorAll('main article.work')].map(x=>x.id),anchors:[...document.querySelectorAll('nav a')].map(x=>x.getAttribute('href')),scriptCount:document.scripts.length,externalResources:[...document.querySelectorAll('[src],[href]')].map(x=>x.getAttribute('src')||x.getAttribute('href')).filter(x=>/^(https?:|\\/\\/)/i.test(x)),bodyText:document.body.innerText}");
+  if (offlinePage.heading !== 'Accepted canonical proofs' ||
+      !offlinePage.csp?.includes("default-src 'none'") ||
+      !offlinePage.csp.includes("connect-src 'none'") ||
+      offlinePage.articleIds.length !== 4 || offlinePage.anchors.length !== 4 ||
+      offlinePage.scriptCount !== 0 || offlinePage.externalResources.length !== 0 ||
+      encoded.some((match) => !offlinePage.articleIds.includes('work-' + match[1]) ||
+        !offlinePage.bodyText.includes(offlineDecoded.find((p) => p.id === match[1]).hash)) ||
+      /UNMERGED CANDIDATE/i.test(offlinePage.bodyText)) {
+    throw new Error('Reopened offline exhibition changed acceptance, CSP or proof details: ' +
+      JSON.stringify({ heading:offlinePage.heading, csp:offlinePage.csp,
+        ids:offlinePage.articleIds, anchors:offlinePage.anchors,
+        scripts:offlinePage.scriptCount, remote:offlinePage.externalResources }));
+  }
+  const offlineScreenshot = await request('GET','/session/' + sessionId + '/screenshot');
+  if (!offlineScreenshot?.value) throw new Error('Offline board desktop screenshot absent.');
+  await writeFile('exhibition-accepted-offline-' + browser + '.png',
+    Buffer.from(offlineScreenshot.value,'base64'));
+  await request('POST', '/session/' + sessionId + '/window/rect', { width:390, height:844 });
+  const navFocus = await execute("document.querySelector('nav a[href=\"#work-operator-atlas\"]').focus();return document.activeElement.getAttribute('href')");
+  if (navFocus !== '#work-operator-atlas') throw new Error('Offline navigation link could not receive keyboard focus.');
+  await pressPixelKey('\uE007'); // Browser may transfer focus to the anchor target.
+  const offlineNarrow = await execute("return {hash:location.hash,width:innerWidth,scrollWidth:document.documentElement.scrollWidth,articleCount:document.querySelectorAll('main article.work').length}");
+  if (offlineNarrow.hash !== '#work-operator-atlas' ||
+      offlineNarrow.width > (browser === 'chrome' ? 390 : 500) ||
+      offlineNarrow.scrollWidth > offlineNarrow.width + 1 ||
+      offlineNarrow.articleCount !== 4) {
+    throw new Error('Offline keyboard navigation or narrow layout failed: ' +
+      JSON.stringify(offlineNarrow));
+  }
+  const offlineNarrowScreenshot = await request('GET','/session/' + sessionId + '/screenshot');
+  if (!offlineNarrowScreenshot?.value) throw new Error('Offline board narrow screenshot absent.');
+  await writeFile('exhibition-accepted-offline-narrow-' + browser + '.png',
+    Buffer.from(offlineNarrowScreenshot.value,'base64'));
+  await writeFile('exhibition-accepted-offline-' + browser + '.json',
+    JSON.stringify({ browser, source:'existing study export HTML Blob; Node decoded RGBA8 independently',
+      offlineDecoded, verifiedFromFileUrl:true, offlineNarrow,
+      title:offlinePage.title, csp:offlinePage.csp },null,2) + '\n');
+
   console.log(JSON.stringify({ browser, status:'four actual decoded canonical CPU images', hashes:result.tiles.map((tile) => tile.hash), selected:selected.id }, null, 2));
 } finally {
   if (sessionId) { try { await request('DELETE', '/session/' + sessionId); } catch { /* cleanup */ } }
