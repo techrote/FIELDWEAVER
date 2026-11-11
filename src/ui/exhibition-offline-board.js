@@ -34,7 +34,9 @@ function sameCrop(a, b) {
 
 // All evidence must derive from the accepted, explicit-tick CPU export.
 // No frame buffer, screenshot, synthetic thumbnail, imported artwork or proxy.
-function verifyTile(entry, tile) {
+// Reused by the live selected-work export: the one accepted CPU receipt
+// verifier must govern both single-work and four-work handoff paths.
+export function verifyOfflineExhibitionTile(entry, tile) {
   if (!tile || tile.id !== entry.id || tile.name !== entry.name ||
       tile.seed !== entry.seed || tile.recipeHash !== entry.recipeHash ||
       tile.targetTick !== entry.targetTick ||
@@ -76,7 +78,7 @@ export function buildOfflineExhibitionBoard(tiles) {
   }
   const cards = entries.map((entry, index) => {
     const tile = byId.get(entry.id);
-    const receipt = verifyTile(entry, tile);
+    const receipt = verifyOfflineExhibitionTile(entry, tile);
     const recipeJson = serializeRecipe(receipt.recipe);
     if (recipeHash(parseRecipe(recipeJson)) !== entry.recipeHash) {
       throw new Error('Offline board refused a non-importable accepted recipe.');

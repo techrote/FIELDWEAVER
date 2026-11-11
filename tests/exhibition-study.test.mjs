@@ -5,6 +5,7 @@ import { recipeHash } from '../src/recipe/index.js';
 import { exhibitionEntries } from '../src/ui/exhibition-catalog.js';
 import { renderVisualIndexProof } from '../src/ui/exhibition-visual-index-model.js';
 import { studyNextId, studyArtworkLabel, studyPixelCursor } from '../src/ui/exhibition-study.js';
+import { verifyOfflineExhibitionTile } from '../src/ui/exhibition-offline-board.js';
 
 test('canonical study cycles the accepted catalog in both directions without introducing other works', () => {
   const ids = exhibitionEntries().map((entry) => entry.id);
@@ -49,4 +50,29 @@ test('keyboard pixel cursor moves in canonical source coordinates and clamps at 
     [96, 64, 0, 0, 'ArrowUp', 'yes']]) {
     assert.throws(() => studyPixelCursor(...args), /Invalid canonical pixel cursor geometry/);
   }
+});
+
+test('selected study provenance is a full verified CPU receipt, not an unframed recipe or stale pixels', () => {
+  const before = BUILTIN_PRESETS.map((preset) => recipeHash(preset.recipe));
+  for (const entry of exhibitionEntries()) {
+    const tile = renderVisualIndexProof(entry.id);
+    const receipt = verifyOfflineExhibitionTile(entry, tile);
+    assert.equal(receipt.rawRgbaHash, tile.rawRgbaHash);
+    assert.equal(receipt.targetTick, entry.targetTick);
+    assert.deepEqual(receipt.crop, entry.exportCrop);
+    assert.equal(recipeHash(receipt.recipe), entry.recipeHash);
+    const badReceipt = { ...receipt, targetTick: receipt.targetTick + 1 };
+    assert.throws(() => verifyOfflineExhibitionTile(entry, {
+      ...tile, provenanceJson: JSON.stringify(badReceipt)
+    }), /mismatched canonical provenance/);
+    const alteredPng = tile.png.slice();
+    alteredPng[alteredPng.length - 8] ^= 1;
+    assert.throws(() => verifyOfflineExhibitionTile(entry, {
+      ...tile, png: alteredPng
+    }), /CRC|PNG|canonical/);
+    assert.throws(() => verifyOfflineExhibitionTile(entry, {
+      ...tile, rawRgbaHash: '0000000000000000'
+    }), /canonical PNG|mismatched accepted proof/);
+  }
+  assert.deepEqual(BUILTIN_PRESETS.map((preset) => recipeHash(preset.recipe)), before);
 });

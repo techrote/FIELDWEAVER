@@ -1,6 +1,7 @@
 import { exhibitionEntries } from './exhibition-catalog.js';
 import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel } from './exhibition-pixel-probe.js';
-import { getAcceptedVisualIndexPng } from './exhibition-visual-index.js';
+import { getAcceptedVisualIndexPng, getAcceptedVisualIndexProvenance } from './exhibition-visual-index.js';
+import { verifyOfflineExhibitionTile } from './exhibition-offline-board.js';
 import { buildAcceptedRecipeHandoff } from './exhibition-recipe-handoff.js';
 
 // Read-only exhibition navigation. The gallery's existing visual-index
@@ -104,9 +105,11 @@ export function mountExhibitionStudy(panel) {
     'Save selected CPU PNG');
   const exportRecipe = make('button', { id: 'exhibition-study-save-recipe', type: 'button', class: 'button' },
     'Save selected recipe');
+  const exportProvenance = make('button', { id: 'exhibition-study-save-provenance', type: 'button', class: 'button' },
+    'Save selected provenance');
   const exportBoard = make('button', { id: 'exhibition-study-save-board', type: 'button', class: 'button' },
     'Save accepted board (HTML)');
-  toolbar.append(back, forward, pin, unpin, load, inspect, exportPng, exportRecipe, exportBoard);
+  toolbar.append(back, forward, pin, unpin, load, inspect, exportPng, exportRecipe, exportProvenance, exportBoard);
   const description = make('p', { class: 'workspace-note', id: 'exhibition-study-help' },
     'Left/Right: browse when outside images · P: pin A · Tab to image, Enter: inspect centre, arrows: move one source pixel, Shift+arrows: move ten · Escape: close. Canonical CPU only.');
   const gallery = make('div', { class: 'exhibition-study-frames', role: 'group',
@@ -400,6 +403,28 @@ export function mountExhibitionStudy(panel) {
         ' · reproduce at tick ' + handoff.targetTick + ' with its accepted crop.';
     } catch (error) {
       announce.textContent = 'Recipe export refused: ' + (error?.message ?? String(error));
+    }
+  });
+  exportProvenance.addEventListener('click', () => {
+    try {
+      const entry = lookup.get(currentId), record = snapshot()?.get(currentId);
+      if (!entry || !record) throw new Error('Rebuild the verified accepted CPU index.');
+      // The currently browsed B owns the export, not pinned A. Source bytes
+      // and the complete FW-012 receipt are tied to the same live blob lease.
+      const png = getAcceptedVisualIndexPng(panel, currentId, record.url, record.hash);
+      const provenanceJson = getAcceptedVisualIndexProvenance(panel, currentId, record.url, record.hash);
+      verifyOfflineExhibitionTile(entry, {
+        id: entry.id, name: entry.name, seed: entry.seed, recipeHash: entry.recipeHash,
+        targetTick: entry.targetTick, rawRgbaHash: record.hash,
+        widthPx: entry.exportCrop.widthPx, heightPx: entry.exportCrop.heightPx,
+        png, provenanceJson
+      });
+      saveSelectedBytes(new TextEncoder().encode(provenanceJson), 'application/json',
+        'fieldweaver-' + currentId + '-' + record.hash + '.fwprovenance.json');
+      announce.textContent = 'Requested full canonical provenance for ' + entry.name +
+        '; file delivery is browser-controlled.';
+    } catch (error) {
+      announce.textContent = 'Provenance export refused: ' + (error?.message ?? String(error));
     }
   });
   exportBoard.addEventListener('click', () => {

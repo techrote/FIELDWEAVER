@@ -6,7 +6,7 @@ import { buildOfflineExhibitionBoard } from './exhibition-offline-board.js';
 // Internal read-only access to the exact FW-012 proof bytes already verified
 // by the visual index. This never exposes a WebGL screenshot or stale blob.
 const proofRegistries = new WeakMap();
-export function getAcceptedVisualIndexPng(panel, id, url, rawRgbaHash) {
+function liveAcceptedVisualIndexProof(panel, id, url, rawRgbaHash) {
   const registry = proofRegistries.get(panel);
   const proof = registry?.proofs.get(id);
   if (!url?.startsWith('blob:') || registry?.urls.get(id) !== url ||
@@ -14,7 +14,15 @@ export function getAcceptedVisualIndexPng(panel, id, url, rawRgbaHash) {
       !/^[0-9a-f]{16}$/.test(rawRgbaHash)) {
     throw new Error('Current verified CPU proof is unavailable or mismatched.');
   }
-  return proof.png.slice(); // detached copy, not mutable ownership
+  return proof;
+}
+export function getAcceptedVisualIndexPng(panel, id, url, rawRgbaHash) {
+  return liveAcceptedVisualIndexProof(panel, id, url, rawRgbaHash).png.slice();
+}
+export function getAcceptedVisualIndexProvenance(panel, id, url, rawRgbaHash) {
+  const receipt = liveAcceptedVisualIndexProof(panel, id, url, rawRgbaHash).provenanceJson;
+  if (typeof receipt !== 'string') throw new Error('Verified CPU provenance is unavailable.');
+  return receipt; // immutable string, scoped to the same live proof lease
 }
 
 // Augment the existing native-button gallery. Never replace the accepted

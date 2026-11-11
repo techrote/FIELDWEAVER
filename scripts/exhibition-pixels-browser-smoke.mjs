@@ -133,6 +133,22 @@ try {
     } catch { return false; }
   });
   const studySavedRecipe = parseRecipe(recipeBytes.toString('utf8'));
+  const provenanceName = 'fieldweaver-timeline-pulse-' + selectedHash + '.fwprovenance.json';
+  await saveByKeyboard('exhibition-study-save-provenance');
+  const provenanceBytes = await readSaved(provenanceName, (bytes) => {
+    try {
+      const receipt = JSON.parse(bytes.toString('utf8'));
+      return receipt.version === 'fw-export-provenance-v1' &&
+        receipt.recipeHash === selectedEntry.recipeHash &&
+        receipt.seed === selectedEntry.seed &&
+        receipt.rawRgbaHash === selectedHash &&
+        receipt.targetTick === selectedEntry.targetTick &&
+        receipt.crop.widthPx === selectedEntry.exportCrop.widthPx &&
+        receipt.crop.heightPx === selectedEntry.exportCrop.heightPx &&
+        recipeHash(parseRecipe(JSON.stringify(receipt.recipe))) === selectedEntry.recipeHash;
+    } catch { return false; }
+  });
+  const studySavedProvenance = JSON.parse(provenanceBytes.toString('utf8'));
   const editorAfterDirectExport = await execute("return {hash:document.documentElement.dataset.fieldweaverCanonicalRecipeHash,selected:document.getElementById('preset-select').value,open:document.getElementById('exhibition-study-dialog').open,status:document.getElementById('exhibition-study-status').textContent}");
   if (savedPng.widthPx !== 96 || savedPng.heightPx !== 64 ||
       rawRgbaHash(savedPng.rgba) !== selectedHash ||
@@ -141,12 +157,16 @@ try {
       editorBeforeDirectExport.hash !== editorAfterDirectExport.hash ||
       editorAfterDirectExport.selected !== 'operator-atlas' ||
       !editorAfterDirectExport.open ||
-      !editorAfterDirectExport.status.includes('importable recipe for Timeline Pulse')) {
+      !editorAfterDirectExport.status.includes('full canonical provenance for Timeline Pulse') ||
+      studySavedProvenance.rawRgbaHash !== selectedHash ||
+      studySavedProvenance.targetTick !== selectedEntry.targetTick) {
     throw new Error('Selected B direct export was stale or changed the editor: ' + JSON.stringify(editorAfterDirectExport));
   }
   await writeFile('exhibition-study-selected-export-' + browser + '.json',
-    JSON.stringify({browser,pngName,recipeName,rgbaHash:rawRgbaHash(savedPng.rgba),
-      recipeHash:recipeHash(studySavedRecipe),editorBeforeDirectExport,editorAfterDirectExport},null,2)+'\n');
+    JSON.stringify({browser,pngName,recipeName,provenanceName,rgbaHash:rawRgbaHash(savedPng.rgba),
+      recipeHash:recipeHash(studySavedRecipe),receiptTick:studySavedProvenance.targetTick,
+      receiptRawRgbaHash:studySavedProvenance.rawRgbaHash,
+      editorBeforeDirectExport,editorAfterDirectExport},null,2)+'\n');
   await request('POST', '/session/' + sessionId + '/window/rect', { width: 1250, height: 900 });
   const studyScreenshot = await request('GET', '/session/' + sessionId + '/screenshot');
   if (!studyScreenshot?.value) throw new Error('Full-window study screenshot absent.');
