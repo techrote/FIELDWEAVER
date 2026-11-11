@@ -41,6 +41,14 @@ Every `npm run verify` now regenerates and checks the committed normalized `reci
 
 ## Offline owner/Integration review — proposed, not accepted
 
+**One-command review (Node 22/24, from this Draft PR checkout):**
+
+```sh
+node gallery/originals/08-registry-of-vacant-rooms/review.mjs
+```
+
+The artwork-local launcher uses the **existing** provenance-gated offline review builder. It prints a local `file://` URL: open it in Firefox to see accepted Operator Atlas and Timeline Pulse alongside the visibly labelled **UNMERGED CANDIDATE** Rooms, then choose **Save recipe** on Rooms and load that JSON with the workbench's **Load recipe** command. It creates a fresh temporary HTML rather than overwriting previous evaluations. The test now checks the downloaded recipe's exact normalized contents against the archived author's recipe as well as the visible PNG's original encoded bytes. Native browser import/export and artistic admission remain owner/Integration gates, not claims made by this script.
+
 From a checkout of this **Draft PR branch**, with Node 22 or 24:
 
 ```sh
