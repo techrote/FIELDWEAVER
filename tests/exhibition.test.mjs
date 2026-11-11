@@ -80,3 +80,10 @@ test('pinned comparison preserves two independent accepted proofs and rejects mi
   assert.throws(() => compareExhibitionProofs({ ...left, crop: { ...left.crop, widthPx: left.crop.widthPx + 1 } }, right), /does not match/);
   assert.throws(() => compareExhibitionProofs({ ...left, rawRgbaHash: 'ffffffffffffffff' }, left), /Conflicting canonical/);
 });
+
+test('local CSP permits CPU-exported blob PNG images without external image sources', async () => {
+  const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+  const directive = html.match(/img-src[^;]*;/)?.[0] ?? '';
+  assert.match(directive, /\\bblob:/);
+  assert.doesNotMatch(directive, /https?:/);
+});
