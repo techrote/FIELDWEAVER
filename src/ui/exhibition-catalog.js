@@ -44,3 +44,46 @@ export function renderExhibitionProof(id) {
   }
   return Object.freeze({ ...result, exhibitionVersion: EXHIBITION_VERSION, presetId: id });
 }
+
+
+function sameCanonicalCrop(a, b) {
+  return a?.widthPx === b?.widthPx &&
+    a?.heightPx === b?.heightPx &&
+    a?.unitsPerPixelQ16 === b?.unitsPerPixelQ16 &&
+    a?.center?.chunkX === b?.center?.chunkX &&
+    a?.center?.chunkY === b?.center?.chunkY &&
+    a?.center?.localX === b?.center?.localX &&
+    a?.center?.localY === b?.center?.localY;
+}
+
+// A/B comparison is metadata over two independently generated CPU proofs.
+// No replay, resampling, common-crop inference or noncanonical pixel blending.
+export function compareExhibitionProofs(left, right) {
+  const accepted = (proof) => {
+    if (!proof || proof.exhibitionVersion !== EXHIBITION_VERSION ||
+        typeof proof.rawRgbaHash !== 'string' || !/^[0-9a-f]{16}$/.test(proof.rawRgbaHash)) {
+      throw new TypeError('Comparison requires a completed canonical exhibition proof.');
+    }
+    const preset = getBuiltinPreset(proof.presetId);
+    if (proof.recipeHash !== preset.recipeHash ||
+        proof.targetTick !== preset.targetTick ||
+        !sameCanonicalCrop(proof.crop, preset.exportCrop)) {
+      throw new Error('Comparison proof does not match its accepted recipe/tick/crop.');
+    }
+    return preset;
+  };
+  const a = accepted(left);
+  const b = accepted(right);
+  if (a.id === b.id && left.rawRgbaHash !== right.rawRgbaHash) {
+    throw new Error('Conflicting canonical RGBA identity for the same accepted exhibition work.');
+  }
+  return Object.freeze({
+    leftId: a.id,
+    rightId: b.id,
+    leftHash: left.rawRgbaHash,
+    rightHash: right.rawRgbaHash,
+    sameRecipe: a.recipeHash === b.recipeHash,
+    sameCrop: sameCanonicalCrop(a.exportCrop, b.exportCrop),
+    sameRawRgbaHash: left.rawRgbaHash === right.rawRgbaHash
+  });
+}
