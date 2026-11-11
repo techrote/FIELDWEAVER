@@ -138,7 +138,7 @@ try {
       throw new Error('Expired canonical index pixels survived rebuild/cancellation: ' + JSON.stringify(lifecycle));
     }
   }
-  if (!lifecycle.status.includes('partial CPU proofs') ||
+  if (!lifecycle.status.includes('completed proofs remain') ||
       await execute("return !document.getElementById('exhibition-study-launch').disabled")) {
     throw new Error('Cancelled index incorrectly remains available for study: ' + JSON.stringify(lifecycle));
   }
