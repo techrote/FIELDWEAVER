@@ -126,7 +126,7 @@ function make() {
   };
   const readme=[
     '# Broken Orbit — Interrupted Cadence','',
-    'A deterministic evolutionary study of the Timeline Pulse preset: the deliberately scheduled freeze, release and burst interventions fracture otherwise continuous motion. This family seeks broken orbits and delayed reconnection, rather than Countercurrent Canticle's opposing-current morphology.','',
+    'A deterministic evolutionary study of the Timeline Pulse preset: the deliberately scheduled freeze, release and burst interventions fracture otherwise continuous motion. This family seeks broken orbits and delayed reconnection, rather than the opposing-current morphology of Countercurrent Canticle.','',
     'Immutable parent: shipped timeline-pulse preset; recipe hash '+EXPECTED_PARENT_HASH+'.',
     'Mutation: fw-mutation-v1; explicit seed '+MUTATION_SEED+'; 16 isolated siblings covering field, emitter, order, seed, material and compound operators.',
     'Canonical comparison: tick '+TARGET_TICK+', with an earlier reference at tick '+EARLY_TICK+'; 144×112 crop centred on (138,128) at one world unit per pixel.',
