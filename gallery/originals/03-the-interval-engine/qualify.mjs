@@ -32,7 +32,7 @@ export async function qualify({write=false,bootstrap=false}={}) {
  assert.deepEqual(a.rgba,b.rgba,'Tile partition changed canonical pixels');
  for(const key of ['rawRgbaHash','stateHash','depositionHash','resultHash'])assert.equal(a[key],b[key],key);
  const decoded=decodePngRgba(a.png);
- assert.equal(decoded.widthPx,512);assert.equal(decoded.heightPx,320);
+ assert.equal(decoded.widthPx,512);assert.equal(decoded.heightPx,384);
  assert.deepEqual(decoded.rgba,a.rgba,'PNG did not preserve exact canonical RGBA8');
  assert.equal(rawRgbaHash(decoded.rgba),a.rawRgbaHash);
  const fresh=replayRecipeToTick(recipe,TARGET_TICK,{capacity:CAPACITY,maxDepositions:MAX_DEPOSITIONS});

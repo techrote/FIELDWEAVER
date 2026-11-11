@@ -20,8 +20,8 @@ Five active/dormant field behaviours are assembled across six explicitly ordered
 
 - Source: `recipe.json` (version `fw-recipe-v1`, engine `fw-agents-v1`; no mutation parent).
 - Root seed: `0x59a11e73` (**1503731315**) — intentional independent seed.
-- Target tick: **176**. Crop: **512×320**, centred at world (128,128), **0.5 units/pixel**.
+- Target tick: **176**. Crop: **512×384**, centred at world (128,136), **0.5 units/pixel**.
 - Replay bounds: 4096 live agents, 250000 depositions; background is the FW-012 canonical default.
 - Execute `npm run verify` for all model checks, or `node gallery/originals/03-the-interval-engine/qualify.mjs --write` to reproduce the canonical PNG and versioned sidecar in `rendered/`. The authoring test checks actual ordered fixed-tick replay, repeatable rasterization at incompatible tile partitions, decoded PNG identity and serialization roundtrip.
 
-The image description and qualitative selection are deliberately withheld until the actual canonical PNG has been visually inspected. No historical artwork, external texture or core function is modified.
+The preceding 512×320 draft was genuinely CPU-rendered and inspected; its active curves crowded the top boundary. This revised framing deliberately expands upward clearance while preserving horizontal side-entry and the central torsion. Final aesthetic description requires inspection of the revised canonical output. No historical artwork, external texture or core function is modified.

@@ -4,12 +4,12 @@
   "seed": 1503731315,
   "framing": {
     "widthPx": 512,
-    "heightPx": 320,
+    "heightPx": 384,
     "center": {
       "chunkX": 0,
       "chunkY": 0,
       "localX": 8388608,
-      "localY": 8388608
+      "localY": 8912896
     },
     "unitsPerPixelQ16": 32768
   },
