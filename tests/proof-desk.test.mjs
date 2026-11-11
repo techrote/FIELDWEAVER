@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { readFile } from 'node:fs/promises';
 
 import { createCanonicalExport } from '../src/export/index.js';
 import { getBuiltinPreset } from '../src/presets/index.js';
@@ -54,4 +55,13 @@ test('proof desk treats optional native PNG as independent evidence, not a prese
   assert.throws(() => verifyProofPackage(source.provenance, damaged), /CRC|Adler|differs/);
   assert.throws(() => verifyProofPackage(source.provenance, new Uint8Array(32)), /truncated/);
   assert.throws(() => verifyProofPackage(source.provenance, new Uint8Array(PROOF_DESK_LIMITS.pngBytes + 1)), /8 MiB/);
+});
+
+test('canonical export UI links locally to the independent proof desk without remote dependencies', async () => {
+  const exportPanel = await readFile(new URL('../src/ui/export-panel.js', import.meta.url), 'utf8');
+  const proofHtml = await readFile(new URL('../proof-desk.html', import.meta.url), 'utf8');
+  assert.match(exportPanel, /href: '\.\/proof-desk\.html'/);
+  assert.match(proofHtml, /src="\.\/src\/ui\/proof-desk\.js"/);
+  assert.match(proofHtml, /Content-Security-Policy/);
+  assert.doesNotMatch(proofHtml, /(?:href|src)="https?:\/\//);
 });
