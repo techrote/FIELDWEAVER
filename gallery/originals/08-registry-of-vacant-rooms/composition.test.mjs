@@ -25,12 +25,10 @@ test('Original 08: candidate enters offline accepted-preset exhibition with exac
   const {mkdtemp,readFile,rm}=await import('node:fs/promises');
   const {tmpdir}=await import('node:os');
   const {join}=await import('node:path');
-  const {fileURLToPath}=await import('node:url');
   const {createRoomsReview}=await import('./review.mjs');
   const folder=await mkdtemp(join(tmpdir(),'fw-original08-curation-'));
   try{
     const output=join(folder,'review.html');
-    const provenance=fileURLToPath(new URL('./the-vacant-rooms.provenance.json',import.meta.url));
     const result=await createRoomsReview(output);
     assert(result.url.startsWith('file:'),'Owner receives a local file URL');
     assert.equal(result.output,output);
