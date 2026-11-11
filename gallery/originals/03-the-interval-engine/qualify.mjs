@@ -1,7 +1,6 @@
 // Original artwork-only verifier; no changes to simulation/export source.
 import assert from 'node:assert/strict';
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
-import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseRecipe, serializeRecipe, recipeHash, replayRecipeToTick } from '../../../src/recipe/index.js';
@@ -11,15 +10,10 @@ export const SEED = 0x59a11e73;
 export const TARGET_TICK = 176;
 export const CAPACITY = 4096;
 export const MAX_DEPOSITIONS = 250000;
-function transfer(kind,bytes) {
- const data = Buffer.from(bytes), b64=data.toString('base64');
- const sha=createHash('sha256').update(data).digest('hex');
- const n=Math.ceil(b64.length/5000);
- console.log('FW_INTERVAL_BEGIN '+kind+' '+data.length+' '+sha+' '+n);
- for(let i=0;i<n;i++)console.log('FW_INTERVAL_CHUNK '+kind+' '+i+' '+b64.slice(i*5000,(i+1)*5000));
- console.log('FW_INTERVAL_END '+kind);
-}
-export async function qualify({write=false,bootstrap=false}={}) {
+export const EXPECTED_RECIPE_HASH = '4adb2abba8c7999f';
+export const EXPECTED_RAW_RGBA_HASH = 'fd389a9bb0ce640f';
+export const EXPECTED_RESULT_HASH = '468a91bf82bbb51d';
+export async function qualify({write=false}={}) {
  const text=await readFile(new URL('./recipe.json',import.meta.url),'utf8');
  const recipe=parseRecipe(text);
  assert.equal(serializeRecipe(recipe),text,'Recipe must be canonical normalized JSON');
@@ -45,12 +39,10 @@ export async function qualify({write=false,bootstrap=false}={}) {
  const receipt={artwork:ART_ID,seed:SEED,recipeHash:recipeHash(recipe),targetTick:TARGET_TICK,crop:recipe.framing,
   depositionCount:a.depositionCount,rawRgbaHash:a.rawRgbaHash,stateHash:a.stateHash,
   depositionHash:a.depositionHash,resultHash:a.resultHash};
- console.log('FW_INTERVAL_RECEIPT '+JSON.stringify(receipt));
- if(bootstrap&&process.versions.node.startsWith('24.')){
-  transfer('png',a.png);transfer('provenance',Buffer.from(a.provenanceJson,'utf8'));
-  transfer('receipt',Buffer.from(JSON.stringify(receipt,null,2)+'\\n','utf8'));
- }
- if(!bootstrap){
+ assert.equal(receipt.recipeHash,EXPECTED_RECIPE_HASH);
+ assert.equal(receipt.rawRgbaHash,EXPECTED_RAW_RGBA_HASH);
+ assert.equal(receipt.resultHash,EXPECTED_RESULT_HASH);
+ {
   assert.deepEqual(await readFile(new URL('./the-interval-engine.png',import.meta.url)),Buffer.from(a.png));
   assert.equal(await readFile(new URL('./the-interval-engine.provenance.json',import.meta.url),'utf8'),a.provenanceJson);
   assert.deepEqual(JSON.parse(await readFile(new URL('./qualification.json',import.meta.url),'utf8')),receipt);
@@ -59,10 +51,10 @@ export async function qualify({write=false,bootstrap=false}={}) {
   await mkdir(new URL('./rendered/',import.meta.url),{recursive:true});
   await writeFile(new URL('./rendered/the-interval-engine.png',import.meta.url),a.png);
   await writeFile(new URL('./rendered/the-interval-engine.provenance.json',import.meta.url),a.provenanceJson);
-  await writeFile(new URL('./rendered/qualification.json',import.meta.url),JSON.stringify(receipt,null,2)+'\\n');
+  await writeFile(new URL('./rendered/qualification.json',import.meta.url),JSON.stringify(receipt,null,2)+String.fromCharCode(10));
  }
  return receipt;
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
- await qualify({write:process.argv.includes('--write'),bootstrap:process.argv.includes('--bootstrap')});
+ await qualify({write:process.argv.includes('--write')});
 }

@@ -24,4 +24,12 @@ Five active/dormant field behaviours are assembled across six explicitly ordered
 - Replay bounds: 4096 live agents, 250000 depositions; background is the FW-012 canonical default.
 - Execute `npm run verify` for all model checks, or `node gallery/originals/03-the-interval-engine/qualify.mjs --write` to reproduce the canonical PNG and versioned sidecar in `rendered/`. The authoring test checks actual ordered fixed-tick replay, repeatable rasterization at incompatible tile partitions, decoded PNG identity and serialization roundtrip.
 
-The preceding 512×320 draft was genuinely CPU-rendered and inspected; its active curves crowded the top boundary. This revised framing deliberately expands upward clearance while preserving horizontal side-entry and the central torsion. Final aesthetic description requires inspection of the revised canonical output. No historical artwork, external texture or core function is modified.
+## Actual visual observation and canonical identity
+
+The final **512×384** FW-012 software raster was directly inspected from the Node 24 export transfer. Broken blue-green registers at both margins lean toward a central black cavity. Warm peach and copper arms curve around that cavity, countered by pale ivory interruptions and isolated narrow vertical scratches. The final wider frame preserves a quiet upper band and no longer slices the central turquoise crest. Some exterior tracks remain cut by the left and right edges deliberately: the sources enter and leave the plate. Distinctive rhythm comes from the central torsion surrounded by short, asymmetrically interrupted outer rails, rather than bilateral vortex rings or vertical rain.
+
+- **Normalized recipe identity:** `4adb2abba8c7999f`.
+- **Canonical decoded RGBA8 identity:** `fd389a9bb0ce640f`.
+- **State / deposition / result:** `65dfec3443bbf2a3` / `b35798a4e049945c` / `468a91bf82bbb51d`.
+- **Depositions:** **210,772**. The checked-in native FW-012 PNG and provenance are verified byte-for-byte against fresh canonical exports and dissimilar raster tile dimensions. The image was inspected, but independent artistic acceptance remains with Integration.
+ No historical artwork, external texture or core function is modified.
