@@ -54,15 +54,17 @@ test('Original 08: candidate enters offline accepted-preset exhibition with exac
 
     // Test the actual bytes offered to the owner, not just the displayed card.
     // A valid-looking href must not download a stale, divergent recipe/proof.
-    const jsonLink=(suffix)=>html.match(new RegExp(
-      '<a href="data:application/json;base64,([^"]+)" download="fieldweaver-work-3\\\\.'+suffix+'"' ));
-    const pngLink=html.match(/<a href="data:image\\/png;base64,([^"]+)" download="fieldweaver-work-3\\.png"/);
-    assert(pngLink,'The proposed original must offer its canonical PNG');
-    assert.deepEqual(Buffer.from(pngLink[1],'base64'),archived,
+    const download=(filename)=>{
+      const tag=[...html.matchAll(/<a [^>]*>/g)].map(match=>match[0])
+        .find(value=>value.includes('download="'+filename+'"'));
+      assert(tag,'Missing offline download: '+filename);
+      const encoded=tag.match(/href="data:[^"]+;base64,([^"]+)"/);
+      assert(encoded,'Non-embedded or malformed offline download: '+filename);
+      return Buffer.from(encoded[1],'base64');
+    };
+    assert.deepEqual(download('fieldweaver-work-3.png'),archived,
       'Downloaded canonical PNG must match the archived author output');
-    const sidecarLink=jsonLink('provenance\\\\.json');
-    assert(sidecarLink,'The proposed original must offer full provenance');
-    const sidecarBytes=Buffer.from(sidecarLink[1],'base64');
+    const sidecarBytes=download('fieldweaver-work-3.provenance.json');
     const sourceSidecar=await readFile(new URL('./the-vacant-rooms.provenance.json',import.meta.url));
     assert.deepEqual(sidecarBytes,sourceSidecar,
       'Downloaded provenance must match the archived canonical sidecar');
