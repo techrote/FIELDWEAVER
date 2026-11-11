@@ -59,6 +59,25 @@ try {
         tile.width !== 96 || tile.height !== 64 || !tile.src.startsWith('blob:'))) {
     throw new Error('Actual CPU image decoding failed: ' + JSON.stringify(result));
   }
+
+  const boardEnabled = await execute("return !document.getElementById('exhibition-board-save').disabled");
+  if (!boardEnabled) throw new Error('Offline board download did not enable after four verified proofs.');
+  await execute("window.__boardHtml = null; const native = URL.createObjectURL; URL.createObjectURL = function(blob){ if(blob.type.startsWith('text/html')) blob.text().then(value => { window.__boardHtml = value; }); return native.call(this,blob); }; document.getElementById('exhibition-board-save').click(); URL.createObjectURL = native;");
+  let boardHtml = null;
+  for (let i = 0; i < 30; i += 1) {
+    boardHtml = await execute("return window.__boardHtml");
+    if (boardHtml) break;
+    await sleep(100);
+  }
+  if (!boardHtml || (boardHtml.match(/src="data:image\/png;base64,/g) || []).length !== 4 ||
+      (boardHtml.match(/<article id="work-/g) || []).length !== 4 ||
+      !boardHtml.includes('default-src &#39;none&#39;') ||
+      result.tiles.some((tile) => !boardHtml.includes(tile.hash))) {
+    throw new Error('Offline HTML download was not backed by four canonical decoded proofs.');
+  }
+  const board = { enabled: boardEnabled, htmlBytes: new TextEncoder().encode(boardHtml).length,
+    imageCount: 4, hashes: result.tiles.map((tile) => tile.hash) };
+
   const selected = await execute("document.querySelector('[data-exhibition-id=\"operator-atlas\"]').click(); return {id:document.getElementById('preset-select').value,pressed:document.querySelector('.exhibition-card[aria-pressed=\"true\"]')?.dataset.exhibitionId,images:document.querySelectorAll('.exhibition-index-image:not([hidden])').length,proof:document.documentElement.dataset.fieldweaverExhibitionProofHash||''}");
   if (selected.id !== 'operator-atlas' || selected.pressed !== 'operator-atlas' ||
       selected.images !== 4 || selected.proof) {
@@ -69,7 +88,7 @@ try {
   const screenshot = await request('GET', '/session/' + sessionId + '/screenshot');
   if (!screenshot?.value) throw new Error('Browser screenshot absent.');
   await writeFile('exhibition-visual-index-' + browser + '.png', Buffer.from(screenshot.value, 'base64'));
-  await writeFile('exhibition-visual-index-' + browser + '.json', JSON.stringify({ browser, initial, result, selected }, null, 2) + '\n');
+  await writeFile('exhibition-visual-index-' + browser + '.json', JSON.stringify({ browser, initial, result, board, selected }, null, 2) + '\n');
   console.log(JSON.stringify({ browser, status:'four actual decoded canonical CPU images', hashes:result.tiles.map((tile) => tile.hash), selected:selected.id }, null, 2));
 } finally {
   if (sessionId) { try { await request('DELETE', '/session/' + sessionId); } catch { /* cleanup */ } }
