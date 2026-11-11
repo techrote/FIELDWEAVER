@@ -45,8 +45,8 @@ test('Original 08: candidate enters offline accepted-preset exhibition with exac
     assert.match(html,/ACCEPTED PRESET/);
     assert.match(html,/download="fieldweaver-work-3.recipe.json"/);
     assert.match(html,/Identity, lineage and exact framing/);
-    assert.doesNotMatch(html,/<script\\b|<iframe\\b|src="https?:|href="https?:/i);
-    const images=[...html.matchAll(/<img[^>]+src="data:image\\/png;base64,([^"]+)"/g)];
+    assert.doesNotMatch(html,/<script\b|<iframe\b|src="https?:|href="https?:/i);
+    const images=[...html.matchAll(/<img[^>]+src="data:image\/png;base64,([^"]+)"/g)];
     assert.equal(images.length,3,'two accepted CPU proofs and one proposed original');
     const archived=await readFile(new URL('./the-vacant-rooms.png',import.meta.url));
     assert.deepEqual(Buffer.from(images[2][1],'base64'),archived,
