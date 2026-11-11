@@ -50,19 +50,63 @@ try {
     if (desktop.images.every((img) => img.complete && img.w && img.h)) break;
     await sleep(100);
   }
-  const expected = ['ACCEPTED PRESET', 'ACCEPTED PRESET', 'UNMERGED CANDIDATE',
-    'UNMERGED CANDIDATE', 'UNMERGED CANDIDATE', 'UNMERGED CANDIDATE'];
-  if (desktop.cards !== 6 || JSON.stringify(desktop.labels) !== JSON.stringify(expected) ||
+  const expected = ['ACCEPTED PRESET', 'ACCEPTED PRESET', 'UNMERGED CANDIDATE', 'UNMERGED CANDIDATE'];
+  if (desktop.cards !== 4 || JSON.stringify(desktop.labels) !== JSON.stringify(expected) ||
       desktop.scripts !== 0 || !desktop.csp.includes("default-src 'none'") ||
-      desktop.remote !== 0 || desktop.images.length !== 6 ||
+      desktop.remote !== 0 || desktop.images.length !== 4 ||
       desktop.images.some((img) => !img.complete || !img.data || !img.w || !img.h)) {
     throw new Error('Offline canonical admission HTML was not verified: ' + JSON.stringify(desktop));
+  }
+  // Confirm each owner-facing export is a real, self-contained canonical
+  // source payload, not merely a styled download control or image preview.
+  // Browser-side data-URI decode is compatible with default-src 'none'.
+  const exports = await execute(`
+    return [...document.querySelectorAll('article.work')].map(work => {
+      const links = [...work.querySelectorAll('a[download]')];
+      const uri = (a, mime) => {
+        const href = a?.getAttribute('href') || '';
+        const prefix = 'data:' + mime + ';base64,';
+        if (!href.startsWith(prefix)) return null;
+        return atob(href.slice(prefix.length));
+      };
+      const png = uri(links[0], 'image/png');
+      const recipeBytes = uri(links[1], 'application/json');
+      const provenanceBytes = uri(links[2], 'application/json');
+      const decodeJson = (bytes) => JSON.parse(new TextDecoder().decode(
+        Uint8Array.from(bytes, char => char.charCodeAt(0))));
+      const recipe = recipeBytes ? decodeJson(recipeBytes) : {};
+      const provenance = provenanceBytes ? decodeJson(provenanceBytes) : {};
+      return {
+        id: work.id,
+        files: links.map(a => a.getAttribute('download')),
+        imageIsExport: links[0]?.getAttribute('href') === work.querySelector('img')?.getAttribute('src'),
+        pngSignature: png?.slice(0, 8) === String.fromCharCode(137,80,78,71,13,10,26,10),
+        recipeSchema: recipe.schemaVersion,
+        provenanceVersion: provenance.version,
+        rawRgbaHash: provenance.rawRgbaHash,
+        identityVisible: !!provenance.rawRgbaHash &&
+          work.textContent.includes(provenance.rawRgbaHash)
+      };
+    });
+  `);
+  if (exports.length !== 4 || exports.some((item, i) =>
+    item.id !== 'work-' + (i + 1) || item.files.length !== 3 ||
+    item.files[0] !== 'fieldweaver-work-' + (i + 1) + '.png' ||
+    item.files[1] !== 'fieldweaver-work-' + (i + 1) + '.recipe.json' ||
+    item.files[2] !== 'fieldweaver-work-' + (i + 1) + '.provenance.json' ||
+    !item.imageIsExport || !item.pngSignature ||
+    item.recipeSchema !== 'fw-recipe-v1' ||
+    item.provenanceVersion !== 'fw-export-provenance-v1' ||
+    !/^[a-f0-9]{16}$/.test(item.rawRgbaHash) || !item.identityVisible
+  )) {
+    throw new Error('Offline source-identical PNG/recipe/provenance exports failed: ' +
+      JSON.stringify(exports));
   }
   const screenshot = await request('GET', base + '/screenshot');
   await writeFile('admission-review-' + browser + '-desktop.png', Buffer.from(screenshot, 'base64'));
   const found = await request('POST', base + '/elements',
     { using: 'css selector', value: 'nav[aria-label="Jump to artwork"] a' });
-  if (found.length !== 6) throw new Error('Offline gallery navigation has wrong anchor count.');
+  if (found.length !== 4) throw new Error('Offline gallery navigation has wrong anchor count.');
   const anchor = found[3]['element-6066-11e4-a52e-4f735466cecf'] || found[3].ELEMENT;
   await request('POST', base + '/element/' + anchor + '/value', { text: '\uE007' });
   const hash = await execute('return window.location.hash');
@@ -70,11 +114,11 @@ try {
   await request('POST', base + '/window/rect', { width: 390, height: 844 });
   await sleep(150);
   const narrow = await execute("return {width:document.documentElement.clientWidth,scrollWidth:document.documentElement.scrollWidth,cards:document.querySelectorAll('article.work').length,label:document.querySelector('#work-4 .state')?.textContent.trim()}");
-  if (narrow.cards !== 6 || narrow.label !== 'UNMERGED CANDIDATE' ||
+  if (narrow.cards !== 4 || narrow.label !== 'UNMERGED CANDIDATE' ||
       narrow.scrollWidth > narrow.width + 2) throw new Error('Narrow-layout failure: ' + JSON.stringify(narrow));
   const mobile = await request('GET', base + '/screenshot');
   await writeFile('admission-review-' + browser + '-narrow.png', Buffer.from(mobile, 'base64'));
-  const receipt = { browser, input, desktop, keyboardHash: hash, narrow };
+  const receipt = { browser, input, desktop, exports, keyboardHash: hash, narrow };
   await writeFile('admission-review-' + browser + '.json', JSON.stringify(receipt, null, 2) + '\n');
   console.log(JSON.stringify(receipt, null, 2));
 } finally {
