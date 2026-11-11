@@ -4,9 +4,8 @@ import assert from 'node:assert/strict';
 import {mkdtemp,readFile,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
-import {fileURLToPath} from 'node:url';
 import {qualify,isArchived} from './qualify.mjs';
-import {runCli} from '../../../scripts/review-gallery.mjs';
+import {createMantaReview} from './review.mjs';
 
 test('Original 09: complete archived canonical FW-012 recipe/replay/crop/tile and byte identity',async()=>{
   assert.equal(isArchived(),true,'Finished original 09 requires all four committed canonical artifacts');
@@ -25,13 +24,8 @@ test('Original 09: actual canonical candidate enters offline accepted-preset com
   const folder=await mkdtemp(join(tmpdir(),'fieldweaver-manta-review-'));
   try {
     const out=join(folder,'compare.html');
-    const sidecar=fileURLToPath(new URL('./the-last-manta.provenance.json',import.meta.url));
-    const result=await runCli([
-      '--out',out,
-      '--preset','operator-atlas',
-      '--preset','timeline-pulse',
-      '--provenance',sidecar
-    ]);
+    const result=await createMantaReview(out);
+    assert.equal(result.url,new URL('file://'+out).href,'Review prints direct local URL');
     assert.deepEqual(result.entries.map(e=>e.accepted),[true,true,false]);
     const candidate=result.entries[2];
     assert.equal(candidate.recipeHash,'95974bbaa3279204');
@@ -47,6 +41,11 @@ test('Original 09: actual canonical candidate enters offline accepted-preset com
     const archived=await readFile(new URL('./the-last-manta.png',import.meta.url));
     assert.deepEqual(Buffer.from(imageData[2][1],'base64'),archived,
       'Offline review must embed the exact archived canonical PNG bytes');
+    const recipeDownload=html.match(/<a href="data:application\\/json;base64,([^"]+)" download="fieldweaver-work-3\\.recipe\\.json"/);
+    assert(recipeDownload,'Review must provide an importable Original 09 recipe');
+    const downloaded=JSON.parse(Buffer.from(recipeDownload[1],'base64').toString('utf8'));
+    const archivedRecipe=JSON.parse(await readFile(new URL('./recipe.json',import.meta.url),'utf8'));
+    assert.deepEqual(downloaded,archivedRecipe,'Downloaded recipe must be the exact authored Original 09');
   }finally{
     await rm(folder,{recursive:true,force:true});
   }
