@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
-import { recipeHash } from '../src/recipe/index.js';
+import { parseRecipe, recipeHash, serializeRecipe } from '../src/recipe/index.js';
 import { BUILTIN_PRESETS } from '../src/presets/index.js';
 import { exhibitionEntries, renderExhibitionProof } from '../src/ui/exhibition-catalog.js';
 import { renderVisualIndexProof, verifyVisualIndexProof } from '../src/ui/exhibition-visual-index-model.js';
@@ -57,6 +57,22 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
   for (const tile of tiles) {
     assert(board.html.includes(tile.rawRgbaHash));
     assert(board.html.includes(tile.recipeHash));
+  }
+  // Offline data: downloads are user-initiated, self-contained and importable
+  // without script execution or a network request.
+  const recipeLinks = [...board.html.matchAll(/<a download="([^"]+\.fwrecipe\.json)" href="data:application\/json;base64,([^"]+)">Save importable recipe<\/a>/g)];
+  const receiptLinks = [...board.html.matchAll(/<a download="([^"]+\.fwprovenance\.json)" href="data:application\/json;base64,([^"]+)">Save full provenance<\/a>/g)];
+  assert.equal(recipeLinks.length, 4);
+  assert.equal(receiptLinks.length, 4);
+  for (let i = 0; i < 4; i += 1) {
+    const tile = tiles[i];
+    const recipeText = Buffer.from(recipeLinks[i][2], 'base64').toString('utf8');
+    const receiptText = Buffer.from(receiptLinks[i][2], 'base64').toString('utf8');
+    assert.equal(recipeLinks[i][1], 'fieldweaver-' + tile.id + '-' + tile.recipeHash + '.fwrecipe.json');
+    assert.equal(receiptLinks[i][1], 'fieldweaver-' + tile.id + '-' + tile.rawRgbaHash + '.fwprovenance.json');
+    assert.equal(recipeText, serializeRecipe(JSON.parse(tile.provenanceJson).recipe));
+    assert.equal(recipeHash(parseRecipe(recipeText)), tile.recipeHash);
+    assert.equal(receiptText, tile.provenanceJson);
   }
   const embedded = /src="data:image\/png;base64,([^"]+)"/.exec(board.html)?.[1];
   assert.deepEqual(Buffer.from(embedded, 'base64'), Buffer.from(tiles[0].png));
