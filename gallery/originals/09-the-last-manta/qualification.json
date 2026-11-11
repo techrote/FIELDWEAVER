@@ -1,0 +1,25 @@
+{
+  "artwork": "09-the-last-manta",
+  "seed": 1369109101,
+  "recipeHash": "95974bbaa3279204",
+  "targetTick": 166,
+  "intermediateTick": 73,
+  "crop": {
+    "widthPx": 480,
+    "heightPx": 320,
+    "center": {
+      "chunkX": 0,
+      "chunkY": 0,
+      "localX": 11927552,
+      "localY": 7602176
+    },
+    "unitsPerPixelQ16": 52429
+  },
+  "emitters": 255,
+  "occupiedPixels": 4431,
+  "depositionCount": 26132,
+  "rawRgbaHash": "5a819a6ffd149c9e",
+  "stateHash": "701011cdd1a39510",
+  "depositionHash": "2557dbf97dca44cf",
+  "resultHash": "9aea16802aebd215"
+}

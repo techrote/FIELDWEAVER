@@ -1,0 +1,6948 @@
+{
+  "schemaVersion": "fw-recipe-v1",
+  "engineVersion": "fw-agents-v1",
+  "seed": 1369109101,
+  "framing": {
+    "widthPx": 480,
+    "heightPx": 320,
+    "center": {
+      "chunkX": 0,
+      "chunkY": 0,
+      "localX": 11927552,
+      "localY": 7602176
+    },
+    "unitsPerPixelQ16": 52429
+  },
+  "fields": {
+    "format": "fw-fields-v1",
+    "nextId": 8,
+    "order": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "layers": [
+      {
+        "id": 1,
+        "kind": "vector",
+        "operator": "uniform",
+        "enabled": true,
+        "blend": "add",
+        "cellsPerChunk": 256,
+        "transform": {
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 0,
+            "localY": 0
+          },
+          "scaleXQ16": 65536,
+          "scaleYQ16": 65536
+        },
+        "parameters": {
+          "vectorXQ16": 12,
+          "vectorYQ16": -38
+        },
+        "chunks": []
+      },
+      {
+        "id": 2,
+        "kind": "vector",
+        "operator": "turbulence",
+        "enabled": true,
+        "blend": "add",
+        "cellsPerChunk": 256,
+        "transform": {
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 0,
+            "localY": 0
+          },
+          "scaleXQ16": 65536,
+          "scaleYQ16": 65536
+        },
+        "parameters": {
+          "amplitudeQ16": 155,
+          "cellSizeQ16": 1048576,
+          "seed": 801644877
+        },
+        "chunks": []
+      },
+      {
+        "id": 3,
+        "kind": "vector",
+        "operator": "vortex",
+        "enabled": false,
+        "blend": "add",
+        "cellsPerChunk": 256,
+        "transform": {
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 7340032,
+            "localY": 10682368
+          },
+          "scaleXQ16": 65536,
+          "scaleYQ16": 65536
+        },
+        "parameters": {
+          "radiusQ16": 4915200,
+          "strengthQ16": 3600
+        },
+        "chunks": []
+      },
+      {
+        "id": 4,
+        "kind": "vector",
+        "operator": "vortex",
+        "enabled": false,
+        "blend": "add",
+        "cellsPerChunk": 256,
+        "transform": {
+          "origin": {
+            "chunkX": 1,
+            "chunkY": 0,
+            "localX": 131072,
+            "localY": 10092544
+          },
+          "scaleXQ16": 65536,
+          "scaleYQ16": 65536
+        },
+        "parameters": {
+          "radiusQ16": 4587520,
+          "strengthQ16": -3650
+        },
+        "chunks": []
+      },
+      {
+        "id": 5,
+        "kind": "vector",
+        "operator": "attractor",
+        "enabled": false,
+        "blend": "add",
+        "cellsPerChunk": 256,
+        "transform": {
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 11599872,
+            "localY": 8847360
+          },
+          "scaleXQ16": 65536,
+          "scaleYQ16": 65536
+        },
+        "parameters": {
+          "radiusQ16": 6094848,
+          "strengthQ16": 4900
+        },
+        "chunks": []
+      },
+      {
+        "id": 6,
+        "kind": "vector",
+        "operator": "direction-quantizer",
+        "enabled": false,
+        "blend": "add",
+        "cellsPerChunk": 256,
+        "transform": {
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 0,
+            "localY": 0
+          },
+          "scaleXQ16": 65536,
+          "scaleYQ16": 65536
+        },
+        "parameters": {
+          "sectors": 8
+        },
+        "chunks": []
+      },
+      {
+        "id": 7,
+        "kind": "vector",
+        "operator": "uniform",
+        "enabled": false,
+        "blend": "add",
+        "cellsPerChunk": 256,
+        "transform": {
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 0,
+            "localY": 0
+          },
+          "scaleXQ16": 65536,
+          "scaleYQ16": 65536
+        },
+        "parameters": {
+          "vectorXQ16": 850,
+          "vectorYQ16": -510
+        },
+        "chunks": []
+      }
+    ]
+  },
+  "materials": [
+    {
+      "id": 1,
+      "kind": "ink",
+      "inertiaNumerator": 1,
+      "inertiaDenominator": 1,
+      "steeringNumerator": 1,
+      "steeringDenominator": 48,
+      "lifetimeTicks": 104,
+      "depositEvery": 1,
+      "primitive": "disc",
+      "radiusQ16": 32000,
+      "strengthQ16": 64000,
+      "quantizeAxis": false
+    },
+    {
+      "id": 2,
+      "kind": "filament",
+      "inertiaNumerator": 1,
+      "inertiaDenominator": 1,
+      "steeringNumerator": 1,
+      "steeringDenominator": 55,
+      "lifetimeTicks": 103,
+      "depositEvery": 1,
+      "primitive": "segment",
+      "radiusQ16": 25500,
+      "strengthQ16": 57000,
+      "quantizeAxis": false
+    },
+    {
+      "id": 3,
+      "kind": "dust",
+      "inertiaNumerator": 1,
+      "inertiaDenominator": 2,
+      "steeringNumerator": 1,
+      "steeringDenominator": 3,
+      "lifetimeTicks": 99,
+      "depositEvery": 1,
+      "primitive": "disc",
+      "radiusQ16": 24500,
+      "strengthQ16": 65000,
+      "quantizeAxis": false
+    },
+    {
+      "id": 4,
+      "kind": "shard",
+      "inertiaNumerator": 1,
+      "inertiaDenominator": 1,
+      "steeringNumerator": 1,
+      "steeringDenominator": 26,
+      "lifetimeTicks": 101,
+      "depositEvery": 1,
+      "primitive": "segment",
+      "radiusQ16": 28500,
+      "strengthQ16": 56000,
+      "quantizeAxis": true
+    }
+  ],
+  "emitters": [
+    {
+      "id": 1,
+      "materialId": 1,
+      "startTick": 6,
+      "stopTick": 6,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11730944,
+          "localY": 10158080
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -6109,
+      "velocityYQ16": 2700,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 2,
+      "materialId": 1,
+      "startTick": 8,
+      "stopTick": 8,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11120052,
+          "localY": 10428116
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -6295,
+      "velocityYQ16": 2695,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 3,
+      "materialId": 1,
+      "startTick": 10,
+      "stopTick": 10,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10490585,
+          "localY": 10697579
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -6437,
+      "velocityYQ16": 2650,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 4,
+      "materialId": 1,
+      "startTick": 12,
+      "stopTick": 12,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 9846844,
+          "localY": 10962628
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -6537,
+      "velocityYQ16": 2568,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 5,
+      "materialId": 1,
+      "startTick": 4,
+      "stopTick": 4,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 9193127,
+          "localY": 11219421
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -6594,
+      "velocityYQ16": 2447,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 6,
+      "materialId": 1,
+      "startTick": 6,
+      "stopTick": 6,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 8533735,
+          "localY": 11464118
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -6608,
+      "velocityYQ16": 2288,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 7,
+      "materialId": 1,
+      "startTick": 8,
+      "stopTick": 8,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 7872967,
+          "localY": 11692878
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -6578,
+      "velocityYQ16": 2090,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 8,
+      "materialId": 1,
+      "startTick": 10,
+      "stopTick": 10,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 7215123,
+          "localY": 11901859
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -6506,
+      "velocityYQ16": 1854,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 9,
+      "materialId": 1,
+      "startTick": 12,
+      "stopTick": 12,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 6564502,
+          "localY": 12087221
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -6391,
+      "velocityYQ16": 1579,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 10,
+      "materialId": 1,
+      "startTick": 4,
+      "stopTick": 4,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 5925404,
+          "localY": 12245123
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -6233,
+      "velocityYQ16": 1266,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 11,
+      "materialId": 1,
+      "startTick": 6,
+      "stopTick": 6,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 5302129,
+          "localY": 12371723
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -6032,
+      "velocityYQ16": 915,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 12,
+      "materialId": 1,
+      "startTick": 8,
+      "stopTick": 8,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 4698976,
+          "localY": 12463181
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -5787,
+      "velocityYQ16": 525,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 13,
+      "materialId": 1,
+      "startTick": 10,
+      "stopTick": 10,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 4120245,
+          "localY": 12515656
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -5500,
+      "velocityYQ16": 97,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 14,
+      "materialId": 1,
+      "startTick": 12,
+      "stopTick": 12,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 3570236,
+          "localY": 12525306
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -5170,
+      "velocityYQ16": -370,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 15,
+      "materialId": 1,
+      "startTick": 4,
+      "stopTick": 4,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 3053248,
+          "localY": 12488291
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -4797,
+      "velocityYQ16": -875,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 16,
+      "materialId": 1,
+      "startTick": 6,
+      "stopTick": 6,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 2573580,
+          "localY": 12400770
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -4380,
+      "velocityYQ16": -1419,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 17,
+      "materialId": 1,
+      "startTick": 8,
+      "stopTick": 8,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 2135533,
+          "localY": 12258901
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -3921,
+      "velocityYQ16": -2001,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 18,
+      "materialId": 1,
+      "startTick": 10,
+      "stopTick": 10,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 1743407,
+          "localY": 12058844
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -3419,
+      "velocityYQ16": -2621,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 19,
+      "materialId": 1,
+      "startTick": 12,
+      "stopTick": 12,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 1401500,
+          "localY": 11796757
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -2874,
+      "velocityYQ16": -3280,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 20,
+      "materialId": 1,
+      "startTick": 10,
+      "stopTick": 10,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 1114112,
+          "localY": 11468800
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 2095,
+      "velocityYQ16": -4302,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 21,
+      "materialId": 1,
+      "startTick": 12,
+      "stopTick": 12,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 1323609,
+          "localY": 11038559
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 2552,
+      "velocityYQ16": -4193,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 22,
+      "materialId": 1,
+      "startTick": 14,
+      "stopTick": 14,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 1578855,
+          "localY": 10619268
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 2999,
+      "velocityYQ16": -4050,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 23,
+      "materialId": 1,
+      "startTick": 16,
+      "stopTick": 16,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 1878759,
+          "localY": 10214252
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 3435,
+      "velocityYQ16": -3874,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 24,
+      "materialId": 1,
+      "startTick": 8,
+      "stopTick": 8,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 2222233,
+          "localY": 9826836
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 3860,
+      "velocityYQ16": -3665,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 25,
+      "materialId": 1,
+      "startTick": 10,
+      "stopTick": 10,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 2608188,
+          "localY": 9460345
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 4273,
+      "velocityYQ16": -3422,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 26,
+      "materialId": 1,
+      "startTick": 12,
+      "stopTick": 12,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 3035533,
+          "localY": 9118103
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 4676,
+      "velocityYQ16": -3147,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 27,
+      "materialId": 1,
+      "startTick": 14,
+      "stopTick": 14,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 3503181,
+          "localY": 8803437
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 5069,
+      "velocityYQ16": -2838,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 28,
+      "materialId": 1,
+      "startTick": 16,
+      "stopTick": 16,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 4010041,
+          "localY": 8519670
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 5450,
+      "velocityYQ16": -2495,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 29,
+      "materialId": 1,
+      "startTick": 8,
+      "stopTick": 8,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 4555024,
+          "localY": 8270129
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 5820,
+      "velocityYQ16": -2120,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 30,
+      "materialId": 1,
+      "startTick": 10,
+      "stopTick": 10,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 5137042,
+          "localY": 8058138
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6180,
+      "velocityYQ16": -1711,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 31,
+      "materialId": 1,
+      "startTick": 12,
+      "stopTick": 12,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 5755005,
+          "localY": 7887022
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6528,
+      "velocityYQ16": -1269,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 32,
+      "materialId": 1,
+      "startTick": 14,
+      "stopTick": 14,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 6407823,
+          "localY": 7760106
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6866,
+      "velocityYQ16": -794,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 33,
+      "materialId": 1,
+      "startTick": 16,
+      "stopTick": 16,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 7094408,
+          "localY": 7680716
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7193,
+      "velocityYQ16": -285,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 34,
+      "materialId": 1,
+      "startTick": 8,
+      "stopTick": 8,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 7813670,
+          "localY": 7652176
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7509,
+      "velocityYQ16": 256,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 35,
+      "materialId": 1,
+      "startTick": 10,
+      "stopTick": 10,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 8564520,
+          "localY": 7677811
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7813,
+      "velocityYQ16": 831,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 36,
+      "materialId": 1,
+      "startTick": 12,
+      "stopTick": 12,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 9345869,
+          "localY": 7760947
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 8108,
+      "velocityYQ16": 1440,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 37,
+      "materialId": 1,
+      "startTick": 14,
+      "stopTick": 14,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10156628,
+          "localY": 7904909
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 8391,
+      "velocityYQ16": 2081,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 38,
+      "materialId": 1,
+      "startTick": 16,
+      "stopTick": 16,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10995706,
+          "localY": 8113020
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 8663,
+      "velocityYQ16": 2756,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 39,
+      "materialId": 1,
+      "startTick": 9,
+      "stopTick": 9,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11730944,
+          "localY": 10158080
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 5769,
+      "velocityYQ16": 4273,
+      "velocityJitterQ16": 100
+    },
+    {
+      "id": 40,
+      "materialId": 1,
+      "startTick": 11,
+      "stopTick": 11,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 12307888,
+          "localY": 10585368
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 5912,
+      "velocityYQ16": 3910,
+      "velocityJitterQ16": 100
+    },
+    {
+      "id": 41,
+      "materialId": 1,
+      "startTick": 13,
+      "stopTick": 13,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 12899050,
+          "localY": 10976368
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6033,
+      "velocityYQ16": 3533,
+      "velocityJitterQ16": 100
+    },
+    {
+      "id": 42,
+      "materialId": 1,
+      "startTick": 15,
+      "stopTick": 15,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 13502308,
+          "localY": 11329645
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6132,
+      "velocityYQ16": 3141,
+      "velocityJitterQ16": 100
+    },
+    {
+      "id": 43,
+      "materialId": 1,
+      "startTick": 7,
+      "stopTick": 7,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 14115541,
+          "localY": 11643767
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6211,
+      "velocityYQ16": 2735,
+      "velocityJitterQ16": 100
+    },
+    {
+      "id": 44,
+      "materialId": 1,
+      "startTick": 9,
+      "stopTick": 9,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 14736628,
+          "localY": 11917300
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6268,
+      "velocityYQ16": 2315,
+      "velocityJitterQ16": 100
+    },
+    {
+      "id": 45,
+      "materialId": 1,
+      "startTick": 11,
+      "stopTick": 11,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 15363448,
+          "localY": 12148811
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6304,
+      "velocityYQ16": 1881,
+      "velocityJitterQ16": 100
+    },
+    {
+      "id": 46,
+      "materialId": 1,
+      "startTick": 13,
+      "stopTick": 13,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 15993880,
+          "localY": 12336868
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6319,
+      "velocityYQ16": 1432,
+      "velocityJitterQ16": 100
+    },
+    {
+      "id": 47,
+      "materialId": 1,
+      "startTick": 15,
+      "stopTick": 15,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 16625802,
+          "localY": 12480036
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6313,
+      "velocityYQ16": 968,
+      "velocityJitterQ16": 100
+    },
+    {
+      "id": 48,
+      "materialId": 1,
+      "startTick": 7,
+      "stopTick": 7,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 479878,
+          "localY": 12576883
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6285,
+      "velocityYQ16": 491,
+      "velocityJitterQ16": 100
+    },
+    {
+      "id": 49,
+      "materialId": 1,
+      "startTick": 9,
+      "stopTick": 9,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 1108417,
+          "localY": 12625975
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6237,
+      "velocityYQ16": -1,
+      "velocityJitterQ16": 100
+    },
+    {
+      "id": 50,
+      "materialId": 1,
+      "startTick": 11,
+      "stopTick": 11,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 1732084,
+          "localY": 12625880
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6167,
+      "velocityYQ16": -507,
+      "velocityJitterQ16": 100
+    },
+    {
+      "id": 51,
+      "materialId": 1,
+      "startTick": 13,
+      "stopTick": 13,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 2348757,
+          "localY": 12575163
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6076,
+      "velocityYQ16": -1028,
+      "velocityJitterQ16": 100
+    },
+    {
+      "id": 52,
+      "materialId": 1,
+      "startTick": 15,
+      "stopTick": 15,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 2956315,
+          "localY": 12472392
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 5963,
+      "velocityYQ16": -1563,
+      "velocityJitterQ16": 100
+    },
+    {
+      "id": 53,
+      "materialId": 1,
+      "startTick": 7,
+      "stopTick": 7,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 3552636,
+          "localY": 12316134
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 5830,
+      "velocityYQ16": -2112,
+      "velocityJitterQ16": 100
+    },
+    {
+      "id": 54,
+      "materialId": 1,
+      "startTick": 9,
+      "stopTick": 9,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 4135600,
+          "localY": 12104955
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 5675,
+      "velocityYQ16": -2675,
+      "velocityJitterQ16": 100
+    },
+    {
+      "id": 55,
+      "materialId": 1,
+      "startTick": 11,
+      "stopTick": 11,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 4703085,
+          "localY": 11837422
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 5499,
+      "velocityYQ16": -3253,
+      "velocityJitterQ16": 100
+    },
+    {
+      "id": 56,
+      "materialId": 1,
+      "startTick": 13,
+      "stopTick": 13,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 5252970,
+          "localY": 11512102
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 5302,
+      "velocityYQ16": -3845,
+      "velocityJitterQ16": 100
+    },
+    {
+      "id": 57,
+      "materialId": 1,
+      "startTick": 15,
+      "stopTick": 15,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 5783134,
+          "localY": 11127562
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 5083,
+      "velocityYQ16": -4452,
+      "velocityJitterQ16": 100
+    },
+    {
+      "id": 58,
+      "materialId": 1,
+      "startTick": 13,
+      "stopTick": 13,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 6291456,
+          "localY": 10682368
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -2462,
+      "velocityYQ16": -4420,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 59,
+      "materialId": 1,
+      "startTick": 15,
+      "stopTick": 15,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 6045259,
+          "localY": 10240375
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -2834,
+      "velocityYQ16": -4329,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 60,
+      "materialId": 1,
+      "startTick": 17,
+      "stopTick": 17,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 5761856,
+          "localY": 9807440
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -3208,
+      "velocityYQ16": -4192,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 61,
+      "materialId": 1,
+      "startTick": 19,
+      "stopTick": 19,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 5441074,
+          "localY": 9388264
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -3583,
+      "velocityYQ16": -4007,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 62,
+      "materialId": 1,
+      "startTick": 11,
+      "stopTick": 11,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 5082742,
+          "localY": 8987547
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -3961,
+      "velocityYQ16": -3776,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 63,
+      "materialId": 1,
+      "startTick": 13,
+      "stopTick": 13,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 4686689,
+          "localY": 8609991
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -4339,
+      "velocityYQ16": -3497,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 64,
+      "materialId": 1,
+      "startTick": 15,
+      "stopTick": 15,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 4252741,
+          "localY": 8260297
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -4720,
+      "velocityYQ16": -3171,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 65,
+      "materialId": 1,
+      "startTick": 17,
+      "stopTick": 17,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 3780727,
+          "localY": 7943166
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -5103,
+      "velocityYQ16": -2799,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 66,
+      "materialId": 1,
+      "startTick": 19,
+      "stopTick": 19,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 3270475,
+          "localY": 7663298
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -5487,
+      "velocityYQ16": -2379,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 67,
+      "materialId": 1,
+      "startTick": 11,
+      "stopTick": 11,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 2721813,
+          "localY": 7425394
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -5872,
+      "velocityYQ16": -1912,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 68,
+      "materialId": 1,
+      "startTick": 13,
+      "stopTick": 13,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 2134568,
+          "localY": 7234156
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -6260,
+      "velocityYQ16": -1399,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 69,
+      "materialId": 1,
+      "startTick": 15,
+      "stopTick": 15,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 1508570,
+          "localY": 7094284
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -6649,
+      "velocityYQ16": -838,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 70,
+      "materialId": 1,
+      "startTick": 17,
+      "stopTick": 17,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 843646,
+          "localY": 7010479
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -7040,
+      "velocityYQ16": -230,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 71,
+      "materialId": 1,
+      "startTick": 19,
+      "stopTick": 19,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 139623,
+          "localY": 6987443
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -7433,
+      "velocityYQ16": 424,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 72,
+      "materialId": 1,
+      "startTick": 11,
+      "stopTick": 11,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 16173547,
+          "localY": 7029875
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -7827,
+      "velocityYQ16": 1126,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 73,
+      "materialId": 1,
+      "startTick": 13,
+      "stopTick": 13,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 15390813,
+          "localY": 7142478
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -8223,
+      "velocityYQ16": 1875,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 74,
+      "materialId": 1,
+      "startTick": 15,
+      "stopTick": 15,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 14568465,
+          "localY": 7329952
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -8621,
+      "velocityYQ16": 2670,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 75,
+      "materialId": 1,
+      "startTick": 17,
+      "stopTick": 17,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 13706330,
+          "localY": 7596997
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -9021,
+      "velocityYQ16": 3513,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 76,
+      "materialId": 1,
+      "startTick": 19,
+      "stopTick": 19,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 12804238,
+          "localY": 7948316
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -9422,
+      "velocityYQ16": 4403,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 77,
+      "materialId": 4,
+      "startTick": 20,
+      "stopTick": 20,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 1572864,
+          "localY": 11272192
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6848,
+      "velocityYQ16": -1386,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 78,
+      "materialId": 4,
+      "startTick": 22,
+      "stopTick": 22,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 2257642,
+          "localY": 11133605
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6673,
+      "velocityYQ16": -1749,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 79,
+      "materialId": 4,
+      "startTick": 24,
+      "stopTick": 24,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 2924944,
+          "localY": 10958668
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6533,
+      "velocityYQ16": -2039,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 80,
+      "materialId": 4,
+      "startTick": 26,
+      "stopTick": 26,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 3578266,
+          "localY": 10754720
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6428,
+      "velocityYQ16": -2256,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 81,
+      "materialId": 4,
+      "startTick": 18,
+      "stopTick": 18,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 4221101,
+          "localY": 10529101
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6358,
+      "velocityYQ16": -2399,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 82,
+      "materialId": 4,
+      "startTick": 20,
+      "stopTick": 20,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 4856946,
+          "localY": 10289152
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6323,
+      "velocityYQ16": -2469,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 83,
+      "materialId": 4,
+      "startTick": 22,
+      "stopTick": 22,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 5489295,
+          "localY": 10042212
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6323,
+      "velocityYQ16": -2466,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 84,
+      "materialId": 4,
+      "startTick": 24,
+      "stopTick": 24,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 6121645,
+          "localY": 9795622
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6358,
+      "velocityYQ16": -2389,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 85,
+      "materialId": 4,
+      "startTick": 26,
+      "stopTick": 26,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 6757490,
+          "localY": 9556722
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6428,
+      "velocityYQ16": -2239,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 86,
+      "materialId": 4,
+      "startTick": 18,
+      "stopTick": 18,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 7400325,
+          "localY": 9332851
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6533,
+      "velocityYQ16": -2015,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 87,
+      "materialId": 4,
+      "startTick": 20,
+      "stopTick": 20,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 8053646,
+          "localY": 9131349
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6673,
+      "velocityYQ16": -1718,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 88,
+      "materialId": 4,
+      "startTick": 22,
+      "stopTick": 22,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 8720948,
+          "localY": 8959558
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6848,
+      "velocityYQ16": -1347,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 89,
+      "materialId": 4,
+      "startTick": 24,
+      "stopTick": 24,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 9405727,
+          "localY": 8824816
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7057,
+      "velocityYQ16": -904,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 90,
+      "materialId": 4,
+      "startTick": 26,
+      "stopTick": 26,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10111477,
+          "localY": 8734463
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7302,
+      "velocityYQ16": -386,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 91,
+      "materialId": 4,
+      "startTick": 18,
+      "stopTick": 18,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10841693,
+          "localY": 8695841
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7582,
+      "velocityYQ16": 204,
+      "velocityJitterQ16": 105
+    },
+    {
+      "id": 92,
+      "materialId": 4,
+      "startTick": 20,
+      "stopTick": 20,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 12189696,
+          "localY": 8781824
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 9401,
+      "velocityYQ16": -825,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 93,
+      "materialId": 4,
+      "startTick": 22,
+      "stopTick": 22,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 13129822,
+          "localY": 8699278
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 9063,
+      "velocityYQ16": -396,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 94,
+      "materialId": 4,
+      "startTick": 24,
+      "stopTick": 24,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 14036161,
+          "localY": 8659723
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 8720,
+      "velocityYQ16": 10,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 95,
+      "materialId": 4,
+      "startTick": 26,
+      "stopTick": 26,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 14908129,
+          "localY": 8660713
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 8370,
+      "velocityYQ16": 391,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 96,
+      "materialId": 4,
+      "startTick": 18,
+      "stopTick": 18,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 15745145,
+          "localY": 8699802
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 8015,
+      "velocityYQ16": 747,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 97,
+      "materialId": 4,
+      "startTick": 20,
+      "stopTick": 20,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 16546626,
+          "localY": 8774542
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7654,
+      "velocityYQ16": 1079,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 98,
+      "materialId": 4,
+      "startTick": 22,
+      "stopTick": 22,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 534774,
+          "localY": 8882487
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7287,
+      "velocityYQ16": 1387,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 99,
+      "materialId": 4,
+      "startTick": 24,
+      "stopTick": 24,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 1263437,
+          "localY": 9021191
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6914,
+      "velocityYQ16": 1670,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 100,
+      "materialId": 4,
+      "startTick": 26,
+      "stopTick": 26,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 1954818,
+          "localY": 9188205
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6535,
+      "velocityYQ16": 1929,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 101,
+      "materialId": 4,
+      "startTick": 18,
+      "stopTick": 18,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 2608333,
+          "localY": 9381085
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6151,
+      "velocityYQ16": 2163,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 102,
+      "materialId": 4,
+      "startTick": 20,
+      "stopTick": 20,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 3223400,
+          "localY": 9597383
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 5760,
+      "velocityYQ16": 2373,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 103,
+      "materialId": 4,
+      "startTick": 22,
+      "stopTick": 22,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 3799437,
+          "localY": 9834653
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 5364,
+      "velocityYQ16": 2558,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 104,
+      "materialId": 4,
+      "startTick": 24,
+      "stopTick": 24,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 4335862,
+          "localY": 10090447
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 4962,
+      "velocityYQ16": 2719,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 105,
+      "materialId": 4,
+      "startTick": 26,
+      "stopTick": 26,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 4832091,
+          "localY": 10362319
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 4555,
+      "velocityYQ16": 2855,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 106,
+      "materialId": 4,
+      "startTick": 18,
+      "stopTick": 18,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 5287542,
+          "localY": 10647823
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 4141,
+      "velocityYQ16": 2967,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 107,
+      "materialId": 2,
+      "startTick": 26,
+      "stopTick": 26,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 2490368,
+          "localY": 11730944
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 10416,
+      "velocityYQ16": 1614,
+      "velocityJitterQ16": 115
+    },
+    {
+      "id": 108,
+      "materialId": 2,
+      "startTick": 28,
+      "stopTick": 28,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 3531964,
+          "localY": 11892323
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 9788,
+      "velocityYQ16": 943,
+      "velocityJitterQ16": 115
+    },
+    {
+      "id": 109,
+      "materialId": 2,
+      "startTick": 30,
+      "stopTick": 30,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 4510738,
+          "localY": 11986585
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 9183,
+      "velocityYQ16": 322,
+      "velocityJitterQ16": 115
+    },
+    {
+      "id": 110,
+      "materialId": 2,
+      "startTick": 32,
+      "stopTick": 32,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 5429018,
+          "localY": 12018742
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 8601,
+      "velocityYQ16": -249,
+      "velocityJitterQ16": 115
+    },
+    {
+      "id": 111,
+      "materialId": 2,
+      "startTick": 24,
+      "stopTick": 24,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 6289129,
+          "localY": 11993804
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 8043,
+      "velocityYQ16": -770,
+      "velocityJitterQ16": 115
+    },
+    {
+      "id": 112,
+      "materialId": 2,
+      "startTick": 26,
+      "stopTick": 26,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 7093399,
+          "localY": 11916783
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7508,
+      "velocityYQ16": -1241,
+      "velocityJitterQ16": 115
+    },
+    {
+      "id": 113,
+      "materialId": 2,
+      "startTick": 28,
+      "stopTick": 28,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 7844155,
+          "localY": 11792692
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6996,
+      "velocityYQ16": -1662,
+      "velocityJitterQ16": 115
+    },
+    {
+      "id": 114,
+      "materialId": 2,
+      "startTick": 30,
+      "stopTick": 30,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 8543723,
+          "localY": 11626540
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6507,
+      "velocityYQ16": -2032,
+      "velocityJitterQ16": 115
+    },
+    {
+      "id": 115,
+      "materialId": 2,
+      "startTick": 32,
+      "stopTick": 32,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 9194429,
+          "localY": 11423339
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6042,
+      "velocityYQ16": -2352,
+      "velocityJitterQ16": 115
+    },
+    {
+      "id": 116,
+      "materialId": 2,
+      "startTick": 24,
+      "stopTick": 24,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 9798601,
+          "localY": 11188102
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 5600,
+      "velocityYQ16": -2623,
+      "velocityJitterQ16": 115
+    },
+    {
+      "id": 117,
+      "materialId": 2,
+      "startTick": 26,
+      "stopTick": 26,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10358566,
+          "localY": 10925839
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 5181,
+      "velocityYQ16": -2843,
+      "velocityJitterQ16": 115
+    },
+    {
+      "id": 118,
+      "materialId": 2,
+      "startTick": 28,
+      "stopTick": 28,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10876649,
+          "localY": 10641561
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 4785,
+      "velocityYQ16": -3013,
+      "velocityJitterQ16": 115
+    },
+    {
+      "id": 119,
+      "materialId": 2,
+      "startTick": 30,
+      "stopTick": 30,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11355178,
+          "localY": 10340280
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 4413,
+      "velocityYQ16": -3133,
+      "velocityJitterQ16": 115
+    },
+    {
+      "id": 120,
+      "materialId": 2,
+      "startTick": 28,
+      "stopTick": 28,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11927552,
+          "localY": 10092544
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7562,
+      "velocityYQ16": 2467,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 121,
+      "materialId": 2,
+      "startTick": 30,
+      "stopTick": 30,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 12683707,
+          "localY": 10339236
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7560,
+      "velocityYQ16": 2517,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 122,
+      "materialId": 2,
+      "startTick": 32,
+      "stopTick": 32,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 13439683,
+          "localY": 10590940
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7556,
+      "velocityYQ16": 2501,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 123,
+      "materialId": 2,
+      "startTick": 34,
+      "stopTick": 34,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 14195300,
+          "localY": 10841033
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7551,
+      "velocityYQ16": 2419,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 124,
+      "materialId": 2,
+      "startTick": 26,
+      "stopTick": 26,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 14950381,
+          "localY": 11082892
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7544,
+      "velocityYQ16": 2270,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 125,
+      "materialId": 2,
+      "startTick": 28,
+      "stopTick": 28,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 15704746,
+          "localY": 11309897
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7535,
+      "velocityYQ16": 2055,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 126,
+      "materialId": 2,
+      "startTick": 30,
+      "stopTick": 30,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 16458216,
+          "localY": 11515424
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7524,
+      "velocityYQ16": 1774,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 127,
+      "materialId": 2,
+      "startTick": 32,
+      "stopTick": 32,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 433397,
+          "localY": 11692851
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7511,
+      "velocityYQ16": 1427,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 128,
+      "materialId": 2,
+      "startTick": 34,
+      "stopTick": 34,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 1184540,
+          "localY": 11835557
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7497,
+      "velocityYQ16": 1014,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 129,
+      "materialId": 2,
+      "startTick": 26,
+      "stopTick": 26,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 1934252,
+          "localY": 11936919
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7481,
+      "velocityYQ16": 534,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 130,
+      "materialId": 2,
+      "startTick": 28,
+      "stopTick": 28,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 2682352,
+          "localY": 11990314
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7463,
+      "velocityYQ16": -12,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 131,
+      "materialId": 2,
+      "startTick": 30,
+      "stopTick": 30,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 3428663,
+          "localY": 11989121
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7443,
+      "velocityYQ16": -624,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 132,
+      "materialId": 2,
+      "startTick": 32,
+      "stopTick": 32,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 4173006,
+          "localY": 11926717
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7422,
+      "velocityYQ16": -1302,
+      "velocityJitterQ16": 110
+    },
+    {
+      "id": 133,
+      "materialId": 3,
+      "startTick": 17,
+      "stopTick": 17,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10897151,
+          "localY": 10524618
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -2128,
+      "velocityYQ16": -25974,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 134,
+      "materialId": 2,
+      "startTick": 19,
+      "stopTick": 19,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10031976,
+          "localY": 10887574
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -4765,
+      "velocityYQ16": -32207,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 135,
+      "materialId": 2,
+      "startTick": 21,
+      "stopTick": 21,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 9146165,
+          "localY": 11237346
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -6628,
+      "velocityYQ16": -37117,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 136,
+      "materialId": 3,
+      "startTick": 23,
+      "stopTick": 23,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 8250467,
+          "localY": 11564334
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -7802,
+      "velocityYQ16": -40691,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 137,
+      "materialId": 2,
+      "startTick": 25,
+      "stopTick": 25,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 7355628,
+          "localY": 11858935
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -8370,
+      "velocityYQ16": -42916,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 138,
+      "materialId": 2,
+      "startTick": 27,
+      "stopTick": 27,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 6472397,
+          "localY": 12111550
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -8415,
+      "velocityYQ16": -43778,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 139,
+      "materialId": 3,
+      "startTick": 29,
+      "stopTick": 29,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 5611520,
+          "localY": 12312576
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -8021,
+      "velocityYQ16": -43264,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 140,
+      "materialId": 2,
+      "startTick": 31,
+      "stopTick": 31,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 4783746,
+          "localY": 12452413
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -7272,
+      "velocityYQ16": -41360,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 141,
+      "materialId": 2,
+      "startTick": 33,
+      "stopTick": 33,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 3999822,
+          "localY": 12521460
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -6252,
+      "velocityYQ16": -38053,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 142,
+      "materialId": 3,
+      "startTick": 35,
+      "stopTick": 35,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 3270495,
+          "localY": 12510115
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -5043,
+      "velocityYQ16": -33329,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 143,
+      "materialId": 2,
+      "startTick": 37,
+      "stopTick": 37,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 2606513,
+          "localY": 12408778
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -3730,
+      "velocityYQ16": -27176,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 144,
+      "materialId": 2,
+      "startTick": 39,
+      "stopTick": 39,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 2018623,
+          "localY": 12207847
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -2396,
+      "velocityYQ16": -19578,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 145,
+      "materialId": 3,
+      "startTick": 41,
+      "stopTick": 41,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 1517574,
+          "localY": 11897722
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -1125,
+      "velocityYQ16": -10524,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 146,
+      "materialId": 3,
+      "startTick": 15,
+      "stopTick": 15,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 12464229,
+          "localY": 10693242
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 5964,
+      "velocityYQ16": -29052,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 147,
+      "materialId": 2,
+      "startTick": 17,
+      "stopTick": 17,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 13219417,
+          "localY": 11169567
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 9711,
+      "velocityYQ16": -38012,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 148,
+      "materialId": 2,
+      "startTick": 19,
+      "stopTick": 19,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 13992198,
+          "localY": 11584143
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 12626,
+      "velocityYQ16": -45003,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 149,
+      "materialId": 2,
+      "startTick": 21,
+      "stopTick": 21,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 14778261,
+          "localY": 11934057
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 14756,
+      "velocityYQ16": -50093,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 150,
+      "materialId": 3,
+      "startTick": 23,
+      "stopTick": 23,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 15573295,
+          "localY": 12216396
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 16149,
+      "velocityYQ16": -53350,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 151,
+      "materialId": 2,
+      "startTick": 25,
+      "stopTick": 25,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 16372990,
+          "localY": 12428247
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 16852,
+      "velocityYQ16": -54842,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 152,
+      "materialId": 2,
+      "startTick": 27,
+      "stopTick": 27,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 395818,
+          "localY": 12566698
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 16914,
+      "velocityYQ16": -54635,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 153,
+      "materialId": 2,
+      "startTick": 29,
+      "stopTick": 29,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 1191901,
+          "localY": 12628836
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 16381,
+      "velocityYQ16": -52799,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 154,
+      "materialId": 3,
+      "startTick": 31,
+      "stopTick": 31,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 1979711,
+          "localY": 12611748
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 15301,
+      "velocityYQ16": -49401,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 155,
+      "materialId": 2,
+      "startTick": 33,
+      "stopTick": 33,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 2754939,
+          "localY": 12512521
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 13721,
+      "velocityYQ16": -44508,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 156,
+      "materialId": 2,
+      "startTick": 35,
+      "stopTick": 35,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 3513273,
+          "localY": 12328244
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 11690,
+      "velocityYQ16": -38189,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 157,
+      "materialId": 2,
+      "startTick": 37,
+      "stopTick": 37,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 4250403,
+          "localY": 12056003
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 9255,
+      "velocityYQ16": -30510,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 158,
+      "materialId": 3,
+      "startTick": 39,
+      "stopTick": 39,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 4962017,
+          "localY": 11692885
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6463,
+      "velocityYQ16": -21541,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 159,
+      "materialId": 2,
+      "startTick": 41,
+      "stopTick": 41,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 5643805,
+          "localY": 11235977
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 3362,
+      "velocityYQ16": -11348,
+      "velocityJitterQ16": 118
+    },
+    {
+      "id": 160,
+      "materialId": 3,
+      "startTick": 18,
+      "stopTick": 18,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10223616,
+          "localY": 10354688
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 2254,
+      "velocityYQ16": 2661,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 161,
+      "materialId": 3,
+      "startTick": 20,
+      "stopTick": 20,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10449024,
+          "localY": 10620800
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 1893,
+      "velocityYQ16": 2899,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 162,
+      "materialId": 3,
+      "startTick": 22,
+      "stopTick": 22,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10638336,
+          "localY": 10910720
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 1601,
+      "velocityYQ16": 2884,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 163,
+      "materialId": 3,
+      "startTick": 24,
+      "stopTick": 24,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10798464,
+          "localY": 11199104
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 1379,
+      "velocityYQ16": 2615,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 164,
+      "materialId": 3,
+      "startTick": 16,
+      "stopTick": 16,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10936320,
+          "localY": 11460608
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 1225,
+      "velocityYQ16": 2093,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 165,
+      "materialId": 3,
+      "startTick": 18,
+      "stopTick": 18,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11058816,
+          "localY": 11669888
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 1140,
+      "velocityYQ16": 1317,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 166,
+      "materialId": 3,
+      "startTick": 20,
+      "stopTick": 20,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11172864,
+          "localY": 11801600
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 1125,
+      "velocityYQ16": 288,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 167,
+      "materialId": 3,
+      "startTick": 22,
+      "stopTick": 22,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11285376,
+          "localY": 11830400
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 1179,
+      "velocityYQ16": -995,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 168,
+      "materialId": 3,
+      "startTick": 20,
+      "stopTick": 20,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 12189696,
+          "localY": 11730944
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 1691,
+      "velocityYQ16": 1261,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 169,
+      "materialId": 3,
+      "startTick": 22,
+      "stopTick": 22,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 12358784,
+          "localY": 11857024
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 1637,
+      "velocityYQ16": -22,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 170,
+      "materialId": 3,
+      "startTick": 24,
+      "stopTick": 24,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 12522496,
+          "localY": 11854848
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 1591,
+      "velocityYQ16": -1112,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 171,
+      "materialId": 3,
+      "startTick": 26,
+      "stopTick": 26,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 12681600,
+          "localY": 11743616
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 1553,
+      "velocityYQ16": -2011,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 172,
+      "materialId": 3,
+      "startTick": 18,
+      "stopTick": 18,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 12836864,
+          "localY": 11542528
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 1522,
+      "velocityYQ16": -2717,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 173,
+      "materialId": 3,
+      "startTick": 20,
+      "stopTick": 20,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 12989056,
+          "localY": 11270784
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 1499,
+      "velocityYQ16": -3232,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 174,
+      "materialId": 3,
+      "startTick": 22,
+      "stopTick": 22,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 13138944,
+          "localY": 10947584
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 1484,
+      "velocityYQ16": -3555,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 175,
+      "materialId": 3,
+      "startTick": 24,
+      "stopTick": 24,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 13287296,
+          "localY": 10592128
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 1476,
+      "velocityYQ16": -3685,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 176,
+      "materialId": 3,
+      "startTick": 23,
+      "stopTick": 23,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11075584,
+          "localY": 9895936
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 3197,
+      "velocityYQ16": -9591,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 177,
+      "materialId": 3,
+      "startTick": 23,
+      "stopTick": 23,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 12386304,
+          "localY": 9895936
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -1598,
+      "velocityYQ16": -9591,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 178,
+      "materialId": 2,
+      "startTick": 31,
+      "stopTick": 31,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10878976,
+          "localY": 9633792
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6637,
+      "velocityYQ16": -2489,
+      "velocityJitterQ16": 60
+    },
+    {
+      "id": 179,
+      "materialId": 2,
+      "startTick": 31,
+      "stopTick": 31,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 12386304,
+          "localY": 9633792
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -6637,
+      "velocityYQ16": -2903,
+      "velocityJitterQ16": 60
+    },
+    {
+      "id": 180,
+      "materialId": 2,
+      "startTick": 34,
+      "stopTick": 34,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10715136,
+          "localY": 9325773
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 8213,
+      "velocityYQ16": -2489,
+      "velocityJitterQ16": 60
+    },
+    {
+      "id": 181,
+      "materialId": 2,
+      "startTick": 34,
+      "stopTick": 34,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 12530483,
+          "localY": 9325773
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -7798,
+      "velocityYQ16": -2903,
+      "velocityJitterQ16": 60
+    },
+    {
+      "id": 182,
+      "materialId": 2,
+      "startTick": 37,
+      "stopTick": 37,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10551296,
+          "localY": 9017754
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 9789,
+      "velocityYQ16": -2489,
+      "velocityJitterQ16": 60
+    },
+    {
+      "id": 183,
+      "materialId": 2,
+      "startTick": 37,
+      "stopTick": 37,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 12674662,
+          "localY": 9017754
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -8959,
+      "velocityYQ16": -2903,
+      "velocityJitterQ16": 60
+    },
+    {
+      "id": 184,
+      "materialId": 2,
+      "startTick": 40,
+      "stopTick": 40,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10387456,
+          "localY": 8709734
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 11365,
+      "velocityYQ16": -2489,
+      "velocityJitterQ16": 60
+    },
+    {
+      "id": 185,
+      "materialId": 2,
+      "startTick": 40,
+      "stopTick": 40,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 12818842,
+          "localY": 8709734
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -10121,
+      "velocityYQ16": -2903,
+      "velocityJitterQ16": 60
+    },
+    {
+      "id": 186,
+      "materialId": 2,
+      "startTick": 43,
+      "stopTick": 43,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10223616,
+          "localY": 8401715
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 12941,
+      "velocityYQ16": -2489,
+      "velocityJitterQ16": 60
+    },
+    {
+      "id": 187,
+      "materialId": 2,
+      "startTick": 43,
+      "stopTick": 43,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 12963021,
+          "localY": 8401715
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -11282,
+      "velocityYQ16": -2903,
+      "velocityJitterQ16": 60
+    },
+    {
+      "id": 188,
+      "materialId": 3,
+      "startTick": 28,
+      "stopTick": 28,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11730944,
+          "localY": 8323072
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 614,
+      "velocityYQ16": -5703,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 189,
+      "materialId": 3,
+      "startTick": 30,
+      "stopTick": 30,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11782546,
+          "localY": 7843985
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 199,
+      "velocityYQ16": -5608,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 190,
+      "materialId": 3,
+      "startTick": 32,
+      "stopTick": 32,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11799287,
+          "localY": 7372874
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -128,
+      "velocityYQ16": -5496,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 191,
+      "materialId": 3,
+      "startTick": 34,
+      "stopTick": 34,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11788553,
+          "localY": 6911217
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -367,
+      "velocityYQ16": -5366,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 192,
+      "materialId": 3,
+      "startTick": 26,
+      "stopTick": 26,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11757730,
+          "localY": 6460491
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -518,
+      "velocityYQ16": -5218,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 193,
+      "materialId": 3,
+      "startTick": 28,
+      "stopTick": 28,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11714203,
+          "localY": 6022172
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -581,
+      "velocityYQ16": -5053,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 194,
+      "materialId": 3,
+      "startTick": 30,
+      "stopTick": 30,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11665359,
+          "localY": 5597739
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -557,
+      "velocityYQ16": -4870,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 195,
+      "materialId": 3,
+      "startTick": 32,
+      "stopTick": 32,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11618583,
+          "localY": 5188669
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -444,
+      "velocityYQ16": -4669,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 196,
+      "materialId": 3,
+      "startTick": 34,
+      "stopTick": 34,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11581260,
+          "localY": 4796438
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": -244,
+      "velocityYQ16": -4451,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 197,
+      "materialId": 3,
+      "startTick": 26,
+      "stopTick": 26,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11560777,
+          "localY": 4422523
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 45,
+      "velocityYQ16": -4216,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 198,
+      "materialId": 3,
+      "startTick": 28,
+      "stopTick": 28,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11564519,
+          "localY": 4068402
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 421,
+      "velocityYQ16": -3963,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 199,
+      "materialId": 3,
+      "startTick": 37,
+      "stopTick": 37,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11599872,
+          "localY": 3145728
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 1098,
+      "velocityYQ16": -2554,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 200,
+      "materialId": 3,
+      "startTick": 39,
+      "stopTick": 39,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11695406,
+          "localY": 2923517
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 1322,
+      "velocityYQ16": -2567,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 201,
+      "materialId": 3,
+      "startTick": 41,
+      "stopTick": 41,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11810428,
+          "localY": 2700160
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 1493,
+      "velocityYQ16": -2686,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 202,
+      "materialId": 3,
+      "startTick": 43,
+      "stopTick": 43,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11940353,
+          "localY": 2466485
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 1612,
+      "velocityYQ16": -2910,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 203,
+      "materialId": 3,
+      "startTick": 35,
+      "stopTick": 35,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 12080597,
+          "localY": 2213321
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 1678,
+      "velocityYQ16": -3239,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 204,
+      "materialId": 3,
+      "startTick": 37,
+      "stopTick": 37,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 12226572,
+          "localY": 1931497
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 1691,
+      "velocityYQ16": -3674,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 205,
+      "materialId": 3,
+      "startTick": 39,
+      "stopTick": 39,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 12373694,
+          "localY": 1611842
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 1652,
+      "velocityYQ16": -4214,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 206,
+      "materialId": 4,
+      "startTick": 45,
+      "stopTick": 45,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 2162688,
+          "localY": 6356992
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7201,
+      "velocityYQ16": -1892,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 207,
+      "materialId": 4,
+      "startTick": 47,
+      "stopTick": 47,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 2803565,
+          "localY": 6188564
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7020,
+      "velocityYQ16": -1672,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 208,
+      "materialId": 4,
+      "startTick": 49,
+      "stopTick": 49,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 3428319,
+          "localY": 6039798
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6834,
+      "velocityYQ16": -1406,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 209,
+      "materialId": 4,
+      "startTick": 51,
+      "stopTick": 51,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 4036559,
+          "localY": 5914624
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6644,
+      "velocityYQ16": -1097,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 210,
+      "materialId": 4,
+      "startTick": 43,
+      "stopTick": 43,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 4627890,
+          "localY": 5816975
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6450,
+      "velocityYQ16": -744,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 211,
+      "materialId": 4,
+      "startTick": 45,
+      "stopTick": 45,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 5201920,
+          "localY": 5750784
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6251,
+      "velocityYQ16": -346,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 212,
+      "materialId": 4,
+      "startTick": 47,
+      "stopTick": 47,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 5758255,
+          "localY": 5719982
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6048,
+      "velocityYQ16": 96,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 213,
+      "materialId": 4,
+      "startTick": 49,
+      "stopTick": 49,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 6296502,
+          "localY": 5728502
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 5840,
+      "velocityYQ16": 582,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 214,
+      "materialId": 4,
+      "startTick": 51,
+      "stopTick": 51,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 6816268,
+          "localY": 5780275
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 5628,
+      "velocityYQ16": 1112,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 215,
+      "materialId": 4,
+      "startTick": 43,
+      "stopTick": 43,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 7317160,
+          "localY": 5879235
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 5412,
+      "velocityYQ16": 1686,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 216,
+      "materialId": 4,
+      "startTick": 49,
+      "stopTick": 49,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 15007744,
+          "localY": 3670016
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7609,
+      "velocityYQ16": -156,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 217,
+      "materialId": 4,
+      "startTick": 51,
+      "stopTick": 51,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 15684927,
+          "localY": 3656122
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7755,
+      "velocityYQ16": 409,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 218,
+      "materialId": 4,
+      "startTick": 53,
+      "stopTick": 53,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 16375087,
+          "localY": 3692560
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7825,
+      "velocityYQ16": 966,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 219,
+      "materialId": 4,
+      "startTick": 55,
+      "stopTick": 55,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 294322,
+          "localY": 3778544
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7821,
+      "velocityYQ16": 1514,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 220,
+      "materialId": 4,
+      "startTick": 47,
+      "stopTick": 47,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 990380,
+          "localY": 3913286
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7741,
+      "velocityYQ16": 2053,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 221,
+      "materialId": 4,
+      "startTick": 49,
+      "stopTick": 49,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 1679360,
+          "localY": 4096000
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7587,
+      "velocityYQ16": 2583,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 222,
+      "materialId": 4,
+      "startTick": 51,
+      "stopTick": 51,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 2354577,
+          "localY": 4325900
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7357,
+      "velocityYQ16": 3104,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 223,
+      "materialId": 4,
+      "startTick": 53,
+      "stopTick": 53,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 3009348,
+          "localY": 4602200
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7052,
+      "velocityYQ16": 3617,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 224,
+      "materialId": 4,
+      "startTick": 55,
+      "stopTick": 55,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 3636986,
+          "localY": 4924113
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6672,
+      "velocityYQ16": 4121,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 225,
+      "materialId": 4,
+      "startTick": 47,
+      "stopTick": 47,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 1,
+          "chunkY": 0,
+          "localX": 4230808,
+          "localY": 5290852
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 6217,
+      "velocityYQ16": 4616,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 226,
+      "materialId": 4,
+      "startTick": 53,
+      "stopTick": 53,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 2490368,
+          "localY": 4194304
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 9767,
+      "velocityYQ16": -3890,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 227,
+      "materialId": 4,
+      "startTick": 55,
+      "stopTick": 55,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 3359616,
+          "localY": 3848064
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 9413,
+      "velocityYQ16": -2380,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 228,
+      "materialId": 4,
+      "startTick": 57,
+      "stopTick": 57,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 4197376,
+          "localY": 3636224
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 9051,
+      "velocityYQ16": -1017,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 229,
+      "materialId": 4,
+      "startTick": 59,
+      "stopTick": 59,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 5002880,
+          "localY": 3545728
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 8680,
+      "velocityYQ16": 200,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 230,
+      "materialId": 4,
+      "startTick": 51,
+      "stopTick": 51,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 5775360,
+          "localY": 3563520
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 8300,
+      "velocityYQ16": 1270,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 231,
+      "materialId": 4,
+      "startTick": 53,
+      "stopTick": 53,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 6514048,
+          "localY": 3676544
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7912,
+      "velocityYQ16": 2193,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 232,
+      "materialId": 4,
+      "startTick": 55,
+      "stopTick": 55,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 7218176,
+          "localY": 3871744
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7515,
+      "velocityYQ16": 2970,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 233,
+      "materialId": 4,
+      "startTick": 57,
+      "stopTick": 57,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 7886976,
+          "localY": 4136064
+        },
+        "widthQ16": 600,
+        "heightQ16": 600
+      },
+      "velocityXQ16": 7109,
+      "velocityYQ16": 3600,
+      "velocityJitterQ16": 125
+    },
+    {
+      "id": 234,
+      "materialId": 2,
+      "startTick": 54,
+      "stopTick": 54,
+      "intervalTicks": 1,
+      "rate": 2,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 8650752,
+          "localY": 1376256
+        },
+        "widthQ16": 660,
+        "heightQ16": 660
+      },
+      "velocityXQ16": 3449,
+      "velocityYQ16": 0,
+      "velocityJitterQ16": 220
+    },
+    {
+      "id": 235,
+      "materialId": 4,
+      "startTick": 57,
+      "stopTick": 57,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11730944,
+          "localY": 3407872
+        },
+        "widthQ16": 660,
+        "heightQ16": 660
+      },
+      "velocityXQ16": -2989,
+      "velocityYQ16": -1495,
+      "velocityJitterQ16": 220
+    },
+    {
+      "id": 236,
+      "materialId": 4,
+      "startTick": 60,
+      "stopTick": 60,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 14811136,
+          "localY": 1900544
+        },
+        "widthQ16": 660,
+        "heightQ16": 660
+      },
+      "velocityXQ16": 8508,
+      "velocityYQ16": -2989,
+      "velocityJitterQ16": 220
+    },
+    {
+      "id": 237,
+      "materialId": 4,
+      "startTick": 63,
+      "stopTick": 63,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11534336,
+          "localY": 3932160
+        },
+        "widthQ16": 660,
+        "heightQ16": 660
+      },
+      "velocityXQ16": -5519,
+      "velocityYQ16": -4484,
+      "velocityJitterQ16": 220
+    },
+    {
+      "id": 238,
+      "materialId": 2,
+      "startTick": 66,
+      "stopTick": 66,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 14614528,
+          "localY": 2424832
+        },
+        "widthQ16": 660,
+        "heightQ16": 660
+      },
+      "velocityXQ16": 13567,
+      "velocityYQ16": 0,
+      "velocityJitterQ16": 220
+    },
+    {
+      "id": 239,
+      "materialId": 4,
+      "startTick": 69,
+      "stopTick": 69,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11337728,
+          "localY": 4456448
+        },
+        "widthQ16": 660,
+        "heightQ16": 660
+      },
+      "velocityXQ16": -1725,
+      "velocityYQ16": -1495,
+      "velocityJitterQ16": 220
+    },
+    {
+      "id": 240,
+      "materialId": 4,
+      "startTick": 72,
+      "stopTick": 72,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 14417920,
+          "localY": 2949120
+        },
+        "widthQ16": 660,
+        "heightQ16": 660
+      },
+      "velocityXQ16": 5979,
+      "velocityYQ16": -2989,
+      "velocityJitterQ16": 220
+    },
+    {
+      "id": 241,
+      "materialId": 4,
+      "startTick": 75,
+      "stopTick": 75,
+      "intervalTicks": 1,
+      "rate": 2,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 11141120,
+          "localY": 1441792
+        },
+        "widthQ16": 660,
+        "heightQ16": 660
+      },
+      "velocityXQ16": -4254,
+      "velocityYQ16": -4484,
+      "velocityJitterQ16": 220
+    },
+    {
+      "id": 242,
+      "materialId": 2,
+      "startTick": 78,
+      "stopTick": 78,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 14221312,
+          "localY": 3473408
+        },
+        "widthQ16": 660,
+        "heightQ16": 660
+      },
+      "velocityXQ16": 11038,
+      "velocityYQ16": 0,
+      "velocityJitterQ16": 220
+    },
+    {
+      "id": 243,
+      "materialId": 4,
+      "startTick": 81,
+      "stopTick": 81,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10944512,
+          "localY": 1966080
+        },
+        "widthQ16": 660,
+        "heightQ16": 660
+      },
+      "velocityXQ16": -6784,
+      "velocityYQ16": -1495,
+      "velocityJitterQ16": 220
+    },
+    {
+      "id": 244,
+      "materialId": 4,
+      "startTick": 84,
+      "stopTick": 84,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 14024704,
+          "localY": 3997696
+        },
+        "widthQ16": 660,
+        "heightQ16": 660
+      },
+      "velocityXQ16": 3449,
+      "velocityYQ16": -2989,
+      "velocityJitterQ16": 220
+    },
+    {
+      "id": 245,
+      "materialId": 4,
+      "startTick": 54,
+      "stopTick": 54,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10747904,
+          "localY": 2490368
+        },
+        "widthQ16": 660,
+        "heightQ16": 660
+      },
+      "velocityXQ16": -2989,
+      "velocityYQ16": -4484,
+      "velocityJitterQ16": 220
+    },
+    {
+      "id": 246,
+      "materialId": 2,
+      "startTick": 57,
+      "stopTick": 57,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 13828096,
+          "localY": 4521984
+        },
+        "widthQ16": 660,
+        "heightQ16": 660
+      },
+      "velocityXQ16": 8508,
+      "velocityYQ16": 0,
+      "velocityJitterQ16": 220
+    },
+    {
+      "id": 247,
+      "materialId": 4,
+      "startTick": 60,
+      "stopTick": 60,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10551296,
+          "localY": 3014656
+        },
+        "widthQ16": 660,
+        "heightQ16": 660
+      },
+      "velocityXQ16": -5519,
+      "velocityYQ16": -1495,
+      "velocityJitterQ16": 220
+    },
+    {
+      "id": 248,
+      "materialId": 4,
+      "startTick": 63,
+      "stopTick": 63,
+      "intervalTicks": 1,
+      "rate": 2,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 13631488,
+          "localY": 1507328
+        },
+        "widthQ16": 660,
+        "heightQ16": 660
+      },
+      "velocityXQ16": 13567,
+      "velocityYQ16": -2989,
+      "velocityJitterQ16": 220
+    },
+    {
+      "id": 249,
+      "materialId": 4,
+      "startTick": 66,
+      "stopTick": 66,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10354688,
+          "localY": 3538944
+        },
+        "widthQ16": 660,
+        "heightQ16": 660
+      },
+      "velocityXQ16": -1725,
+      "velocityYQ16": -4484,
+      "velocityJitterQ16": 220
+    },
+    {
+      "id": 250,
+      "materialId": 2,
+      "startTick": 69,
+      "stopTick": 69,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 13434880,
+          "localY": 2031616
+        },
+        "widthQ16": 660,
+        "heightQ16": 660
+      },
+      "velocityXQ16": 5979,
+      "velocityYQ16": 0,
+      "velocityJitterQ16": 220
+    },
+    {
+      "id": 251,
+      "materialId": 4,
+      "startTick": 72,
+      "stopTick": 72,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 10158080,
+          "localY": 4063232
+        },
+        "widthQ16": 660,
+        "heightQ16": 660
+      },
+      "velocityXQ16": -4254,
+      "velocityYQ16": -1495,
+      "velocityJitterQ16": 220
+    },
+    {
+      "id": 252,
+      "materialId": 4,
+      "startTick": 75,
+      "stopTick": 75,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 13238272,
+          "localY": 2555904
+        },
+        "widthQ16": 660,
+        "heightQ16": 660
+      },
+      "velocityXQ16": 11038,
+      "velocityYQ16": -2989,
+      "velocityJitterQ16": 220
+    },
+    {
+      "id": 253,
+      "materialId": 4,
+      "startTick": 78,
+      "stopTick": 78,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 9961472,
+          "localY": 4587520
+        },
+        "widthQ16": 660,
+        "heightQ16": 660
+      },
+      "velocityXQ16": -6784,
+      "velocityYQ16": -4484,
+      "velocityJitterQ16": 220
+    },
+    {
+      "id": 254,
+      "materialId": 2,
+      "startTick": 81,
+      "stopTick": 81,
+      "intervalTicks": 1,
+      "rate": 1,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 13041664,
+          "localY": 3080192
+        },
+        "widthQ16": 660,
+        "heightQ16": 660
+      },
+      "velocityXQ16": 3449,
+      "velocityYQ16": 0,
+      "velocityJitterQ16": 220
+    },
+    {
+      "id": 255,
+      "materialId": 4,
+      "startTick": 84,
+      "stopTick": 84,
+      "intervalTicks": 1,
+      "rate": 2,
+      "bursts": [],
+      "geometry": {
+        "type": "box",
+        "origin": {
+          "chunkX": 0,
+          "chunkY": 0,
+          "localX": 9764864,
+          "localY": 1572864
+        },
+        "widthQ16": 660,
+        "heightQ16": 660
+      },
+      "velocityXQ16": -2989,
+      "velocityYQ16": -1495,
+      "velocityJitterQ16": 220
+    }
+  ],
+  "lut": {
+    "schemaVersion": "fw-lut-v1",
+    "assets": [
+      {
+        "schemaVersion": "fw-lut-v1",
+        "id": 1,
+        "name": "deep lagoon wing margins",
+        "size": 32,
+        "channels": {
+          "a": [
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535
+          ],
+          "b": [
+            62500,
+            62145,
+            61790,
+            61435,
+            61081,
+            60726,
+            60371,
+            60016,
+            59661,
+            59306,
+            58952,
+            58597,
+            58242,
+            57887,
+            57532,
+            57177,
+            56823,
+            56468,
+            56113,
+            55758,
+            55403,
+            55048,
+            54694,
+            54339,
+            53984,
+            53629,
+            53274,
+            52919,
+            52565,
+            52210,
+            51855,
+            51500
+          ],
+          "g": [
+            58500,
+            57855,
+            57210,
+            56565,
+            55919,
+            55274,
+            54629,
+            53984,
+            53339,
+            52694,
+            52048,
+            51403,
+            50758,
+            50113,
+            49468,
+            48823,
+            48177,
+            47532,
+            46887,
+            46242,
+            45597,
+            44952,
+            44306,
+            43661,
+            43016,
+            42371,
+            41726,
+            41081,
+            40435,
+            39790,
+            39145,
+            38500
+          ],
+          "r": [
+            23000,
+            22677,
+            22355,
+            22032,
+            21710,
+            21387,
+            21065,
+            20742,
+            20419,
+            20097,
+            19774,
+            19452,
+            19129,
+            18806,
+            18484,
+            18161,
+            17839,
+            17516,
+            17194,
+            16871,
+            16548,
+            16226,
+            15903,
+            15581,
+            15258,
+            14935,
+            14613,
+            14290,
+            13968,
+            13645,
+            13323,
+            13000
+          ]
+        }
+      },
+      {
+        "schemaVersion": "fw-lut-v1",
+        "id": 2,
+        "name": "quartz wing filaments",
+        "size": 32,
+        "channels": {
+          "a": [
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535
+          ],
+          "b": [
+            53000,
+            53129,
+            53258,
+            53387,
+            53516,
+            53645,
+            53774,
+            53903,
+            54032,
+            54161,
+            54290,
+            54419,
+            54548,
+            54677,
+            54806,
+            54935,
+            55065,
+            55194,
+            55323,
+            55452,
+            55581,
+            55710,
+            55839,
+            55968,
+            56097,
+            56226,
+            56355,
+            56484,
+            56613,
+            56742,
+            56871,
+            57000
+          ],
+          "g": [
+            62500,
+            62048,
+            61597,
+            61145,
+            60694,
+            60242,
+            59790,
+            59339,
+            58887,
+            58435,
+            57984,
+            57532,
+            57081,
+            56629,
+            56177,
+            55726,
+            55274,
+            54823,
+            54371,
+            53919,
+            53468,
+            53016,
+            52565,
+            52113,
+            51661,
+            51210,
+            50758,
+            50306,
+            49855,
+            49403,
+            48952,
+            48500
+          ],
+          "r": [
+            55500,
+            54710,
+            53919,
+            53129,
+            52339,
+            51548,
+            50758,
+            49968,
+            49177,
+            48387,
+            47597,
+            46806,
+            46016,
+            45226,
+            44435,
+            43645,
+            42855,
+            42065,
+            41274,
+            40484,
+            39694,
+            38903,
+            38113,
+            37323,
+            36532,
+            35742,
+            34952,
+            34161,
+            33371,
+            32581,
+            31790,
+            31000
+          ]
+        }
+      },
+      {
+        "schemaVersion": "fw-lut-v1",
+        "id": 3,
+        "name": "bone crest, tail, gills",
+        "size": 32,
+        "channels": {
+          "a": [
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535
+          ],
+          "b": [
+            44000,
+            43484,
+            42968,
+            42452,
+            41935,
+            41419,
+            40903,
+            40387,
+            39871,
+            39355,
+            38839,
+            38323,
+            37806,
+            37290,
+            36774,
+            36258,
+            35742,
+            35226,
+            34710,
+            34194,
+            33677,
+            33161,
+            32645,
+            32129,
+            31613,
+            31097,
+            30581,
+            30065,
+            29548,
+            29032,
+            28516,
+            28000
+          ],
+          "g": [
+            58000,
+            57484,
+            56968,
+            56452,
+            55935,
+            55419,
+            54903,
+            54387,
+            53871,
+            53355,
+            52839,
+            52323,
+            51806,
+            51290,
+            50774,
+            50258,
+            49742,
+            49226,
+            48710,
+            48194,
+            47677,
+            47161,
+            46645,
+            46129,
+            45613,
+            45097,
+            44581,
+            44065,
+            43548,
+            43032,
+            42516,
+            42000
+          ],
+          "r": [
+            61500,
+            61129,
+            60758,
+            60387,
+            60016,
+            59645,
+            59274,
+            58903,
+            58532,
+            58161,
+            57790,
+            57419,
+            57048,
+            56677,
+            56306,
+            55935,
+            55565,
+            55194,
+            54823,
+            54452,
+            54081,
+            53710,
+            53339,
+            52968,
+            52597,
+            52226,
+            51855,
+            51484,
+            51113,
+            50742,
+            50371,
+            50000
+          ]
+        }
+      },
+      {
+        "schemaVersion": "fw-lut-v1",
+        "id": 4,
+        "name": "residual violet current",
+        "size": 32,
+        "channels": {
+          "a": [
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535,
+            65535
+          ],
+          "b": [
+            63500,
+            62968,
+            62435,
+            61903,
+            61371,
+            60839,
+            60306,
+            59774,
+            59242,
+            58710,
+            58177,
+            57645,
+            57113,
+            56581,
+            56048,
+            55516,
+            54984,
+            54452,
+            53919,
+            53387,
+            52855,
+            52323,
+            51790,
+            51258,
+            50726,
+            50194,
+            49661,
+            49129,
+            48597,
+            48065,
+            47532,
+            47000
+          ],
+          "g": [
+            31000,
+            30548,
+            30097,
+            29645,
+            29194,
+            28742,
+            28290,
+            27839,
+            27387,
+            26935,
+            26484,
+            26032,
+            25581,
+            25129,
+            24677,
+            24226,
+            23774,
+            23323,
+            22871,
+            22419,
+            21968,
+            21516,
+            21065,
+            20613,
+            20161,
+            19710,
+            19258,
+            18806,
+            18355,
+            17903,
+            17452,
+            17000
+          ],
+          "r": [
+            47000,
+            46306,
+            45613,
+            44919,
+            44226,
+            43532,
+            42839,
+            42145,
+            41452,
+            40758,
+            40065,
+            39371,
+            38677,
+            37984,
+            37290,
+            36597,
+            35903,
+            35210,
+            34516,
+            33823,
+            33129,
+            32435,
+            31742,
+            31048,
+            30355,
+            29661,
+            28968,
+            28274,
+            27581,
+            26887,
+            26194,
+            25500
+          ]
+        }
+      },
+      {
+        "schemaVersion": "fw-lut-v1",
+        "id": 5,
+        "name": "phase-opened sediment radii",
+        "size": 32,
+        "channels": {
+          "logic": [
+            12500,
+            15200,
+            17900,
+            20600,
+            23300,
+            26000,
+            28700,
+            31400,
+            12500,
+            15200,
+            17900,
+            20600,
+            23300,
+            26000,
+            28700,
+            31400,
+            12500,
+            15200,
+            17900,
+            20600,
+            23300,
+            26000,
+            28700,
+            31400,
+            12500,
+            15200,
+            17900,
+            20600,
+            23300,
+            26000,
+            28700,
+            31400
+          ]
+        }
+      }
+    ],
+    "mappings": [
+      {
+        "version": "fw-lut-map-v1",
+        "id": 1,
+        "materialId": 1,
+        "lutId": 1,
+        "source": "ageTicks",
+        "channel": "rgba",
+        "destination": "color",
+        "addressMode": "clamp",
+        "inputMin": 0,
+        "inputMax": 103,
+        "scaleNumerator": 1,
+        "scaleDenominator": 1,
+        "bias": 0,
+        "outputMin": 0,
+        "outputMax": 65535
+      },
+      {
+        "version": "fw-lut-map-v1",
+        "id": 2,
+        "materialId": 2,
+        "lutId": 2,
+        "source": "ageTicks",
+        "channel": "rgba",
+        "destination": "color",
+        "addressMode": "clamp",
+        "inputMin": 0,
+        "inputMax": 102,
+        "scaleNumerator": 1,
+        "scaleDenominator": 1,
+        "bias": 0,
+        "outputMin": 0,
+        "outputMax": 65535
+      },
+      {
+        "version": "fw-lut-map-v1",
+        "id": 3,
+        "materialId": 3,
+        "lutId": 3,
+        "source": "ageTicks",
+        "channel": "rgba",
+        "destination": "color",
+        "addressMode": "clamp",
+        "inputMin": 0,
+        "inputMax": 98,
+        "scaleNumerator": 1,
+        "scaleDenominator": 1,
+        "bias": 0,
+        "outputMin": 0,
+        "outputMax": 65535
+      },
+      {
+        "version": "fw-lut-map-v1",
+        "id": 4,
+        "materialId": 4,
+        "lutId": 4,
+        "source": "ageTicks",
+        "channel": "rgba",
+        "destination": "color",
+        "addressMode": "clamp",
+        "inputMin": 0,
+        "inputMax": 100,
+        "scaleNumerator": 1,
+        "scaleDenominator": 1,
+        "bias": 0,
+        "outputMin": 0,
+        "outputMax": 65535
+      },
+      {
+        "version": "fw-lut-map-v1",
+        "id": 5,
+        "materialId": 3,
+        "lutId": 5,
+        "source": "ageTicks",
+        "channel": "logic",
+        "destination": "radiusQ16",
+        "addressMode": "clamp",
+        "inputMin": 0,
+        "inputMax": 98,
+        "scaleNumerator": 1,
+        "scaleDenominator": 1,
+        "bias": 0,
+        "outputMin": 8500,
+        "outputMax": 39000
+      }
+    ]
+  },
+  "commands": [
+    {
+      "version": "fw-command-v1",
+      "id": 10,
+      "tick": 22,
+      "type": "set-field-enabled",
+      "fieldId": 3,
+      "enabled": true
+    },
+    {
+      "version": "fw-command-v1",
+      "id": 20,
+      "tick": 33,
+      "type": "set-field-enabled",
+      "fieldId": 4,
+      "enabled": true
+    },
+    {
+      "version": "fw-command-v1",
+      "id": 30,
+      "tick": 49,
+      "type": "set-field-enabled",
+      "fieldId": 3,
+      "enabled": false
+    },
+    {
+      "version": "fw-command-v1",
+      "id": 40,
+      "tick": 58,
+      "type": "set-field-enabled",
+      "fieldId": 4,
+      "enabled": false
+    },
+    {
+      "version": "fw-command-v1",
+      "id": 50,
+      "tick": 64,
+      "type": "release-burst",
+      "emitterId": 12,
+      "count": 3
+    },
+    {
+      "version": "fw-command-v1",
+      "id": 60,
+      "tick": 71,
+      "type": "set-field-enabled",
+      "fieldId": 5,
+      "enabled": true
+    },
+    {
+      "version": "fw-command-v1",
+      "id": 70,
+      "tick": 84,
+      "type": "set-field-enabled",
+      "fieldId": 5,
+      "enabled": false
+    },
+    {
+      "version": "fw-command-v1",
+      "id": 80,
+      "tick": 91,
+      "type": "set-simulation-frozen",
+      "frozen": true
+    },
+    {
+      "version": "fw-command-v1",
+      "id": 90,
+      "tick": 97,
+      "type": "set-simulation-frozen",
+      "frozen": false
+    },
+    {
+      "version": "fw-command-v1",
+      "id": 100,
+      "tick": 107,
+      "type": "set-field-enabled",
+      "fieldId": 6,
+      "enabled": true
+    },
+    {
+      "version": "fw-command-v1",
+      "id": 110,
+      "tick": 114,
+      "type": "set-field-enabled",
+      "fieldId": 6,
+      "enabled": false
+    },
+    {
+      "version": "fw-command-v1",
+      "id": 120,
+      "tick": 121,
+      "type": "set-field-enabled",
+      "fieldId": 7,
+      "enabled": true
+    },
+    {
+      "version": "fw-command-v1",
+      "id": 130,
+      "tick": 128,
+      "type": "set-field-enabled",
+      "fieldId": 7,
+      "enabled": false
+    },
+    {
+      "version": "fw-command-v1",
+      "id": 140,
+      "tick": 137,
+      "type": "release-burst",
+      "emitterId": 57,
+      "count": 4
+    },
+    {
+      "version": "fw-command-v1",
+      "id": 150,
+      "tick": 144,
+      "type": "release-burst",
+      "emitterId": 101,
+      "count": 4
+    }
+  ],
+  "lineage": null
+}
