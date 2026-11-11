@@ -15,9 +15,9 @@ This is independently authored vector-field geometry, not a mutation or recolour
 
 The score starts with chalk-filament treads, rust ink counterparts, then mauve axis-quantized fragments. Vortexes at ticks 34 and 47 pull at the broken junction; the four-sector quantizer switches on only from 63–75; the score holds at 82–88, followed by weak asymmetric drift and a final displaced dust burst. Four material families have different movement/deposition behaviours. Five dedicated LUTs include a non-colour age-dependent dust radius mapping. All 70 emitters, seven field layers, 17 commands, and five LUT assets are versioned in the immutable normalized JSON.
 
-## Evidence boundary
+## Evidence and reproduction
 
-The authored recipe is executable but a locally produced screenshot or WebGL preview is **not** the canonical output. The artwork-specific test uses `createCanonicalExport` (FW-012), two tile partitions, decoded RGBA8 comparison and replay checks. Its initial CI-only evidence channel emits the real PNG and provenance for archival. Until that channel has actually executed and its image is visually inspected, do not claim an observed canonical image or artistic quality.
+The canonical export is FW-012 CPU software raster; WebGL must not be treated as an identity oracle.
 
 ```sh
 npm ci
@@ -25,4 +25,18 @@ npm run verify
 node gallery/originals/06-the-missing-stair/qualify.mjs --write
 ```
 
-Only files inside `gallery/originals/06-the-missing-stair/` belong to this submission. Historical works and canonical engine remain immutable.
+No historical or core files are touched.
+
+## Archived and inspected canonical artwork
+
+The true FW-012 Node 24 canonical PNG was recovered **losslessly** from [exact-head Windows-independent CI run 42961094186](https://github.com/techrote/FIELDWEAVER/actions/runs/42961094186), decoded and inspected. Observed: very fine mint stair/riser fragments descend diagonally from the upper-left into a broad dark void; a separate oxide counterflight occupies the upper-right, with small violet cuts and gold registration dots. Several deliberately missing treads remain legible. This is quiet, fine-lined architectural notation rather than a dense poster. The sparse visual weight should be independently considered during artistic admission; no screenshot or WebGL result was substituted.
+
+- Canonical PNG: `the-missing-stair.png` (320×240)
+- Recipe identity: `e135011898223cc7`
+- Raw RGBA8 identity: `b8c3e7fb1e6aad10`
+- State / deposition / result identities: `3455185e94421e62` / `0f6fee0f0e0689ed` / `05966b4b7c3cb6bd`
+- Ordered canonical depositions: **25148**
+- Provenance: `the-missing-stair.provenance.json` (`fw-export-provenance-v1`)
+- Archived receipt: `qualification.json`
+
+The regression now compares fresh replay against the committed PNG bytes, exact decoded RGBA, provenance and the fixed identities on both supported Node versions. It also exercises alternate tile partitions and a same-tick normalized recipe roundtrip.

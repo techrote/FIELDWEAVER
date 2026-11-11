@@ -29,6 +29,8 @@ export async function qualify({write=false}={}){
  assert.notEqual(early.resultHash(),replay.resultHash());
  assert(a.depositionCount>500&&a.depositionCount<280000,'visible deposited material required');
  const receipt={artwork:ART_ID,seed:SEED,recipeHash:recipeHash(recipe),targetTick:TICK,crop:recipe.framing,depositionCount:a.depositionCount,rawRgbaHash:a.rawRgbaHash,stateHash:a.stateHash,depositionHash:a.depositionHash,resultHash:a.resultHash};
+ const expected={recipeHash:'e135011898223cc7',rawRgbaHash:'b8c3e7fb1e6aad10',stateHash:'3455185e94421e62',depositionHash:'0f6fee0f0e0689ed',resultHash:'05966b4b7c3cb6bd',depositionCount:25148};
+ for(const [k,v] of Object.entries(expected))assert.equal(receipt[k],v,'canonical golden '+k);
  if(process.env.CI&&!await fileExists(new URL('./the-missing-stair.png',import.meta.url))){
   console.log('FW06_RECEIPT='+JSON.stringify(receipt));
   console.log('FW06_PNG64='+Buffer.from(a.png).toString('base64'));

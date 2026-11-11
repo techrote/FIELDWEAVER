@@ -1,0 +1,22 @@
+{
+  "artwork": "06-the-missing-stair",
+  "seed": 1278120375,
+  "recipeHash": "e135011898223cc7",
+  "targetTick": 148,
+  "crop": {
+    "widthPx": 320,
+    "heightPx": 240,
+    "center": {
+      "chunkX": 0,
+      "chunkY": 0,
+      "localX": 10485760,
+      "localY": 7864320
+    },
+    "unitsPerPixelQ16": 65536
+  },
+  "depositionCount": 25148,
+  "rawRgbaHash": "b8c3e7fb1e6aad10",
+  "stateHash": "3455185e94421e62",
+  "depositionHash": "0f6fee0f0e0689ed",
+  "resultHash": "05966b4b7c3cb6bd"
+}
