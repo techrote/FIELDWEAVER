@@ -25,6 +25,20 @@ Then import \`recipe.json\` through the local workbench. \`--write\` generates a
 
 Owner/Integration is responsible for independent aesthetic acceptance. No earlier works or shared source are modified.
 
+## Source-verified offline owner comparison
+
+From this PR's isolated checkout, run:
+
+```sh
+node gallery/originals/07-the-zero-meridian/review.mjs
+```
+
+The command runs the **existing** offline CPU gallery review generator. It independently replays the saved provenance against the archived image, creates a new temporary `file://` HTML file without overwriting previous reviews, and prints its location. Open that URL in Firefox. It displays accepted **Operator Atlas** and **Timeline Pulse**, followed by **UNMERGED CANDIDATE — The Zero Meridian**. The candidate card provides downloadable PNG, normalized recipe, and exact provenance.
+
+In the application, use **Load recipe** on the downloaded candidate JSON. Reproduce **tick 154** at **352×288** with the stored crop (centre 128,124; 0.625 units/pixel), and compare raw RGBA8 identity **`20d0367ebe3a8d8e`**. Running `npm run verify` now also exercises the actual offline review generator, checks all three downloadable candidate artifacts against their source archives, imports the downloaded recipe through the public parser, and independently regenerates the advertised canonical image with a third raster tile geometry. General Chrome/Firefox CI smoke does not substitute for physical owner import/export acceptance.
+
+**Curatorial distinction:** the fragmented cyan outer bearing, displaced rust arc, long diagonal needle and detached mauve calibration marks establish a legible radial technical drawing, rather than #57 Rooms' three upright architectural registers or the accepted presets' miniature chromatic glyph clusters. At native 352×288 size, the broken outer ring is strong; the very thin secondary marks and large empty centre could lose coherence at gallery-thumbnail scale. Keep this work **proposed**, not automatically admitted. The single outstanding owner decision is **ADMIT / REVISE FRAMING / REJECT** after native-size inspection and real Firefox import/export.
+
 ## Observed canonical identity
 
 | Field | Verified CPU result |
