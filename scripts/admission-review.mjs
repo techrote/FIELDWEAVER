@@ -30,7 +30,7 @@ export const ADMISSION_SELECTION = Object.freeze([
   }),
   Object.freeze({
     pr: 62, lane: 'MUTATION', title: 'After the Fourth Pause — sibling 01',
-    head: 'db131b7b184ff66b6b1209141dc8fff717a497b8',
+    head: '9dce8cb6f68d8f85906bde26329b39f635f072cc',
     provenance: 'gallery/variants/09-after-the-fourth-pause/selected.provenance.json',
     rgba: '753ce0ca6b5e2aea'
   })
