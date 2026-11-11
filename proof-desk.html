@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>Proof Desk — FIELDWEAVER</title>
+  <link rel="stylesheet" href="./src/ui/proof-desk.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to proof desk</a>
+  <header class="masthead">
+    <div><span class="eyebrow">FIELDWEAVER / EXHIBITION / CANONICAL EVIDENCE</span>
+      <h1>Proof Desk</h1>
+      <p>Inspect a supplied artwork receipt. Reproduce the image from its actual recipe, seed, tick and crop.</p>
+    </div>
+    <a class="back" href="./index.html">Return to instrument</a>
+  </header>
+  <main id="main" class="workspace">
+    <section class="intake" aria-labelledby="intake-title">
+      <p class="index">01 / INPUTS</p>
+      <h2 id="intake-title">Receive a work</h2>
+      <p class="muted">Use a genuine <code>fw-export-provenance-v1</code> sidecar. A companion canonical RGBA8 PNG is optional but lets you verify the archived image's decoded pixels too. Files stay on this device.</p>
+      <label for="proof-provenance">Canonical provenance (.json) <span class="required">required</span></label>
+      <input type="file" id="proof-provenance" accept=".json,.fwexport.json,application/json" required>
+      <label for="proof-png">Archived RGBA8 PNG <span class="muted">optional</span></label>
+      <input type="file" id="proof-png" accept=".png,image/png">
+      <button type="button" id="proof-verify">Verify &amp; reproduce</button>
+      <output id="proof-status" role="status" aria-live="polite">Select a receipt to begin. No files are sent anywhere.</output>
+      <p class="fine">Budget: tick 0–512, at most 1024×1024 pixels and 250,000 depositions. Unsupported PNG encodings are rejected, never silently converted by a GPU or canvas.</p>
+    </section>
+    <section class="result" aria-labelledby="result-title">
+      <p class="index">02 / INDEPENDENT REPLAY</p>
+      <h2 id="result-title">Canonical reconstruction</h2>
+      <figure class="proof-frame">
+        <img id="proof-image" alt="" hidden>
+        <p id="proof-placeholder">No canonical image has been reproduced.</p>
+        <figcaption id="proof-caption">Only verified CPU software-raster pixels will appear here.</figcaption>
+      </figure>
+      <div id="proof-details" hidden>
+        <p class="pass" id="proof-verdict">Reproduction verified</p>
+        <dl class="readout">
+          <dt>Recipe</dt><dd id="proof-recipe-hash"></dd>
+          <dt>Seed</dt><dd id="proof-seed"></dd>
+          <dt>Target tick</dt><dd id="proof-tick"></dd>
+          <dt>Crop</dt><dd id="proof-crop"></dd>
+          <dt>Raw RGBA8</dt><dd id="proof-rgba-hash"></dd>
+          <dt>State</dt><dd id="proof-state-hash"></dd>
+          <dt>Lineage</dt><dd id="proof-lineage"></dd>
+          <dt>Archived PNG</dt><dd id="proof-png-status"></dd>
+        </dl>
+        <div class="actions">
+          <button type="button" id="proof-download-png">Save replayed PNG</button>
+          <button type="button" id="proof-download-provenance">Save verified receipt</button>
+        </div>
+      </div>
+      <p class="fine">Passing this check establishes deterministic agreement with the receipt, not artistic merit, author identity or acceptance into the published catalogue. The live WebGL view is not consulted.</p>
+    </section>
+  </main>
+  <footer>FIELDWEAVER · Local-only verification · No telemetry, uploads or network services</footer>
+  <script type="module" src="./src/ui/proof-desk.js"></script>
+</body>
+</html>
