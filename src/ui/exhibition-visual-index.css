@@ -1,0 +1,35 @@
+.exhibition-index-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.35rem;
+  margin: 0.4rem 0 0.8rem;
+}
+.exhibition-index-controls output {
+  grid-column: 1 / -1;
+  min-height: 2.2em;
+  overflow-wrap: anywhere;
+}
+.exhibition-index-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: contain;
+  image-rendering: pixelated;
+  background: #090b08;
+  border: 1px solid var(--line);
+  margin-bottom: 0.4rem;
+}
+.exhibition-card .exhibition-index-image[hidden] { display: none; }
+.exhibition-card .exhibition-index-trace {
+  border-top: 1px solid var(--line);
+  padding-top: 0.25rem;
+  font-size: 0.6rem;
+  color: #c4d8bb;
+  overflow-wrap: anywhere;
+}
+.exhibition-card[data-canonical-rgba-hash] { border-color: #5b7656; }
+@media (max-width: 420px) {
+  .exhibition-index-controls { grid-template-columns: 1fr; }
+  .exhibition-index-controls output { grid-column: 1; }
+}
