@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'src/ui/exhibition-visual-index*'
+      - 'src/ui/exhibition-offline-board.js'
       - 'src/ui/exhibition-study*'
       - 'src/ui/exhibition-pixel-probe.js'
       - 'tests/exhibition-pixel-probe.test.mjs'
@@ -75,6 +76,9 @@ jobs:
             exhibition-accepted-offline-${{ matrix.browser }}.png
             exhibition-accepted-offline-narrow-${{ matrix.browser }}.png
             exhibition-accepted-offline-${{ matrix.browser }}.json
+            exhibition-offline-reimport-${{ matrix.browser }}.png
+            exhibition-offline-reimport-${{ matrix.browser }}.json
+            exhibition-offline-downloads-${{ matrix.browser }}/*.json
             visual-index-server.log
             xvfb.log
           if-no-files-found: ignore
