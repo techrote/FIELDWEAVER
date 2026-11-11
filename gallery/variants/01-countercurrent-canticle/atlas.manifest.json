@@ -1,0 +1,513 @@
+{
+  "version": "fw-variant-atlas-v1",
+  "title": "Countercurrent Canticle",
+  "sourceMainCommit": "29cbff7da474f5c40192c14599e18b525362dd5b",
+  "parent": {
+    "presetId": "operator-atlas",
+    "recipeHash": "ab6f4e5af5842f3a",
+    "rawRgbaHash": "73a662b43015820b"
+  },
+  "mutationSeed": 1834067906,
+  "targetTick": 180,
+  "crop": {
+    "widthPx": 144,
+    "heightPx": 112,
+    "center": {
+      "chunkX": 0,
+      "chunkY": 0,
+      "localX": 8388608,
+      "localY": 8388608
+    },
+    "unitsPerPixelQ16": 65536
+  },
+  "agentCapacity": 4096,
+  "maxDepositions": 250000,
+  "candidateCount": 16,
+  "criterion": "Silhouette occupancy XOR from parent, spatial coverage, and pairwise silhouette novelty; palette-only differences rejected",
+  "selectedSiblingIndex": 4,
+  "selectedRecipeHash": "d07c05d273523992",
+  "selectedRawRgbaHash": "fcbe4656aac5c30b",
+  "candidates": [
+    {
+      "siblingIndex": 0,
+      "config": {
+        "mutationSeed": 1834067906,
+        "siblingIndex": 0,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "536b8919c61e9b81",
+      "rawRgbaHash": "8889b70cb7d67b95",
+      "occupiedPixels": 772,
+      "shapeDifference": 378,
+      "coveredGridCells": 17,
+      "operationTypes": [
+        "move-emitter",
+        "perturb-material-parameter",
+        "derive-sibling-seed",
+        "adjust-field-strength-scale",
+        "substitute-lut",
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "siblingIndex": 1,
+      "config": {
+        "mutationSeed": 1834067906,
+        "siblingIndex": 1,
+        "scope": "fields",
+        "intensity": "bold",
+        "operationCount": 2
+      },
+      "recipeHash": "5e6a0477f941d3db",
+      "rawRgbaHash": "73a662b43015820b",
+      "occupiedPixels": 920,
+      "shapeDifference": 0,
+      "coveredGridCells": 20,
+      "operationTypes": [
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "siblingIndex": 2,
+      "config": {
+        "mutationSeed": 1834067906,
+        "siblingIndex": 2,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "e8978bf623fa3cbb",
+      "rawRgbaHash": "85444d4f293629a1",
+      "occupiedPixels": 700,
+      "shapeDifference": 446,
+      "coveredGridCells": 17,
+      "operationTypes": [
+        "substitute-lut",
+        "move-emitter",
+        "perturb-material-parameter",
+        "derive-sibling-seed",
+        "swap-adjacent-fields",
+        "adjust-field-strength-scale"
+      ]
+    },
+    {
+      "siblingIndex": 3,
+      "config": {
+        "mutationSeed": 1834067906,
+        "siblingIndex": 3,
+        "scope": "emitters",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "recipeHash": "7c3ae22146bb000f",
+      "rawRgbaHash": "ae6d69a7bacf7e89",
+      "occupiedPixels": 726,
+      "shapeDifference": 194,
+      "coveredGridCells": 17,
+      "operationTypes": [
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 4,
+      "config": {
+        "mutationSeed": 1834067906,
+        "siblingIndex": 4,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "d07c05d273523992",
+      "rawRgbaHash": "fcbe4656aac5c30b",
+      "occupiedPixels": 1326,
+      "shapeDifference": 1094,
+      "coveredGridCells": 24,
+      "operationTypes": [
+        "substitute-lut",
+        "adjust-field-strength-scale",
+        "derive-sibling-seed",
+        "move-emitter",
+        "perturb-material-parameter",
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "siblingIndex": 5,
+      "config": {
+        "mutationSeed": 1834067906,
+        "siblingIndex": 5,
+        "scope": "fields",
+        "intensity": "bold",
+        "operationCount": 2
+      },
+      "recipeHash": "f57b3be02990edcc",
+      "rawRgbaHash": "8880be46d8728115",
+      "occupiedPixels": 933,
+      "shapeDifference": 83,
+      "coveredGridCells": 20,
+      "operationTypes": [
+        "swap-adjacent-fields",
+        "adjust-field-strength-scale"
+      ]
+    },
+    {
+      "siblingIndex": 6,
+      "config": {
+        "mutationSeed": 1834067906,
+        "siblingIndex": 6,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "e6499f17188cea45",
+      "rawRgbaHash": "9ba11ed0052dad88",
+      "occupiedPixels": 383,
+      "shapeDifference": 709,
+      "coveredGridCells": 8,
+      "operationTypes": [
+        "substitute-lut",
+        "perturb-material-parameter",
+        "derive-sibling-seed",
+        "swap-adjacent-fields",
+        "adjust-field-strength-scale",
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 7,
+      "config": {
+        "mutationSeed": 1834067906,
+        "siblingIndex": 7,
+        "scope": "seed",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "recipeHash": "718566e0b6e457e1",
+      "rawRgbaHash": "99188f2074d6b4bc",
+      "occupiedPixels": 975,
+      "shapeDifference": 307,
+      "coveredGridCells": 20,
+      "operationTypes": [
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "siblingIndex": 8,
+      "config": {
+        "mutationSeed": 1834067906,
+        "siblingIndex": 8,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "3a4a3acdb2fde122",
+      "rawRgbaHash": "bbb20fb6b42a8412",
+      "occupiedPixels": 862,
+      "shapeDifference": 288,
+      "coveredGridCells": 19,
+      "operationTypes": [
+        "perturb-material-parameter",
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields",
+        "derive-sibling-seed",
+        "move-emitter",
+        "substitute-lut"
+      ]
+    },
+    {
+      "siblingIndex": 9,
+      "config": {
+        "mutationSeed": 1834067906,
+        "siblingIndex": 9,
+        "scope": "emitters",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "recipeHash": "1678cac76acfc7ba",
+      "rawRgbaHash": "0473dd2e58e0ae26",
+      "occupiedPixels": 889,
+      "shapeDifference": 31,
+      "coveredGridCells": 19,
+      "operationTypes": [
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 10,
+      "config": {
+        "mutationSeed": 1834067906,
+        "siblingIndex": 10,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "34799e5db2af4764",
+      "rawRgbaHash": "1204994373f9a3ae",
+      "occupiedPixels": 856,
+      "shapeDifference": 914,
+      "coveredGridCells": 14,
+      "operationTypes": [
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields",
+        "perturb-material-parameter",
+        "substitute-lut",
+        "move-emitter",
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "siblingIndex": 11,
+      "config": {
+        "mutationSeed": 1834067906,
+        "siblingIndex": 11,
+        "scope": "fields",
+        "intensity": "bold",
+        "operationCount": 2
+      },
+      "recipeHash": "8c48179a32e19703",
+      "rawRgbaHash": "73a662b43015820b",
+      "occupiedPixels": 920,
+      "shapeDifference": 0,
+      "coveredGridCells": 20,
+      "operationTypes": [
+        "swap-adjacent-fields",
+        "adjust-field-strength-scale"
+      ]
+    },
+    {
+      "siblingIndex": 12,
+      "config": {
+        "mutationSeed": 1834067906,
+        "siblingIndex": 12,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "58ecce85075d3e48",
+      "rawRgbaHash": "7523689d4876e08d",
+      "occupiedPixels": 354,
+      "shapeDifference": 644,
+      "coveredGridCells": 9,
+      "operationTypes": [
+        "adjust-field-strength-scale",
+        "derive-sibling-seed",
+        "substitute-lut",
+        "perturb-material-parameter",
+        "move-emitter",
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "siblingIndex": 13,
+      "config": {
+        "mutationSeed": 1834067906,
+        "siblingIndex": 13,
+        "scope": "seed",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "recipeHash": "16c04637c1fb999a",
+      "rawRgbaHash": "8544ef09dd7560a4",
+      "occupiedPixels": 949,
+      "shapeDifference": 333,
+      "coveredGridCells": 20,
+      "operationTypes": [
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "siblingIndex": 14,
+      "config": {
+        "mutationSeed": 1834067906,
+        "siblingIndex": 14,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "cd0e7cd7bdd6de63",
+      "rawRgbaHash": "0a2b8d55b424823b",
+      "occupiedPixels": 819,
+      "shapeDifference": 529,
+      "coveredGridCells": 19,
+      "operationTypes": [
+        "adjust-field-strength-scale",
+        "substitute-lut",
+        "derive-sibling-seed",
+        "swap-adjacent-fields",
+        "perturb-material-parameter",
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 15,
+      "config": {
+        "mutationSeed": 1834067906,
+        "siblingIndex": 15,
+        "scope": "fields",
+        "intensity": "bold",
+        "operationCount": 2
+      },
+      "recipeHash": "f4cba3bb03df78e0",
+      "rawRgbaHash": "b0f6c1d3532ef2ee",
+      "occupiedPixels": 895,
+      "shapeDifference": 263,
+      "coveredGridCells": 20,
+      "operationTypes": [
+        "swap-adjacent-fields",
+        "adjust-field-strength-scale"
+      ]
+    }
+  ],
+  "finalists": [
+    {
+      "panel": 2,
+      "siblingIndex": 4,
+      "config": {
+        "mutationSeed": 1834067906,
+        "siblingIndex": 4,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "lineageIdentity": "37ef52c73fedcced",
+      "recipeHash": "d07c05d273523992",
+      "rawRgbaHash": "fcbe4656aac5c30b",
+      "stateHash": "2f8e63ca0ac4e989",
+      "depositionHash": "6ae27c822a2581f4",
+      "resultHash": "a8eec9864da0d273",
+      "occupiedPixels": 1326,
+      "shapeDifference": 1094,
+      "coveredGridCells": 24,
+      "operationTypes": [
+        "substitute-lut",
+        "adjust-field-strength-scale",
+        "derive-sibling-seed",
+        "move-emitter",
+        "perturb-material-parameter",
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "panel": 3,
+      "siblingIndex": 10,
+      "config": {
+        "mutationSeed": 1834067906,
+        "siblingIndex": 10,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "lineageIdentity": "9a730eacbead0269",
+      "recipeHash": "34799e5db2af4764",
+      "rawRgbaHash": "1204994373f9a3ae",
+      "stateHash": "028f631dda620879",
+      "depositionHash": "d2b268ad5c45d5f8",
+      "resultHash": "8e7c8b6152327427",
+      "occupiedPixels": 856,
+      "shapeDifference": 914,
+      "coveredGridCells": 14,
+      "operationTypes": [
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields",
+        "perturb-material-parameter",
+        "substitute-lut",
+        "move-emitter",
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "panel": 4,
+      "siblingIndex": 6,
+      "config": {
+        "mutationSeed": 1834067906,
+        "siblingIndex": 6,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "lineageIdentity": "606786ecc0417427",
+      "recipeHash": "e6499f17188cea45",
+      "rawRgbaHash": "9ba11ed0052dad88",
+      "stateHash": "8b253147d1e6f07a",
+      "depositionHash": "be4d0eefe8fa586d",
+      "resultHash": "77d1bcd4c485c125",
+      "occupiedPixels": 383,
+      "shapeDifference": 709,
+      "coveredGridCells": 8,
+      "operationTypes": [
+        "substitute-lut",
+        "perturb-material-parameter",
+        "derive-sibling-seed",
+        "swap-adjacent-fields",
+        "adjust-field-strength-scale",
+        "move-emitter"
+      ]
+    },
+    {
+      "panel": 5,
+      "siblingIndex": 12,
+      "config": {
+        "mutationSeed": 1834067906,
+        "siblingIndex": 12,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "lineageIdentity": "afb9f16a6a5e120c",
+      "recipeHash": "58ecce85075d3e48",
+      "rawRgbaHash": "7523689d4876e08d",
+      "stateHash": "6897346e4999309c",
+      "depositionHash": "f2a240b3a2dc07b3",
+      "resultHash": "62709192789bc215",
+      "occupiedPixels": 354,
+      "shapeDifference": 644,
+      "coveredGridCells": 9,
+      "operationTypes": [
+        "adjust-field-strength-scale",
+        "derive-sibling-seed",
+        "substitute-lut",
+        "perturb-material-parameter",
+        "move-emitter",
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "panel": 6,
+      "siblingIndex": 14,
+      "config": {
+        "mutationSeed": 1834067906,
+        "siblingIndex": 14,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "lineageIdentity": "69fa6081f678c7cc",
+      "recipeHash": "cd0e7cd7bdd6de63",
+      "rawRgbaHash": "0a2b8d55b424823b",
+      "stateHash": "74a0233f3d93dbe4",
+      "depositionHash": "1cb905cbedc88a49",
+      "resultHash": "274f76d6d07bdffb",
+      "occupiedPixels": 819,
+      "shapeDifference": 529,
+      "coveredGridCells": 19,
+      "operationTypes": [
+        "adjust-field-strength-scale",
+        "substitute-lut",
+        "derive-sibling-seed",
+        "swap-adjacent-fields",
+        "perturb-material-parameter",
+        "move-emitter"
+      ]
+    }
+  ],
+  "contactSheet": {
+    "widthPx": 464,
+    "heightPx": 248,
+    "panels": "row-major parent then five selected siblings",
+    "displayOnly": true,
+    "rawRgbaHash": "f130fc0663e8a82d"
+  }
+}
