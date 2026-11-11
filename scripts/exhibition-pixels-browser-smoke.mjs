@@ -98,12 +98,12 @@ try {
   const pngName = 'fieldweaver-timeline-pulse-' + selectedHash + '.png';
   const recipeName = 'fieldweaver-timeline-pulse-' + selectedEntry.recipeHash + '.fwrecipe.json';
   const savedPng = decodePngRgba(new Uint8Array(await readSaved(pngName)));
-  const savedRecipe = parseRecipe((await readSaved(recipeName)).toString('utf8'));
+  const studySavedRecipe = parseRecipe((await readSaved(recipeName)).toString('utf8'));
   const editorAfterDirectExport = await execute("return {hash:document.documentElement.dataset.fieldweaverCanonicalRecipeHash,selected:document.getElementById('preset-select').value,open:document.getElementById('exhibition-study-dialog').open,status:document.getElementById('exhibition-study-status').textContent}");
   if (savedPng.widthPx !== 96 || savedPng.heightPx !== 64 ||
       rawRgbaHash(savedPng.rgba) !== selectedHash ||
-      recipeHash(savedRecipe) !== selectedEntry.recipeHash ||
-      savedRecipe.seed !== selectedEntry.seed ||
+      recipeHash(studySavedRecipe) !== selectedEntry.recipeHash ||
+      studySavedRecipe.seed !== selectedEntry.seed ||
       editorBeforeDirectExport.hash !== editorAfterDirectExport.hash ||
       editorAfterDirectExport.selected !== 'operator-atlas' ||
       !editorAfterDirectExport.open ||
@@ -112,7 +112,7 @@ try {
   }
   await writeFile('exhibition-study-selected-export-' + browser + '.json',
     JSON.stringify({browser,pngName,recipeName,rgbaHash:rawRgbaHash(savedPng.rgba),
-      recipeHash:recipeHash(savedRecipe),editorBeforeDirectExport,editorAfterDirectExport},null,2)+'\n');
+      recipeHash:recipeHash(studySavedRecipe),editorBeforeDirectExport,editorAfterDirectExport},null,2)+'\n');
   await request('POST', '/session/' + sessionId + '/window/rect', { width: 1250, height: 900 });
   const studyScreenshot = await request('GET', '/session/' + sessionId + '/screenshot');
   if (!studyScreenshot?.value) throw new Error('Full-window study screenshot absent.');
