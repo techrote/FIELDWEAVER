@@ -89,7 +89,7 @@ try {
     throw new Error('Study did not invoke explicit recipe adoption: ' + JSON.stringify(loaded));
   }
   await writeFile('exhibition-study-' + browser + '.json',
-    JSON.stringify({ browser, opened, compared, keyboard, loaded }, null, 2) + '\\n');
+    JSON.stringify({ browser, opened, compared, keyboard, loaded }, null, 2) + '\n');
   await request('POST', '/session/' + sessionId + '/window/rect', { width: 1250, height: 900 });
   await execute("document.querySelector('#exhibition-grid').scrollIntoView({block:'center'})");
   const screenshot = await request('GET', '/session/' + sessionId + '/screenshot');
