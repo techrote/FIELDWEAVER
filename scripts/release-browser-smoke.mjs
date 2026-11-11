@@ -134,20 +134,120 @@ try {
   if (exhibition?.selected !== 'first-weave' || exhibition.hash !== '8d83d52e732a5825' || !exhibition.imageReady || !exhibition.pngEnabled) {
     throw new Error(`Exhibition did not render canonical golden PNG: ${JSON.stringify(exhibition)}`);
   }
+
+  const pinned = await execute(`
+    document.querySelector('#exhibition-pin-a').click();
+    return {
+      aVisible: !document.querySelector('#exhibition-compare-a-image').hidden,
+      bVisible: !document.querySelector('#exhibition-compare-b-image').hidden,
+      aDetails: document.querySelector('#exhibition-compare-a-details').textContent,
+      canDownloadA: !document.querySelector('#exhibition-a-download-png').disabled,
+      aSource: document.querySelector('#exhibition-compare-a-image').getAttribute('src')
+    };
+  `);
+  if (!pinned.aVisible || !pinned.bVisible || !pinned.canDownloadA ||
+      !pinned.aDetails.includes('8d83d52e732a5825') || !pinned.aSource?.startsWith('blob:')) {
+    throw new Error(`Pinned A did not preserve a real canonical PNG: ${JSON.stringify(pinned)}`);
+  }
   const moved = await execute(`
     document.querySelector('#exhibition-next').click();
     return {
       selected: document.documentElement.dataset.fieldweaverPresetId,
       hash: document.documentElement.dataset.fieldweaverExhibitionProofHash,
       pngDisabled: document.querySelector('#exhibition-download-png').disabled,
-      pressed: [...document.querySelectorAll('.exhibition-card[aria-pressed="true"]')].map((node) => node.dataset.exhibitionId)
+      pressed: [...document.querySelectorAll('.exhibition-card[aria-pressed="true"]')].map((node) => node.dataset.exhibitionId),
+      aVisible: !document.querySelector('#exhibition-compare-a-image').hidden,
+      bHidden: document.querySelector('#exhibition-compare-b-image').hidden,
+      aSource: document.querySelector('#exhibition-compare-a-image').getAttribute('src')
     };
   `);
-  if (moved.selected !== 'operator-atlas' || moved.hash || !moved.pngDisabled || moved.pressed.join(',') !== 'operator-atlas') {
+  if (moved.selected !== 'operator-atlas' || moved.hash || !moved.pngDisabled || moved.pressed.join(',') !== 'operator-atlas' || !moved.aVisible || !moved.bHidden || moved.aSource !== pinned.aSource) {
     throw new Error(`Exhibition navigation retained stale canonical proof: ${JSON.stringify(moved)}`);
   }
 
-  const evidence = { browser, initial, loaded, afterStamp, exhibition, moved, driverLog: driverLog.slice(-3000) };
+
+  // B has its own accepted seed/tick/crop and is independently CPU-rendered.
+  await execute(`document.querySelector('#exhibition-render').click();`);
+  let compared;
+  const compareDeadline = Date.now() + 15_000;
+  while (Date.now() < compareDeadline) {
+    compared = await execute(`
+      return {
+        selected: document.documentElement.dataset.fieldweaverPresetId,
+        hash: document.documentElement.dataset.fieldweaverExhibitionProofHash,
+        aVisible: !document.querySelector('#exhibition-compare-a-image').hidden,
+        bVisible: !document.querySelector('#exhibition-compare-b-image').hidden,
+        aDetails: document.querySelector('#exhibition-compare-a-details').textContent,
+        bDetails: document.querySelector('#exhibition-compare-b-details').textContent,
+        comparisonStatus: document.querySelector('#exhibition-compare-status').textContent,
+        aSource: document.querySelector('#exhibition-compare-a-image').getAttribute('src'),
+        bSource: document.querySelector('#exhibition-compare-b-image').getAttribute('src')
+      };
+    `);
+    if (compared.hash || compared.comparisonStatus.includes('failed')) break;
+    await sleep(200);
+  }
+  if (compared?.selected !== 'operator-atlas' || !compared.hash || compared.hash === exhibition.hash ||
+      !compared.aVisible || !compared.bVisible || compared.aSource !== pinned.aSource ||
+      !compared.bDetails.includes(compared.hash) ||
+      !compared.comparisonStatus.includes('Distinct raw RGBA8 identities') ||
+      compared.aSource === compared.bSource) {
+    throw new Error(`Two-up canonical comparison failed: ${JSON.stringify(compared)}`);
+  }
+
+  // A rendered hash is not proof the browser actually decoded/displayed the PNG.
+  // The gallery uses Blob object URLs, so exercise the restrictive CSP boundary.
+  let decoded = null;
+  const decodeDeadline = Date.now() + 15_000;
+  while (Date.now() < decodeDeadline) {
+    decoded = await execute(`
+      const dimensions = (selector) => {
+        const image = document.querySelector(selector);
+        return [image.naturalWidth, image.naturalHeight, image.complete];
+      };
+      return {
+        main: dimensions('#exhibition-preview'),
+        a: dimensions('#exhibition-compare-a-image'),
+        b: dimensions('#exhibition-compare-b-image')
+      };
+    `);
+    if ([decoded.main, decoded.a, decoded.b].every((v) => v[0] === 96 && v[1] === 64 && v[2])) break;
+    await sleep(150);
+  }
+  if (![decoded?.main, decoded?.a, decoded?.b].every((v) => v?.[0] === 96 && v?.[1] === 64 && v?.[2])) {
+    throw new Error(`Canonical proof images were not actually decoded: ${JSON.stringify(decoded)}`);
+  }
+  await request('POST', `/session/${sessionId}/window/rect`, { width: 1280, height: 900 });
+  await execute(`document.querySelector('#exhibition-compare-b-image').scrollIntoView({ block: 'center' });`);
+  const capture = await request('GET', `/session/${sessionId}/screenshot`);
+  if (!capture?.value) throw new Error('Browser did not return an exhibition comparison screenshot.');
+  await writeFile(`release-exhibition-${browser}.png`, Buffer.from(capture.value, 'base64'));
+
+  const invalidated = await execute(`
+    document.querySelector('#exhibition-next').click();
+    return {
+      aVisible: !document.querySelector('#exhibition-compare-a-image').hidden,
+      bHidden: document.querySelector('#exhibition-compare-b-image').hidden,
+      bDownloadDisabled: document.querySelector('#exhibition-download-png').disabled,
+      aDownloadEnabled: !document.querySelector('#exhibition-a-download-png').disabled
+    };
+  `);
+  if (!invalidated.aVisible || !invalidated.bHidden || !invalidated.bDownloadDisabled || !invalidated.aDownloadEnabled) {
+    throw new Error(`Selection invalidated the pinned A or retained stale B: ${JSON.stringify(invalidated)}`);
+  }
+  const cleared = await execute(`
+    document.querySelector('#exhibition-clear-a').click();
+    return {
+      aHidden: document.querySelector('#exhibition-compare-a-image').hidden,
+      bHidden: document.querySelector('#exhibition-compare-b-image').hidden,
+      pinDownloadDisabled: document.querySelector('#exhibition-a-download-png').disabled
+    };
+  `);
+  if (!cleared.aHidden || !cleared.bHidden || !cleared.pinDownloadDisabled) {
+    throw new Error(`Clearing A retained stale comparison artifacts: ${JSON.stringify(cleared)}`);
+  }
+
+  const evidence = { browser, initial, loaded, afterStamp, exhibition, pinned, moved, compared, decoded, invalidated, cleared, driverLog: driverLog.slice(-3000) };
   await writeFile(evidencePath, `${JSON.stringify(evidence, null, 2)}\n`);
   console.log(JSON.stringify({ browser, preset: loaded.presetId, presetHash: loaded.presetHash, keyboardStampHash: afterStamp.canonicalHash, releaseDiagnostics: afterStamp.releaseDiagnostics }, null, 2));
 } finally {
