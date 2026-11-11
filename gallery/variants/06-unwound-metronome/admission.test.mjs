@@ -41,6 +41,24 @@ test('variant 06: one-command accepted/candidate board embeds exact archived CPU
     assert.ok(html.includes('data:image/png;base64,' + archivedPng.toString('base64')),
       'review must embed byte-exact selected CPU PNG, not a proxy or stale frame');
     assert.ok(html.includes(RECIPE) && html.includes(RGBA));
+    // The downloadable payloads must be the selected canonical artwork, not
+    // merely links with the expected filenames or stale accepted-preset data.
+    const pngDownload = [...html.matchAll(/<a href="data:image\\/png;base64,([A-Za-z0-9+/=]+)" download="fieldweaver-work-3\\.png">/g)];
+    assert.equal(pngDownload.length, 1, 'exactly one candidate PNG download');
+    assert.deepEqual(Buffer.from(pngDownload[0][1], 'base64'), archivedPng,
+      'downloaded PNG must match archived canonical bytes');
+
+    const jsonDownloads = [...html.matchAll(/<a href="data:application\\/json;base64,([A-Za-z0-9+/=]+)" download="fieldweaver-work-3\\.(recipe|provenance)\\.json">/g)];
+    assert.equal(jsonDownloads.length, 2, 'candidate recipe and provenance must each be downloadable');
+    const payloads = Object.fromEntries(jsonDownloads.map(([, encoded, kind]) =>
+      [kind, JSON.parse(Buffer.from(encoded, 'base64').toString('utf8'))]));
+    assert.deepEqual(payloads.recipe,
+      JSON.parse(await readFile(join(root, 'selected.recipe.json'), 'utf8')),
+      'downloadable normalized recipe must match the selected archived child');
+    assert.deepEqual(payloads.provenance, provenance,
+      'downloadable provenance must match the selected archived FW-012 receipt');
+    assert.equal(payloads.provenance.recipeHash, RECIPE);
+    assert.equal(payloads.provenance.rawRgbaHash, RGBA);
     assert.equal((html.match(/<article id="work-/g) ?? []).length, 3);
     assert.doesNotMatch(html, /<script\b|<iframe\b|<img[^>]*src="https?:/i);
   } finally {
