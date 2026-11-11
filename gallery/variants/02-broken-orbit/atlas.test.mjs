@@ -96,11 +96,18 @@ function make() {
     if(finalists.length===5)break;
   }
   assert.equal(finalists.length,5,'Five spatially distinct, nonempty variants required; no palette-only substitute');
-  const chosen=finalists[0], roundtrip=parseRecipe(serializeRecipe(chosen.m.recipe));
+  // Curated by inspection of the actual six-panel FW-012 software raster atlas:
+  // sibling 0 has a cohesive cyan arc and a contrasting green/violet fork.
+  const chosen=finalists.find(f=>f.siblingIndex===0);
+  assert.ok(chosen, 'Curated sibling must survive the objective diversity gate');
+  const roundtrip=parseRecipe(serializeRecipe(chosen.m.recipe));
   assert.equal(recipeHash(roundtrip),chosen.recipeHash);
   assert.equal(readMutationLineage(roundtrip).childIdentity,chosen.identity);
   const reexport=render(roundtrip);
   assert.deepEqual(reexport.rgba,chosen.out.rgba);
+  const alt=createCanonicalExport(roundtrip,{...REPLAY,tileWidthPx:47,tileHeightPx:31});
+  assert.equal(alt.rawRgbaHash,chosen.out.rawRgbaHash);
+  assert.deepEqual(alt.rgba,chosen.out.rgba);
   assert.deepEqual(decodePngRgba(reexport.png).rgba,reexport.rgba);
   const plate=sheet([base,...finalists.map(f=>f.out)]);
   assert.equal(rawRgbaHash(decodePngRgba(plate.png).rgba),rawRgbaHash(plate.rgba));
@@ -114,6 +121,8 @@ function make() {
     criterion:'Late-tick spatial silhouette XOR from immutable Timeline Pulse parent, temporal change from tick 16 to 180, spatial coverage and pairwise morphology novelty; palette-only differences rejected',
     selectedSiblingIndex:chosen.siblingIndex,selectedRecipeHash:chosen.recipeHash,
     selectedRawRgbaHash:chosen.rawRgbaHash,
+    topScoringSiblingIndex:ranking[0].siblingIndex,
+    selectionBasis:'Actual FW-012 image inspection favors sibling 0: continuous cyan arc, opposed green/violet fork and deliberate empty centre. Numerical rank 1 was sparser.',
     candidates:samples.map(s=>({siblingIndex:s.siblingIndex,config:s.config,recipeHash:s.recipeHash,
       rawRgbaHash:s.rawRgbaHash,earlyRawRgbaHash:s.earlyRawRgbaHash,temporalShapeChange:s.temporalDifference,occupiedPixels:s.occupied,shapeDifference:s.difference,
       coveredGridCells:s.cells,operationTypes:s.operationTypes})),
@@ -140,6 +149,7 @@ function make() {
     '- atlas.manifest.json: all 16 explicit mutation configs, early/late hashes, spatial novelty, temporal change and selection records.',
     '- atlas.test.mjs: complete deterministic regeneration, decoded PNG, lineage, import/export, tiled raster and committed-byte checks.','',
     '## Selection logic and limitations','',
+    'The real canonical six-panel PNG was inspected. Panel 3 / sibling 0 was deliberately chosen for its long cyan arc and sharp green/violet counterforce; the numerical top scorer sibling 10 appeared less coherent.','',
     'Every candidate is ranked on occupied-pixel silhouette difference from the original, early-to-late silhouette change, spatial spread and occupancy; mechanically near-identical images and palette-only substitutions are rejected. This score is a reproducible search aid, not a claim of aesthetic merit. All legacy artwork and engine source remain untouched.','',
     'Reproduce using npm run verify or node --test gallery/variants/02-broken-orbit/atlas.test.mjs. Offline, software raster only.',''
   ].join('\n');
