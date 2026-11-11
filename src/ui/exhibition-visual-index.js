@@ -2,6 +2,20 @@ import { exhibitionEntries } from './exhibition-catalog.js';
 import { renderVisualIndexProof } from './exhibition-visual-index-model.js';
 import { buildOfflineExhibitionBoard } from './exhibition-offline-board.js';
 
+// Internal read-only access to the exact FW-012 proof bytes already verified
+// by the visual index. This never exposes a WebGL screenshot or stale blob.
+const proofRegistries = new WeakMap();
+export function getAcceptedVisualIndexPng(panel, id, url, rawRgbaHash) {
+  const registry = proofRegistries.get(panel);
+  const proof = registry?.proofs.get(id);
+  if (!url?.startsWith('blob:') || registry?.urls.get(id) !== url ||
+      proof?.id !== id || proof?.rawRgbaHash !== rawRgbaHash ||
+      !/^[0-9a-f]{16}$/.test(rawRgbaHash)) {
+    throw new Error('Current verified CPU proof is unavailable or mismatched.');
+  }
+  return proof.png.slice(); // detached copy, not mutable ownership
+}
+
 // Augment the existing native-button gallery. Never replace the accepted
 // catalog, change the editor, or use a WebGL frame as artwork evidence.
 export function mountExhibitionVisualIndex(panel) {
@@ -13,6 +27,7 @@ export function mountExhibitionVisualIndex(panel) {
   const tiles = new Map();
   const urls = new Map();
   const verifiedProofs = new Map();
+  proofRegistries.set(panel, { proofs: verifiedProofs, urls });
   let generation = 0;
   let leaving = false;
   for (const entry of entries) {
@@ -156,6 +171,7 @@ export function mountExhibitionVisualIndex(panel) {
   window.addEventListener('pagehide', () => {
     leaving = true;
     verifiedProofs.clear();
+    proofRegistries.delete(panel);
     generation += 1;
     for (const id of [...urls.keys()]) revoke(id);
   }, { once: true });

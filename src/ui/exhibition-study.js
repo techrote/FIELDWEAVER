@@ -1,4 +1,6 @@
 import { exhibitionEntries } from './exhibition-catalog.js';
+import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel } from './exhibition-pixel-probe.js';
+import { getAcceptedVisualIndexPng } from './exhibition-visual-index.js';
 
 // Read-only exhibition navigation. The gallery's existing visual-index
 // verifier owns CPU replay, PNG decoding, provenance and image URL lifetime.
@@ -72,7 +74,9 @@ export function mountExhibitionStudy(panel) {
   const pin = make('button', { id: 'exhibition-study-pin', type: 'button', class: 'button' }, 'Pin current as A');
   const unpin = make('button', { id: 'exhibition-study-unpin', type: 'button', class: 'button' }, 'Clear A');
   const load = make('button', { id: 'exhibition-study-load', type: 'button', class: 'button' }, 'Load selected into editor');
-  toolbar.append(back, forward, pin, unpin, load);
+  const inspect = make('button', { id: 'exhibition-study-pixel-toggle', type: 'button',
+  class: 'button', 'aria-expanded': 'false', 'aria-controls': 'exhibition-study-pixel-desk' }, 'Inspect exact pixels');
+toolbar.append(back, forward, pin, unpin, load, inspect);
   const description = make('p', { class: 'workspace-note', id: 'exhibition-study-help' },
     'Left/Right: browse · P: pin A · Escape: close. Only locally verified canonical CPU images; no WebGL pixels.');
   const gallery = make('div', { class: 'exhibition-study-frames', role: 'group',
@@ -87,13 +91,42 @@ export function mountExhibitionStudy(panel) {
     return { box, heading, img, caption, letter };
   }
   const left = frame('A'), right = frame('B');
+  const desk = make('section', { id: 'exhibition-study-pixel-desk', class: 'exhibition-study-pixel-desk',
+    'aria-label': 'Decoded canonical pixel inspection' });
+  desk.hidden = true;
+  const help = make('p', { class: 'workspace-note' },
+    'Click an image or enter a column/row. Sample the exact decoded CPU PNG. Image coordinates start at the top-left; A and B have separate authored world crops.');
+  const fields = make('div', { class: 'exhibition-study-pixel-controls' });
+  const sourceLabel = make('label', {}, 'Image ');
+  const source = make('select', { id: 'exhibition-study-pixel-source' });
+  source.append(make('option', { value: 'A' }, 'A'), make('option', { value: 'B' }, 'B'));
+  sourceLabel.append(source);
+  const xLabel = make('label', {}, 'Column ');
+  const x = make('input', { id: 'exhibition-study-pixel-x', type: 'number', min: '0', step: '1' });
+  xLabel.append(x);
+  const yLabel = make('label', {}, 'Row ');
+  const y = make('input', { id: 'exhibition-study-pixel-y', type: 'number', min: '0', step: '1' });
+  yLabel.append(y);
+  const nextMark = make('button', { id: 'exhibition-study-pixel-next', class: 'button',
+    type: 'button' }, 'Next visible mark');
+  fields.append(sourceLabel, xLabel, yLabel, nextMark);
+  const reading = make('output', { id: 'exhibition-study-pixel-reading',
+    class: 'workspace-note', 'aria-live': 'polite' }, 'Choose a pixel.');
+  const gridPixels = make('div', { id: 'exhibition-study-pixel-neighbours',
+    class: 'exhibition-study-pixel-neighbours', role: 'img',
+    'aria-label': 'Nine by nine nearest-neighbour display; selected centre outlined' });
+  desk.append(help, fields, reading, gridPixels);
   const announce = make('output', { id: 'exhibition-study-status', 'aria-live': 'polite',
     class: 'workspace-note' }, 'No study open.');
-  dialog.append(header, toolbar, description, gallery, announce);
+  dialog.append(header, toolbar, description, gallery, desk, announce);
   document.body.append(dialog);
 
   let currentId = ids[0];
   let pinnedId = null;
+  let pixelOpen = false;
+  let pixelToken = 0;
+  let lastPixelId = null;
+  const pixelCache = new Map();
   const cards = new Map(entries.map((entry) => [entry.id,
     [...grid.querySelectorAll('[data-exhibition-id]')].find((card) => card.dataset.exhibitionId === entry.id)]));
   const images = new Map([...cards].map(([id, card]) => [id, card?.querySelector('.exhibition-index-image')]));
@@ -109,7 +142,7 @@ export function mountExhibitionStudy(panel) {
           !image.currentSrc.startsWith('blob:')) return null;
       let label;
       try { label = studyArtworkLabel(entry, hash); } catch { return null; }
-      result.set(entry.id, { label, url: image.currentSrc });
+      result.set(entry.id, { label, url: image.currentSrc, hash });
     }
     return result;
   };
@@ -126,11 +159,113 @@ export function mountExhibitionStudy(panel) {
     frameNode.img.alt = record.label.alt;
     frameNode.caption.textContent = record.label.details;
   }
+  const pixelId = () => source.value === 'B' && pinnedId ? currentId : (pinnedId ?? currentId);
+  async function updatePixel(resetCoordinates = false, findNextMark = false) {
+    if (!pixelOpen || !dialog.open) return;
+    const token = ++pixelToken;
+    const id = pixelId(), record = snapshot()?.get(id), entry = lookup.get(id);
+    if (!record) { reading.textContent = 'Verified CPU image unavailable.'; gridPixels.replaceChildren(); return; }
+    try {
+      let pixels = pixelCache.get(record.url);
+      if (!pixels) {
+        // Reuse the exact verified PNG bytes already held for offline board
+        // export; CSP deliberately disallows independent blob: fetch.
+        pixels = verifyStudyPng(getAcceptedVisualIndexPng(panel, id, record.url, record.hash),
+          entry.exportCrop.widthPx, entry.exportCrop.heightPx, record.hash);
+        if (token !== pixelToken || !dialog.open) return;
+        pixelCache.set(record.url, pixels);
+      }
+      if (token !== pixelToken || !dialog.open) return;
+      if (resetCoordinates || lastPixelId !== id) {
+        x.value = String(Math.floor(pixels.width / 2));
+        y.value = String(Math.floor(pixels.height / 2));
+        lastPixelId = id;
+      }
+      x.max = String(pixels.width - 1); y.max = String(pixels.height - 1);
+      const col = Math.max(0, Math.min(pixels.width - 1, Math.trunc(Number(x.value) || 0)));
+      const row = Math.max(0, Math.min(pixels.height - 1, Math.trunc(Number(y.value) || 0)));
+      let nextCol = col, nextRow = row;
+      if (findNextMark) {
+        const next = nextVisibleStudyPixel(pixels, col, row);
+        if (next) { nextCol = next.x; nextRow = next.y; }
+        else {
+          reading.textContent = entry.name + ' has no visible non-background pixels at this accepted crop.';
+          gridPixels.replaceChildren();
+          return;
+        }
+      }
+      x.value = String(nextCol); y.value = String(nextRow);
+      const sample = sampleStudyPixel(pixels, nextCol, nextRow);
+      reading.textContent = entry.name + ' · (' + nextCol + ', ' + nextRow + ') · ' + sample.hex +
+        ' · RGBA8 ' + sample.rgba.join(', ') + ' · image identity ' + pixels.hash;
+      const cells = [];
+      for (let dy = -4; dy <= 4; dy += 1) {
+        for (let dx = -4; dx <= 4; dx += 1) {
+          const cell = make('span', { class: 'exhibition-study-pixel-cell' + (dx === 0 && dy === 0 ? ' is-centre' : '') });
+          const px = nextCol + dx, py = nextRow + dy;
+          if (px < 0 || py < 0 || px >= pixels.width || py >= pixels.height) cell.classList.add('is-outside');
+          else {
+            const color = sampleStudyPixel(pixels, px, py);
+            cell.style.backgroundColor = 'rgb(' + color.rgba.slice(0, 3).join(',') + ')';
+            cell.title = px + ',' + py + ' ' + color.hex;
+          }
+          cells.push(cell);
+        }
+      }
+      gridPixels.replaceChildren(...cells);
+    } catch (error) {
+      if (token !== pixelToken) return;
+      reading.textContent = 'Cannot inspect this verified PNG: ' + (error?.message ?? String(error));
+      gridPixels.replaceChildren();
+    }
+  }
+  function resetPixel() {
+    ++pixelToken; pixelCache.clear(); lastPixelId = null; pixelOpen = false;
+    dialog.classList.remove('is-pixel-inspection');
+    desk.hidden = true; inspect.setAttribute('aria-expanded', 'false'); inspect.textContent = 'Inspect exact pixels';
+    gridPixels.replaceChildren(); reading.textContent = 'Choose a pixel.';
+  }
+  inspect.addEventListener('click', () => {
+    if (pixelOpen) { resetPixel(); return; }
+    pixelOpen = true; desk.hidden = false;
+    dialog.classList.add('is-pixel-inspection');
+    source.value = pinnedId ? 'B' : 'A';
+    inspect.setAttribute('aria-expanded', 'true');
+    inspect.textContent = 'Hide pixel inspection';
+    void updatePixel(true); x.focus();
+  });
+  source.addEventListener('change', () => { lastPixelId = null; void updatePixel(true); });
+  for (const input of [x, y]) input.addEventListener('input', () => void updatePixel());
+  nextMark.addEventListener('click', () => void updatePixel(false, true));
+  for (const [side, frameNode] of [['A', left], ['B', right]]) {
+    frameNode.img.title = 'Click to inspect a canonical decoded pixel';
+    frameNode.img.addEventListener('click', (event) => {
+      if (!dialog.open || (side === 'B' && !pinnedId)) return;
+      const img = frameNode.img, bounds = img.getBoundingClientRect();
+      const entry = lookup.get(side === 'B' ? currentId : (pinnedId ?? currentId));
+      const point = studyImageClickPixel({
+        left: bounds.left + img.clientLeft, top: bounds.top + img.clientTop,
+        width: img.clientWidth, height: img.clientHeight
+      }, entry.exportCrop.widthPx, entry.exportCrop.heightPx, event.clientX, event.clientY);
+      if (!point) return;
+      if (!pixelOpen) {
+        pixelOpen = true; desk.hidden = false;
+        dialog.classList.add('is-pixel-inspection');
+        inspect.setAttribute('aria-expanded', 'true');
+        inspect.textContent = 'Hide pixel inspection';
+      }
+      source.value = side; lastPixelId = pixelId();
+      x.value = String(point.x); y.value = String(point.y);
+      void updatePixel();
+    });
+  }
   function paint() {
     const frames = snapshot();
     if (!frames) { close(); return; }
     present(left, frames.get(pinnedId ?? currentId));
     present(right, pinnedId ? frames.get(currentId) : null);
+    source.querySelector('[value="B"]').disabled = !pinnedId;
+    if (!pinnedId && source.value === 'B') source.value = 'A';
     unpin.disabled = !pinnedId;
     pin.disabled = pinnedId === currentId;
     announce.textContent = 'Work ' + (ids.indexOf(currentId) + 1) + '/' + ids.length +
@@ -138,6 +273,7 @@ export function mountExhibitionStudy(panel) {
       (pinnedId ? ' · A pinned: ' + lookup.get(pinnedId).name + ' · B: current selection' : ' · single artwork study');
   }
   function clearImages() {
+    resetPixel();
     present(left, null);
     present(right, null);
   }
@@ -148,6 +284,7 @@ export function mountExhibitionStudy(panel) {
   function move(offset) {
     currentId = studyNextId(ids, currentId, offset);
     paint();
+    if (pixelOpen) void updatePixel();
   }
   const updateLaunch = () => { launch.disabled = !snapshot(); };
   const observer = new MutationObserver(updateLaunch);
@@ -163,12 +300,13 @@ export function mountExhibitionStudy(panel) {
   });
   back.addEventListener('click', () => move(-1));
   forward.addEventListener('click', () => move(1));
-  pin.addEventListener('click', () => { pinnedId = currentId; paint(); });
-  unpin.addEventListener('click', () => { pinnedId = null; paint(); });
+  pin.addEventListener('click', () => { pinnedId = currentId; paint(); if (pixelOpen) void updatePixel(true); });
+  unpin.addEventListener('click', () => { pinnedId = null; paint(); if (pixelOpen) void updatePixel(true); });
   closeButton.addEventListener('click', close);
   dialog.addEventListener('close', clearImages);
   dialog.addEventListener('keydown', (event) => {
     if (event.ctrlKey || event.altKey || event.metaKey) return;
+    if (['INPUT', 'SELECT', 'TEXTAREA'].includes(event.target.tagName)) return;
     if (event.key === 'ArrowRight') { event.preventDefault(); move(1); }
     if (event.key === 'ArrowLeft') { event.preventDefault(); move(-1); }
     if (event.key.toLowerCase() === 'p' && event.target.tagName !== 'INPUT') {
