@@ -194,6 +194,29 @@ try {
       compared.aSource === compared.bSource) {
     throw new Error(`Two-up canonical comparison failed: ${JSON.stringify(compared)}`);
   }
+
+  // A rendered hash is not proof the browser actually decoded/displayed the PNG.
+  // The gallery uses Blob object URLs, so exercise the restrictive CSP boundary.
+  let decoded = null;
+  const decodeDeadline = Date.now() + 15_000;
+  while (Date.now() < decodeDeadline) {
+    decoded = await execute(`
+      const dimensions = (selector) => {
+        const image = document.querySelector(selector);
+        return [image.naturalWidth, image.naturalHeight, image.complete];
+      };
+      return {
+        main: dimensions('#exhibition-preview'),
+        a: dimensions('#exhibition-compare-a-image'),
+        b: dimensions('#exhibition-compare-b-image')
+      };
+    `);
+    if ([decoded.main, decoded.a, decoded.b].every((v) => v[0] === 96 && v[1] === 64 && v[2])) break;
+    await sleep(150);
+  }
+  if (![decoded?.main, decoded?.a, decoded?.b].every((v) => v?.[0] === 96 && v?.[1] === 64 && v?.[2])) {
+    throw new Error(`Canonical proof images were not actually decoded: ${JSON.stringify(decoded)}`);
+  }
   await request('POST', `/session/${sessionId}/window/rect`, { width: 1280, height: 900 });
   await execute(`document.querySelector('#exhibition-compare-b-image').scrollIntoView({ block: 'center' });`);
   const capture = await request('GET', `/session/${sessionId}/screenshot`);
@@ -224,7 +247,7 @@ try {
     throw new Error(`Clearing A retained stale comparison artifacts: ${JSON.stringify(cleared)}`);
   }
 
-  const evidence = { browser, initial, loaded, afterStamp, exhibition, pinned, moved, compared, invalidated, cleared, driverLog: driverLog.slice(-3000) };
+  const evidence = { browser, initial, loaded, afterStamp, exhibition, pinned, moved, compared, decoded, invalidated, cleared, driverLog: driverLog.slice(-3000) };
   await writeFile(evidencePath, `${JSON.stringify(evidence, null, 2)}\n`);
   console.log(JSON.stringify({ browser, preset: loaded.presetId, presetHash: loaded.presetHash, keyboardStampHash: afterStamp.canonicalHash, releaseDiagnostics: afterStamp.releaseDiagnostics }, null, 2));
 } finally {
