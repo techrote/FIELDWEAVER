@@ -1,6 +1,7 @@
 import { spawn, spawnSync } from 'node:child_process';
-import { writeFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { join, resolve } from 'node:path';
+import { parseRecipe, recipeHash } from '../src/recipe/index.js';
 import { pathToFileURL } from 'node:url';
 import { decodePngRgba, rawRgbaHash } from '../src/export/index.js';
 
@@ -11,6 +12,8 @@ if (spawnSync('bash', ['-lc', 'command -v ' + executable], { encoding: 'utf8' })
   throw new Error(executable + ' unavailable; no browser result may be claimed.');
 }
 const port = browser === 'chrome' ? 9531 : 9532;
+const downloadDir = resolve('exhibition-offline-downloads-' + browser);
+await mkdir(downloadDir, { recursive: true });
 const driver = spawn(executable, browser === 'chrome' ? ['--port=' + port] : ['--port', String(port)], { stdio: ['ignore', 'pipe', 'pipe'] });
 let driverLog = '';
 driver.stdout.on('data', (data) => { driverLog += String(data); });
@@ -34,8 +37,8 @@ try {
   }
   if (!online) throw new Error('WebDriver did not start: ' + driverLog);
   const desired = browser === 'chrome'
-    ? { capabilities: { alwaysMatch: { browserName: 'chrome', 'goog:chromeOptions': { args: ['--headless=new', '--no-sandbox', '--disable-dev-shm-usage', '--enable-webgl', '--ignore-gpu-blocklist', '--use-angle=swiftshader'] } } } }
-    : { capabilities: { alwaysMatch: { browserName: 'firefox', 'moz:firefoxOptions': { args: process.env.DISPLAY ? [] : ['-headless'], prefs: { 'webgl.disabled': false, 'webgl.force-enabled': true, 'gfx.webrender.software': true } } } } };
+    ? { capabilities: { alwaysMatch: { browserName: 'chrome', 'goog:chromeOptions': { args: ['--headless=new', '--no-sandbox', '--disable-dev-shm-usage', '--enable-webgl', '--ignore-gpu-blocklist', '--use-angle=swiftshader'], prefs: { 'download.default_directory': downloadDir, 'download.prompt_for_download': false, 'download.directory_upgrade': true } } } } }
+    : { capabilities: { alwaysMatch: { browserName: 'firefox', 'moz:firefoxOptions': { args: process.env.DISPLAY ? [] : ['-headless'], prefs: { 'webgl.disabled': false, 'webgl.force-enabled': true, 'gfx.webrender.software': true, 'browser.download.dir': downloadDir, 'browser.download.folderList': 2, 'browser.download.useDownloadDir': true, 'browser.helperApps.neverAsk.saveToDisk': 'application/json,application/octet-stream', 'browser.download.alwaysOpenPanel': false } } } } };
   const created = await request('POST', '/session', desired);
   sessionId = created?.value?.sessionId ?? created?.sessionId;
   if (!sessionId) throw new Error('Missing WebDriver session ID.');
@@ -349,6 +352,75 @@ try {
   if (!offlineNarrowScreenshot?.value) throw new Error('Offline board narrow screenshot absent.');
   await writeFile('exhibition-accepted-offline-narrow-' + browser + '.png',
     Buffer.from(offlineNarrowScreenshot.value,'base64'));
+  // Actual browser keyboard activation of static data: download anchors.
+  // Reading a href is insufficient: CSP and browser download policies must
+  // permit a file to reach disk before the editor can re-import its bytes.
+  const embeddedDownloads = [...boardHtml.matchAll(/<a download="([^"]+)" href="data:application\\/json;base64,([^"]+)"/g)]
+    .map((match) => ({ name: match[1], bytes: Buffer.from(match[2], 'base64') }));
+  if (embeddedDownloads.length !== 8) {
+    throw new Error('Expected eight independent accepted JSON downloads.');
+  }
+  const savedDownloads = [];
+  for (const index of [0, 1]) {
+    const expected = embeddedDownloads[index];
+    const destination = join(downloadDir, expected.name);
+    const focused = await execute("const a=document.querySelectorAll('main article.work')[0].querySelectorAll('.work-actions a')[" + index + "];a.focus();return {active:document.activeElement===a,name:a.download}");
+    if (!focused.active || focused.name !== expected.name) {
+      throw new Error('Offline recipe/provenance link cannot be activated by keyboard: ' + JSON.stringify(focused));
+    }
+    await pressPixelKey('\\uE007'); // Real WebDriver Enter; no synthetic click or CSP fetch.
+    let contents = null;
+    for (let attempt = 0; attempt < 100; attempt += 1) {
+      try { contents = await readFile(destination); } catch { /* download not complete */ }
+      if (contents?.equals(expected.bytes)) break;
+      await sleep(100);
+    }
+    if (!contents?.equals(expected.bytes)) {
+      throw new Error('Actual offline browser download missing or mismatched: ' + expected.name +
+        ' (observed ' + (contents?.length ?? 'none') + ' of ' + expected.bytes.length + ' bytes)');
+    }
+    savedDownloads.push({ name: expected.name, bytes: contents.length, match: true });
+  }
+  // Reopen the real workbench and import the file that the browser actually
+  // saved, rather than regenerating or injecting the recipe JSON from Node.
+  const savedRecipePath = join(downloadDir, embeddedDownloads[0].name);
+  const savedRecipe = await readFile(savedRecipePath, 'utf8');
+  const acceptedRecipeHash = recipeHash(parseRecipe(savedRecipe));
+  const firstAccepted = result.tiles.find((tile) => tile.id === offlineDownloads[0].id);
+  if (acceptedRecipeHash !== firstAccepted?.hashRecipe && !embeddedDownloads[0].name.includes(acceptedRecipeHash)) {
+    throw new Error('Saved recipe has an unexpected accepted recipe hash: ' + acceptedRecipeHash);
+  }
+  await request('POST', '/session/' + sessionId + '/url', { url: 'http://127.0.0.1:4173/' });
+  let fileReady = false;
+  for (let attempt = 0; attempt < 80; attempt += 1) {
+    fileReady = await execute("return Boolean(document.querySelector('#recipe-file') && document.querySelector('#recipe-status') && document.querySelector('.preset-panel'))");
+    if (fileReady) break;
+    await sleep(100);
+  }
+  if (!fileReady) throw new Error('Recipe persistence panel was not available for actual saved-file import.');
+  await execute("const f=document.getElementById('recipe-file');f.hidden=false;f.style.display='block'");
+  const located = await request('POST', '/session/' + sessionId + '/element',
+    { using: 'css selector', value: '#recipe-file' });
+  const fileElement = located.value?.['element-6066-11e4-a52e-4f735466cecf'];
+  if (!fileElement) throw new Error('Cannot locate real recipe file input for WebDriver upload.');
+  await request('POST', '/session/' + sessionId + '/element/' + fileElement + '/value',
+    { text: savedRecipePath });
+  let imported = null;
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    imported = await execute("return {status:document.getElementById('recipe-status').textContent,hash:document.documentElement.dataset.fieldweaverCanonicalRecipeHash,commands:document.documentElement.dataset.fieldweaverRecipeCommands,proof:document.documentElement.dataset.fieldweaverExhibitionProofHash||''}");
+    if (imported.status.startsWith('Loaded ') || imported.status.startsWith('Load rejected')) break;
+    await sleep(100);
+  }
+  if (imported?.status !== 'Loaded ' + acceptedRecipeHash || imported.hash !== acceptedRecipeHash || imported.proof) {
+    throw new Error('Downloaded accepted recipe did not re-import into the real editor: ' + JSON.stringify(imported));
+  }
+  const importScreenshot = await request('GET', '/session/' + sessionId + '/screenshot');
+  if (!importScreenshot?.value) throw new Error('Saved-file recipe import screenshot absent.');
+  await writeFile('exhibition-offline-reimport-' + browser + '.png',
+    Buffer.from(importScreenshot.value, 'base64'));
+  await writeFile('exhibition-offline-reimport-' + browser + '.json',
+    JSON.stringify({ browser, savedDownloads, acceptedRecipeHash, imported,
+      source: 'Real file:// keyboard downloads followed by saved-file input re-import' }, null, 2) + '\\n');
   await writeFile('exhibition-accepted-offline-' + browser + '.json',
     JSON.stringify({ browser, source:'existing study export HTML Blob; Node decoded RGBA8 independently',
       offlineDecoded, offlineDownloads, verifiedFromFileUrl:true, offlineNarrow,
