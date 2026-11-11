@@ -56,16 +56,28 @@ try {
     await sleep(250);
   }
   if (!rendered.includes('ready: 4/4')) throw new Error('Four real canonical CPU proofs were not generated: ' + rendered);
-  const initial = await execute("document.getElementById('exhibition-study-launch').click();const ledger=document.getElementById('exhibition-recipe-ledger');ledger.open=true;return {open:document.getElementById('exhibition-study-dialog').open,shown:!ledger.hidden,rows:document.querySelectorAll('#exhibition-recipe-ledger-rows tr').length,relation:document.querySelector('#exhibition-recipe-ledger-rows tr td:last-child')?.textContent,images:[...document.querySelectorAll('.exhibition-study-frame:not([hidden]) img')].map(i=>({w:i.naturalWidth,h:i.naturalHeight,src:i.currentSrc}))}");
+  let initial = await execute("document.getElementById('exhibition-study-launch').click();const ledger=document.getElementById('exhibition-recipe-ledger');ledger.open=true;return {open:document.getElementById('exhibition-study-dialog').open,shown:!ledger.hidden,rows:document.querySelectorAll('#exhibition-recipe-ledger-rows tr').length,relation:document.querySelector('#exhibition-recipe-ledger-rows tr td:last-child')?.textContent,images:[...document.querySelectorAll('.exhibition-study-frame:not([hidden]) img')].map(i=>({w:i.naturalWidth,h:i.naturalHeight,src:i.currentSrc}))}");
+  for (let i = 0; i < 30 && !initial.shown; i += 1) {
+    await sleep(100);
+    initial = await execute("const ledger=document.getElementById('exhibition-recipe-ledger');return {open:document.getElementById('exhibition-study-dialog').open,shown:!ledger.hidden,rows:document.querySelectorAll('#exhibition-recipe-ledger-rows tr').length,relation:document.querySelector('#exhibition-recipe-ledger-rows tr td:last-child')?.textContent,images:[...document.querySelectorAll('.exhibition-study-frame:not([hidden]) img')].map(i=>({w:i.naturalWidth,h:i.naturalHeight,src:i.currentSrc}))}");
+  }
   if (!initial.open || !initial.shown || initial.rows !== 10 || initial.relation !== 'Single work' ||
       initial.images.length !== 1 || initial.images[0].w !== 96 || initial.images[0].h !== 64 ||
       !initial.images[0].src.startsWith('blob:')) throw new Error('Unverified initial recipe score: ' + JSON.stringify(initial));
-  const atlas = await execute("document.getElementById('exhibition-study-pin').click();document.getElementById('exhibition-study-next').click();const cells=[...document.querySelectorAll('#exhibition-recipe-ledger-rows tr')].map(x=>({name:x.querySelector('th').textContent,relation:x.lastElementChild.textContent}));return {status:document.getElementById('exhibition-study-status').textContent,frames:document.querySelectorAll('.exhibition-study-frame:not([hidden]) img').length,cells,notes:document.getElementById('exhibition-recipe-ledger-status').textContent}");
+  let atlas = await execute("document.getElementById('exhibition-study-pin').click();document.getElementById('exhibition-study-next').click();const cells=[...document.querySelectorAll('#exhibition-recipe-ledger-rows tr')].map(x=>({name:x.querySelector('th').textContent,relation:x.lastElementChild.textContent}));return {status:document.getElementById('exhibition-study-status').textContent,frames:document.querySelectorAll('.exhibition-study-frame:not([hidden]) img').length,cells,notes:document.getElementById('exhibition-recipe-ledger-status').textContent}");
+  for (let i = 0; i < 30 && atlas.cells.length === 0; i += 1) {
+    await sleep(100);
+    atlas = await execute("const cells=[...document.querySelectorAll('#exhibition-recipe-ledger-rows tr')].map(x=>({name:x.querySelector('th').textContent,relation:x.lastElementChild.textContent}));return {status:document.getElementById('exhibition-study-status').textContent,frames:document.querySelectorAll('.exhibition-study-frame:not([hidden]) img').length,cells,notes:document.getElementById('exhibition-recipe-ledger-status').textContent}");
+  }
   if (!atlas.status.includes('Operator Atlas') || atlas.frames !== 2 ||
       atlas.cells.find((x) => x.name === 'Ordered field stack')?.relation !== 'Different' ||
       atlas.cells.find((x) => x.name === 'Material behaviours')?.relation !== 'Identical' ||
       !atlas.notes.includes('Two accepted')) throw new Error('A/B exact recipe differences invalid: ' + JSON.stringify(atlas));
-  const pulse = await execute("document.getElementById('exhibition-study-next').click();return {status:document.getElementById('exhibition-study-status').textContent,timeline:[...document.querySelectorAll('#exhibition-recipe-ledger-commands section:last-child li')].map(x=>x.textContent),relation:[...document.querySelectorAll('#exhibition-recipe-ledger-rows tr')].find(x=>x.querySelector('th').textContent==='Interventions')?.lastElementChild.textContent}");
+  let pulse = await execute("document.getElementById('exhibition-study-next').click();return {status:document.getElementById('exhibition-study-status').textContent,timeline:[...document.querySelectorAll('#exhibition-recipe-ledger-commands section:last-child li')].map(x=>x.textContent),relation:[...document.querySelectorAll('#exhibition-recipe-ledger-rows tr')].find(x=>x.querySelector('th').textContent==='Interventions')?.lastElementChild.textContent}");
+  for (let i = 0; i < 30 && pulse.timeline.length !== 6; i += 1) {
+    await sleep(100);
+    pulse = await execute("return {status:document.getElementById('exhibition-study-status').textContent,timeline:[...document.querySelectorAll('#exhibition-recipe-ledger-commands section:last-child li')].map(x=>x.textContent),relation:[...document.querySelectorAll('#exhibition-recipe-ledger-rows tr')].find(x=>x.querySelector('th').textContent==='Interventions')?.lastElementChild.textContent}");
+  }
   if (!pulse.status.includes('Timeline Pulse') || pulse.timeline.length !== 6 ||
       !pulse.timeline[0].includes('tick 8') || !pulse.timeline[5].includes('tick 34') ||
       pulse.relation !== 'Different') throw new Error('Command register was not the real accepted timeline: ' + JSON.stringify(pulse));
