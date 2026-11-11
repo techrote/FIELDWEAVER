@@ -1,0 +1,22 @@
+{
+  "artwork": "02-the-luminous-ledger",
+  "recipeHash": "e60f9467e69750b9",
+  "seed": 1800529875,
+  "targetTick": 168,
+  "crop": {
+    "widthPx": 448,
+    "heightPx": 448,
+    "center": {
+      "chunkX": 0,
+      "chunkY": 0,
+      "localX": 8388608,
+      "localY": 7340032
+    },
+    "unitsPerPixelQ16": 32768
+  },
+  "depositionCount": 85804,
+  "rawRgbaHash": "3b821e3737598e0a",
+  "stateHash": "9c6e2316df297b9f",
+  "depositionHash": "a698b6160db85305",
+  "resultHash": "8ff150b7d713ab3c"
+}

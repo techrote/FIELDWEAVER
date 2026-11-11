@@ -1,0 +1,1400 @@
+{
+  "version": "fw-export-provenance-v1",
+  "exportVersion": "fw-canonical-export-v1",
+  "rasterVersion": "fw-canonical-raster-v1",
+  "pngVersion": "fw-png-rgba8-v1",
+  "recipeHash": "e60f9467e69750b9",
+  "recipe": {
+    "schemaVersion": "fw-recipe-v1",
+    "engineVersion": "fw-agents-v1",
+    "seed": 1800529875,
+    "framing": {
+      "widthPx": 448,
+      "heightPx": 448,
+      "center": {
+        "chunkX": 0,
+        "chunkY": 0,
+        "localX": 8388608,
+        "localY": 7340032
+      },
+      "unitsPerPixelQ16": 32768
+    },
+    "fields": {
+      "format": "fw-fields-v1",
+      "nextId": 7,
+      "order": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "layers": [
+        {
+          "id": 1,
+          "kind": "vector",
+          "operator": "uniform",
+          "enabled": true,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 0,
+              "localY": 0
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "vectorXQ16": 0,
+            "vectorYQ16": -24800
+          },
+          "chunks": []
+        },
+        {
+          "id": 2,
+          "kind": "vector",
+          "operator": "attractor",
+          "enabled": false,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 5242880,
+              "localY": 7340032
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "radiusQ16": 4456448,
+            "strengthQ16": 34000
+          },
+          "chunks": []
+        },
+        {
+          "id": 3,
+          "kind": "vector",
+          "operator": "attractor",
+          "enabled": false,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 11534336,
+              "localY": 7340032
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "radiusQ16": 4456448,
+            "strengthQ16": -32000
+          },
+          "chunks": []
+        },
+        {
+          "id": 4,
+          "kind": "vector",
+          "operator": "turbulence",
+          "enabled": true,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 0,
+              "localY": 0
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "amplitudeQ16": 2000,
+            "cellSizeQ16": 1048576,
+            "seed": 592910643
+          },
+          "chunks": []
+        },
+        {
+          "id": 5,
+          "kind": "vector",
+          "operator": "direction-quantizer",
+          "enabled": true,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 0,
+              "localY": 0
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "sectors": 4
+          },
+          "chunks": []
+        },
+        {
+          "id": 6,
+          "kind": "vector",
+          "operator": "uniform",
+          "enabled": false,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 0,
+              "localY": 0
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "vectorXQ16": 7500,
+            "vectorYQ16": -2600
+          },
+          "chunks": []
+        }
+      ]
+    },
+    "materials": [
+      {
+        "id": 1,
+        "kind": "ink",
+        "inertiaNumerator": 3,
+        "inertiaDenominator": 4,
+        "steeringNumerator": 1,
+        "steeringDenominator": 2,
+        "lifetimeTicks": 145,
+        "depositEvery": 1,
+        "primitive": "disc",
+        "radiusQ16": 26214,
+        "strengthQ16": 53000,
+        "quantizeAxis": false
+      },
+      {
+        "id": 2,
+        "kind": "filament",
+        "inertiaNumerator": 7,
+        "inertiaDenominator": 8,
+        "steeringNumerator": 1,
+        "steeringDenominator": 4,
+        "lifetimeTicks": 180,
+        "depositEvery": 1,
+        "primitive": "segment",
+        "radiusQ16": 14418,
+        "strengthQ16": 59000,
+        "quantizeAxis": false
+      },
+      {
+        "id": 3,
+        "kind": "dust",
+        "inertiaNumerator": 1,
+        "inertiaDenominator": 4,
+        "steeringNumerator": 3,
+        "steeringDenominator": 4,
+        "lifetimeTicks": 68,
+        "depositEvery": 2,
+        "primitive": "point",
+        "radiusQ16": 8192,
+        "strengthQ16": 48000,
+        "quantizeAxis": false
+      },
+      {
+        "id": 4,
+        "kind": "shard",
+        "inertiaNumerator": 1,
+        "inertiaDenominator": 2,
+        "steeringNumerator": 1,
+        "steeringDenominator": 1,
+        "lifetimeTicks": 108,
+        "depositEvery": 1,
+        "primitive": "segment",
+        "radiusQ16": 10486,
+        "strengthQ16": 64000,
+        "quantizeAxis": true
+      }
+    ],
+    "emitters": [
+      {
+        "id": 1,
+        "materialId": 2,
+        "startTick": 0,
+        "stopTick": 50,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 2359296,
+            "localY": 13565952
+          },
+          "widthQ16": 104858,
+          "heightQ16": 91750
+        },
+        "velocityXQ16": -4200,
+        "velocityYQ16": -105000,
+        "velocityJitterQ16": 1200
+      },
+      {
+        "id": 2,
+        "materialId": 2,
+        "startTick": 4,
+        "stopTick": 54,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 3932160,
+            "localY": 13303808
+          },
+          "widthQ16": 104858,
+          "heightQ16": 91750
+        },
+        "velocityXQ16": -2800,
+        "velocityYQ16": -105000,
+        "velocityJitterQ16": 1200
+      },
+      {
+        "id": 3,
+        "materialId": 2,
+        "startTick": 8,
+        "stopTick": 58,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5505024,
+            "localY": 13041664
+          },
+          "widthQ16": 104858,
+          "heightQ16": 91750
+        },
+        "velocityXQ16": -1400,
+        "velocityYQ16": -105000,
+        "velocityJitterQ16": 1200
+      },
+      {
+        "id": 4,
+        "materialId": 2,
+        "startTick": 12,
+        "stopTick": 62,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 7077888,
+            "localY": 13565952
+          },
+          "widthQ16": 104858,
+          "heightQ16": 91750
+        },
+        "velocityXQ16": 0,
+        "velocityYQ16": -105000,
+        "velocityJitterQ16": 1200
+      },
+      {
+        "id": 5,
+        "materialId": 2,
+        "startTick": 16,
+        "stopTick": 66,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8650752,
+            "localY": 13303808
+          },
+          "widthQ16": 104858,
+          "heightQ16": 91750
+        },
+        "velocityXQ16": 1400,
+        "velocityYQ16": -105000,
+        "velocityJitterQ16": 1200
+      },
+      {
+        "id": 6,
+        "materialId": 2,
+        "startTick": 20,
+        "stopTick": 70,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 10223616,
+            "localY": 13041664
+          },
+          "widthQ16": 104858,
+          "heightQ16": 91750
+        },
+        "velocityXQ16": 2800,
+        "velocityYQ16": -105000,
+        "velocityJitterQ16": 1200
+      },
+      {
+        "id": 7,
+        "materialId": 2,
+        "startTick": 24,
+        "stopTick": 74,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 11796480,
+            "localY": 13565952
+          },
+          "widthQ16": 104858,
+          "heightQ16": 91750
+        },
+        "velocityXQ16": 4200,
+        "velocityYQ16": -105000,
+        "velocityJitterQ16": 1200
+      },
+      {
+        "id": 8,
+        "materialId": 2,
+        "startTick": 28,
+        "stopTick": 78,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 13369344,
+            "localY": 13303808
+          },
+          "widthQ16": 104858,
+          "heightQ16": 91750
+        },
+        "velocityXQ16": 5600,
+        "velocityYQ16": -105000,
+        "velocityJitterQ16": 1200
+      },
+      {
+        "id": 9,
+        "materialId": 1,
+        "startTick": 12,
+        "stopTick": 92,
+        "intervalTicks": 3,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 3080192,
+            "localY": 13434880
+          },
+          "widthQ16": 104858,
+          "heightQ16": 91750
+        },
+        "velocityXQ16": -3000,
+        "velocityYQ16": -94000,
+        "velocityJitterQ16": 3500
+      },
+      {
+        "id": 10,
+        "materialId": 1,
+        "startTick": 16,
+        "stopTick": 96,
+        "intervalTicks": 3,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 6225920,
+            "localY": 13434880
+          },
+          "widthQ16": 104858,
+          "heightQ16": 91750
+        },
+        "velocityXQ16": 3000,
+        "velocityYQ16": -94000,
+        "velocityJitterQ16": 3500
+      },
+      {
+        "id": 11,
+        "materialId": 1,
+        "startTick": 20,
+        "stopTick": 100,
+        "intervalTicks": 3,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 9371648,
+            "localY": 13434880
+          },
+          "widthQ16": 104858,
+          "heightQ16": 91750
+        },
+        "velocityXQ16": -3000,
+        "velocityYQ16": -94000,
+        "velocityJitterQ16": 3500
+      },
+      {
+        "id": 12,
+        "materialId": 1,
+        "startTick": 24,
+        "stopTick": 104,
+        "intervalTicks": 3,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12517376,
+            "localY": 13434880
+          },
+          "widthQ16": 104858,
+          "heightQ16": 91750
+        },
+        "velocityXQ16": 3000,
+        "velocityYQ16": -94000,
+        "velocityJitterQ16": 3500
+      },
+      {
+        "id": 13,
+        "materialId": 3,
+        "startTick": 44,
+        "stopTick": 139,
+        "intervalTicks": 3,
+        "rate": 4,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 4128768,
+            "localY": 9043968
+          },
+          "widthQ16": 104858,
+          "heightQ16": 91750
+        },
+        "velocityXQ16": 46000,
+        "velocityYQ16": -13000,
+        "velocityJitterQ16": 5600
+      },
+      {
+        "id": 14,
+        "materialId": 3,
+        "startTick": 54,
+        "stopTick": 139,
+        "intervalTicks": 3,
+        "rate": 4,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12320768,
+            "localY": 9699328
+          },
+          "widthQ16": 104858,
+          "heightQ16": 91750
+        },
+        "velocityXQ16": -44000,
+        "velocityYQ16": -8500,
+        "velocityJitterQ16": 5600
+      },
+      {
+        "id": 15,
+        "materialId": 4,
+        "startTick": 93,
+        "stopTick": 145,
+        "intervalTicks": 2,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 1966080,
+            "localY": 8716288
+          },
+          "widthQ16": 104858,
+          "heightQ16": 91750
+        },
+        "velocityXQ16": 61000,
+        "velocityYQ16": -8000,
+        "velocityJitterQ16": 2200
+      },
+      {
+        "id": 16,
+        "materialId": 4,
+        "startTick": 82,
+        "stopTick": 149,
+        "intervalTicks": 2,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 14548992,
+            "localY": 8716288
+          },
+          "widthQ16": 104858,
+          "heightQ16": 91750
+        },
+        "velocityXQ16": -61000,
+        "velocityYQ16": -8000,
+        "velocityJitterQ16": 2200
+      }
+    ],
+    "lut": {
+      "schemaVersion": "fw-lut-v1",
+      "assets": [
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 1,
+          "name": "Iron ledger / oxidised ink",
+          "size": 32,
+          "channels": {
+            "a": [
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535
+            ],
+            "b": [
+              13621,
+              14906,
+              15934,
+              17219,
+              18247,
+              19532,
+              20560,
+              21845,
+              22873,
+              24158,
+              25186,
+              26985,
+              28784,
+              30583,
+              32382,
+              34181,
+              35723,
+              37522,
+              39321,
+              41120,
+              42919,
+              43433,
+              40606,
+              38036,
+              35209,
+              32639,
+              29812,
+              27242,
+              24415,
+              21845,
+              19018,
+              16448
+            ],
+            "g": [
+              16448,
+              18761,
+              21331,
+              23644,
+              25957,
+              28270,
+              30840,
+              33153,
+              35466,
+              38036,
+              40349,
+              42148,
+              43690,
+              44975,
+              46517,
+              48059,
+              49601,
+              51143,
+              52685,
+              53970,
+              55512,
+              55512,
+              52171,
+              48830,
+              45489,
+              42405,
+              39064,
+              35723,
+              32382,
+              29298,
+              25957,
+              22616
+            ],
+            "r": [
+              36751,
+              38807,
+              40863,
+              43176,
+              45232,
+              47288,
+              49344,
+              51657,
+              53713,
+              55769,
+              57825,
+              58853,
+              59367,
+              59624,
+              60138,
+              60652,
+              60909,
+              61423,
+              61937,
+              62194,
+              62708,
+              62194,
+              60138,
+              57825,
+              55769,
+              53713,
+              51400,
+              49344,
+              47031,
+              44975,
+              42662,
+              40606
+            ]
+          }
+        },
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 2,
+          "name": "Eight coded rain staves / pigment register",
+          "size": 16,
+          "channels": {
+            "a": [
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535
+            ],
+            "b": [
+              51143,
+              29812,
+              20046,
+              12850,
+              49087,
+              48830,
+              38550,
+              30840,
+              30840,
+              23901,
+              35980,
+              28270,
+              41377,
+              44204,
+              41634,
+              52685
+            ],
+            "g": [
+              59367,
+              46517,
+              31354,
+              15420,
+              43947,
+              36751,
+              44718,
+              48059,
+              46774,
+              35723,
+              46517,
+              37779,
+              42405,
+              32896,
+              44461,
+              57825
+            ],
+            "r": [
+              63222,
+              60138,
+              52428,
+              39835,
+              40349,
+              23901,
+              20046,
+              50629,
+              55512,
+              45232,
+              52428,
+              36237,
+              50886,
+              31354,
+              26985,
+              60395
+            ]
+          }
+        },
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 3,
+          "name": "Sea-glass dust",
+          "size": 32,
+          "channels": {
+            "a": [
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535
+            ],
+            "b": [
+              26728,
+              29298,
+              31868,
+              34438,
+              37265,
+              39835,
+              42405,
+              44975,
+              47545,
+              50115,
+              52942,
+              53199,
+              52428,
+              51400,
+              50629,
+              49858,
+              49087,
+              48316,
+              47545,
+              46517,
+              45746,
+              44718,
+              43433,
+              42148,
+              40863,
+              39578,
+              38293,
+              37008,
+              35723,
+              34438,
+              33153,
+              31868
+            ],
+            "g": [
+              19532,
+              22102,
+              24415,
+              26985,
+              29298,
+              31868,
+              34181,
+              36751,
+              39321,
+              41634,
+              44204,
+              45489,
+              46260,
+              47288,
+              48059,
+              48830,
+              49601,
+              50372,
+              51143,
+              52171,
+              52942,
+              52428,
+              49601,
+              46774,
+              44204,
+              41377,
+              38550,
+              35723,
+              32896,
+              30069,
+              27242,
+              24415
+            ],
+            "r": [
+              11051,
+              12593,
+              14135,
+              15934,
+              17476,
+              19018,
+              20560,
+              22102,
+              23901,
+              25443,
+              26985,
+              28784,
+              30840,
+              32896,
+              34695,
+              36751,
+              38807,
+              40863,
+              42662,
+              44718,
+              46774,
+              47031,
+              43690,
+              40606,
+              37265,
+              33924,
+              30840,
+              27499,
+              24415,
+              21074,
+              17990,
+              14649
+            ]
+          }
+        },
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 4,
+          "name": "Interference armature",
+          "size": 32,
+          "channels": {
+            "a": [
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535
+            ],
+            "b": [
+              35209,
+              33924,
+              32382,
+              31097,
+              29555,
+              28270,
+              26728,
+              25443,
+              24158,
+              22616,
+              21331,
+              21845,
+              23130,
+              24672,
+              25957,
+              27499,
+              28784,
+              30326,
+              31611,
+              33153,
+              34438,
+              35723,
+              36751,
+              37522,
+              38550,
+              39578,
+              40349,
+              41377,
+              42148,
+              43176,
+              43947,
+              44975
+            ],
+            "g": [
+              55512,
+              52428,
+              49344,
+              46260,
+              43176,
+              40092,
+              36751,
+              33667,
+              30583,
+              27499,
+              24415,
+              24929,
+              27242,
+              29812,
+              32125,
+              34438,
+              36751,
+              39064,
+              41377,
+              43947,
+              46260,
+              47288,
+              46260,
+              44975,
+              43947,
+              42662,
+              41377,
+              40349,
+              39064,
+              37779,
+              36751,
+              35466
+            ],
+            "r": [
+              59110,
+              58339,
+              57311,
+              56540,
+              55512,
+              54741,
+              53713,
+              52942,
+              51914,
+              51143,
+              50115,
+              50115,
+              50115,
+              50372,
+              50629,
+              50886,
+              51143,
+              51400,
+              51657,
+              51914,
+              51914,
+              51400,
+              48573,
+              46003,
+              43433,
+              40863,
+              38293,
+              35723,
+              32896,
+              30326,
+              27756,
+              25186
+            ]
+          }
+        },
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 5,
+          "name": "Dust gate / slow accelerating steering",
+          "size": 32,
+          "channels": {
+            "logic": [
+              12000,
+              12055,
+              12221,
+              12496,
+              12882,
+              13379,
+              13985,
+              14702,
+              15530,
+              16467,
+              17515,
+              18673,
+              19942,
+              21320,
+              22810,
+              24409,
+              26119,
+              27939,
+              29869,
+              31909,
+              34060,
+              36322,
+              38693,
+              41175,
+              43767,
+              46469,
+              49282,
+              52205,
+              55238,
+              58382,
+              61636,
+              65000
+            ]
+          }
+        }
+      ],
+      "mappings": [
+        {
+          "version": "fw-lut-map-v1",
+          "id": 1,
+          "materialId": 1,
+          "lutId": 1,
+          "source": "lifetimeProgressQ16",
+          "channel": "rgba",
+          "destination": "color",
+          "addressMode": "clamp",
+          "inputMin": 0,
+          "inputMax": 65536,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 0,
+          "outputMax": 65535
+        },
+        {
+          "version": "fw-lut-map-v1",
+          "id": 2,
+          "materialId": 2,
+          "lutId": 2,
+          "source": "emitterId",
+          "channel": "rgba",
+          "destination": "color",
+          "addressMode": "clamp",
+          "inputMin": 1,
+          "inputMax": 16,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 0,
+          "outputMax": 65535
+        },
+        {
+          "version": "fw-lut-map-v1",
+          "id": 3,
+          "materialId": 3,
+          "lutId": 3,
+          "source": "lifetimeProgressQ16",
+          "channel": "rgba",
+          "destination": "color",
+          "addressMode": "clamp",
+          "inputMin": 0,
+          "inputMax": 65536,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 0,
+          "outputMax": 65535
+        },
+        {
+          "version": "fw-lut-map-v1",
+          "id": 4,
+          "materialId": 4,
+          "lutId": 4,
+          "source": "lifetimeProgressQ16",
+          "channel": "rgba",
+          "destination": "color",
+          "addressMode": "clamp",
+          "inputMin": 0,
+          "inputMax": 65536,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 0,
+          "outputMax": 65535
+        },
+        {
+          "version": "fw-lut-map-v1",
+          "id": 5,
+          "materialId": 3,
+          "lutId": 5,
+          "source": "ageTicks",
+          "channel": "logic",
+          "destination": "steeringMultiplierQ16",
+          "addressMode": "clamp",
+          "inputMin": 0,
+          "inputMax": 67,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 12000,
+          "outputMax": 65536
+        }
+      ]
+    },
+    "commands": [
+      {
+        "version": "fw-command-v1",
+        "id": 10,
+        "tick": 20,
+        "type": "release-burst",
+        "emitterId": 1,
+        "count": 10
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 20,
+        "tick": 30,
+        "type": "release-burst",
+        "emitterId": 4,
+        "count": 10
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 30,
+        "tick": 43,
+        "type": "set-emitter-rate",
+        "emitterId": 7,
+        "rate": 0
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 40,
+        "tick": 56,
+        "type": "set-emitter-rate",
+        "emitterId": 7,
+        "rate": 1
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 50,
+        "tick": 64,
+        "type": "set-field-enabled",
+        "fieldId": 2,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 60,
+        "tick": 70,
+        "type": "set-field-enabled",
+        "fieldId": 3,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 70,
+        "tick": 80,
+        "type": "set-field-enabled",
+        "fieldId": 5,
+        "enabled": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 80,
+        "tick": 91,
+        "type": "set-simulation-frozen",
+        "frozen": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 90,
+        "tick": 96,
+        "type": "set-simulation-frozen",
+        "frozen": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 100,
+        "tick": 100,
+        "type": "set-field-enabled",
+        "fieldId": 6,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 110,
+        "tick": 112,
+        "type": "set-emitter-rate",
+        "emitterId": 13,
+        "rate": 0
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 120,
+        "tick": 128,
+        "type": "set-field-enabled",
+        "fieldId": 2,
+        "enabled": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 130,
+        "tick": 142,
+        "type": "set-field-enabled",
+        "fieldId": 3,
+        "enabled": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 140,
+        "tick": 150,
+        "type": "set-field-enabled",
+        "fieldId": 5,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 150,
+        "tick": 156,
+        "type": "release-burst",
+        "emitterId": 16,
+        "count": 12
+      }
+    ],
+    "lineage": null
+  },
+  "seed": 1800529875,
+  "schemaVersion": "fw-recipe-v1",
+  "engineVersion": "fw-agents-v1",
+  "targetTick": 168,
+  "crop": {
+    "widthPx": 448,
+    "heightPx": 448,
+    "center": {
+      "chunkX": 0,
+      "chunkY": 0,
+      "localX": 8388608,
+      "localY": 7340032
+    },
+    "unitsPerPixelQ16": 32768
+  },
+  "widthPx": 448,
+  "heightPx": 448,
+  "unitsPerPixelQ16": 32768,
+  "backgroundRgba8": [
+    9,
+    11,
+    8,
+    255
+  ],
+  "pixelFormat": "rgba8",
+  "rawRgbaHash": "3b821e3737598e0a",
+  "stateHash": "9c6e2316df297b9f",
+  "depositionHash": "a698b6160db85305",
+  "resultHash": "8ff150b7d713ab3c",
+  "lineage": null
+}
