@@ -130,6 +130,8 @@ jobs:
         run: node scripts/infinite-browser-smoke.mjs ${{ matrix.browser }}
       - name: Exercise FW-014 presets, telemetry, and keyboard accessibility
         run: node scripts/release-browser-smoke.mjs ${{ matrix.browser }}
+      - name: Exercise offline canonical artwork review in real browser
+        run: node scripts/gallery-review-browser-smoke.mjs ${{ matrix.browser }}
       - name: Exercise FW-015 WebGPU equivalence research gate
         run: node scripts/gpu-research-browser-smoke.mjs ${{ matrix.browser }}
       - name: Upload browser smoke evidence
@@ -145,6 +147,8 @@ jobs:
             export-smoke-${{ matrix.browser }}.log
             infinite-smoke-${{ matrix.browser }}.log
             release-smoke-${{ matrix.browser }}.log
+            gallery-review-smoke-${{ matrix.browser }}.log
+            gallery-review-smoke-${{ matrix.browser }}.png
             gpu-research-smoke-${{ matrix.browser }}.log
             browser-server.log
             xvfb.log
