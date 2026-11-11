@@ -1,0 +1,794 @@
+{
+  "version": "fw-variant-atlas-v1",
+  "title": "The Negative Loom — four channels after the crossing",
+  "sourceMainCommit": "a940b79f8ae87a3f8f475283155bc97fadc62313",
+  "parent": {
+    "presetId": "first-weave",
+    "recipeHash": "bb1a24bc2c9cf0bc",
+    "rawRgbaHash": "020ced7835040f5e"
+  },
+  "mutationVersion": "fw-mutation-v1",
+  "mutationSeed": 1315932705,
+  "targetTick": 180,
+  "earlyTick": 24,
+  "crop": {
+    "widthPx": 192,
+    "heightPx": 144,
+    "center": {
+      "chunkX": 0,
+      "chunkY": 0,
+      "localX": 9437184,
+      "localY": 8650752
+    },
+    "unitsPerPixelQ16": 65536
+  },
+  "agentCapacity": 4096,
+  "maxDepositions": 250000,
+  "candidateCount": 30,
+  "selectionCriteria": "Exact canonical RGBA uniqueness, occupied-pixel bounds, 16px-cell coverage, parent silhouette XOR >=70, pairwise XOR >=110; hue-only differences cannot qualify.",
+  "candidates": [
+    {
+      "siblingIndex": 0,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 0,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "005392c3c2886be3",
+      "rawRgbaHash": "e80f5e9c94959f43",
+      "occupiedPixels": 330,
+      "coveredCells": 13,
+      "parentSilhouetteXor": 383,
+      "operationTypes": [
+        "move-emitter",
+        "swap-adjacent-fields",
+        "perturb-material-parameter",
+        "derive-sibling-seed",
+        "substitute-lut",
+        "adjust-field-strength-scale"
+      ]
+    },
+    {
+      "siblingIndex": 1,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 1,
+        "scope": "emitters",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "recipeHash": "e8cec0e09de99716",
+      "rawRgbaHash": "362fe5a7fefee02d",
+      "occupiedPixels": 618,
+      "coveredCells": 16,
+      "parentSilhouetteXor": 43,
+      "operationTypes": [
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 2,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 2,
+        "scope": "seed",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "recipeHash": "20f932603f8858e6",
+      "rawRgbaHash": "114d932f1074dcde",
+      "occupiedPixels": 734,
+      "coveredCells": 20,
+      "parentSilhouetteXor": 147,
+      "operationTypes": [
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "siblingIndex": 3,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 3,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "b30e0f2cfeeadf46",
+      "rawRgbaHash": "8c5c3fd333b8b058",
+      "occupiedPixels": 487,
+      "coveredCells": 14,
+      "parentSilhouetteXor": 504,
+      "operationTypes": [
+        "substitute-lut",
+        "move-emitter",
+        "derive-sibling-seed",
+        "swap-adjacent-fields",
+        "adjust-field-strength-scale",
+        "perturb-material-parameter"
+      ]
+    },
+    {
+      "siblingIndex": 4,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 4,
+        "scope": "fields",
+        "intensity": "bold",
+        "operationCount": 2
+      },
+      "recipeHash": "25aba3f4125b3137",
+      "rawRgbaHash": "2c660b03def03865",
+      "occupiedPixels": 698,
+      "coveredCells": 20,
+      "parentSilhouetteXor": 139,
+      "operationTypes": [
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "siblingIndex": 5,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 5,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "2a1f20b77630dcf8",
+      "rawRgbaHash": "0e8b2b8621fe3c47",
+      "occupiedPixels": 886,
+      "coveredCells": 23,
+      "parentSilhouetteXor": 901,
+      "operationTypes": [
+        "swap-adjacent-fields",
+        "move-emitter",
+        "perturb-material-parameter",
+        "substitute-lut",
+        "adjust-field-strength-scale",
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "siblingIndex": 6,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 6,
+        "scope": "emitters",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "recipeHash": "28759b34d89cf954",
+      "rawRgbaHash": "bcdeb34c4768a626",
+      "occupiedPixels": 389,
+      "coveredCells": 16,
+      "parentSilhouetteXor": 272,
+      "operationTypes": [
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 7,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 7,
+        "scope": "seed",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "recipeHash": "6a0dd6267e4ca50c",
+      "rawRgbaHash": "05366a49eba61cb3",
+      "occupiedPixels": 726,
+      "coveredCells": 19,
+      "parentSilhouetteXor": 127,
+      "operationTypes": [
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "siblingIndex": 8,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 8,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "3b412c5116b76f24",
+      "rawRgbaHash": "09ab723f54a9bf4c",
+      "occupiedPixels": 595,
+      "coveredCells": 19,
+      "parentSilhouetteXor": 616,
+      "operationTypes": [
+        "perturb-material-parameter",
+        "derive-sibling-seed",
+        "move-emitter",
+        "swap-adjacent-fields",
+        "adjust-field-strength-scale",
+        "substitute-lut"
+      ]
+    },
+    {
+      "siblingIndex": 9,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 9,
+        "scope": "fields",
+        "intensity": "bold",
+        "operationCount": 2
+      },
+      "recipeHash": "4b38b5b4406128dd",
+      "rawRgbaHash": "6b513482d175857b",
+      "occupiedPixels": 648,
+      "coveredCells": 20,
+      "parentSilhouetteXor": 75,
+      "operationTypes": [
+        "swap-adjacent-fields",
+        "adjust-field-strength-scale"
+      ]
+    },
+    {
+      "siblingIndex": 10,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 10,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "d9b04ffb93f9c70f",
+      "rawRgbaHash": "6e497570de520d48",
+      "occupiedPixels": 640,
+      "coveredCells": 15,
+      "parentSilhouetteXor": 249,
+      "operationTypes": [
+        "adjust-field-strength-scale",
+        "perturb-material-parameter",
+        "move-emitter",
+        "derive-sibling-seed",
+        "swap-adjacent-fields",
+        "substitute-lut"
+      ]
+    },
+    {
+      "siblingIndex": 11,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 11,
+        "scope": "emitters",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "recipeHash": "128373b3e086cfde",
+      "rawRgbaHash": "3341cd1b402ff82e",
+      "occupiedPixels": 1029,
+      "coveredCells": 25,
+      "parentSilhouetteXor": 912,
+      "operationTypes": [
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 12,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 12,
+        "scope": "seed",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "recipeHash": "2606e7c21af03747",
+      "rawRgbaHash": "9d1b6db8b16b5ccf",
+      "occupiedPixels": 700,
+      "coveredCells": 20,
+      "parentSilhouetteXor": 101,
+      "operationTypes": [
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "siblingIndex": 13,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 13,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "9363e18f844620d7",
+      "rawRgbaHash": "779c1429153ad8e2",
+      "occupiedPixels": 593,
+      "coveredCells": 17,
+      "parentSilhouetteXor": 374,
+      "operationTypes": [
+        "adjust-field-strength-scale",
+        "perturb-material-parameter",
+        "swap-adjacent-fields",
+        "move-emitter",
+        "derive-sibling-seed",
+        "substitute-lut"
+      ]
+    },
+    {
+      "siblingIndex": 14,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 14,
+        "scope": "fields",
+        "intensity": "bold",
+        "operationCount": 2
+      },
+      "recipeHash": "9b50027ebde07c15",
+      "rawRgbaHash": "020ced7835040f5e",
+      "occupiedPixels": 661,
+      "coveredCells": 20,
+      "parentSilhouetteXor": 0,
+      "operationTypes": [
+        "swap-adjacent-fields",
+        "adjust-field-strength-scale"
+      ]
+    },
+    {
+      "siblingIndex": 15,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 15,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "3e1253ba41b41d37",
+      "rawRgbaHash": "73fae6ad2ccd418d",
+      "occupiedPixels": 693,
+      "coveredCells": 20,
+      "parentSilhouetteXor": 172,
+      "operationTypes": [
+        "move-emitter",
+        "adjust-field-strength-scale",
+        "substitute-lut",
+        "derive-sibling-seed",
+        "perturb-material-parameter",
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "siblingIndex": 16,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 16,
+        "scope": "emitters",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "recipeHash": "822414ed8958fa2b",
+      "rawRgbaHash": "ed7bdf3348c5efc9",
+      "occupiedPixels": 649,
+      "coveredCells": 17,
+      "parentSilhouetteXor": 40,
+      "operationTypes": [
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 17,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 17,
+        "scope": "seed",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "recipeHash": "e4db255e55641f2e",
+      "rawRgbaHash": "e5721d45dcdebb7c",
+      "occupiedPixels": 720,
+      "coveredCells": 20,
+      "parentSilhouetteXor": 149,
+      "operationTypes": [
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "siblingIndex": 18,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 18,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "56b0694c9f1fe417",
+      "rawRgbaHash": "a6b11bd278ddfcca",
+      "occupiedPixels": 583,
+      "coveredCells": 21,
+      "parentSilhouetteXor": 548,
+      "operationTypes": [
+        "swap-adjacent-fields",
+        "substitute-lut",
+        "adjust-field-strength-scale",
+        "perturb-material-parameter",
+        "derive-sibling-seed",
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 19,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 19,
+        "scope": "fields",
+        "intensity": "bold",
+        "operationCount": 2
+      },
+      "recipeHash": "0e76ab79d8c74a20",
+      "rawRgbaHash": "020ced7835040f5e",
+      "occupiedPixels": 661,
+      "coveredCells": 20,
+      "parentSilhouetteXor": 0,
+      "operationTypes": [
+        "swap-adjacent-fields",
+        "adjust-field-strength-scale"
+      ]
+    },
+    {
+      "siblingIndex": 20,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 20,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "abce9fe8a32629a9",
+      "rawRgbaHash": "12206daadf5b3a75",
+      "occupiedPixels": 714,
+      "coveredCells": 18,
+      "parentSilhouetteXor": 729,
+      "operationTypes": [
+        "swap-adjacent-fields",
+        "perturb-material-parameter",
+        "substitute-lut",
+        "move-emitter",
+        "adjust-field-strength-scale",
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "siblingIndex": 21,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 21,
+        "scope": "emitters",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "recipeHash": "4694dc360bc6cb5e",
+      "rawRgbaHash": "bcdeb34c4768a626",
+      "occupiedPixels": 389,
+      "coveredCells": 16,
+      "parentSilhouetteXor": 272,
+      "operationTypes": [
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 22,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 22,
+        "scope": "seed",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "recipeHash": "f002feec04439bd3",
+      "rawRgbaHash": "0b38a15cc309a926",
+      "occupiedPixels": 654,
+      "coveredCells": 20,
+      "parentSilhouetteXor": 115,
+      "operationTypes": [
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "siblingIndex": 23,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 23,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "9087d1058fe99cea",
+      "rawRgbaHash": "774d3d63032fc751",
+      "occupiedPixels": 671,
+      "coveredCells": 16,
+      "parentSilhouetteXor": 136,
+      "operationTypes": [
+        "perturb-material-parameter",
+        "derive-sibling-seed",
+        "move-emitter",
+        "adjust-field-strength-scale",
+        "substitute-lut",
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "siblingIndex": 24,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 24,
+        "scope": "fields",
+        "intensity": "bold",
+        "operationCount": 2
+      },
+      "recipeHash": "56bbd4a11ef20347",
+      "rawRgbaHash": "020ced7835040f5e",
+      "occupiedPixels": 661,
+      "coveredCells": 20,
+      "parentSilhouetteXor": 0,
+      "operationTypes": [
+        "swap-adjacent-fields",
+        "adjust-field-strength-scale"
+      ]
+    },
+    {
+      "siblingIndex": 25,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 25,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "af1e0be83696fbaf",
+      "rawRgbaHash": "94a860f31ff5043d",
+      "occupiedPixels": 877,
+      "coveredCells": 22,
+      "parentSilhouetteXor": 322,
+      "operationTypes": [
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields",
+        "perturb-material-parameter",
+        "move-emitter",
+        "substitute-lut",
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "siblingIndex": 26,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 26,
+        "scope": "emitters",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "recipeHash": "c8e1880e21569da1",
+      "rawRgbaHash": "b8cce9e65772dbdc",
+      "occupiedPixels": 684,
+      "coveredCells": 20,
+      "parentSilhouetteXor": 75,
+      "operationTypes": [
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 27,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 27,
+        "scope": "seed",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "recipeHash": "b3957d63316851f6",
+      "rawRgbaHash": "275c44abe8f4d3e8",
+      "occupiedPixels": 704,
+      "coveredCells": 20,
+      "parentSilhouetteXor": 123,
+      "operationTypes": [
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "siblingIndex": 28,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 28,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "7f6814293011fead",
+      "rawRgbaHash": "b3af2edf4c0d9fb0",
+      "occupiedPixels": 450,
+      "coveredCells": 16,
+      "parentSilhouetteXor": 407,
+      "operationTypes": [
+        "move-emitter",
+        "substitute-lut",
+        "perturb-material-parameter",
+        "swap-adjacent-fields",
+        "adjust-field-strength-scale",
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "siblingIndex": 29,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 29,
+        "scope": "fields",
+        "intensity": "bold",
+        "operationCount": 2
+      },
+      "recipeHash": "275e160409797650",
+      "rawRgbaHash": "020ced7835040f5e",
+      "occupiedPixels": 661,
+      "coveredCells": 20,
+      "parentSilhouetteXor": 0,
+      "operationTypes": [
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields"
+      ]
+    }
+  ],
+  "finalists": [
+    {
+      "panel": 2,
+      "siblingIndex": 11,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 11,
+        "scope": "emitters",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "lineageIdentity": "4a6c6cd6185e428f",
+      "recipeHash": "128373b3e086cfde",
+      "rawRgbaHash": "3341cd1b402ff82e",
+      "stateHash": "3e8166dadc8838a4",
+      "depositionHash": "ae8d74c6ae5f8eee",
+      "resultHash": "ffb62c3063c4c19e",
+      "occupiedPixels": 1029,
+      "coveredCells": 25,
+      "parentSilhouetteXor": 912,
+      "earlyLateSilhouetteXor": 790,
+      "earlyRawRgbaHash": "80ed089dcd2e4704",
+      "operationTypes": [
+        "move-emitter"
+      ]
+    },
+    {
+      "panel": 3,
+      "siblingIndex": 5,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 5,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "lineageIdentity": "cbffa7fb7a7e07f4",
+      "recipeHash": "2a1f20b77630dcf8",
+      "rawRgbaHash": "0e8b2b8621fe3c47",
+      "stateHash": "8dac5b1764961b03",
+      "depositionHash": "68f6fe76922ebe3e",
+      "resultHash": "2a5813c5a4fe66b5",
+      "occupiedPixels": 886,
+      "coveredCells": 23,
+      "parentSilhouetteXor": 901,
+      "earlyLateSilhouetteXor": 743,
+      "earlyRawRgbaHash": "1b24bba9dd52ad04",
+      "operationTypes": [
+        "swap-adjacent-fields",
+        "move-emitter",
+        "perturb-material-parameter",
+        "substitute-lut",
+        "adjust-field-strength-scale",
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "panel": 4,
+      "siblingIndex": 20,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 20,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "lineageIdentity": "f2fa129a45ef7fe0",
+      "recipeHash": "abce9fe8a32629a9",
+      "rawRgbaHash": "12206daadf5b3a75",
+      "stateHash": "986efa6901c99b5f",
+      "depositionHash": "2f36f827d5dc9cb6",
+      "resultHash": "047c2670e4955e55",
+      "occupiedPixels": 714,
+      "coveredCells": 18,
+      "parentSilhouetteXor": 729,
+      "earlyLateSilhouetteXor": 583,
+      "earlyRawRgbaHash": "56b05a5c79ae8e32",
+      "operationTypes": [
+        "swap-adjacent-fields",
+        "perturb-material-parameter",
+        "substitute-lut",
+        "move-emitter",
+        "adjust-field-strength-scale",
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "panel": 5,
+      "siblingIndex": 8,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 8,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "lineageIdentity": "ee31b587a0e81a09",
+      "recipeHash": "3b412c5116b76f24",
+      "rawRgbaHash": "09ab723f54a9bf4c",
+      "stateHash": "c35994c78fe6ea84",
+      "depositionHash": "482a391b4916b50c",
+      "resultHash": "a2fd346086b2b954",
+      "occupiedPixels": 595,
+      "coveredCells": 19,
+      "parentSilhouetteXor": 616,
+      "earlyLateSilhouetteXor": 457,
+      "earlyRawRgbaHash": "4aa035646ab99439",
+      "operationTypes": [
+        "perturb-material-parameter",
+        "derive-sibling-seed",
+        "move-emitter",
+        "swap-adjacent-fields",
+        "adjust-field-strength-scale",
+        "substitute-lut"
+      ]
+    },
+    {
+      "panel": 6,
+      "siblingIndex": 18,
+      "config": {
+        "mutationSeed": 1315932705,
+        "siblingIndex": 18,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "lineageIdentity": "23de95d70db0bded",
+      "recipeHash": "56b0694c9f1fe417",
+      "rawRgbaHash": "a6b11bd278ddfcca",
+      "stateHash": "49cb5c9391403e85",
+      "depositionHash": "05b9d2297bde00d2",
+      "resultHash": "e0c47fcd8bada3e5",
+      "occupiedPixels": 583,
+      "coveredCells": 21,
+      "parentSilhouetteXor": 548,
+      "earlyLateSilhouetteXor": 509,
+      "earlyRawRgbaHash": "d111734a73337700",
+      "operationTypes": [
+        "swap-adjacent-fields",
+        "substitute-lut",
+        "adjust-field-strength-scale",
+        "perturb-material-parameter",
+        "derive-sibling-seed",
+        "move-emitter"
+      ]
+    }
+  ],
+  "contactSheet": {
+    "widthPx": 600,
+    "heightPx": 306,
+    "displayOnly": true,
+    "rawRgbaHash": "2b79a18417f75d5d"
+  },
+  "selection": {
+    "siblingIndex": 11,
+    "rationale": "Preliminary canonical morphology rank. Editorial visual acceptance is pending an actual inspection of the emitted contact sheet."
+  }
+}
