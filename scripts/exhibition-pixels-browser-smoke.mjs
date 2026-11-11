@@ -293,6 +293,42 @@ try {
         ids:offlinePage.articleIds, anchors:offlinePage.anchors,
         scripts:offlinePage.scriptCount, remote:offlinePage.externalResources }));
   }
+  // Exercise data: download payloads in the real reopened offline document
+  // without fetch(blob:) / fetch(data:), both forbidden by the strict CSP.
+  // File-manager persistence remains a separate physical owner gate.
+  const offlineDownloads = await execute(`return [...document.querySelectorAll('.work article.work')].map(article => {
+    const provenance = article.querySelector('details pre')?.textContent;
+    const record = JSON.parse(provenance);
+    const links = [...article.querySelectorAll('.work-actions a')];
+    return {
+      id: article.id.replace(/^work-/, ''),
+      links: links.map(link => {
+        const uri = link.getAttribute('href') || '';
+        const prefix = 'data:application/json;base64,';
+        if (!uri.startsWith(prefix)) return { valid: false };
+        const bytes = Uint8Array.from(atob(uri.slice(prefix.length)), char => char.charCodeAt(0));
+        const data = new TextDecoder().decode(bytes);
+        const parsed = JSON.parse(data);
+        return { valid: true, download: link.download, isRecipe: link.textContent.includes('importable recipe'),
+          matchesSource: link.textContent.includes('importable recipe')
+            ? JSON.stringify(parsed) === JSON.stringify(record.recipe) : data === provenance,
+          seed: link.textContent.includes('importable recipe') ? parsed.seed : parsed.seed,
+          length: bytes.length };
+      })
+    };
+  })`);
+  if (offlineDownloads.length !== 4 || offlineDownloads.some((record) => {
+    const canonical = offlineDecoded.find((item) => item.id === record.id);
+    return !canonical || record.links.length !== 2 ||
+      record.links.some((link) => !link.valid || !link.matchesSource || link.length < 16) ||
+      !record.links[0].isRecipe || record.links[1].isRecipe ||
+      !record.links[0].download.includes(record.id) ||
+      !record.links[1].download.includes(canonical.hash);
+  })) {
+    throw new Error('Offline accepted recipe/provenance downloads are invalid: ' + JSON.stringify(offlineDownloads));
+  }
+  const downloadFocus = await execute("const link=document.querySelector('.work-actions a');link.focus();return document.activeElement===link");
+  if (!downloadFocus) throw new Error('Offline accepted recipe download is not keyboard focusable.');
   const offlineScreenshot = await request('GET','/session/' + sessionId + '/screenshot');
   if (!offlineScreenshot?.value) throw new Error('Offline board desktop screenshot absent.');
   await writeFile('exhibition-accepted-offline-' + browser + '.png',
@@ -315,7 +351,7 @@ try {
     Buffer.from(offlineNarrowScreenshot.value,'base64'));
   await writeFile('exhibition-accepted-offline-' + browser + '.json',
     JSON.stringify({ browser, source:'existing study export HTML Blob; Node decoded RGBA8 independently',
-      offlineDecoded, verifiedFromFileUrl:true, offlineNarrow,
+      offlineDecoded, offlineDownloads, verifiedFromFileUrl:true, offlineNarrow,
       title:offlinePage.title, csp:offlinePage.csp },null,2) + '\n');
 
   console.log(JSON.stringify({ browser, status:'four actual decoded canonical CPU images', hashes:result.tiles.map((tile) => tile.hash), selected:selected.id }, null, 2));
