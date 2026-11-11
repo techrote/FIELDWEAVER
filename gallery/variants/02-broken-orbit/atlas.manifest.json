@@ -1,0 +1,553 @@
+{
+  "version": "fw-variant-atlas-v1",
+  "title": "Broken Orbit — Interrupted Cadence",
+  "sourceMainCommit": "f4a3909bf9fd2a7ec0c4b073820eddbc6422752b",
+  "parent": {
+    "presetId": "timeline-pulse",
+    "recipeHash": "c94aed7bfc18a40d",
+    "rawRgbaHash": "a22daecbd316014a"
+  },
+  "mutationSeed": 2465515121,
+  "targetTick": 180,
+  "earlierComparisonTick": 16,
+  "crop": {
+    "widthPx": 144,
+    "heightPx": 112,
+    "center": {
+      "chunkX": 0,
+      "chunkY": 0,
+      "localX": 6553600,
+      "localY": 7602176
+    },
+    "unitsPerPixelQ16": 65536
+  },
+  "agentCapacity": 4096,
+  "maxDepositions": 250000,
+  "candidateCount": 16,
+  "criterion": "Late-tick spatial silhouette XOR from immutable Timeline Pulse parent, temporal change from tick 16 to 180, spatial coverage and pairwise morphology novelty; palette-only differences rejected",
+  "selectedSiblingIndex": 0,
+  "selectedRecipeHash": "c020600555bf3802",
+  "selectedRawRgbaHash": "f588c5f4d356ff95",
+  "topScoringSiblingIndex": 10,
+  "selectionBasis": "Actual FW-012 image inspection favors sibling 0: continuous cyan arc, opposed green/violet fork and deliberate empty centre. Numerical rank 1 was sparser.",
+  "candidates": [
+    {
+      "siblingIndex": 0,
+      "config": {
+        "mutationSeed": 2465515121,
+        "siblingIndex": 0,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "c020600555bf3802",
+      "rawRgbaHash": "f588c5f4d356ff95",
+      "earlyRawRgbaHash": "4b207fef815debea",
+      "temporalShapeChange": 803,
+      "occupiedPixels": 894,
+      "shapeDifference": 1200,
+      "coveredGridCells": 20,
+      "operationTypes": [
+        "adjust-field-strength-scale",
+        "perturb-material-parameter",
+        "derive-sibling-seed",
+        "substitute-lut",
+        "swap-adjacent-fields",
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 1,
+      "config": {
+        "mutationSeed": 2465515121,
+        "siblingIndex": 1,
+        "scope": "fields",
+        "intensity": "bold",
+        "operationCount": 2
+      },
+      "recipeHash": "9f0818048a9bf84e",
+      "rawRgbaHash": "a22daecbd316014a",
+      "earlyRawRgbaHash": "b862bdfec5ed1c17",
+      "temporalShapeChange": 1039,
+      "occupiedPixels": 1130,
+      "shapeDifference": 0,
+      "coveredGridCells": 24,
+      "operationTypes": [
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "siblingIndex": 2,
+      "config": {
+        "mutationSeed": 2465515121,
+        "siblingIndex": 2,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "c66b8fb86b75cd0e",
+      "rawRgbaHash": "9ed87bb488bf6a4e",
+      "earlyRawRgbaHash": "dec8e20add958465",
+      "temporalShapeChange": 641,
+      "occupiedPixels": 699,
+      "shapeDifference": 633,
+      "coveredGridCells": 14,
+      "operationTypes": [
+        "swap-adjacent-fields",
+        "substitute-lut",
+        "move-emitter",
+        "derive-sibling-seed",
+        "adjust-field-strength-scale",
+        "perturb-material-parameter"
+      ]
+    },
+    {
+      "siblingIndex": 3,
+      "config": {
+        "mutationSeed": 2465515121,
+        "siblingIndex": 3,
+        "scope": "emitters",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "recipeHash": "2b79af7b632c6c47",
+      "rawRgbaHash": "67aba1e435210558",
+      "earlyRawRgbaHash": "b3c94edc37f960ab",
+      "temporalShapeChange": 882,
+      "occupiedPixels": 970,
+      "shapeDifference": 160,
+      "coveredGridCells": 22,
+      "operationTypes": [
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 4,
+      "config": {
+        "mutationSeed": 2465515121,
+        "siblingIndex": 4,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "a21236414e67330c",
+      "rawRgbaHash": "3d53698e2b70751d",
+      "earlyRawRgbaHash": "79c78eb5a34e156d",
+      "temporalShapeChange": 772,
+      "occupiedPixels": 862,
+      "shapeDifference": 818,
+      "coveredGridCells": 19,
+      "operationTypes": [
+        "derive-sibling-seed",
+        "perturb-material-parameter",
+        "move-emitter",
+        "substitute-lut",
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "siblingIndex": 5,
+      "config": {
+        "mutationSeed": 2465515121,
+        "siblingIndex": 5,
+        "scope": "fields",
+        "intensity": "bold",
+        "operationCount": 2
+      },
+      "recipeHash": "709a8c3c2f582e60",
+      "rawRgbaHash": "a22daecbd316014a",
+      "earlyRawRgbaHash": "b862bdfec5ed1c17",
+      "temporalShapeChange": 1039,
+      "occupiedPixels": 1130,
+      "shapeDifference": 0,
+      "coveredGridCells": 24,
+      "operationTypes": [
+        "swap-adjacent-fields",
+        "adjust-field-strength-scale"
+      ]
+    },
+    {
+      "siblingIndex": 6,
+      "config": {
+        "mutationSeed": 2465515121,
+        "siblingIndex": 6,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "bc937d5b9abe50bd",
+      "rawRgbaHash": "22c1f7613d98e2cb",
+      "earlyRawRgbaHash": "74113f37d46245d2",
+      "temporalShapeChange": 975,
+      "occupiedPixels": 1055,
+      "shapeDifference": 1085,
+      "coveredGridCells": 19,
+      "operationTypes": [
+        "move-emitter",
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields",
+        "substitute-lut",
+        "perturb-material-parameter",
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "siblingIndex": 7,
+      "config": {
+        "mutationSeed": 2465515121,
+        "siblingIndex": 7,
+        "scope": "seed",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "recipeHash": "73ee9f807aa1bfa4",
+      "rawRgbaHash": "e4ae5e0a58cce895",
+      "earlyRawRgbaHash": "731ab994cf350f91",
+      "temporalShapeChange": 1043,
+      "occupiedPixels": 1135,
+      "shapeDifference": 329,
+      "coveredGridCells": 23,
+      "operationTypes": [
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "siblingIndex": 8,
+      "config": {
+        "mutationSeed": 2465515121,
+        "siblingIndex": 8,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "b08c53d9e095c71d",
+      "rawRgbaHash": "abfe65c45829fcbf",
+      "earlyRawRgbaHash": "3b48a04eac1b11ac",
+      "temporalShapeChange": 660,
+      "occupiedPixels": 727,
+      "shapeDifference": 673,
+      "coveredGridCells": 16,
+      "operationTypes": [
+        "move-emitter",
+        "perturb-material-parameter",
+        "swap-adjacent-fields",
+        "substitute-lut",
+        "adjust-field-strength-scale",
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "siblingIndex": 9,
+      "config": {
+        "mutationSeed": 2465515121,
+        "siblingIndex": 9,
+        "scope": "emitters",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "recipeHash": "11eeda62f894a8c3",
+      "rawRgbaHash": "a841cb2aabeec164",
+      "earlyRawRgbaHash": "44e356286b74c1f0",
+      "temporalShapeChange": 1012,
+      "occupiedPixels": 1102,
+      "shapeDifference": 28,
+      "coveredGridCells": 23,
+      "operationTypes": [
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 10,
+      "config": {
+        "mutationSeed": 2465515121,
+        "siblingIndex": 10,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "bc724cd41f5e0d5f",
+      "rawRgbaHash": "30388b18359bd6eb",
+      "earlyRawRgbaHash": "76f19a6c6c08cd86",
+      "temporalShapeChange": 807,
+      "occupiedPixels": 911,
+      "shapeDifference": 1253,
+      "coveredGridCells": 18,
+      "operationTypes": [
+        "perturb-material-parameter",
+        "derive-sibling-seed",
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields",
+        "substitute-lut",
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 11,
+      "config": {
+        "mutationSeed": 2465515121,
+        "siblingIndex": 11,
+        "scope": "fields",
+        "intensity": "bold",
+        "operationCount": 2
+      },
+      "recipeHash": "dad998464592f820",
+      "rawRgbaHash": "a22daecbd316014a",
+      "earlyRawRgbaHash": "b862bdfec5ed1c17",
+      "temporalShapeChange": 1039,
+      "occupiedPixels": 1130,
+      "shapeDifference": 0,
+      "coveredGridCells": 24,
+      "operationTypes": [
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "siblingIndex": 12,
+      "config": {
+        "mutationSeed": 2465515121,
+        "siblingIndex": 12,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "34334e062cfc975c",
+      "rawRgbaHash": "299c26e445bec0a6",
+      "earlyRawRgbaHash": "48dca15e74e44511",
+      "temporalShapeChange": 954,
+      "occupiedPixels": 1053,
+      "shapeDifference": 951,
+      "coveredGridCells": 20,
+      "operationTypes": [
+        "derive-sibling-seed",
+        "move-emitter",
+        "swap-adjacent-fields",
+        "perturb-material-parameter",
+        "adjust-field-strength-scale",
+        "substitute-lut"
+      ]
+    },
+    {
+      "siblingIndex": 13,
+      "config": {
+        "mutationSeed": 2465515121,
+        "siblingIndex": 13,
+        "scope": "seed",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "recipeHash": "ef6d4dd4a5ef55f8",
+      "rawRgbaHash": "bbfae215d580324b",
+      "earlyRawRgbaHash": "2efec92995e0b005",
+      "temporalShapeChange": 1006,
+      "occupiedPixels": 1099,
+      "shapeDifference": 449,
+      "coveredGridCells": 24,
+      "operationTypes": [
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "siblingIndex": 14,
+      "config": {
+        "mutationSeed": 2465515121,
+        "siblingIndex": 14,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "recipeHash": "1f2915edf257f2fc",
+      "rawRgbaHash": "b480b7a439844db8",
+      "earlyRawRgbaHash": "d27d36b39409ac45",
+      "temporalShapeChange": 1006,
+      "occupiedPixels": 1094,
+      "shapeDifference": 358,
+      "coveredGridCells": 23,
+      "operationTypes": [
+        "derive-sibling-seed",
+        "swap-adjacent-fields",
+        "move-emitter",
+        "perturb-material-parameter",
+        "adjust-field-strength-scale",
+        "substitute-lut"
+      ]
+    },
+    {
+      "siblingIndex": 15,
+      "config": {
+        "mutationSeed": 2465515121,
+        "siblingIndex": 15,
+        "scope": "fields",
+        "intensity": "bold",
+        "operationCount": 2
+      },
+      "recipeHash": "73a3f9aeab52d64f",
+      "rawRgbaHash": "f6034ba755b13ba4",
+      "earlyRawRgbaHash": "baded02c262c8103",
+      "temporalShapeChange": 1039,
+      "occupiedPixels": 1130,
+      "shapeDifference": 60,
+      "coveredGridCells": 24,
+      "operationTypes": [
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields"
+      ]
+    }
+  ],
+  "finalists": [
+    {
+      "panel": 2,
+      "siblingIndex": 10,
+      "config": {
+        "mutationSeed": 2465515121,
+        "siblingIndex": 10,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "lineageIdentity": "cdd7dbb907a08929",
+      "recipeHash": "bc724cd41f5e0d5f",
+      "rawRgbaHash": "30388b18359bd6eb",
+      "stateHash": "34b2e0586abccc9d",
+      "depositionHash": "eb2f24447b6d7e67",
+      "resultHash": "3bba024b3d8102b4",
+      "occupiedPixels": 911,
+      "shapeDifference": 1253,
+      "temporalShapeChange": 807,
+      "coveredGridCells": 18,
+      "operationTypes": [
+        "perturb-material-parameter",
+        "derive-sibling-seed",
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields",
+        "substitute-lut",
+        "move-emitter"
+      ]
+    },
+    {
+      "panel": 3,
+      "siblingIndex": 0,
+      "config": {
+        "mutationSeed": 2465515121,
+        "siblingIndex": 0,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "lineageIdentity": "dbe9345dd13e9981",
+      "recipeHash": "c020600555bf3802",
+      "rawRgbaHash": "f588c5f4d356ff95",
+      "stateHash": "c1cb1ebcedfef527",
+      "depositionHash": "526be72cc5c2e0fb",
+      "resultHash": "c4cfbab25450b002",
+      "occupiedPixels": 894,
+      "shapeDifference": 1200,
+      "temporalShapeChange": 803,
+      "coveredGridCells": 20,
+      "operationTypes": [
+        "adjust-field-strength-scale",
+        "perturb-material-parameter",
+        "derive-sibling-seed",
+        "substitute-lut",
+        "swap-adjacent-fields",
+        "move-emitter"
+      ]
+    },
+    {
+      "panel": 4,
+      "siblingIndex": 6,
+      "config": {
+        "mutationSeed": 2465515121,
+        "siblingIndex": 6,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "lineageIdentity": "bfd3fe27d4721621",
+      "recipeHash": "bc937d5b9abe50bd",
+      "rawRgbaHash": "22c1f7613d98e2cb",
+      "stateHash": "2f45b6aa27a7a04c",
+      "depositionHash": "61cacbaf81ac682a",
+      "resultHash": "25856be4849744f4",
+      "occupiedPixels": 1055,
+      "shapeDifference": 1085,
+      "temporalShapeChange": 975,
+      "coveredGridCells": 19,
+      "operationTypes": [
+        "move-emitter",
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields",
+        "substitute-lut",
+        "perturb-material-parameter",
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "panel": 5,
+      "siblingIndex": 12,
+      "config": {
+        "mutationSeed": 2465515121,
+        "siblingIndex": 12,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "lineageIdentity": "a938525060fa08f0",
+      "recipeHash": "34334e062cfc975c",
+      "rawRgbaHash": "299c26e445bec0a6",
+      "stateHash": "c2054df4e11d772f",
+      "depositionHash": "4bf701597b3796e3",
+      "resultHash": "958a20caf3f5370a",
+      "occupiedPixels": 1053,
+      "shapeDifference": 951,
+      "temporalShapeChange": 954,
+      "coveredGridCells": 20,
+      "operationTypes": [
+        "derive-sibling-seed",
+        "move-emitter",
+        "swap-adjacent-fields",
+        "perturb-material-parameter",
+        "adjust-field-strength-scale",
+        "substitute-lut"
+      ]
+    },
+    {
+      "panel": 6,
+      "siblingIndex": 4,
+      "config": {
+        "mutationSeed": 2465515121,
+        "siblingIndex": 4,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "lineageIdentity": "70cc8e5c6d90043c",
+      "recipeHash": "a21236414e67330c",
+      "rawRgbaHash": "3d53698e2b70751d",
+      "stateHash": "5893c6726915304c",
+      "depositionHash": "b03f882d6a4c2f82",
+      "resultHash": "8382970cb5778ca6",
+      "occupiedPixels": 862,
+      "shapeDifference": 818,
+      "temporalShapeChange": 772,
+      "coveredGridCells": 19,
+      "operationTypes": [
+        "derive-sibling-seed",
+        "perturb-material-parameter",
+        "move-emitter",
+        "substitute-lut",
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields"
+      ]
+    }
+  ],
+  "contactSheet": {
+    "widthPx": 464,
+    "heightPx": 248,
+    "panels": "row-major parent then five selected siblings",
+    "displayOnly": true,
+    "rawRgbaHash": "cba7318fced4c659"
+  }
+}
