@@ -1,0 +1,2202 @@
+{
+  "version": "fw-export-provenance-v1",
+  "exportVersion": "fw-canonical-export-v1",
+  "rasterVersion": "fw-canonical-raster-v1",
+  "pngVersion": "fw-png-rgba8-v1",
+  "recipeHash": "90bd1ed3d7b6dbf5",
+  "recipe": {
+    "schemaVersion": "fw-recipe-v1",
+    "engineVersion": "fw-agents-v1",
+    "seed": 432525989,
+    "framing": {
+      "widthPx": 256,
+      "heightPx": 192,
+      "center": {
+        "chunkX": 0,
+        "chunkY": 0,
+        "localX": 8388608,
+        "localY": 7340032
+      },
+      "unitsPerPixelQ16": 49152
+    },
+    "fields": {
+      "format": "fw-fields-v1",
+      "nextId": 8,
+      "order": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "layers": [
+        {
+          "id": 1,
+          "kind": "vector",
+          "operator": "uniform",
+          "enabled": true,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 0,
+              "localY": 0
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "vectorXQ16": 130,
+            "vectorYQ16": -1050
+          },
+          "chunks": []
+        },
+        {
+          "id": 2,
+          "kind": "vector",
+          "operator": "turbulence",
+          "enabled": true,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 0,
+              "localY": 0
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "amplitudeQ16": 1000,
+            "cellSizeQ16": 1048576,
+            "seed": 595243466
+          },
+          "chunks": []
+        },
+        {
+          "id": 3,
+          "kind": "vector",
+          "operator": "vortex",
+          "enabled": false,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 9043968,
+              "localY": 7602176
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "radiusQ16": 2949120,
+            "strengthQ16": 9500
+          },
+          "chunks": []
+        },
+        {
+          "id": 4,
+          "kind": "vector",
+          "operator": "vortex",
+          "enabled": false,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 8716288,
+              "localY": 6881280
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "radiusQ16": 2228224,
+            "strengthQ16": -6500
+          },
+          "chunks": []
+        },
+        {
+          "id": 5,
+          "kind": "vector",
+          "operator": "direction-quantizer",
+          "enabled": false,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 0,
+              "localY": 0
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "sectors": 8
+          },
+          "chunks": []
+        },
+        {
+          "id": 6,
+          "kind": "vector",
+          "operator": "uniform",
+          "enabled": false,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 0,
+              "localY": 0
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "vectorXQ16": 4900,
+            "vectorYQ16": -3400
+          },
+          "chunks": []
+        },
+        {
+          "id": 7,
+          "kind": "vector",
+          "operator": "vortex",
+          "enabled": false,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 10682368,
+              "localY": 4849664
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "radiusQ16": 1966080,
+            "strengthQ16": -13500
+          },
+          "chunks": []
+        }
+      ]
+    },
+    "materials": [
+      {
+        "id": 1,
+        "kind": "ink",
+        "inertiaNumerator": 1,
+        "inertiaDenominator": 1,
+        "steeringNumerator": 1,
+        "steeringDenominator": 12,
+        "lifetimeTicks": 94,
+        "depositEvery": 1,
+        "primitive": "disc",
+        "radiusQ16": 24000,
+        "strengthQ16": 65536,
+        "quantizeAxis": false
+      },
+      {
+        "id": 2,
+        "kind": "filament",
+        "inertiaNumerator": 1,
+        "inertiaDenominator": 1,
+        "steeringNumerator": 1,
+        "steeringDenominator": 16,
+        "lifetimeTicks": 119,
+        "depositEvery": 1,
+        "primitive": "segment",
+        "radiusQ16": 26000,
+        "strengthQ16": 65536,
+        "quantizeAxis": false
+      },
+      {
+        "id": 3,
+        "kind": "dust",
+        "inertiaNumerator": 1,
+        "inertiaDenominator": 4,
+        "steeringNumerator": 3,
+        "steeringDenominator": 4,
+        "lifetimeTicks": 65,
+        "depositEvery": 2,
+        "primitive": "point",
+        "radiusQ16": 13500,
+        "strengthQ16": 55500,
+        "quantizeAxis": false
+      },
+      {
+        "id": 4,
+        "kind": "shard",
+        "inertiaNumerator": 1,
+        "inertiaDenominator": 1,
+        "steeringNumerator": 1,
+        "steeringDenominator": 9,
+        "lifetimeTicks": 63,
+        "depositEvery": 1,
+        "primitive": "segment",
+        "radiusQ16": 22000,
+        "strengthQ16": 65000,
+        "quantizeAxis": true
+      }
+    ],
+    "emitters": [
+      {
+        "id": 1,
+        "materialId": 2,
+        "startTick": 0,
+        "stopTick": 13,
+        "intervalTicks": 2,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8585216,
+            "localY": 10747904
+          },
+          "widthQ16": 11000,
+          "heightQ16": 11000
+        },
+        "velocityXQ16": -43691,
+        "velocityYQ16": -36158,
+        "velocityJitterQ16": 740
+      },
+      {
+        "id": 2,
+        "materialId": 1,
+        "startTick": 6,
+        "stopTick": 14,
+        "intervalTicks": 3,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8626504,
+            "localY": 10641736
+          },
+          "widthQ16": 6900,
+          "heightQ16": 6900
+        },
+        "velocityXQ16": -36300,
+        "velocityYQ16": -30042,
+        "velocityJitterQ16": 1200
+      },
+      {
+        "id": 3,
+        "materialId": 2,
+        "startTick": 3,
+        "stopTick": 16,
+        "intervalTicks": 2,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 4784128,
+            "localY": 7602176
+          },
+          "widthQ16": 11000,
+          "heightQ16": 11000
+        },
+        "velocityXQ16": 46704,
+        "velocityYQ16": -36158,
+        "velocityJitterQ16": 740
+      },
+      {
+        "id": 4,
+        "materialId": 1,
+        "startTick": 9,
+        "stopTick": 17,
+        "intervalTicks": 3,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 4943380,
+            "localY": 7496008
+          },
+          "widthQ16": 6900,
+          "heightQ16": 6900
+        },
+        "velocityXQ16": 38804,
+        "velocityYQ16": -30042,
+        "velocityJitterQ16": 1200
+      },
+      {
+        "id": 5,
+        "materialId": 2,
+        "startTick": 6,
+        "stopTick": 19,
+        "intervalTicks": 2,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8847360,
+            "localY": 4456448
+          },
+          "widthQ16": 11000,
+          "heightQ16": 11000
+        },
+        "velocityXQ16": 41431,
+        "velocityYQ16": 36911,
+        "velocityJitterQ16": 740
+      },
+      {
+        "id": 6,
+        "materialId": 1,
+        "startTick": 12,
+        "stopTick": 20,
+        "intervalTicks": 3,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8999731,
+            "localY": 4445635
+          },
+          "widthQ16": 6900,
+          "heightQ16": 6900
+        },
+        "velocityXQ16": 34423,
+        "velocityYQ16": 30668,
+        "velocityJitterQ16": 1200
+      },
+      {
+        "id": 7,
+        "materialId": 2,
+        "startTick": 9,
+        "stopTick": 22,
+        "intervalTicks": 2,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12451840,
+            "localY": 7667712
+          },
+          "widthQ16": 11000,
+          "heightQ16": 11000
+        },
+        "velocityXQ16": -44444,
+        "velocityYQ16": 35405,
+        "velocityJitterQ16": 740
+      },
+      {
+        "id": 8,
+        "materialId": 1,
+        "startTick": 15,
+        "stopTick": 23,
+        "intervalTicks": 3,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12492145,
+            "localY": 7654932
+          },
+          "widthQ16": 6900,
+          "heightQ16": 6900
+        },
+        "velocityXQ16": -36926,
+        "velocityYQ16": 29416,
+        "velocityJitterQ16": 1200
+      },
+      {
+        "id": 9,
+        "materialId": 2,
+        "startTick": 17,
+        "stopTick": 22,
+        "intervalTicks": 3,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8110080,
+            "localY": 10354688
+          },
+          "widthQ16": 4800,
+          "heightQ16": 4800
+        },
+        "velocityXQ16": 47454,
+        "velocityYQ16": -37663,
+        "velocityJitterQ16": 700
+      },
+      {
+        "id": 10,
+        "materialId": 1,
+        "startTick": 25,
+        "stopTick": 30,
+        "intervalTicks": 3,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 9068544,
+            "localY": 10362880
+          },
+          "widthQ16": 4800,
+          "heightQ16": 4800
+        },
+        "velocityXQ16": -43408,
+        "velocityYQ16": -36252,
+        "velocityJitterQ16": 650
+      },
+      {
+        "id": 11,
+        "materialId": 2,
+        "startTick": 20,
+        "stopTick": 25,
+        "intervalTicks": 3,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 7634944,
+            "localY": 9961472
+          },
+          "widthQ16": 4800,
+          "heightQ16": 4800
+        },
+        "velocityXQ16": 47753,
+        "velocityYQ16": -37763,
+        "velocityJitterQ16": 700
+      },
+      {
+        "id": 12,
+        "materialId": 2,
+        "startTick": 23,
+        "stopTick": 28,
+        "intervalTicks": 3,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 7159808,
+            "localY": 9568256
+          },
+          "widthQ16": 4800,
+          "heightQ16": 4800
+        },
+        "velocityXQ16": 48053,
+        "velocityYQ16": -37863,
+        "velocityJitterQ16": 700
+      },
+      {
+        "id": 13,
+        "materialId": 1,
+        "startTick": 33,
+        "stopTick": 38,
+        "intervalTicks": 3,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 10035200,
+            "localY": 9592832
+          },
+          "widthQ16": 4800,
+          "heightQ16": 4800
+        },
+        "velocityXQ16": -42843,
+        "velocityYQ16": -36440,
+        "velocityJitterQ16": 650
+      },
+      {
+        "id": 14,
+        "materialId": 2,
+        "startTick": 26,
+        "stopTick": 31,
+        "intervalTicks": 3,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 6684672,
+            "localY": 9175040
+          },
+          "widthQ16": 4800,
+          "heightQ16": 4800
+        },
+        "velocityXQ16": 48353,
+        "velocityYQ16": -37963,
+        "velocityJitterQ16": 700
+      },
+      {
+        "id": 15,
+        "materialId": 2,
+        "startTick": 29,
+        "stopTick": 34,
+        "intervalTicks": 3,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 6209536,
+            "localY": 8781824
+          },
+          "widthQ16": 4800,
+          "heightQ16": 4800
+        },
+        "velocityXQ16": 48652,
+        "velocityYQ16": -38063,
+        "velocityJitterQ16": 700
+      },
+      {
+        "id": 16,
+        "materialId": 1,
+        "startTick": 41,
+        "stopTick": 46,
+        "intervalTicks": 3,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 11001856,
+            "localY": 8822784
+          },
+          "widthQ16": 4800,
+          "heightQ16": 4800
+        },
+        "velocityXQ16": -42278,
+        "velocityYQ16": -36629,
+        "velocityJitterQ16": 650
+      },
+      {
+        "id": 17,
+        "materialId": 2,
+        "startTick": 32,
+        "stopTick": 37,
+        "intervalTicks": 3,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5734400,
+            "localY": 8388608
+          },
+          "widthQ16": 4800,
+          "heightQ16": 4800
+        },
+        "velocityXQ16": 48952,
+        "velocityYQ16": -38163,
+        "velocityJitterQ16": 700
+      },
+      {
+        "id": 18,
+        "materialId": 2,
+        "startTick": 12,
+        "stopTick": 26,
+        "intervalTicks": 2,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8454144,
+            "localY": 10485760
+          },
+          "widthQ16": 5600,
+          "heightQ16": 5600
+        },
+        "velocityXQ16": 2621,
+        "velocityYQ16": -57016,
+        "velocityJitterQ16": 1400
+      },
+      {
+        "id": 19,
+        "materialId": 1,
+        "startTick": 24,
+        "stopTick": 33,
+        "intervalTicks": 2,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5177344,
+            "localY": 7536640
+          },
+          "widthQ16": 7200,
+          "heightQ16": 7200
+        },
+        "velocityXQ16": 61961,
+        "velocityYQ16": 1192,
+        "velocityJitterQ16": 960
+      },
+      {
+        "id": 20,
+        "materialId": 2,
+        "startTick": 39,
+        "stopTick": 45,
+        "intervalTicks": 2,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5963776,
+            "localY": 6684672
+          },
+          "widthQ16": 4100,
+          "heightQ16": 4100
+        },
+        "velocityXQ16": 53483,
+        "velocityYQ16": 33898,
+        "velocityJitterQ16": 580
+      },
+      {
+        "id": 21,
+        "materialId": 1,
+        "startTick": 35,
+        "stopTick": 42,
+        "intervalTicks": 2,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 7012352,
+            "localY": 9502720
+          },
+          "widthQ16": 4400,
+          "heightQ16": 4400
+        },
+        "velocityXQ16": 48955,
+        "velocityYQ16": -41848,
+        "velocityJitterQ16": 680
+      },
+      {
+        "id": 22,
+        "materialId": 2,
+        "startTick": 67,
+        "stopTick": 72,
+        "intervalTicks": 2,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8912896,
+            "localY": 4521984
+          },
+          "widthQ16": 4800,
+          "heightQ16": 4800
+        },
+        "velocityXQ16": 20257,
+        "velocityYQ16": -13107,
+        "velocityJitterQ16": 950
+      },
+      {
+        "id": 23,
+        "materialId": 4,
+        "startTick": 75,
+        "stopTick": 80,
+        "intervalTicks": 2,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 10027008,
+            "localY": 3866624
+          },
+          "widthQ16": 4800,
+          "heightQ16": 4800
+        },
+        "velocityXQ16": 19065,
+        "velocityYQ16": -5958,
+        "velocityJitterQ16": 950
+      },
+      {
+        "id": 24,
+        "materialId": 2,
+        "startTick": 83,
+        "stopTick": 88,
+        "intervalTicks": 2,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 10092544,
+            "localY": 4259840
+          },
+          "widthQ16": 4800,
+          "heightQ16": 4800
+        },
+        "velocityXQ16": 33364,
+        "velocityYQ16": -5958,
+        "velocityJitterQ16": 950
+      },
+      {
+        "id": 25,
+        "materialId": 4,
+        "startTick": 91,
+        "stopTick": 96,
+        "intervalTicks": 2,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 9306112,
+            "localY": 4915200
+          },
+          "widthQ16": 4800,
+          "heightQ16": 4800
+        },
+        "velocityXQ16": 20257,
+        "velocityYQ16": -20257,
+        "velocityJitterQ16": 950
+      },
+      {
+        "id": 26,
+        "materialId": 2,
+        "startTick": 99,
+        "stopTick": 104,
+        "intervalTicks": 2,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 10158080,
+            "localY": 3997696
+          },
+          "widthQ16": 4800,
+          "heightQ16": 4800
+        },
+        "velocityXQ16": 22640,
+        "velocityYQ16": -11916,
+        "velocityJitterQ16": 950
+      },
+      {
+        "id": 27,
+        "materialId": 3,
+        "startTick": 32,
+        "stopTick": 37,
+        "intervalTicks": 3,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 4194304,
+            "localY": 9371648
+          },
+          "widthQ16": 8500,
+          "heightQ16": 8500
+        },
+        "velocityXQ16": -20165,
+        "velocityYQ16": 12603,
+        "velocityJitterQ16": 3600
+      },
+      {
+        "id": 28,
+        "materialId": 3,
+        "startTick": 37,
+        "stopTick": 42,
+        "intervalTicks": 3,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 4369067,
+            "localY": 8519680
+          },
+          "widthQ16": 8500,
+          "heightQ16": 8500
+        },
+        "velocityXQ16": 30247,
+        "velocityYQ16": 12603,
+        "velocityJitterQ16": 3600
+      },
+      {
+        "id": 29,
+        "materialId": 3,
+        "startTick": 42,
+        "stopTick": 47,
+        "intervalTicks": 3,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 4543829,
+            "localY": 7667712
+          },
+          "widthQ16": 8500,
+          "heightQ16": 8500
+        },
+        "velocityXQ16": -20165,
+        "velocityYQ16": 12603,
+        "velocityJitterQ16": 3600
+      },
+      {
+        "id": 30,
+        "materialId": 3,
+        "startTick": 47,
+        "stopTick": 52,
+        "intervalTicks": 3,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 4718592,
+            "localY": 6815744
+          },
+          "widthQ16": 8500,
+          "heightQ16": 8500
+        },
+        "velocityXQ16": 30247,
+        "velocityYQ16": 12603,
+        "velocityJitterQ16": 3600
+      },
+      {
+        "id": 31,
+        "materialId": 3,
+        "startTick": 52,
+        "stopTick": 57,
+        "intervalTicks": 3,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 4893355,
+            "localY": 5963776
+          },
+          "widthQ16": 8500,
+          "heightQ16": 8500
+        },
+        "velocityXQ16": -20165,
+        "velocityYQ16": 12603,
+        "velocityJitterQ16": 3600
+      },
+      {
+        "id": 32,
+        "materialId": 3,
+        "startTick": 57,
+        "stopTick": 62,
+        "intervalTicks": 3,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5068117,
+            "localY": 5111808
+          },
+          "widthQ16": 8500,
+          "heightQ16": 8500
+        },
+        "velocityXQ16": 30247,
+        "velocityYQ16": 12603,
+        "velocityJitterQ16": 3600
+      },
+      {
+        "id": 33,
+        "materialId": 3,
+        "startTick": 62,
+        "stopTick": 67,
+        "intervalTicks": 3,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5242880,
+            "localY": 4259840
+          },
+          "widthQ16": 8500,
+          "heightQ16": 8500
+        },
+        "velocityXQ16": -20165,
+        "velocityYQ16": 12603,
+        "velocityJitterQ16": 3600
+      },
+      {
+        "id": 34,
+        "materialId": 4,
+        "startTick": 43,
+        "stopTick": 47,
+        "intervalTicks": 4,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12124160,
+            "localY": 9502720
+          },
+          "widthQ16": 5600,
+          "heightQ16": 5600
+        },
+        "velocityXQ16": -30583,
+        "velocityYQ16": -15292,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 35,
+        "materialId": 4,
+        "startTick": 48,
+        "stopTick": 52,
+        "intervalTicks": 4,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12266155,
+            "localY": 8639829
+          },
+          "widthQ16": 5600,
+          "heightQ16": 5600
+        },
+        "velocityXQ16": -19661,
+        "velocityYQ16": -2185,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 36,
+        "materialId": 4,
+        "startTick": 53,
+        "stopTick": 57,
+        "intervalTicks": 4,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12408149,
+            "localY": 7776939
+          },
+          "widthQ16": 5600,
+          "heightQ16": 5600
+        },
+        "velocityXQ16": -30583,
+        "velocityYQ16": -2185,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 37,
+        "materialId": 4,
+        "startTick": 58,
+        "stopTick": 62,
+        "intervalTicks": 4,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12550144,
+            "localY": 6914048
+          },
+          "widthQ16": 5600,
+          "heightQ16": 5600
+        },
+        "velocityXQ16": -19661,
+        "velocityYQ16": -15292,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 38,
+        "materialId": 4,
+        "startTick": 63,
+        "stopTick": 67,
+        "intervalTicks": 4,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12692139,
+            "localY": 6051157
+          },
+          "widthQ16": 5600,
+          "heightQ16": 5600
+        },
+        "velocityXQ16": -30583,
+        "velocityYQ16": -2185,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 39,
+        "materialId": 4,
+        "startTick": 68,
+        "stopTick": 72,
+        "intervalTicks": 4,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12834133,
+            "localY": 5188267
+          },
+          "widthQ16": 5600,
+          "heightQ16": 5600
+        },
+        "velocityXQ16": -19661,
+        "velocityYQ16": -2185,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 40,
+        "materialId": 4,
+        "startTick": 73,
+        "stopTick": 77,
+        "intervalTicks": 4,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12976128,
+            "localY": 4325376
+          },
+          "widthQ16": 5600,
+          "heightQ16": 5600
+        },
+        "velocityXQ16": -30583,
+        "velocityYQ16": -15292,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 41,
+        "materialId": 3,
+        "startTick": 95,
+        "stopTick": 99,
+        "intervalTicks": 3,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5439488,
+            "localY": 5439488
+          },
+          "widthQ16": 6400,
+          "heightQ16": 6400
+        },
+        "velocityXQ16": 9638,
+        "velocityYQ16": -25058,
+        "velocityJitterQ16": 3400
+      },
+      {
+        "id": 42,
+        "materialId": 3,
+        "startTick": 100,
+        "stopTick": 104,
+        "intervalTicks": 3,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 6488064,
+            "localY": 6094848
+          },
+          "widthQ16": 6400,
+          "heightQ16": 6400
+        },
+        "velocityXQ16": 9638,
+        "velocityYQ16": -25058,
+        "velocityJitterQ16": 3400
+      },
+      {
+        "id": 43,
+        "materialId": 3,
+        "startTick": 105,
+        "stopTick": 109,
+        "intervalTicks": 3,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 7536640,
+            "localY": 6750208
+          },
+          "widthQ16": 6400,
+          "heightQ16": 6400
+        },
+        "velocityXQ16": 9638,
+        "velocityYQ16": -25058,
+        "velocityJitterQ16": 3400
+      },
+      {
+        "id": 44,
+        "materialId": 3,
+        "startTick": 110,
+        "stopTick": 114,
+        "intervalTicks": 3,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8585216,
+            "localY": 5439488
+          },
+          "widthQ16": 6400,
+          "heightQ16": 6400
+        },
+        "velocityXQ16": 9638,
+        "velocityYQ16": -25058,
+        "velocityJitterQ16": 3400
+      },
+      {
+        "id": 45,
+        "materialId": 3,
+        "startTick": 115,
+        "stopTick": 119,
+        "intervalTicks": 3,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 9633792,
+            "localY": 6094848
+          },
+          "widthQ16": 6400,
+          "heightQ16": 6400
+        },
+        "velocityXQ16": 9638,
+        "velocityYQ16": -25058,
+        "velocityJitterQ16": 3400
+      },
+      {
+        "id": 46,
+        "materialId": 3,
+        "startTick": 120,
+        "stopTick": 124,
+        "intervalTicks": 3,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 10682368,
+            "localY": 6750208
+          },
+          "widthQ16": 6400,
+          "heightQ16": 6400
+        },
+        "velocityXQ16": 9638,
+        "velocityYQ16": -25058,
+        "velocityJitterQ16": 3400
+      }
+    ],
+    "lut": {
+      "schemaVersion": "fw-lut-v1",
+      "assets": [
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 1,
+          "name": "Iron / vermilion seam",
+          "size": 32,
+          "channels": {
+            "a": [
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535
+            ],
+            "b": [
+              11000,
+              11226,
+              11452,
+              11677,
+              11903,
+              12129,
+              12355,
+              12581,
+              12806,
+              13032,
+              13258,
+              13484,
+              13710,
+              13935,
+              14161,
+              14387,
+              14613,
+              14839,
+              15065,
+              15290,
+              15516,
+              15742,
+              15968,
+              16194,
+              16419,
+              16645,
+              16871,
+              17097,
+              17323,
+              17548,
+              17774,
+              18000
+            ],
+            "g": [
+              9000,
+              9419,
+              9839,
+              10258,
+              10677,
+              11097,
+              11516,
+              11935,
+              12355,
+              12774,
+              13194,
+              13613,
+              14032,
+              14452,
+              14871,
+              15290,
+              15710,
+              16129,
+              16548,
+              16968,
+              17387,
+              17806,
+              18226,
+              18645,
+              19065,
+              19484,
+              19903,
+              20323,
+              20742,
+              21161,
+              21581,
+              22000
+            ],
+            "r": [
+              23000,
+              24065,
+              25129,
+              26194,
+              27258,
+              28323,
+              29387,
+              30452,
+              31516,
+              32581,
+              33645,
+              34710,
+              35774,
+              36839,
+              37903,
+              38968,
+              40032,
+              41097,
+              42161,
+              43226,
+              44290,
+              45355,
+              46419,
+              47484,
+              48548,
+              49613,
+              50677,
+              51742,
+              52806,
+              53871,
+              54935,
+              56000
+            ]
+          }
+        },
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 2,
+          "name": "Pale aqua / silver filament",
+          "size": 32,
+          "channels": {
+            "a": [
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535
+            ],
+            "b": [
+              43000,
+              43581,
+              44161,
+              44742,
+              45323,
+              45903,
+              46484,
+              47065,
+              47645,
+              48226,
+              48806,
+              49387,
+              49968,
+              50548,
+              51129,
+              51710,
+              52290,
+              52871,
+              53452,
+              54032,
+              54613,
+              55194,
+              55774,
+              56355,
+              56935,
+              57516,
+              58097,
+              58677,
+              59258,
+              59839,
+              60419,
+              61000
+            ],
+            "g": [
+              38000,
+              38726,
+              39452,
+              40177,
+              40903,
+              41629,
+              42355,
+              43081,
+              43806,
+              44532,
+              45258,
+              45984,
+              46710,
+              47435,
+              48161,
+              48887,
+              49613,
+              50339,
+              51065,
+              51790,
+              52516,
+              53242,
+              53968,
+              54694,
+              55419,
+              56145,
+              56871,
+              57597,
+              58323,
+              59048,
+              59774,
+              60500
+            ],
+            "r": [
+              10500,
+              11677,
+              12855,
+              14032,
+              15210,
+              16387,
+              17565,
+              18742,
+              19919,
+              21097,
+              22274,
+              23452,
+              24629,
+              25806,
+              26984,
+              28161,
+              29339,
+              30516,
+              31694,
+              32871,
+              34048,
+              35226,
+              36403,
+              37581,
+              38758,
+              39935,
+              41113,
+              42290,
+              43468,
+              44645,
+              45823,
+              47000
+            ]
+          }
+        },
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 3,
+          "name": "Silt / grey-gold mote",
+          "size": 32,
+          "channels": {
+            "a": [
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535
+            ],
+            "b": [
+              26000,
+              26258,
+              26516,
+              26774,
+              27032,
+              27290,
+              27548,
+              27806,
+              28065,
+              28323,
+              28581,
+              28839,
+              29097,
+              29355,
+              29613,
+              29871,
+              30129,
+              30387,
+              30645,
+              30903,
+              31161,
+              31419,
+              31677,
+              31935,
+              32194,
+              32452,
+              32710,
+              32968,
+              33226,
+              33484,
+              33742,
+              34000
+            ],
+            "g": [
+              27000,
+              27694,
+              28387,
+              29081,
+              29774,
+              30468,
+              31161,
+              31855,
+              32548,
+              33242,
+              33935,
+              34629,
+              35323,
+              36016,
+              36710,
+              37403,
+              38097,
+              38790,
+              39484,
+              40177,
+              40871,
+              41565,
+              42258,
+              42952,
+              43645,
+              44339,
+              45032,
+              45726,
+              46419,
+              47113,
+              47806,
+              48500
+            ],
+            "r": [
+              25000,
+              25839,
+              26677,
+              27516,
+              28355,
+              29194,
+              30032,
+              30871,
+              31710,
+              32548,
+              33387,
+              34226,
+              35065,
+              35903,
+              36742,
+              37581,
+              38419,
+              39258,
+              40097,
+              40935,
+              41774,
+              42613,
+              43452,
+              44290,
+              45129,
+              45968,
+              46806,
+              47645,
+              48484,
+              49323,
+              50161,
+              51000
+            ]
+          }
+        },
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 4,
+          "name": "Signal mauve / violet splinters",
+          "size": 32,
+          "channels": {
+            "a": [
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535
+            ],
+            "b": [
+              36000,
+              36710,
+              37419,
+              38129,
+              38839,
+              39548,
+              40258,
+              40968,
+              41677,
+              42387,
+              43097,
+              43806,
+              44516,
+              45226,
+              45935,
+              46645,
+              47355,
+              48065,
+              48774,
+              49484,
+              50194,
+              50903,
+              51613,
+              52323,
+              53032,
+              53742,
+              54452,
+              55161,
+              55871,
+              56581,
+              57290,
+              58000
+            ],
+            "g": [
+              9000,
+              9613,
+              10226,
+              10839,
+              11452,
+              12065,
+              12677,
+              13290,
+              13903,
+              14516,
+              15129,
+              15742,
+              16355,
+              16968,
+              17581,
+              18194,
+              18806,
+              19419,
+              20032,
+              20645,
+              21258,
+              21871,
+              22484,
+              23097,
+              23710,
+              24323,
+              24935,
+              25548,
+              26161,
+              26774,
+              27387,
+              28000
+            ],
+            "r": [
+              21000,
+              22097,
+              23194,
+              24290,
+              25387,
+              26484,
+              27581,
+              28677,
+              29774,
+              30871,
+              31968,
+              33065,
+              34161,
+              35258,
+              36355,
+              37452,
+              38548,
+              39645,
+              40742,
+              41839,
+              42935,
+              44032,
+              45129,
+              46226,
+              47323,
+              48419,
+              49516,
+              50613,
+              51710,
+              52806,
+              53903,
+              55000
+            ]
+          }
+        },
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 5,
+          "name": "Shaking radius / interrupted bead rhythm",
+          "size": 32,
+          "channels": {
+            "logic": [
+              9000,
+              9000,
+              9000,
+              9000,
+              12000,
+              12000,
+              12000,
+              12000,
+              26000,
+              26000,
+              26000,
+              26000,
+              15000,
+              15000,
+              15000,
+              15000,
+              19000,
+              19000,
+              19000,
+              19000,
+              32768,
+              32768,
+              32768,
+              32768,
+              14000,
+              14000,
+              14000,
+              14000,
+              24000,
+              24000,
+              24000,
+              24000
+            ]
+          }
+        }
+      ],
+      "mappings": [
+        {
+          "version": "fw-lut-map-v1",
+          "id": 1,
+          "materialId": 1,
+          "lutId": 1,
+          "source": "lifetimeProgressQ16",
+          "channel": "rgba",
+          "destination": "color",
+          "addressMode": "clamp",
+          "inputMin": 0,
+          "inputMax": 65536,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 0,
+          "outputMax": 65535
+        },
+        {
+          "version": "fw-lut-map-v1",
+          "id": 2,
+          "materialId": 2,
+          "lutId": 2,
+          "source": "ageTicks",
+          "channel": "rgba",
+          "destination": "color",
+          "addressMode": "clamp",
+          "inputMin": 0,
+          "inputMax": 118,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 0,
+          "outputMax": 65535
+        },
+        {
+          "version": "fw-lut-map-v1",
+          "id": 3,
+          "materialId": 3,
+          "lutId": 3,
+          "source": "lifetimeProgressQ16",
+          "channel": "rgba",
+          "destination": "color",
+          "addressMode": "clamp",
+          "inputMin": 0,
+          "inputMax": 65536,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 0,
+          "outputMax": 65535
+        },
+        {
+          "version": "fw-lut-map-v1",
+          "id": 4,
+          "materialId": 4,
+          "lutId": 4,
+          "source": "lifetimeProgressQ16",
+          "channel": "rgba",
+          "destination": "color",
+          "addressMode": "clamp",
+          "inputMin": 0,
+          "inputMax": 65536,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 0,
+          "outputMax": 65535
+        },
+        {
+          "version": "fw-lut-map-v1",
+          "id": 5,
+          "materialId": 3,
+          "lutId": 5,
+          "source": "ageTicks",
+          "channel": "logic",
+          "destination": "radiusQ16",
+          "addressMode": "clamp",
+          "inputMin": 0,
+          "inputMax": 64,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 9000,
+          "outputMax": 32768
+        }
+      ]
+    },
+    "commands": [
+      {
+        "version": "fw-command-v1",
+        "id": 10,
+        "tick": 16,
+        "type": "release-burst",
+        "emitterId": 1,
+        "count": 16
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 20,
+        "tick": 24,
+        "type": "release-burst",
+        "emitterId": 3,
+        "count": 18
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 30,
+        "tick": 35,
+        "type": "set-field-enabled",
+        "fieldId": 3,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 40,
+        "tick": 48,
+        "type": "set-field-enabled",
+        "fieldId": 4,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 50,
+        "tick": 53,
+        "type": "release-burst",
+        "emitterId": 15,
+        "count": 11
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 60,
+        "tick": 62,
+        "type": "set-field-enabled",
+        "fieldId": 5,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 70,
+        "tick": 68,
+        "type": "set-emitter-rate",
+        "emitterId": 11,
+        "rate": 0
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 80,
+        "tick": 72,
+        "type": "release-burst",
+        "emitterId": 21,
+        "count": 9
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 90,
+        "tick": 77,
+        "type": "set-field-enabled",
+        "fieldId": 5,
+        "enabled": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 100,
+        "tick": 81,
+        "type": "set-simulation-frozen",
+        "frozen": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 110,
+        "tick": 86,
+        "type": "set-simulation-frozen",
+        "frozen": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 120,
+        "tick": 93,
+        "type": "set-field-enabled",
+        "fieldId": 6,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 130,
+        "tick": 104,
+        "type": "set-field-enabled",
+        "fieldId": 7,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 140,
+        "tick": 110,
+        "type": "release-burst",
+        "emitterId": 29,
+        "count": 8
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 150,
+        "tick": 119,
+        "type": "set-field-enabled",
+        "fieldId": 3,
+        "enabled": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 160,
+        "tick": 125,
+        "type": "set-field-enabled",
+        "fieldId": 4,
+        "enabled": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 170,
+        "tick": 132,
+        "type": "release-burst",
+        "emitterId": 37,
+        "count": 13
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 180,
+        "tick": 138,
+        "type": "set-field-enabled",
+        "fieldId": 7,
+        "enabled": false
+      }
+    ],
+    "lineage": null
+  },
+  "seed": 432525989,
+  "schemaVersion": "fw-recipe-v1",
+  "engineVersion": "fw-agents-v1",
+  "targetTick": 160,
+  "crop": {
+    "widthPx": 256,
+    "heightPx": 192,
+    "center": {
+      "chunkX": 0,
+      "chunkY": 0,
+      "localX": 8388608,
+      "localY": 7340032
+    },
+    "unitsPerPixelQ16": 49152
+  },
+  "widthPx": 256,
+  "heightPx": 192,
+  "unitsPerPixelQ16": 49152,
+  "backgroundRgba8": [
+    9,
+    11,
+    8,
+    255
+  ],
+  "pixelFormat": "rgba8",
+  "rawRgbaHash": "ded31b12f6efd7dc",
+  "stateHash": "5f630c24020ee1ea",
+  "depositionHash": "66d14f1ff1226488",
+  "resultHash": "81552f777588879c",
+  "lineage": null
+}

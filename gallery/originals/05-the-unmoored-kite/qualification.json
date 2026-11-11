@@ -1,0 +1,22 @@
+{
+  "artwork": "05-the-unmoored-kite",
+  "seed": 432525989,
+  "recipeHash": "90bd1ed3d7b6dbf5",
+  "targetTick": 160,
+  "crop": {
+    "widthPx": 256,
+    "heightPx": 192,
+    "center": {
+      "chunkX": 0,
+      "chunkY": 0,
+      "localX": 8388608,
+      "localY": 7340032
+    },
+    "unitsPerPixelQ16": 49152
+  },
+  "depositionCount": 20451,
+  "rawRgbaHash": "ded31b12f6efd7dc",
+  "stateHash": "5f630c24020ee1ea",
+  "depositionHash": "66d14f1ff1226488",
+  "resultHash": "81552f777588879c"
+}

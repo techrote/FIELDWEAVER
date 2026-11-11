@@ -27,6 +27,12 @@ export async function qualify({write=false}={}){
  assert.equal(round.resultHash(),mid.resultHash());assert.notEqual(replay.resultHash(),mid.resultHash());
  assert(a.depositionCount>1000&&a.depositionCount<250000);
  const receipt={artwork:ART_ID,seed:SEED,recipeHash:recipeHash(recipe),targetTick:TICK,crop:recipe.framing,depositionCount:a.depositionCount,rawRgbaHash:a.rawRgbaHash,stateHash:a.stateHash,depositionHash:a.depositionHash,resultHash:a.resultHash};
+ const expected={recipeHash:'90bd1ed3d7b6dbf5',rawRgbaHash:'ded31b12f6efd7dc',
+ stateHash:'5f630c24020ee1ea',depositionHash:'66d14f1ff1226488',resultHash:'81552f777588879c',depositionCount:20451};
+ for(const [key,value] of Object.entries(expected))assert.equal(receipt[key],value,'golden '+key);
+ assert.deepEqual(await readFile(new URL('./the-unmoored-kite.png',import.meta.url)),Buffer.from(a.png),'archived CPU PNG differs');
+ assert.equal(await readFile(new URL('./the-unmoored-kite.provenance.json',import.meta.url),'utf8'),a.provenanceJson,'archived sidecar differs');
+ assert.deepEqual(JSON.parse(await readFile(new URL('./qualification.json',import.meta.url),'utf8')),receipt,'archived receipt differs');
  if(write){
   await writeFile(new URL('./the-unmoored-kite.png',import.meta.url),a.png);
   await writeFile(new URL('./the-unmoored-kite.provenance.json',import.meta.url),a.provenanceJson);
