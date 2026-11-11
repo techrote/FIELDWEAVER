@@ -58,6 +58,7 @@ jobs:
           name: exhibition-recipe-ledger-${{ matrix.browser }}
           path: |
             exhibition-recipe-score-${{ matrix.browser }}.png
+            exhibition-recipe-score-narrow-${{ matrix.browser }}.png
             exhibition-recipe-score-${{ matrix.browser }}.json
             recipe-ledger-server.log
             xvfb.log

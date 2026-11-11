@@ -128,6 +128,29 @@ try {
   const screenshot = await request('GET', '/session/' + sessionId + '/screenshot');
   if (!screenshot?.value) throw new Error('No actual browser screenshot.');
   await writeFile('exhibition-recipe-score-' + browser + '.png', Buffer.from(screenshot.value, 'base64'));
+  // Genuine keyboard + compact-width qualification of the same A/B ledger.
+  await request('POST', '/session/' + sessionId + '/window/rect', { width: 390, height: 850 });
+  await execute("document.getElementById('exhibition-recipe-ledger').scrollIntoView({block:'start'});document.querySelector('#exhibition-recipe-ledger summary').focus()");
+  const wasOpen = await execute("return document.getElementById('exhibition-recipe-ledger').open");
+  const enterKey = async () => request('POST', '/session/' + sessionId + '/actions', {
+    actions: [{ type: 'key', id: 'fw-ledger-keyboard', actions: [
+      { type: 'keyDown', value: '\uE007' }, { type: 'keyUp', value: '\uE007' }
+    ] }]
+  });
+  await enterKey();
+  const toggled = await execute("return document.getElementById('exhibition-recipe-ledger').open");
+  await enterKey();
+  const reopened = await execute("return document.getElementById('exhibition-recipe-ledger').open");
+  const narrow = await execute("const dlg=document.getElementById('exhibition-study-dialog').getBoundingClientRect();const ledger=document.getElementById('exhibition-recipe-ledger').getBoundingClientRect();return {width:innerWidth,bodyOverflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,dialogWidth:dlg.width,ledgerRight:ledger.right,keyboardFocus:document.activeElement?.tagName,ledgerOpen:document.getElementById('exhibition-recipe-ledger').open}");
+  if (!wasOpen || toggled || !reopened || narrow.keyboardFocus !== 'SUMMARY' ||
+      narrow.bodyOverflow > 2 || narrow.dialogWidth > narrow.width + 2 ||
+      narrow.ledgerRight > narrow.width + 2 || !narrow.ledgerOpen) {
+    throw new Error('Narrow native-keyboard recipe score failed: ' + JSON.stringify({ wasOpen, toggled, reopened, narrow }));
+  }
+  const narrowCapture = await request('GET', '/session/' + sessionId + '/screenshot');
+  if (!narrowCapture?.value) throw new Error('Narrow live browser screenshot absent.');
+  await writeFile('exhibition-recipe-score-narrow-' + browser + '.png', Buffer.from(narrowCapture.value, 'base64'));
+  await request('POST', '/session/' + sessionId + '/window/rect', { width: 1280, height: 940 });
   const exported = await execute("window.__ledgerExport=null;const original=URL.createObjectURL;URL.createObjectURL=function(blob){if(blob.type==='application/json')blob.text().then(t=>window.__ledgerExport=t);return original.call(this,blob)};document.getElementById('exhibition-recipe-ledger-download').click();URL.createObjectURL=original;return true");
   if (!exported) throw new Error('Export click failed.');
   let receipt;
@@ -150,7 +173,7 @@ try {
     throw new Error('Read-only score changed editor state or survived dialog close: ' + JSON.stringify(after));
   }
   await writeFile('exhibition-recipe-score-' + browser + '.json',
-    JSON.stringify({ browser, before, initial, atlas, pulse, receipt, after }, null, 2) + '\n');
+    JSON.stringify({ browser, before, initial, atlas, pulse, narrow, receipt, after }, null, 2) + '\n');
   console.log(JSON.stringify({ browser, canonicalProofs: 4, deltaRows: atlas.cells.length,
     interventionEvents: pulse.timeline.length, exportedPair: [receipt.a.id, receipt.b.id],
     editorUnchanged: true }, null, 2));
