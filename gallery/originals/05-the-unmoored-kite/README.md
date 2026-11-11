@@ -6,7 +6,7 @@ This is a newly authored original, **not** an FW-011 mutation. An earlier compos
 
 - Import `recipe.json` through the local workbench's **Load recipe**.
 - Seed `0x19c7d2a5` (432525989); no lineage parent.
-- Tick **160**; crop **256×192**, centre world (128,112), 0.625 units/pixel.
+- Tick **160**; crop **256×192**, centre world (128,112), 0.75 units/pixel.
 - **7 ordered fields, 46 emitters, 4 materials, 5 LUTs, 18 interventions**.
 - Temporal score: late counter-rotation, quantization on/off, freeze/release, a right/down unmooring drift, and low-corner vortex.
 - Colour logic: iron red seam, pale aqua/silver structural filament, ash-gold motes, signal-mauve splinters. Dust radius is age-LUT controlled, not colour-only.

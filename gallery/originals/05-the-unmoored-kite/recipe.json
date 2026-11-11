@@ -11,7 +11,7 @@
       "localX": 8388608,
       "localY": 7340032
     },
-    "unitsPerPixelQ16": 40960
+    "unitsPerPixelQ16": 49152
   },
   "fields": {
     "format": "fw-fields-v1",
