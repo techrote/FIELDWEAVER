@@ -194,7 +194,8 @@ try {
       compared.aSource === compared.bSource) {
     throw new Error(`Two-up canonical comparison failed: ${JSON.stringify(compared)}`);
   }
-  await execute(`document.querySelector('#exhibition-compare-title').scrollIntoView({ block: 'center' });`);
+  await request('POST', `/session/${sessionId}/window/rect`, { width: 1280, height: 900 });
+  await execute(`document.querySelector('#exhibition-compare-b-image').scrollIntoView({ block: 'center' });`);
   const capture = await request('GET', `/session/${sessionId}/screenshot`);
   if (!capture?.value) throw new Error('Browser did not return an exhibition comparison screenshot.');
   await writeFile(`release-exhibition-${browser}.png`, Buffer.from(capture.value, 'base64'));
