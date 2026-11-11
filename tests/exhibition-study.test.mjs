@@ -4,7 +4,7 @@ import { BUILTIN_PRESETS } from '../src/presets/index.js';
 import { recipeHash } from '../src/recipe/index.js';
 import { exhibitionEntries } from '../src/ui/exhibition-catalog.js';
 import { renderVisualIndexProof } from '../src/ui/exhibition-visual-index-model.js';
-import { studyNextId, studyArtworkLabel } from '../src/ui/exhibition-study.js';
+import { studyNextId, studyArtworkLabel, studyPixelCursor } from '../src/ui/exhibition-study.js';
 
 test('canonical study cycles the accepted catalog in both directions without introducing other works', () => {
   const ids = exhibitionEntries().map((entry) => entry.id);
@@ -33,4 +33,20 @@ test('study shows identities of truly generated canonical CPU images without rec
     assert.throws(() => studyArtworkLabel(entry, 'proxy-image'), /verified accepted CPU/);
   }
   assert.deepEqual(BUILTIN_PRESETS.map((preset) => recipeHash(preset.recipe)), before);
+});
+
+
+test('keyboard pixel cursor moves in canonical source coordinates and clamps at crop boundaries', () => {
+  assert.deepEqual(studyPixelCursor(96, 64, 48, 32, 'ArrowRight'), { x: 49, y: 32 });
+  assert.deepEqual(studyPixelCursor(96, 64, 49, 32, 'ArrowDown', true), { x: 49, y: 42 });
+  assert.deepEqual(studyPixelCursor(96, 64, 0, 0, 'ArrowLeft', true), { x: 0, y: 0 });
+  assert.deepEqual(studyPixelCursor(96, 64, 95, 63, 'ArrowDown', true), { x: 95, y: 63 });
+  assert.deepEqual(studyPixelCursor(1, 1, 0, 0, 'ArrowRight'), { x: 0, y: 0 });
+  assert.equal(studyPixelCursor(96, 64, 48, 32, 'Enter'), null);
+  assert.equal(Object.isFrozen(studyPixelCursor(96, 64, 1, 1, 'ArrowUp')), true);
+  for (const args of [[0, 64, 0, 0, 'ArrowUp'], [96, 64, -1, 0, 'ArrowUp'],
+    [96, 64, 96, 0, 'ArrowUp'], [96, 64, 1.2, 0, 'ArrowUp'],
+    [96, 64, 0, 0, 'ArrowUp', 'yes']]) {
+    assert.throws(() => studyPixelCursor(...args), /Invalid canonical pixel cursor geometry/);
+  }
 });
