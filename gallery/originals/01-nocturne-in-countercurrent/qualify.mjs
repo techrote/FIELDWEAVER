@@ -49,15 +49,6 @@ export async function qualifyArtwork({ write = false } = {}) {
   assert.deepEqual(first.rgba, second.rgba, 'full pixel buffer differs across tile shapes');
   assert(first.depositionCount > 100, 'composition generated too few depositions');
 
-  // TEMPORARY CI image transport; remove immediately after exact canonical PNG is archived.
-  const printablePng = Buffer.from(first.png).toString('base64');
-  const chunkSize = 8000;
-  const numberOfChunks = Math.ceil(printablePng.length / chunkSize);
-  console.log('FW_ORIGINAL_PNG_BASE64_PARTS:' + numberOfChunks);
-  for (let i = 0; i < numberOfChunks; i++) {
-    console.log('FW_ORIGINAL_PNG_BASE64_' + String(i).padStart(4, '0') + ':' + printablePng.slice(i * chunkSize, (i + 1) * chunkSize));
-  }
-
   const decoded = decodePngRgba(first.png);
   assert.equal(decoded.widthPx, recipe.framing.widthPx);
   assert.equal(decoded.heightPx, recipe.framing.heightPx);
@@ -72,6 +63,18 @@ export async function qualifyArtwork({ write = false } = {}) {
   assert.equal(first.provenance.recipeHash, identity);
   assert.equal(first.provenance.rawRgbaHash, first.rawRgbaHash);
   assert.equal(first.provenance.targetTick, TARGET_TICK);
+  // The checked-in artwork must be byte-for-byte identical to the actual canonical export.
+  const archivedPng = await readFile(new URL('./nocturne-in-countercurrent.png', import.meta.url));
+  const archivedProvenance = await readFile(new URL('./nocturne-in-countercurrent.provenance.json', import.meta.url), 'utf8');
+  const archivedReceipt = JSON.parse(await readFile(new URL('./qualification.json', import.meta.url), 'utf8'));
+  assert.deepEqual(archivedPng, Buffer.from(first.png), 'checked-in PNG differs from canonical output');
+  assert.equal(archivedProvenance, first.provenanceJson, 'checked-in FW-012 provenance differs from canonical export');
+  assert.equal(archivedReceipt.rawRgbaHash, first.rawRgbaHash);
+  assert.equal(archivedReceipt.stateHash, first.stateHash);
+  assert.equal(archivedReceipt.depositionHash, first.depositionHash);
+  assert.equal(archivedReceipt.resultHash, first.resultHash);
+  assert.equal(archivedReceipt.depositionCount, first.depositionCount);
+
 
   const receipt = {
     artwork: ARTWORK_ID,
