@@ -15,6 +15,7 @@ test('variant 09: exact provenance, nontrivial separated geometry, immutable par
   const before=serializeRecipe(baseline.recipe);
   const built=buildAtlas();
   assert.equal(built.candidates.length,16);
+  assert.equal(built.selected.i,1,'curated sibling 01 must remain selected');
   assert.equal(new Set(built.candidates.map(c=>c.export.rawRgbaHash)).size,16);
   assert.equal(built.finalists.length,4);
   assert(built.finalists.every(c=>c.parentXor>=140 && c.ink>=90));
@@ -27,6 +28,7 @@ test('variant 09: exact provenance, nontrivial separated geometry, immutable par
   assert.equal(serializeRecipe(baseline.recipe),before);
   const child=parseRecipe(built.files.find(f=>f.path==='selected.recipe.json').bytes.toString('utf8'));
   assert.equal(recipeHash(child),built.archive.selection.recipeHash);
+  assert.deepEqual(child.commands,baseline.recipe.commands,'inherited timeline, including freeze/resume, must remain immutable');
   assert.equal(child.lineage.parentRecipeHash,built.selected.first.childRecipeHash);
   const alt=createCanonicalExport(child,{targetTick:TICK,crop:CROP,agentCapacity:4096,maxDepositions:250000,tileWidthPx:29,tileHeightPx:19});
   assert.equal(alt.rawRgbaHash,built.selected.export.rawRgbaHash);
