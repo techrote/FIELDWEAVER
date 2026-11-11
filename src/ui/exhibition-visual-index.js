@@ -53,7 +53,11 @@ export function mountExhibitionVisualIndex(panel) {
   status.className = 'workspace-note';
   status.setAttribute('aria-live', 'polite');
   status.textContent = 'Opt in to generate actual CPU thumbnails; no WebGL or imported art.';
-  controls.append(render, cancel, saveBoard, status);
+  const boardStatus = document.createElement('output');
+  boardStatus.id = 'exhibition-board-status';
+  boardStatus.className = 'workspace-note';
+  boardStatus.setAttribute('aria-live', 'polite');
+  controls.append(render, cancel, saveBoard, status, boardStatus);
   grid.after(controls);
 
   const revoke = (id) => {
@@ -67,6 +71,7 @@ export function mountExhibitionVisualIndex(panel) {
     cancel.disabled = false;
     saveBoard.disabled = true;
     verifiedProofs.clear();
+    boardStatus.textContent = '';
     let completed = 0;
     try {
       for (const entry of entries) {
@@ -126,6 +131,7 @@ export function mountExhibitionVisualIndex(panel) {
     generation += 1;
     verifiedProofs.clear();
     saveBoard.disabled = true;
+    boardStatus.textContent = '';
     render.disabled = false;
     cancel.disabled = true;
     status.textContent = 'Cancelled between entries; completed proofs remain.';
@@ -142,9 +148,9 @@ export function mountExhibitionVisualIndex(panel) {
       link.click();
       link.remove();
       window.setTimeout(() => URL.revokeObjectURL(url), 2000);
-      status.textContent = 'Offline canonical board download requested: ' + board.count + ' accepted proofs.';
+      boardStatus.textContent = 'Offline canonical board download requested: ' + board.count + ' accepted proofs.';
     } catch (error) {
-      status.textContent = 'Offline board unavailable: ' + (error?.message ?? String(error));
+      boardStatus.textContent = 'Offline board unavailable: ' + (error?.message ?? String(error));
     }
   });
   window.addEventListener('pagehide', () => {
