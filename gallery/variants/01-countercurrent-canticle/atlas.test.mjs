@@ -17,10 +17,10 @@ const PREFIX = 'gallery/variants/01-countercurrent-canticle/';
 const PARENT_ID = 'operator-atlas';
 const EXPECTED_PARENT_HASH = 'ab6f4e5af5842f3a';
 const MUTATION_SEED = 0x6d51a7c2;
-const TARGET_TICK = 58;
+const TARGET_TICK = 180;
 const CROP = Object.freeze({ widthPx: 144, heightPx: 112,
   center: { chunkX: 0, chunkY: 0, localX: 128 * 65536, localY: 128 * 65536 },
-  unitsPerPixelQ16: 2 * 65536 });
+  unitsPerPixelQ16: 65536 });
 const REPLAY = { targetTick: TARGET_TICK, crop: CROP, agentCapacity: 4096,
   maxDepositions: 250000, tileWidthPx: 29, tileHeightPx: 23 };
 const BG = [9, 11, 8];
@@ -126,7 +126,7 @@ function make() {
     'An authored study of opposing currents in a four-material simulation: topology, trajectories and layered sedimentation rather than colour-only mutation.','',
     '**Immutable parent:** shipped operator-atlas preset; recipe hash '+EXPECTED_PARENT_HASH+'.',
     '**Mutation:** fw-mutation-v1, seed '+MUTATION_SEED+', 16 explicit siblings with validated bold scope-specific and mixed transformations.',
-    '**Canonical evaluation:** tick '+TARGET_TICK+', crop 144×112 centered at (128,128) with 2 world units/pixel, agent cap 4096, deposition cap 250000.',
+    '**Canonical evaluation:** tick '+TARGET_TICK+', crop 144×112 centered at (128,128) with 1 world unit/pixel, agent cap 4096, deposition cap 250000.',
     '**Selected descendant:** sibling '+chosen.siblingIndex+', recipe '+chosen.recipeHash+', decoded RGBA hash '+chosen.rawRgbaHash+'.','',
     '## Files','',
     '- selected.recipe.json: loadable full child recipe with fw-lineage-v1 ancestry; selected.png: authoritative FW-012 software raster.',
