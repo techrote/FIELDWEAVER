@@ -112,9 +112,11 @@ function build() {
     s.earlyHash=early.rawRgbaHash;
     s.temporalXor=xor(shapeOf(early.rgba).mask,s.shape.mask);
   }
-  // This fixed choice is a preselection for real canonical-visual inspection.
-  // Curatorial choice and note must be updated only after inspecting output.
+  // Selected after direct inspection of the genuine six-panel FW-012 CPU sheet.
+  // Keep the editorial decision pinned independently from the morphology score.
   const selected=finalists[0];
+  assert.equal(selected.i,17,'curated sibling changed; review real pixels before modifying');
+  assert.equal(selected.output.rawRgbaHash,'80a5a090d57b6d07','canonical selected pixels changed');
   const sheet=contact([parentOut,...finalists.map(s=>s.output)]);
   assert.deepEqual(decodePngRgba(sheet.png).rgba,sheet.rgba);
   const manifest={
@@ -148,7 +150,7 @@ function build() {
     })),
     contactSheet:{widthPx:sheet.width,heightPx:sheet.height,
       displayOnly:true,rawRgbaHash:rawRgbaHash(sheet.rgba)},
-    selection:{siblingIndex:selected.i,method:'quantitative-preselection; canonical visual inspection pending'}
+    selection:{siblingIndex:selected.i,method:'direct-inspection-of-actual-canonical-CPU-contact-sheet',rationale:"Actual CPU sheet and full-size #17 inspected: a single folded cyan filament loops downward and rises to the right, with internal parallel striations and an isolated purple vertical misregistration at the left edge. It preserves open dark space above the cup-shaped sweep. The other finalists collapse into left-edge scraps or shorter falling ribbons. Compared with Broken Orbit's extended arc and Faulted Confluence's flatter carrier, this descendant turns into a hollow lower basin rather than a lateral stream. The cropped left registration is intentional but may be too austere for some contexts; no objective aesthetic score is claimed."}
   };
   const files=[
     ['atlas.manifest.json',JSON.stringify(manifest,null,2)+'\n'],
