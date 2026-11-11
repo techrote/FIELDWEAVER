@@ -17,8 +17,8 @@ const PREFIX = 'gallery/variants/02-broken-orbit/';
 const PARENT_ID = 'timeline-pulse';
 const EXPECTED_PARENT_HASH = 'c94aed7bfc18a40d';
 const MUTATION_SEED = 0x92f4c671;
-const TARGET_TICK = 156;
-const EARLY_TICK = 64;
+const TARGET_TICK = 56;
+const EARLY_TICK = 16;
 const CROP = Object.freeze({ widthPx: 144, heightPx: 112,
   center: { chunkX: 0, chunkY: 0, localX: 138 * 65536, localY: 128 * 65536 },
   unitsPerPixelQ16: 65536 });
@@ -86,11 +86,12 @@ function make() {
       operationTypes:m.operations.map(op=>op.type)};
   });
   assert.equal(new Set(samples.map(s=>s.recipeHash)).size,scopes.length);
+  assert.ok(samples.some(s=>s.temporalDifference>=30), 'Timeline comparison must demonstrate actual visible temporal change');
   const ranking=[...samples].sort((a,b)=> (b.difference*8+b.temporalDifference*4+b.cells*16-Math.abs(b.occupied-2100)/8)-
     (a.difference*8+a.temporalDifference*4+a.cells*16-Math.abs(a.occupied-2100)/8) || a.siblingIndex-b.siblingIndex);
   const finalists=[];
   for(const s of ranking) {
-    if(s.difference<60 || s.occupied<60 || finalists.some(f=>distance(s.mask,f.mask)<80))continue;
+    if(s.difference<60 || s.temporalDifference<30 || s.occupied<60 || finalists.some(f=>distance(s.mask,f.mask)<80))continue;
     finalists.push(s);
     if(finalists.length===5)break;
   }
@@ -110,7 +111,7 @@ function make() {
     mutationSeed:MUTATION_SEED,targetTick:TARGET_TICK,earlierComparisonTick:EARLY_TICK,crop:CROP,
     agentCapacity:REPLAY.agentCapacity,maxDepositions:REPLAY.maxDepositions,
     candidateCount:samples.length,
-    criterion:'Late-tick spatial silhouette XOR from immutable Timeline Pulse parent, temporal change from tick 64 to 156, spatial coverage and pairwise morphology novelty; palette-only differences rejected',
+    criterion:'Late-tick spatial silhouette XOR from immutable Timeline Pulse parent, temporal change from tick 16 to 56, spatial coverage and pairwise morphology novelty; palette-only differences rejected',
     selectedSiblingIndex:chosen.siblingIndex,selectedRecipeHash:chosen.recipeHash,
     selectedRawRgbaHash:chosen.rawRgbaHash,
     candidates:samples.map(s=>({siblingIndex:s.siblingIndex,config:s.config,recipeHash:s.recipeHash,
