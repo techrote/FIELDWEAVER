@@ -29,7 +29,7 @@ output[data-state=error]{border-color:#f17865;color:#ffd3cb}
 output[data-state=verified]{border-color:#a3d99a;color:#ddffd2}
 .fine{font-size:.75rem;color:var(--muted);line-height:1.55}
 .proof-frame{margin:0;border:1px solid var(--line);background:#070907;min-height:280px;padding:1.2rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem}
-.proof-frame img{max-width:100%;max-height:66vh;object-fit:contain;image-rendering:pixelated}
+.proof-frame img{display:block;width:min(100%,32rem);height:auto;max-height:66vh;object-fit:contain;image-rendering:pixelated}
 .proof-frame img[hidden]{display:none}
 #proof-placeholder{font-family:ui-monospace,monospace;color:#9ca79a;text-align:center}
 .proof-frame figcaption{font-size:.74rem;color:#c0c5b4;text-align:center}
