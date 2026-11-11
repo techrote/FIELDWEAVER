@@ -31,6 +31,8 @@ export async function qualify({write=false,archived=false}={}){
  const receipt={artwork:ART_ID,seed:recipe.seed,recipeHash:recipeHash(recipe),targetTick:TARGET_TICK,crop:recipe.framing,
   emitters:recipe.emitters.length,occupiedPixels:occupied,depositionCount:a.depositionCount,
   rawRgbaHash:a.rawRgbaHash,stateHash:a.stateHash,depositionHash:a.depositionHash,resultHash:a.resultHash};
+ const golden={recipeHash:'002a783e5492a7d5',rawRgbaHash:'20d0367ebe3a8d8e',stateHash:'392c1dc87f4f73df',depositionHash:'6d062421d2acc4e2',resultHash:'9f3193bbf43aa545',occupiedPixels:3041,depositionCount:9630,emitters:100};
+ for(const [key,value] of Object.entries(golden))assert.equal(receipt[key],value,'canonical golden '+key);
  if(archived){
   assert.equal(await readFile(new URL('./recipe.json',import.meta.url),'utf8'),text);
   assert.deepEqual(await readFile(new URL('./the-zero-meridian.png',import.meta.url)),Buffer.from(a.png));

@@ -1,0 +1,3428 @@
+{
+  "version": "fw-export-provenance-v1",
+  "exportVersion": "fw-canonical-export-v1",
+  "rasterVersion": "fw-canonical-raster-v1",
+  "pngVersion": "fw-png-rgba8-v1",
+  "recipeHash": "002a783e5492a7d5",
+  "recipe": {
+    "schemaVersion": "fw-recipe-v1",
+    "engineVersion": "fw-agents-v1",
+    "seed": 1558657561,
+    "framing": {
+      "widthPx": 352,
+      "heightPx": 288,
+      "center": {
+        "chunkX": 0,
+        "chunkY": 0,
+        "localX": 8388608,
+        "localY": 8126464
+      },
+      "unitsPerPixelQ16": 40960
+    },
+    "fields": {
+      "format": "fw-fields-v1",
+      "nextId": 8,
+      "order": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "layers": [
+        {
+          "id": 1,
+          "kind": "vector",
+          "operator": "uniform",
+          "enabled": true,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 0,
+              "localY": 0
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "vectorXQ16": 38,
+            "vectorYQ16": -55
+          },
+          "chunks": []
+        },
+        {
+          "id": 2,
+          "kind": "vector",
+          "operator": "turbulence",
+          "enabled": true,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 0,
+              "localY": 0
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "amplitudeQ16": 210,
+            "cellSizeQ16": 1048576,
+            "seed": 1359725607
+          },
+          "chunks": []
+        },
+        {
+          "id": 3,
+          "kind": "vector",
+          "operator": "vortex",
+          "enabled": false,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 8257536,
+              "localY": 8257536
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "radiusQ16": 5046272,
+            "strengthQ16": 5200
+          },
+          "chunks": []
+        },
+        {
+          "id": 4,
+          "kind": "vector",
+          "operator": "vortex",
+          "enabled": false,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 11862016,
+              "localY": 7340032
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "radiusQ16": 3145728,
+            "strengthQ16": -6100
+          },
+          "chunks": []
+        },
+        {
+          "id": 5,
+          "kind": "vector",
+          "operator": "direction-quantizer",
+          "enabled": false,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 0,
+              "localY": 0
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "sectors": 8
+          },
+          "chunks": []
+        },
+        {
+          "id": 6,
+          "kind": "vector",
+          "operator": "uniform",
+          "enabled": false,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 0,
+              "localY": 0
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "vectorXQ16": -1200,
+            "vectorYQ16": 860
+          },
+          "chunks": []
+        },
+        {
+          "id": 7,
+          "kind": "vector",
+          "operator": "vortex",
+          "enabled": false,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 5177344,
+              "localY": 4194304
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "radiusQ16": 2424832,
+            "strengthQ16": 4200
+          },
+          "chunks": []
+        }
+      ]
+    },
+    "materials": [
+      {
+        "id": 1,
+        "kind": "ink",
+        "inertiaNumerator": 1,
+        "inertiaDenominator": 1,
+        "steeringNumerator": 1,
+        "steeringDenominator": 42,
+        "lifetimeTicks": 96,
+        "depositEvery": 1,
+        "primitive": "disc",
+        "radiusQ16": 31500,
+        "strengthQ16": 58000,
+        "quantizeAxis": false
+      },
+      {
+        "id": 2,
+        "kind": "filament",
+        "inertiaNumerator": 1,
+        "inertiaDenominator": 1,
+        "steeringNumerator": 1,
+        "steeringDenominator": 52,
+        "lifetimeTicks": 116,
+        "depositEvery": 1,
+        "primitive": "segment",
+        "radiusQ16": 30000,
+        "strengthQ16": 65536,
+        "quantizeAxis": false
+      },
+      {
+        "id": 3,
+        "kind": "dust",
+        "inertiaNumerator": 1,
+        "inertiaDenominator": 3,
+        "steeringNumerator": 2,
+        "steeringDenominator": 3,
+        "lifetimeTicks": 54,
+        "depositEvery": 1,
+        "primitive": "point",
+        "radiusQ16": 18000,
+        "strengthQ16": 53000,
+        "quantizeAxis": false
+      },
+      {
+        "id": 4,
+        "kind": "shard",
+        "inertiaNumerator": 1,
+        "inertiaDenominator": 1,
+        "steeringNumerator": 1,
+        "steeringDenominator": 16,
+        "lifetimeTicks": 80,
+        "depositEvery": 1,
+        "primitive": "segment",
+        "radiusQ16": 31000,
+        "strengthQ16": 60000,
+        "quantizeAxis": true
+      }
+    ],
+    "emitters": [
+      {
+        "id": 1,
+        "materialId": 2,
+        "startTick": 1,
+        "stopTick": 1,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12779520,
+            "localY": 8257536
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -647,
+        "velocityYQ16": 8583,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 2,
+        "materialId": 2,
+        "startTick": 2,
+        "stopTick": 2,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12723847,
+            "localY": 8995686
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -1926,
+        "velocityYQ16": 8372,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 3,
+        "materialId": 2,
+        "startTick": 3,
+        "stopTick": 3,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12558198,
+            "localY": 9715661
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -3158,
+        "velocityYQ16": 7954,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 4,
+        "materialId": 2,
+        "startTick": 4,
+        "stopTick": 4,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12286653,
+            "localY": 10399732
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -4311,
+        "velocityYQ16": 7341,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 5,
+        "materialId": 2,
+        "startTick": 5,
+        "stopTick": 5,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 11915898,
+            "localY": 11031055
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -5359,
+        "velocityYQ16": 6547,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 6,
+        "materialId": 2,
+        "startTick": 1,
+        "stopTick": 1,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 11455062,
+            "localY": 11594084
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -6274,
+        "velocityYQ16": 5592,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 7,
+        "materialId": 2,
+        "startTick": 2,
+        "stopTick": 2,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 10915492,
+            "localY": 12074957
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -3043,
+        "velocityYQ16": 2142,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 8,
+        "materialId": 2,
+        "startTick": 3,
+        "stopTick": 3,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8886875,
+            "localY": 12930207
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -8236,
+        "velocityYQ16": 526,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 9,
+        "materialId": 2,
+        "startTick": 4,
+        "stopTick": 4,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8178616,
+            "localY": 12975409
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -8213,
+        "velocityYQ16": -825,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 10,
+        "materialId": 2,
+        "startTick": 5,
+        "stopTick": 5,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 7472302,
+            "localY": 12904442
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -7988,
+        "velocityYQ16": -2156,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 11,
+        "materialId": 2,
+        "startTick": 1,
+        "stopTick": 1,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 6785322,
+            "localY": 12719052
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -7567,
+        "velocityYQ16": -3433,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 12,
+        "materialId": 2,
+        "startTick": 2,
+        "stopTick": 2,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 6134593,
+            "localY": 12423805
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -6959,
+        "velocityYQ16": -4626,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 13,
+        "materialId": 2,
+        "startTick": 3,
+        "stopTick": 3,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5536138,
+            "localY": 12025971
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -6180,
+        "velocityYQ16": -5705,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 14,
+        "materialId": 2,
+        "startTick": 4,
+        "stopTick": 4,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5004693,
+            "localY": 11535345
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -5248,
+        "velocityYQ16": -6643,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 15,
+        "materialId": 2,
+        "startTick": 5,
+        "stopTick": 5,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 4553344,
+            "localY": 10964009
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -4188,
+        "velocityYQ16": -7418,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 16,
+        "materialId": 2,
+        "startTick": 1,
+        "stopTick": 1,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 4193204,
+            "localY": 10326031
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -3024,
+        "velocityYQ16": -8011,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 17,
+        "materialId": 2,
+        "startTick": 2,
+        "stopTick": 2,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 3752760,
+            "localY": 7846284
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 1362,
+        "velocityYQ16": -8492,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 18,
+        "materialId": 2,
+        "startTick": 3,
+        "stopTick": 3,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 3869874,
+            "localY": 7116005
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 2618,
+        "velocityYQ16": -8165,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 19,
+        "materialId": 2,
+        "startTick": 4,
+        "stopTick": 4,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 4095028,
+            "localY": 6413835
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 3810,
+        "velocityYQ16": -7637,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 20,
+        "materialId": 2,
+        "startTick": 5,
+        "stopTick": 5,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 4422676,
+            "localY": 5757063
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 4908,
+        "velocityYQ16": -6921,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 21,
+        "materialId": 2,
+        "startTick": 1,
+        "stopTick": 1,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 4844751,
+            "localY": 5161861
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 5885,
+        "velocityYQ16": -6035,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 22,
+        "materialId": 2,
+        "startTick": 2,
+        "stopTick": 2,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5350861,
+            "localY": 4642885
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 6717,
+        "velocityYQ16": -5000,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 23,
+        "materialId": 2,
+        "startTick": 3,
+        "stopTick": 3,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5928542,
+            "localY": 4212913
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 1589,
+        "velocityYQ16": -958,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 24,
+        "materialId": 2,
+        "startTick": 4,
+        "stopTick": 4,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 9503964,
+            "localY": 3721734
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 7728,
+        "velocityYQ16": 3015,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 25,
+        "materialId": 2,
+        "startTick": 5,
+        "stopTick": 5,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 10168609,
+            "localY": 3981039
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 7181,
+        "velocityYQ16": 4240,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 26,
+        "materialId": 2,
+        "startTick": 1,
+        "stopTick": 1,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 10786197,
+            "localY": 4345646
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 6457,
+        "velocityYQ16": 5360,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 27,
+        "materialId": 2,
+        "startTick": 2,
+        "stopTick": 2,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 11341522,
+            "localY": 4806576
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 5574,
+        "velocityYQ16": 6348,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 28,
+        "materialId": 2,
+        "startTick": 3,
+        "stopTick": 3,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 11820908,
+            "localY": 5352481
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 4554,
+        "velocityYQ16": 7179,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 29,
+        "materialId": 2,
+        "startTick": 4,
+        "stopTick": 4,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12212552,
+            "localY": 5969917
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 3422,
+        "velocityYQ16": 7834,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 30,
+        "materialId": 2,
+        "startTick": 5,
+        "stopTick": 5,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12506811,
+            "localY": 6643682
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 2205,
+        "velocityYQ16": 8297,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 31,
+        "materialId": 2,
+        "startTick": 1,
+        "stopTick": 1,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12696438,
+            "localY": 7357186
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 678,
+        "velocityYQ16": 4734,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 32,
+        "materialId": 1,
+        "startTick": 10,
+        "stopTick": 10,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 11543280,
+            "localY": 9116901
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": -2123,
+        "velocityYQ16": 8081,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 33,
+        "materialId": 1,
+        "startTick": 11,
+        "stopTick": 11,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 11375584,
+            "localY": 9755306
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": -3451,
+        "velocityYQ16": 7476,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 34,
+        "materialId": 1,
+        "startTick": 12,
+        "stopTick": 12,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 11102946,
+            "localY": 10345898
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": -4653,
+        "velocityYQ16": 6596,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 35,
+        "materialId": 1,
+        "startTick": 13,
+        "stopTick": 13,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 10735385,
+            "localY": 10866976
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": -5683,
+        "velocityYQ16": 5474,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 36,
+        "materialId": 1,
+        "startTick": 9,
+        "stopTick": 9,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 10286406,
+            "localY": 11299393
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": -6505,
+        "velocityYQ16": 4150,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 37,
+        "materialId": 1,
+        "startTick": 10,
+        "stopTick": 10,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 9772507,
+            "localY": 11627260
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": -7088,
+        "velocityYQ16": 2674,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 38,
+        "materialId": 1,
+        "startTick": 11,
+        "stopTick": 11,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 9212572,
+            "localY": 11838529
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": -7410,
+        "velocityYQ16": 1100,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 39,
+        "materialId": 1,
+        "startTick": 12,
+        "stopTick": 12,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8627177,
+            "localY": 11925436
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": -7460,
+        "velocityYQ16": -515,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 40,
+        "materialId": 1,
+        "startTick": 13,
+        "stopTick": 13,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8037832,
+            "localY": 11884789
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": -7236,
+        "velocityYQ16": -2110,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 41,
+        "materialId": 1,
+        "startTick": 9,
+        "stopTick": 9,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 7466192,
+            "localY": 11718080
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": -1899,
+        "velocityYQ16": -844,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 42,
+        "materialId": 1,
+        "startTick": 10,
+        "stopTick": 10,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5879440,
+            "localY": 10243081
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": -3218,
+        "velocityYQ16": -7607,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 43,
+        "materialId": 1,
+        "startTick": 11,
+        "stopTick": 11,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5625246,
+            "localY": 9642120
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": -1871,
+        "velocityYQ16": -8160,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 44,
+        "materialId": 1,
+        "startTick": 12,
+        "stopTick": 12,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5477410,
+            "localY": 8997505
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": -456,
+        "velocityYQ16": -8412,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 45,
+        "materialId": 1,
+        "startTick": 13,
+        "stopTick": 13,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5441364,
+            "localY": 8332924
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": 976,
+        "velocityYQ16": -8356,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 46,
+        "materialId": 1,
+        "startTick": 9,
+        "stopTick": 9,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5518433,
+            "localY": 7672797
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": 2372,
+        "velocityYQ16": -7993,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 47,
+        "materialId": 1,
+        "startTick": 10,
+        "stopTick": 10,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5705785,
+            "localY": 7041382
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": 1853,
+        "velocityYQ16": -4101,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 48,
+        "materialId": 1,
+        "startTick": 11,
+        "stopTick": 11,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 7316153,
+            "localY": 5256855
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": 7128,
+        "velocityYQ16": -2534,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 49,
+        "materialId": 1,
+        "startTick": 12,
+        "stopTick": 12,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 7879272,
+            "localY": 5056638
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": 7426,
+        "velocityYQ16": -954,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 50,
+        "materialId": 1,
+        "startTick": 13,
+        "stopTick": 13,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8465923,
+            "localY": 4981265
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": 7451,
+        "velocityYQ16": 661,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 51,
+        "materialId": 1,
+        "startTick": 9,
+        "stopTick": 9,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 9054550,
+            "localY": 5033505
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": 7202,
+        "velocityYQ16": 2252,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 52,
+        "materialId": 1,
+        "startTick": 10,
+        "stopTick": 10,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 9623522,
+            "localY": 5211438
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": 6689,
+        "velocityYQ16": 3761,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 53,
+        "materialId": 1,
+        "startTick": 11,
+        "stopTick": 11,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 10151933,
+            "localY": 5508527
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": 5930,
+        "velocityYQ16": 5131,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 54,
+        "materialId": 1,
+        "startTick": 12,
+        "stopTick": 12,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 10620366,
+            "localY": 5913854
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": 4952,
+        "velocityYQ16": 6312,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 55,
+        "materialId": 1,
+        "startTick": 13,
+        "stopTick": 13,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 11011608,
+            "localY": 6412526
+          },
+          "widthQ16": 510,
+          "heightQ16": 510
+        },
+        "velocityXQ16": 781,
+        "velocityYQ16": 1257,
+        "velocityJitterQ16": 170
+      },
+      {
+        "id": 56,
+        "materialId": 4,
+        "startTick": 18,
+        "stopTick": 18,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5676413,
+            "localY": 12851999
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -11491,
+        "velocityYQ16": -6361,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 57,
+        "materialId": 4,
+        "startTick": 19,
+        "stopTick": 19,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 4940966,
+            "localY": 12444884
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -10291,
+        "velocityYQ16": -7972,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 58,
+        "materialId": 4,
+        "startTick": 20,
+        "stopTick": 20,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 4282342,
+            "localY": 11934663
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -8837,
+        "velocityYQ16": -9387,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 59,
+        "materialId": 4,
+        "startTick": 21,
+        "stopTick": 21,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 3716760,
+            "localY": 11333899
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -7166,
+        "velocityYQ16": -10571,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 60,
+        "materialId": 4,
+        "startTick": 22,
+        "stopTick": 22,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 3258145,
+            "localY": 10657384
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -5318,
+        "velocityYQ16": -11494,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 61,
+        "materialId": 4,
+        "startTick": 18,
+        "stopTick": 18,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 2917791,
+            "localY": 9921778
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -917,
+        "velocityYQ16": -2651,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 62,
+        "materialId": 4,
+        "startTick": 19,
+        "stopTick": 19,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 4940966,
+            "localY": 4070188
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 11491,
+        "velocityYQ16": -6361,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 63,
+        "materialId": 4,
+        "startTick": 20,
+        "stopTick": 20,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5676413,
+            "localY": 3663073
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 12409,
+        "velocityYQ16": -4593,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 64,
+        "materialId": 4,
+        "startTick": 21,
+        "stopTick": 21,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 6470576,
+            "localY": 3369090
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 13021,
+        "velocityYQ16": -2713,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 65,
+        "materialId": 4,
+        "startTick": 14,
+        "stopTick": 14,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 13082430,
+            "localY": 9195400
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 14743,
+        "velocityYQ16": 2866,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 66,
+        "materialId": 4,
+        "startTick": 15,
+        "stopTick": 15,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 11967085,
+            "localY": 11482197
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 7213,
+        "velocityYQ16": 6270,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 67,
+        "materialId": 4,
+        "startTick": 16,
+        "stopTick": 16,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 9857769,
+            "localY": 12904949
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 3112,
+        "velocityYQ16": 9037,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 68,
+        "materialId": 4,
+        "startTick": 18,
+        "stopTick": 18,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5032875,
+            "localY": 11967085
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -6270,
+        "velocityYQ16": 7213,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 69,
+        "materialId": 4,
+        "startTick": 19,
+        "stopTick": 19,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 3610123,
+            "localY": 9857769
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -9037,
+        "velocityYQ16": 3112,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 70,
+        "materialId": 4,
+        "startTick": 20,
+        "stopTick": 20,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 3432642,
+            "localY": 7319672
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -14743,
+        "velocityYQ16": -2866,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 71,
+        "materialId": 4,
+        "startTick": 21,
+        "stopTick": 21,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 4547987,
+            "localY": 5032875
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": -7213,
+        "velocityYQ16": -6270,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 72,
+        "materialId": 4,
+        "startTick": 23,
+        "stopTick": 23,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 9195400,
+            "localY": 3432642
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 2866,
+        "velocityYQ16": -14743,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 73,
+        "materialId": 4,
+        "startTick": 24,
+        "stopTick": 24,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 11482197,
+            "localY": 4547987
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 6270,
+        "velocityYQ16": -7213,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 74,
+        "materialId": 4,
+        "startTick": 25,
+        "stopTick": 25,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12904949,
+            "localY": 6657303
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 9037,
+        "velocityYQ16": -3112,
+        "velocityJitterQ16": 90
+      },
+      {
+        "id": 75,
+        "materialId": 2,
+        "startTick": 4,
+        "stopTick": 4,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 6881280,
+            "localY": 4521984
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 14564,
+        "velocityYQ16": 34953,
+        "velocityJitterQ16": 95
+      },
+      {
+        "id": 76,
+        "materialId": 2,
+        "startTick": 7,
+        "stopTick": 7,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8716288,
+            "localY": 8585216
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 17284,
+        "velocityYQ16": 38889,
+        "velocityJitterQ16": 95
+      },
+      {
+        "id": 77,
+        "materialId": 4,
+        "startTick": 11,
+        "stopTick": 11,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 7405568,
+            "localY": 4915200
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 9216,
+        "velocityYQ16": 20480,
+        "velocityJitterQ16": 120
+      },
+      {
+        "id": 78,
+        "materialId": 4,
+        "startTick": 17,
+        "stopTick": 17,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 9306112,
+            "localY": 10354688
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 16132,
+        "velocityYQ16": 26214,
+        "velocityJitterQ16": 120
+      },
+      {
+        "id": 79,
+        "materialId": 1,
+        "startTick": 21,
+        "stopTick": 21,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 10027008,
+            "localY": 7274496
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 30181,
+        "velocityYQ16": -13797,
+        "velocityJitterQ16": 110
+      },
+      {
+        "id": 80,
+        "materialId": 1,
+        "startTick": 25,
+        "stopTick": 25,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12320768,
+            "localY": 6225920
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 14336,
+        "velocityYQ16": -17408,
+        "velocityJitterQ16": 110
+      },
+      {
+        "id": 81,
+        "materialId": 3,
+        "startTick": 16,
+        "stopTick": 16,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 13238272,
+            "localY": 3997696
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 12483,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 150
+      },
+      {
+        "id": 82,
+        "materialId": 3,
+        "startTick": 19,
+        "stopTick": 19,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 13349683,
+            "localY": 4463002
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 15604,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 150
+      },
+      {
+        "id": 83,
+        "materialId": 3,
+        "startTick": 22,
+        "stopTick": 22,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 13461094,
+            "localY": 4928307
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 18725,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 150
+      },
+      {
+        "id": 84,
+        "materialId": 3,
+        "startTick": 25,
+        "stopTick": 25,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 13238272,
+            "localY": 5393613
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 21845,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 150
+      },
+      {
+        "id": 85,
+        "materialId": 3,
+        "startTick": 28,
+        "stopTick": 28,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 13349683,
+            "localY": 5858918
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 12483,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 150
+      },
+      {
+        "id": 86,
+        "materialId": 3,
+        "startTick": 31,
+        "stopTick": 31,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 13461094,
+            "localY": 6324224
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 15604,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 150
+      },
+      {
+        "id": 87,
+        "materialId": 3,
+        "startTick": 34,
+        "stopTick": 34,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 13238272,
+            "localY": 6789530
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 18725,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 150
+      },
+      {
+        "id": 88,
+        "materialId": 3,
+        "startTick": 37,
+        "stopTick": 37,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 13349683,
+            "localY": 7254835
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 21845,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 150
+      },
+      {
+        "id": 89,
+        "materialId": 3,
+        "startTick": 40,
+        "stopTick": 40,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 13461094,
+            "localY": 7720141
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 12483,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 150
+      },
+      {
+        "id": 90,
+        "materialId": 3,
+        "startTick": 34,
+        "stopTick": 34,
+        "intervalTicks": 1,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 10070137,
+            "localY": 12568184
+          },
+          "widthQ16": 1290,
+          "heightQ16": 1290
+        },
+        "velocityXQ16": -3641,
+        "velocityYQ16": -7282,
+        "velocityJitterQ16": 430
+      },
+      {
+        "id": 91,
+        "materialId": 3,
+        "startTick": 39,
+        "stopTick": 39,
+        "intervalTicks": 1,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 9634654,
+            "localY": 12745184
+          },
+          "widthQ16": 1290,
+          "heightQ16": 1290
+        },
+        "velocityXQ16": 5461,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 430
+      },
+      {
+        "id": 92,
+        "materialId": 3,
+        "startTick": 44,
+        "stopTick": 44,
+        "intervalTicks": 1,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 3844458,
+            "localY": 8914237
+          },
+          "widthQ16": 1290,
+          "heightQ16": 1290
+        },
+        "velocityXQ16": -3641,
+        "velocityYQ16": 7282,
+        "velocityJitterQ16": 430
+      },
+      {
+        "id": 93,
+        "materialId": 3,
+        "startTick": 49,
+        "stopTick": 49,
+        "intervalTicks": 1,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 3811944,
+            "localY": 8586688
+          },
+          "widthQ16": 1290,
+          "heightQ16": 1290
+        },
+        "velocityXQ16": 5461,
+        "velocityYQ16": -7282,
+        "velocityJitterQ16": 430
+      },
+      {
+        "id": 94,
+        "materialId": 3,
+        "startTick": 54,
+        "stopTick": 54,
+        "intervalTicks": 1,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8102008,
+            "localY": 3541818
+          },
+          "widthQ16": 1290,
+          "heightQ16": 1290
+        },
+        "velocityXQ16": -3641,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 430
+      },
+      {
+        "id": 95,
+        "materialId": 3,
+        "startTick": 59,
+        "stopTick": 59,
+        "intervalTicks": 1,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8568402,
+            "localY": 3550438
+          },
+          "widthQ16": 1290,
+          "heightQ16": 1290
+        },
+        "velocityXQ16": 5461,
+        "velocityYQ16": 7282,
+        "velocityJitterQ16": 430
+      },
+      {
+        "id": 96,
+        "materialId": 3,
+        "startTick": 64,
+        "stopTick": 64,
+        "intervalTicks": 1,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12697026,
+            "localY": 7846284
+          },
+          "widthQ16": 1290,
+          "heightQ16": 1290
+        },
+        "velocityXQ16": -3641,
+        "velocityYQ16": -7282,
+        "velocityJitterQ16": 430
+      },
+      {
+        "id": 97,
+        "materialId": 1,
+        "startTick": 32,
+        "stopTick": 32,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 3604480,
+            "localY": 2490368
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 23999,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 75
+      },
+      {
+        "id": 98,
+        "materialId": 1,
+        "startTick": 32,
+        "stopTick": 32,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5767168,
+            "localY": 2490368
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 13846,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 75
+      },
+      {
+        "id": 99,
+        "materialId": 1,
+        "startTick": 32,
+        "stopTick": 32,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 7864320,
+            "localY": 2490368
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 23076,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 75
+      },
+      {
+        "id": 100,
+        "materialId": 1,
+        "startTick": 32,
+        "stopTick": 32,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 10420224,
+            "localY": 2490368
+          },
+          "widthQ16": 500,
+          "heightQ16": 500
+        },
+        "velocityXQ16": 19384,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 75
+      }
+    ],
+    "lut": {
+      "schemaVersion": "fw-lut-v1",
+      "assets": [
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 1,
+          "name": "Oxide copper | dwindling bearing",
+          "size": 32,
+          "channels": {
+            "a": [
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535
+            ],
+            "b": [
+              11200,
+              11290,
+              11381,
+              11471,
+              11561,
+              11652,
+              11742,
+              11832,
+              11923,
+              12013,
+              12103,
+              12194,
+              12284,
+              12374,
+              12465,
+              12555,
+              12645,
+              12735,
+              12826,
+              12916,
+              13006,
+              13097,
+              13187,
+              13277,
+              13368,
+              13458,
+              13548,
+              13639,
+              13729,
+              13819,
+              13910,
+              14000
+            ],
+            "g": [
+              19200,
+              19523,
+              19845,
+              20168,
+              20490,
+              20813,
+              21135,
+              21458,
+              21781,
+              22103,
+              22426,
+              22748,
+              23071,
+              23394,
+              23716,
+              24039,
+              24361,
+              24684,
+              25006,
+              25329,
+              25652,
+              25974,
+              26297,
+              26619,
+              26942,
+              27265,
+              27587,
+              27910,
+              28232,
+              28555,
+              28877,
+              29200
+            ],
+            "r": [
+              46000,
+              46419,
+              46839,
+              47258,
+              47677,
+              48097,
+              48516,
+              48935,
+              49355,
+              49774,
+              50194,
+              50613,
+              51032,
+              51452,
+              51871,
+              52290,
+              52710,
+              53129,
+              53548,
+              53968,
+              54387,
+              54806,
+              55226,
+              55645,
+              56065,
+              56484,
+              56903,
+              57323,
+              57742,
+              58161,
+              58581,
+              59000
+            ]
+          }
+        },
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 2,
+          "name": "Porcelain | oxidised horizon",
+          "size": 32,
+          "channels": {
+            "a": [
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535
+            ],
+            "b": [
+              52000,
+              52290,
+              52581,
+              52871,
+              53161,
+              53452,
+              53742,
+              54032,
+              54323,
+              54613,
+              54903,
+              55194,
+              55484,
+              55774,
+              56065,
+              56355,
+              56645,
+              56935,
+              57226,
+              57516,
+              57806,
+              58097,
+              58387,
+              58677,
+              58968,
+              59258,
+              59548,
+              59839,
+              60129,
+              60419,
+              60710,
+              61000
+            ],
+            "g": [
+              55300,
+              55339,
+              55377,
+              55416,
+              55455,
+              55494,
+              55532,
+              55571,
+              55610,
+              55648,
+              55687,
+              55726,
+              55765,
+              55803,
+              55842,
+              55881,
+              55919,
+              55958,
+              55997,
+              56035,
+              56074,
+              56113,
+              56152,
+              56190,
+              56229,
+              56268,
+              56306,
+              56345,
+              56384,
+              56423,
+              56461,
+              56500
+            ],
+            "r": [
+              45000,
+              44548,
+              44097,
+              43645,
+              43194,
+              42742,
+              42290,
+              41839,
+              41387,
+              40935,
+              40484,
+              40032,
+              39581,
+              39129,
+              38677,
+              38226,
+              37774,
+              37323,
+              36871,
+              36419,
+              35968,
+              35516,
+              35065,
+              34613,
+              34161,
+              33710,
+              33258,
+              32806,
+              32355,
+              31903,
+              31452,
+              31000
+            ]
+          }
+        },
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 3,
+          "name": "Luminous brass | the absent degree",
+          "size": 32,
+          "channels": {
+            "a": [
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535
+            ],
+            "b": [
+              13300,
+              13219,
+              13139,
+              13058,
+              12977,
+              12897,
+              12816,
+              12735,
+              12655,
+              12574,
+              12494,
+              12413,
+              12332,
+              12252,
+              12171,
+              12090,
+              12010,
+              11929,
+              11848,
+              11768,
+              11687,
+              11606,
+              11526,
+              11445,
+              11365,
+              11284,
+              11203,
+              11123,
+              11042,
+              10961,
+              10881,
+              10800
+            ],
+            "g": [
+              44600,
+              44226,
+              43852,
+              43477,
+              43103,
+              42729,
+              42355,
+              41981,
+              41606,
+              41232,
+              40858,
+              40484,
+              40110,
+              39735,
+              39361,
+              38987,
+              38613,
+              38239,
+              37865,
+              37490,
+              37116,
+              36742,
+              36368,
+              35994,
+              35619,
+              35245,
+              34871,
+              34497,
+              34123,
+              33748,
+              33374,
+              33000
+            ],
+            "r": [
+              61000,
+              60290,
+              59581,
+              58871,
+              58161,
+              57452,
+              56742,
+              56032,
+              55323,
+              54613,
+              53903,
+              53194,
+              52484,
+              51774,
+              51065,
+              50355,
+              49645,
+              48935,
+              48226,
+              47516,
+              46806,
+              46097,
+              45387,
+              44677,
+              43968,
+              43258,
+              42548,
+              41839,
+              41129,
+              40419,
+              39710,
+              39000
+            ]
+          }
+        },
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 4,
+          "name": "Iris and charcoal | misregistered needle",
+          "size": 32,
+          "channels": {
+            "a": [
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535
+            ],
+            "b": [
+              56000,
+              55742,
+              55484,
+              55226,
+              54968,
+              54710,
+              54452,
+              54194,
+              53935,
+              53677,
+              53419,
+              53161,
+              52903,
+              52645,
+              52387,
+              52129,
+              51871,
+              51613,
+              51355,
+              51097,
+              50839,
+              50581,
+              50323,
+              50065,
+              49806,
+              49548,
+              49290,
+              49032,
+              48774,
+              48516,
+              48258,
+              48000
+            ],
+            "g": [
+              29000,
+              29258,
+              29516,
+              29774,
+              30032,
+              30290,
+              30548,
+              30806,
+              31065,
+              31323,
+              31581,
+              31839,
+              32097,
+              32355,
+              32613,
+              32871,
+              33129,
+              33387,
+              33645,
+              33903,
+              34161,
+              34419,
+              34677,
+              34935,
+              35194,
+              35452,
+              35710,
+              35968,
+              36226,
+              36484,
+              36742,
+              37000
+            ],
+            "r": [
+              33000,
+              33774,
+              34548,
+              35323,
+              36097,
+              36871,
+              37645,
+              38419,
+              39194,
+              39968,
+              40742,
+              41516,
+              42290,
+              43065,
+              43839,
+              44613,
+              45387,
+              46161,
+              46935,
+              47710,
+              48484,
+              49258,
+              50032,
+              50806,
+              51581,
+              52355,
+              53129,
+              53903,
+              54677,
+              55452,
+              56226,
+              57000
+            ]
+          }
+        },
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 5,
+          "name": "Discontinuous fleck diameter",
+          "size": 32,
+          "channels": {
+            "logic": [
+              9000,
+              14000,
+              24500,
+              12000,
+              8000,
+              20000,
+              12500,
+              26500,
+              9000,
+              14000,
+              24500,
+              12000,
+              8000,
+              20000,
+              12500,
+              26500,
+              9000,
+              14000,
+              24500,
+              12000,
+              8000,
+              20000,
+              12500,
+              26500,
+              9000,
+              14000,
+              24500,
+              12000,
+              8000,
+              20000,
+              12500,
+              26500
+            ]
+          }
+        }
+      ],
+      "mappings": [
+        {
+          "version": "fw-lut-map-v1",
+          "id": 1,
+          "materialId": 1,
+          "lutId": 1,
+          "source": "ageTicks",
+          "channel": "rgba",
+          "destination": "color",
+          "addressMode": "clamp",
+          "inputMin": 0,
+          "inputMax": 95,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 0,
+          "outputMax": 65535
+        },
+        {
+          "version": "fw-lut-map-v1",
+          "id": 2,
+          "materialId": 2,
+          "lutId": 2,
+          "source": "ageTicks",
+          "channel": "rgba",
+          "destination": "color",
+          "addressMode": "clamp",
+          "inputMin": 0,
+          "inputMax": 115,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 0,
+          "outputMax": 65535
+        },
+        {
+          "version": "fw-lut-map-v1",
+          "id": 3,
+          "materialId": 3,
+          "lutId": 3,
+          "source": "ageTicks",
+          "channel": "rgba",
+          "destination": "color",
+          "addressMode": "clamp",
+          "inputMin": 0,
+          "inputMax": 53,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 0,
+          "outputMax": 65535
+        },
+        {
+          "version": "fw-lut-map-v1",
+          "id": 4,
+          "materialId": 4,
+          "lutId": 4,
+          "source": "ageTicks",
+          "channel": "rgba",
+          "destination": "color",
+          "addressMode": "clamp",
+          "inputMin": 0,
+          "inputMax": 79,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 0,
+          "outputMax": 65535
+        },
+        {
+          "version": "fw-lut-map-v1",
+          "id": 5,
+          "materialId": 3,
+          "lutId": 5,
+          "source": "ageTicks",
+          "channel": "logic",
+          "destination": "radiusQ16",
+          "addressMode": "clamp",
+          "inputMin": 0,
+          "inputMax": 53,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 7500,
+          "outputMax": 32000
+        }
+      ]
+    },
+    "commands": [
+      {
+        "version": "fw-command-v1",
+        "id": 10,
+        "tick": 12,
+        "type": "release-burst",
+        "emitterId": 3,
+        "count": 4
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 20,
+        "tick": 29,
+        "type": "set-field-enabled",
+        "fieldId": 3,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 30,
+        "tick": 43,
+        "type": "set-field-enabled",
+        "fieldId": 3,
+        "enabled": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 40,
+        "tick": 51,
+        "type": "release-burst",
+        "emitterId": 15,
+        "count": 6
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 50,
+        "tick": 59,
+        "type": "set-field-enabled",
+        "fieldId": 4,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 60,
+        "tick": 72,
+        "type": "set-field-enabled",
+        "fieldId": 4,
+        "enabled": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 70,
+        "tick": 79,
+        "type": "set-field-enabled",
+        "fieldId": 5,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 80,
+        "tick": 86,
+        "type": "set-field-enabled",
+        "fieldId": 5,
+        "enabled": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 90,
+        "tick": 91,
+        "type": "set-simulation-frozen",
+        "frozen": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 100,
+        "tick": 97,
+        "type": "set-simulation-frozen",
+        "frozen": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 110,
+        "tick": 104,
+        "type": "set-field-enabled",
+        "fieldId": 6,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 120,
+        "tick": 116,
+        "type": "set-field-enabled",
+        "fieldId": 6,
+        "enabled": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 130,
+        "tick": 120,
+        "type": "release-burst",
+        "emitterId": 33,
+        "count": 8
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 140,
+        "tick": 126,
+        "type": "set-field-enabled",
+        "fieldId": 7,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 150,
+        "tick": 139,
+        "type": "set-field-enabled",
+        "fieldId": 7,
+        "enabled": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 160,
+        "tick": 143,
+        "type": "release-burst",
+        "emitterId": 54,
+        "count": 7
+      }
+    ],
+    "lineage": null
+  },
+  "seed": 1558657561,
+  "schemaVersion": "fw-recipe-v1",
+  "engineVersion": "fw-agents-v1",
+  "targetTick": 154,
+  "crop": {
+    "widthPx": 352,
+    "heightPx": 288,
+    "center": {
+      "chunkX": 0,
+      "chunkY": 0,
+      "localX": 8388608,
+      "localY": 8126464
+    },
+    "unitsPerPixelQ16": 40960
+  },
+  "widthPx": 352,
+  "heightPx": 288,
+  "unitsPerPixelQ16": 40960,
+  "backgroundRgba8": [
+    9,
+    11,
+    8,
+    255
+  ],
+  "pixelFormat": "rgba8",
+  "rawRgbaHash": "20d0367ebe3a8d8e",
+  "stateHash": "392c1dc87f4f73df",
+  "depositionHash": "6d062421d2acc4e2",
+  "resultHash": "9f3193bbf43aa545",
+  "lineage": null
+}
