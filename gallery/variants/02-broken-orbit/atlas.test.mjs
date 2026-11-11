@@ -27,7 +27,7 @@ const REPLAY = { targetTick: TARGET_TICK, crop: CROP, agentCapacity: 4096,
 const BG = [9, 11, 8];
 const sha = (b) => createHash('sha256').update(b).digest('hex');
 
-function render(recipe) { return createCanonicalExport(recipe, REPLAY); }
+function render(recipe, tick = TARGET_TICK) { return createCanonicalExport(recipe, { ...REPLAY, targetTick: tick }); }
 function shape(rgba) {
   const mask = new Uint8Array(rgba.length / 4);
   let occupied = 0, cells = 0;
