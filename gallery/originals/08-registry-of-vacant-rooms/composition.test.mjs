@@ -51,6 +51,49 @@ test('Original 08: candidate enters offline accepted-preset exhibition with exac
     assert.deepEqual(savedRecipe,sourceRecipe,'Downloaded review recipe must match archived author recipe');
     assert.deepEqual(Buffer.from(images[2][1],'base64'),archived,
       'Review entry must show exact source-archived canonical pixels');
+
+    // Test the actual bytes offered to the owner, not just the displayed card.
+    // A valid-looking href must not download a stale, divergent recipe/proof.
+    const jsonLink=(suffix)=>html.match(new RegExp(
+      '<a href="data:application/json;base64,([^"]+)" download="fieldweaver-work-3\\\\.'+suffix+'"' ));
+    const pngLink=html.match(/<a href="data:image\\/png;base64,([^"]+)" download="fieldweaver-work-3\\.png"/);
+    assert(pngLink,'The proposed original must offer its canonical PNG');
+    assert.deepEqual(Buffer.from(pngLink[1],'base64'),archived,
+      'Downloaded canonical PNG must match the archived author output');
+    const sidecarLink=jsonLink('provenance\\\\.json');
+    assert(sidecarLink,'The proposed original must offer full provenance');
+    const sidecarBytes=Buffer.from(sidecarLink[1],'base64');
+    const sourceSidecar=await readFile(new URL('./the-vacant-rooms.provenance.json',import.meta.url));
+    assert.deepEqual(sidecarBytes,sourceSidecar,
+      'Downloaded provenance must match the archived canonical sidecar');
+
+    // Re-import the *downloaded* recipe with the ordinary public validator,
+    // then reproduce its advertised tick/crop and exact image identities.
+    const {parseRecipe,serializeRecipe,recipeHash}=await import('../../../src/recipe/index.js');
+    const {createCanonicalExport,decodePngRgba}=await import('../../../src/export/index.js');
+    const imported=parseRecipe(Buffer.from(recipeDownload[1],'base64').toString('utf8'));
+    assert.equal(serializeRecipe(imported),
+      await readFile(new URL('./recipe.json',import.meta.url),'utf8'),
+      'Public recipe import/roundtrip differs from the advertised download');
+    assert.equal(recipeHash(imported),'3a2c43dd7f49d9aa');
+    const provenance=JSON.parse(sidecarBytes.toString('utf8'));
+    assert.deepEqual(provenance.recipe,imported);
+    assert.equal(provenance.seed,0x6da27f19);
+    assert.equal(provenance.targetTick,162);
+    const replay=createCanonicalExport(imported,{
+      targetTick:provenance.targetTick,crop:provenance.crop,
+      backgroundRgba8:provenance.backgroundRgba8,
+      agentCapacity:4096,maxDepositions:250000,
+      tileWidthPx:59,tileHeightPx:41
+    });
+    assert.equal(replay.rawRgbaHash,'56286fc4c1a47bb8');
+    assert.equal(replay.rawRgbaHash,provenance.rawRgbaHash);
+    assert.equal(replay.stateHash,provenance.stateHash);
+    assert.equal(replay.depositionHash,provenance.depositionHash);
+    assert.equal(replay.resultHash,provenance.resultHash);
+    assert.deepEqual(Buffer.from(replay.png),archived,
+      'Editor-importable review download did not reproduce the canonical PNG');
+    assert.deepEqual(decodePngRgba(replay.png).rgba,decodePngRgba(archived).rgba);
   }finally{
     await rm(folder,{recursive:true,force:true});
   }
