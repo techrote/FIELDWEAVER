@@ -209,12 +209,14 @@ toolbar.append(back, forward, pin, unpin, load, inspect);
   }
   function resetPixel() {
     ++pixelToken; pixelCache.clear(); lastPixelId = null; pixelOpen = false;
+    dialog.classList.remove('is-pixel-inspection');
     desk.hidden = true; inspect.setAttribute('aria-expanded', 'false'); inspect.textContent = 'Inspect exact pixels';
     gridPixels.replaceChildren(); reading.textContent = 'Choose a pixel.';
   }
   inspect.addEventListener('click', () => {
     if (pixelOpen) { resetPixel(); return; }
     pixelOpen = true; desk.hidden = false;
+    dialog.classList.add('is-pixel-inspection');
     source.value = pinnedId ? 'B' : 'A';
     inspect.setAttribute('aria-expanded', 'true');
     inspect.textContent = 'Hide pixel inspection';
@@ -235,6 +237,7 @@ toolbar.append(back, forward, pin, unpin, load, inspect);
       if (!point) return;
       if (!pixelOpen) {
         pixelOpen = true; desk.hidden = false;
+        dialog.classList.add('is-pixel-inspection');
         inspect.setAttribute('aria-expanded', 'true');
         inspect.textContent = 'Hide pixel inspection';
       }
