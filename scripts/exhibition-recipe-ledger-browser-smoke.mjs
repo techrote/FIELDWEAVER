@@ -82,6 +82,7 @@ try {
       !pulse.timeline[0].includes('tick 8') || !pulse.timeline[5].includes('tick 34') ||
       pulse.relation !== 'Different') throw new Error('Command register was not the real accepted timeline: ' + JSON.stringify(pulse));
   await request('POST', '/session/' + sessionId + '/window/rect', { width: 1280, height: 940 });
+  await execute("document.getElementById('exhibition-recipe-ledger').scrollIntoView({block:'start'})");
   const screenshot = await request('GET', '/session/' + sessionId + '/screenshot');
   if (!screenshot?.value) throw new Error('No actual browser screenshot.');
   await writeFile('exhibition-recipe-score-' + browser + '.png', Buffer.from(screenshot.value, 'base64'));
@@ -98,7 +99,11 @@ try {
       receipt.b.score.commands.length !== 6 ||
       !/^[a-f0-9]{16}$/.test(receipt.a.rawRgbaHash) ||
       receipt.comparison.length !== 10) throw new Error('Downloaded recipe score has invalid provenance.');
-  const after = await execute("document.getElementById('exhibition-study-close').click();return {open:document.getElementById('exhibition-study-dialog').open,hidden:document.getElementById('exhibition-recipe-ledger').hidden,canonical:document.documentElement.dataset.fieldweaverCanonicalRecipeHash}");
+  let after = await execute("document.getElementById('exhibition-study-close').click();return {open:document.getElementById('exhibition-study-dialog').open,hidden:document.getElementById('exhibition-recipe-ledger').hidden,canonical:document.documentElement.dataset.fieldweaverCanonicalRecipeHash}");
+  for (let i = 0; i < 30 && !after.hidden; i += 1) {
+    await sleep(100);
+    after = await execute("return {open:document.getElementById('exhibition-study-dialog').open,hidden:document.getElementById('exhibition-recipe-ledger').hidden,canonical:document.documentElement.dataset.fieldweaverCanonicalRecipeHash}");
+  }
   if (after.open || !after.hidden || before !== after.canonical) {
     throw new Error('Read-only score changed editor state or survived dialog close: ' + JSON.stringify(after));
   }
