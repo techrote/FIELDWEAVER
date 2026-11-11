@@ -4,7 +4,7 @@ A bounded visual experiment in **broken time** using the accepted `timeline-puls
 
 ## Artistic problem
 
-Can the pause inside a periodic score become spatially legible as interruption, overlap and persistence? The intended departure from variant 08's sheared, sparse diagonal is a counterpoint of several competing marks from the timeline-rich parent, with differing field responses in the same frame. **This is an intended premise, not a claimed observation of unseen image outputs.**
+Can the pause inside a periodic score become spatially legible as interruption, overlap and persistence? The intended departure from variant 08's sheared, sparse diagonal is a counterpoint of several competing marks from the timeline-rich parent, with differing field responses in the same frame. **Observed from the genuine FW-012 CPU contact sheet and full-sized finalists** (initial Node 24 evidence run): sibling **01** presents two divergent currents. A cyan comb descends diagonally from the left-centre, while a separate green/magenta filament rises and flattens into a short red trace to the right. The suspended purple upright above them acts as a score marker. This separation reads as counterpoint following a rest. Sibling 13 has more occupied pixels and a stronger violet L-shaped extension, but that motif too closely repeats variant 08's arched cyan current and abrupt violet right-hand terminus; sibling 00 is overly evacuated and #11 loses the second voice. This is an actual pixel-image observation and an artistic choice, not an automated aesthetic score. The imagery remains deliberately sparse.
 
 ## Exact deterministic run
 
