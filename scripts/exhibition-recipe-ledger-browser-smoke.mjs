@@ -65,7 +65,7 @@ try {
       initial.images.length !== 1 || initial.images[0].w !== 96 || initial.images[0].h !== 64 ||
       !initial.images[0].src.startsWith('blob:')) throw new Error('Unverified initial recipe score: ' + JSON.stringify(initial));
   let atlas = await execute("document.getElementById('exhibition-study-pin').click();document.getElementById('exhibition-study-next').click();const cells=[...document.querySelectorAll('#exhibition-recipe-ledger-rows tr')].map(x=>({name:x.querySelector('th').textContent,relation:x.lastElementChild.textContent}));return {status:document.getElementById('exhibition-study-status').textContent,frames:document.querySelectorAll('.exhibition-study-frame:not([hidden]) img').length,cells,notes:document.getElementById('exhibition-recipe-ledger-status').textContent}");
-  for (let i = 0; i < 30 && atlas.cells.length === 0; i += 1) {
+  for (let i = 0; i < 30 && !atlas.notes.includes('Two accepted'); i += 1) {
     await sleep(100);
     atlas = await execute("const cells=[...document.querySelectorAll('#exhibition-recipe-ledger-rows tr')].map(x=>({name:x.querySelector('th').textContent,relation:x.lastElementChild.textContent}));return {status:document.getElementById('exhibition-study-status').textContent,frames:document.querySelectorAll('.exhibition-study-frame:not([hidden]) img').length,cells,notes:document.getElementById('exhibition-recipe-ledger-status').textContent}");
   }
