@@ -104,19 +104,19 @@ export function createVacantRooms(){
   const materials=[
     {id:1,kind:'ink',inertiaNumerator:1,inertiaDenominator:1,
      steeringNumerator:1,steeringDenominator:56,lifetimeTicks:119,
-     depositEvery:1,primitive:'disc',radiusQ16:46500,
+     depositEvery:1,primitive:'disc',radiusQ16:32000,
      strengthQ16:59000,quantizeAxis:false},
     {id:2,kind:'filament',inertiaNumerator:1,inertiaDenominator:1,
      steeringNumerator:1,steeringDenominator:64,lifetimeTicks:129,
-     depositEvery:1,primitive:'segment',radiusQ16:37500,
+     depositEvery:1,primitive:'segment',radiusQ16:29000,
      strengthQ16:63000,quantizeAxis:false},
     {id:3,kind:'dust',inertiaNumerator:1,inertiaDenominator:3,
      steeringNumerator:2,steeringDenominator:3,lifetimeTicks:58,
-     depositEvery:1,primitive:'point',radiusQ16:25500,
+     depositEvery:1,primitive:'point',radiusQ16:22000,
      strengthQ16:58000,quantizeAxis:false},
     {id:4,kind:'shard',inertiaNumerator:1,inertiaDenominator:1,
      steeringNumerator:1,steeringDenominator:25,lifetimeTicks:109,
-     depositEvery:1,primitive:'segment',radiusQ16:39500,
+     depositEvery:1,primitive:'segment',radiusQ16:31500,
      strengthQ16:64000,quantizeAxis:true}
   ];
   const lut={schemaVersion:'fw-lut-v1',assets:[
@@ -134,7 +134,7 @@ export function createVacantRooms(){
      source:'ageTicks',channel:'logic',destination:'radiusQ16',
      addressMode:'clamp',inputMin:0,inputMax:57,
      scaleNumerator:1,scaleDenominator:1,bias:0,
-     outputMin:6500,outputMax:34000}
+     outputMin:6500,outputMax:32000}
   ]};
   const fields=[
     layer(1,'uniform',{vectorXQ16:17,vectorYQ16:-60},[0,0],true),
