@@ -1,0 +1,66 @@
+name: Exhibition Recipe Ledger
+
+on:
+  pull_request:
+    paths:
+      - 'src/ui/exhibition-recipe-ledger.js'
+      - 'src/ui/exhibition-visual-index.js'
+      - 'src/ui/exhibition.css'
+      - 'tests/exhibition-recipe-ledger.test.mjs'
+      - 'scripts/exhibition-recipe-ledger-browser-smoke.mjs'
+      - 'docs/EXHIBITION_RECIPE_LEDGER.md'
+      - '.github/workflows/exhibition-recipe-ledger.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chrome, firefox]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Full local correctness gate
+        if: matrix.browser == 'firefox'
+        run: npm run verify
+      - name: Firefox virtual display
+        if: matrix.browser == 'firefox'
+        run: |
+          Xvfb :99 -screen 0 1280x1024x24 > xvfb.log 2>&1 &
+          echo 'DISPLAY=:99' >> "$GITHUB_ENV"
+          echo 'LIBGL_ALWAYS_SOFTWARE=1' >> "$GITHUB_ENV"
+          sleep 1
+      - name: Start offline-only local web server
+        run: |
+          node scripts/serve.mjs > recipe-ledger-server.log 2>&1 &
+          for i in {1..40}; do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then exit 0; fi
+            sleep 0.25
+          done
+          cat recipe-ledger-server.log
+          exit 1
+      - name: Verify genuine CPU proof gating and recipe A/B interactions
+        run: node scripts/exhibition-recipe-ledger-browser-smoke.mjs ${{ matrix.browser }}
+      - name: Retain actual browser screenshots and download receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exhibition-recipe-ledger-${{ matrix.browser }}
+          path: |
+            exhibition-recipe-score-${{ matrix.browser }}.png
+            exhibition-recipe-score-narrow-${{ matrix.browser }}.png
+            exhibition-recipe-score-${{ matrix.browser }}.json
+            recipe-ledger-server.log
+            xvfb.log
+          if-no-files-found: ignore
+          retention-days: 7

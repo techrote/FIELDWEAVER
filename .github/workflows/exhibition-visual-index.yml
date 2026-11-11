@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - 'src/ui/exhibition-visual-index*'
+      - 'src/ui/exhibition-offline-board.js'
+      - 'docs/VISUAL_INDEX.md'
       - 'src/ui/exhibition-study*'
       - 'tests/exhibition-study.test.mjs'
       - 'docs/EXHIBITION_STUDY.md'
@@ -58,6 +60,8 @@ jobs:
         with:
           name: exhibition-visual-index-${{ matrix.browser }}
           path: |
+            exhibition-offline-board-${{ matrix.browser }}.html
+            exhibition-offline-board-${{ matrix.browser }}.png
             exhibition-visual-index-${{ matrix.browser }}.png
             exhibition-visual-index-${{ matrix.browser }}.json
             exhibition-study-${{ matrix.browser }}.png

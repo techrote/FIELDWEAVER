@@ -14,3 +14,12 @@ No images are shown by default: this opt-in path incurs rendering work only on r
 `tests/exhibition-visual-index.test.mjs` exercises the four golden images, immutability, damaged PNG, forged provenance and proxy rejection. `scripts/exhibition-visual-index-browser-smoke.mjs` exercises actual Chrome/Firefox image decoding, native-button gallery selection and screenshot capture under a dedicated workflow. Browser screenshots are aesthetic/layout evidence only, never the canonical oracle.
 
 Pending originals and mutation families remain DRAFT until Integration independently qualifies them. The visual index is intentionally limited to accepted works.
+
+
+## Portable offline exhibition field guide
+
+After **Render visual index (4 CPU proofs)** completes successfully, choose **Save offline board (HTML)**. This downloads one self-contained HTML file containing four already verified FW-012 canonical PNGs, each accepted work's recipe/seed/tick/crop/lineage identity, and the complete export provenance JSON (including the loadable recipe) in an expandable disclosure. Images are embedded from original PNG bytes; nearest-neighbour CSS enlargement is a presentation transform only. The document is static, keyboard navigable, printable and has no scripts, telemetry or remote assets. It opens offline.
+
+The button stays disabled until a full four-work pass succeeds. Starting a new pass, cancellation, error or page exit invalidates the pending board evidence. Partially refreshed images cannot be saved as one reviewed set. Board creation never adopts a recipe, modifies simulation state or admits pending gallery submissions.
+
+The offline-board module checks accepted IDs, decoded PNG pixels, crop, receipt versions, recipe hash and seed before embedding them. Tests reject missing, duplicate, corrupted and forged evidence. The Chrome/Firefox browser smoke exercises an actual UI click and reads the resulting HTML download Blob for its four embedded canonical PNGs; it does **not** certify OS-level file persistence. The 96×64 images are review proofs rather than high-resolution exports. For larger output use **Canonical export**.
