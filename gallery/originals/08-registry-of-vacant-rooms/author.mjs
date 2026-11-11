@@ -138,7 +138,7 @@ export function createVacantRooms(){
   ]};
   const fields=[
     layer(1,'uniform',{vectorXQ16:17,vectorYQ16:-60},[0,0],true),
-    layer(2,'turbulence',{amplitudeQ16:190,cellSizeQ16:q(14),seed:0x81b5ad62},[0,0],true),
+    layer(2,'turbulence',{amplitudeQ16:190,cellSizeQ16:q(14),seed:0x21b5ad62},[0,0],true),
     layer(3,'vortex',{radiusQ16:q(54),strengthQ16:-4200},[252,143]),
     layer(4,'attractor',{radiusQ16:q(73),strengthQ16:3900},[160,129]),
     layer(5,'direction-quantizer',{sectors:4}),
