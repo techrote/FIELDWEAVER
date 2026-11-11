@@ -1,0 +1,518 @@
+{
+  "version": "fieldweaver-variant-atlas-v1",
+  "title": "After the Fourth Pause",
+  "method": "two-stage exact FW-011 mutation / FW-012 CPU replay / mask-space curation",
+  "parent": {
+    "id": "timeline-pulse",
+    "recipeHash": "c94aed7bfc18a40d",
+    "seed": 1896747493,
+    "canonical": {
+      "recipeHash": "c94aed7bfc18a40d",
+      "rawRgbaHash": "de01d368f9439ed0",
+      "stateHash": "eb37a19a1a0a9485",
+      "depositionHash": "e6cc1721c9f1dbda",
+      "resultHash": "a90cc4c6740cfa89",
+      "depositionCount": 31377
+    }
+  },
+  "mutation": {
+    "firstSeed": 667544852,
+    "secondSeed": 1243579143,
+    "first": {
+      "scope": "all",
+      "intensity": "bold",
+      "operationCount": 6
+    },
+    "second": {
+      "scope": "fields",
+      "intensity": "bold",
+      "operationCount": 1
+    },
+    "siblingIndexes": [
+      0,
+      15
+    ]
+  },
+  "targetTick": 124,
+  "crop": {
+    "widthPx": 256,
+    "heightPx": 192,
+    "center": {
+      "chunkX": 0,
+      "chunkY": 0,
+      "localX": 8257536,
+      "localY": 8388608
+    },
+    "unitsPerPixelQ16": 49152
+  },
+  "selection": {
+    "index": 1,
+    "recipeHash": "13451f213af22af1",
+    "lineage": {
+      "version": "fw-lineage-v1",
+      "mutationVersion": "fw-mutation-v1",
+      "parentRecipeHash": "eb22edcbd2d41b38",
+      "childIdentity": "b0896193ab13e8ea",
+      "mutationSeed": 1243579143,
+      "siblingIndex": 1,
+      "childSeed": 3706767595,
+      "operations": [
+        {
+          "after": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "before": [
+            1,
+            2,
+            3,
+            5,
+            4
+          ],
+          "index": 3,
+          "target": "fields.order",
+          "type": "swap-adjacent-fields",
+          "version": "fw-mutation-v1"
+        }
+      ]
+    },
+    "canonical": {
+      "recipeHash": "13451f213af22af1",
+      "rawRgbaHash": "753ce0ca6b5e2aea",
+      "stateHash": "d1f31b7f2ed7a514",
+      "depositionHash": "7fe55b30e6e5b6e0",
+      "resultHash": "dd65ce8382e9aa9a",
+      "depositionCount": 31377
+    },
+    "morphologicalScore": 6037,
+    "maskXorFromParent": 2203
+  },
+  "finalists": [
+    {
+      "index": 13,
+      "recipeHash": "4edbf408b7777167",
+      "canonical": {
+        "recipeHash": "4edbf408b7777167",
+        "rawRgbaHash": "216956cea7cf58d0",
+        "stateHash": "1bde0a2e48b230e4",
+        "depositionHash": "b1c30dfc22c5f2b5",
+        "resultHash": "2e868fd082506077",
+        "depositionCount": 28706
+      },
+      "occupiedPixels": 2738,
+      "occupiedGridCells": 19,
+      "bbox": [
+        17,
+        72,
+        238,
+        183
+      ],
+      "quadrant": [
+        187,
+        0,
+        2166,
+        385
+      ],
+      "maskXorFromParent": 2091,
+      "score": 6207.666666666667
+    },
+    {
+      "index": 11,
+      "recipeHash": "a72df3be0c5c3c71",
+      "canonical": {
+        "recipeHash": "a72df3be0c5c3c71",
+        "rawRgbaHash": "608a486580464006",
+        "stateHash": "29f2af78fbead539",
+        "depositionHash": "11ade7111557cb50",
+        "resultHash": "16ba621ddbeecead",
+        "depositionCount": 31377
+      },
+      "occupiedPixels": 1960,
+      "occupiedGridCells": 13,
+      "bbox": [
+        1,
+        31,
+        117,
+        166
+      ],
+      "quadrant": [
+        424,
+        0,
+        1536,
+        0
+      ],
+      "maskXorFromParent": 2377,
+      "score": 6163.333333333333
+    },
+    {
+      "index": 1,
+      "recipeHash": "13451f213af22af1",
+      "canonical": {
+        "recipeHash": "13451f213af22af1",
+        "rawRgbaHash": "753ce0ca6b5e2aea",
+        "stateHash": "d1f31b7f2ed7a514",
+        "depositionHash": "7fe55b30e6e5b6e0",
+        "resultHash": "dd65ce8382e9aa9a",
+        "depositionCount": 31377
+      },
+      "occupiedPixels": 1932,
+      "occupiedGridCells": 16,
+      "bbox": [
+        27,
+        30,
+        172,
+        164
+      ],
+      "quadrant": [
+        526,
+        0,
+        1291,
+        115
+      ],
+      "maskXorFromParent": 2203,
+      "score": 6037
+    },
+    {
+      "index": 0,
+      "recipeHash": "9533e35033358b80",
+      "canonical": {
+        "recipeHash": "9533e35033358b80",
+        "rawRgbaHash": "a163223137b74bf1",
+        "stateHash": "907bd8c911454378",
+        "depositionHash": "f3b9516d13365785",
+        "resultHash": "20c964d4fa9f42a3",
+        "depositionCount": 31377
+      },
+      "occupiedPixels": 1440,
+      "occupiedGridCells": 11,
+      "bbox": [
+        24,
+        30,
+        132,
+        183
+      ],
+      "quadrant": [
+        347,
+        0,
+        1086,
+        7
+      ],
+      "maskXorFromParent": 2147,
+      "score": 5551
+    }
+  ],
+  "candidates": [
+    {
+      "index": 0,
+      "bridgeHash": "2b5569d1f346ceba",
+      "childHash": "9533e35033358b80",
+      "rgbaHash": "a163223137b74bf1",
+      "occupiedPixels": 1440,
+      "occupiedGridCells": 11,
+      "bbox": [
+        24,
+        30,
+        132,
+        183
+      ],
+      "maskXorFromParent": 2147,
+      "score": 5551
+    },
+    {
+      "index": 1,
+      "bridgeHash": "eb22edcbd2d41b38",
+      "childHash": "13451f213af22af1",
+      "rgbaHash": "753ce0ca6b5e2aea",
+      "occupiedPixels": 1932,
+      "occupiedGridCells": 16,
+      "bbox": [
+        27,
+        30,
+        172,
+        164
+      ],
+      "maskXorFromParent": 2203,
+      "score": 6037
+    },
+    {
+      "index": 2,
+      "bridgeHash": "92c2c70ea4ceee2e",
+      "childHash": "4f88b04307ae935e",
+      "rgbaHash": "8a8a15785c7023be",
+      "occupiedPixels": 1317,
+      "occupiedGridCells": 10,
+      "bbox": [
+        25,
+        72,
+        108,
+        183
+      ],
+      "maskXorFromParent": 1814,
+      "score": 4697
+    },
+    {
+      "index": 3,
+      "bridgeHash": "4d1902e33254d0f5",
+      "childHash": "0b800f65575f60be",
+      "rgbaHash": "f28bbbe4089c73f0",
+      "occupiedPixels": 1281,
+      "occupiedGridCells": 12,
+      "bbox": [
+        8,
+        30,
+        108,
+        180
+      ],
+      "maskXorFromParent": 1724,
+      "score": 4589
+    },
+    {
+      "index": 4,
+      "bridgeHash": "304dbb424994d43b",
+      "childHash": "8a7c34494e664d3b",
+      "rgbaHash": "ce3f24792129ec02",
+      "occupiedPixels": 1902,
+      "occupiedGridCells": 14,
+      "bbox": [
+        23,
+        30,
+        110,
+        183
+      ],
+      "maskXorFromParent": 1793,
+      "score": 5018
+    },
+    {
+      "index": 5,
+      "bridgeHash": "8eed0fd0c212d58f",
+      "childHash": "ff88b7a323d9b702",
+      "rgbaHash": "49046dcc4372ff22",
+      "occupiedPixels": 1940,
+      "occupiedGridCells": 14,
+      "bbox": [
+        17,
+        0,
+        113,
+        183
+      ],
+      "maskXorFromParent": 865,
+      "score": 3174.6666666666665
+    },
+    {
+      "index": 6,
+      "bridgeHash": "9ab2702527eaeadb",
+      "childHash": "a699ddaf4af9f132",
+      "rgbaHash": "1bc92e1d627d2106",
+      "occupiedPixels": 1761,
+      "occupiedGridCells": 13,
+      "bbox": [
+        24,
+        30,
+        111,
+        183
+      ],
+      "maskXorFromParent": 1652,
+      "score": 4647
+    },
+    {
+      "index": 7,
+      "bridgeHash": "9fe678b848cc2fe1",
+      "childHash": "f9624bcad91546ca",
+      "rgbaHash": "fad0d42160f0f620",
+      "occupiedPixels": 1678,
+      "occupiedGridCells": 12,
+      "bbox": [
+        0,
+        30,
+        96,
+        191
+      ],
+      "maskXorFromParent": 2059,
+      "score": 5391.333333333333
+    },
+    {
+      "index": 8,
+      "bridgeHash": "c20f30c492c84bfb",
+      "childHash": "28b2bc99bf78005c",
+      "rgbaHash": "21310f317c35014d",
+      "occupiedPixels": 1861,
+      "occupiedGridCells": 13,
+      "bbox": [
+        2,
+        30,
+        103,
+        183
+      ],
+      "maskXorFromParent": 1308,
+      "score": 3992.3333333333335
+    },
+    {
+      "index": 9,
+      "bridgeHash": "58514c233cbcc2b9",
+      "childHash": "369121df20d2fcd6",
+      "rgbaHash": "2835007e2a5495ef",
+      "occupiedPixels": 1289,
+      "occupiedGridCells": 9,
+      "bbox": [
+        18,
+        31,
+        105,
+        183
+      ],
+      "maskXorFromParent": 1316,
+      "score": 3649.6666666666665
+    },
+    {
+      "index": 10,
+      "bridgeHash": "2f52397b21053a1d",
+      "childHash": "4070cdaef470c02c",
+      "rgbaHash": "2a36fa0990adc0d4",
+      "occupiedPixels": 1404,
+      "occupiedGridCells": 10,
+      "bbox": [
+        0,
+        30,
+        103,
+        183
+      ],
+      "maskXorFromParent": 1351,
+      "score": 3800
+    },
+    {
+      "index": 11,
+      "bridgeHash": "95ed4ec066bb385d",
+      "childHash": "a72df3be0c5c3c71",
+      "rgbaHash": "608a486580464006",
+      "occupiedPixels": 1960,
+      "occupiedGridCells": 13,
+      "bbox": [
+        1,
+        31,
+        117,
+        166
+      ],
+      "maskXorFromParent": 2377,
+      "score": 6163.333333333333
+    },
+    {
+      "index": 12,
+      "bridgeHash": "a99abb77f400ceb2",
+      "childHash": "83de66ffa2affd29",
+      "rgbaHash": "411157dffdf26917",
+      "occupiedPixels": 2021,
+      "occupiedGridCells": 12,
+      "bbox": [
+        12,
+        45,
+        119,
+        182
+      ],
+      "maskXorFromParent": 1684,
+      "score": 4755.666666666667
+    },
+    {
+      "index": 13,
+      "bridgeHash": "cbcaa8097d09dc61",
+      "childHash": "4edbf408b7777167",
+      "rgbaHash": "216956cea7cf58d0",
+      "occupiedPixels": 2738,
+      "occupiedGridCells": 19,
+      "bbox": [
+        17,
+        72,
+        238,
+        183
+      ],
+      "maskXorFromParent": 2091,
+      "score": 6207.666666666667
+    },
+    {
+      "index": 14,
+      "bridgeHash": "8317e97fd005bc24",
+      "childHash": "793f97027c84780d",
+      "rgbaHash": "e7ecb48c0e1ca7e4",
+      "occupiedPixels": 1135,
+      "occupiedGridCells": 11,
+      "bbox": [
+        26,
+        30,
+        113,
+        164
+      ],
+      "maskXorFromParent": 1548,
+      "score": 4146.333333333333
+    },
+    {
+      "index": 15,
+      "bridgeHash": "576b1213513d5637",
+      "childHash": "4a65f697ec1fe920",
+      "rgbaHash": "673a41136e4e0654",
+      "occupiedPixels": 1505,
+      "occupiedGridCells": 12,
+      "bbox": [
+        0,
+        72,
+        100,
+        183
+      ],
+      "maskXorFromParent": 1806,
+      "score": 4827.666666666667
+    }
+  ],
+  "sheet": {
+    "kind": "noncanonical-presentation-only",
+    "widthPx": 816,
+    "heightPx": 470,
+    "rawRgbaHash": "790a4f02745487d9"
+  },
+  "files": [
+    {
+      "path": "selected.recipe.json",
+      "sha256": "be39910e290620210fcb2e18302dd996ea19d4246d63d882a80742cfc4dc3709",
+      "bytes": 82273
+    },
+    {
+      "path": "selected.provenance.json",
+      "sha256": "6378da0366dde865dc39625f9b008f6ad456414eade5915bd6e450b359d5771b",
+      "bytes": 92377
+    },
+    {
+      "path": "selected.png",
+      "sha256": "2f6eac407c8c816bb5ecb8b85db757d7b128d21c6e94f98bac7aac4298985838",
+      "bytes": 196883
+    },
+    {
+      "path": "parent.png",
+      "sha256": "748092f643b9ad0e0e8c6f59630fa95a778c2d502b6630ef36615a1abe3550eb",
+      "bytes": 196883
+    },
+    {
+      "path": "finalist-13.png",
+      "sha256": "f077789496b158a81d047a27d76aa1054b804935e96aa630d5b42fef7bee8c3b",
+      "bytes": 196883
+    },
+    {
+      "path": "finalist-11.png",
+      "sha256": "d66780eec613e2387ead0b57f71d640120e6a93b7cefbf774a6d922be53932fa",
+      "bytes": 196883
+    },
+    {
+      "path": "finalist-01.png",
+      "sha256": "2f6eac407c8c816bb5ecb8b85db757d7b128d21c6e94f98bac7aac4298985838",
+      "bytes": 196883
+    },
+    {
+      "path": "finalist-00.png",
+      "sha256": "bf01e0270ab03fa94013a0d80cf0fda5105fcda008d36cf6893382f0b2824d83",
+      "bytes": 196883
+    },
+    {
+      "path": "contact-sheet.png",
+      "sha256": "037dff9177565d2a531b0ede79b5bd482642d77408e13f153bbf616d2817b2b9",
+      "bytes": 1534733
+    }
+  ]
+}
