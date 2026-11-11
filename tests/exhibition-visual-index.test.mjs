@@ -6,6 +6,7 @@ import { recipeHash } from '../src/recipe/index.js';
 import { BUILTIN_PRESETS } from '../src/presets/index.js';
 import { exhibitionEntries, renderExhibitionProof } from '../src/ui/exhibition-catalog.js';
 import { renderVisualIndexProof, verifyVisualIndexProof } from '../src/ui/exhibition-visual-index-model.js';
+import { buildOfflineExhibitionBoard } from '../src/ui/exhibition-offline-board.js';
 
 test('visual index decodes all accepted CPU proofs at golden tick/crop without editing recipes', async () => {
   const fixtures = JSON.parse(await readFile(new URL('../fixtures/fw-014-presets.json', import.meta.url), 'utf8'));
@@ -39,4 +40,38 @@ test('visual index rejects corrupted canonical images, proxy identities and forg
   receipt.seed += 1;
   assert.throws(() => verifyVisualIndexProof('first-weave', { ...proof, provenanceJson: JSON.stringify(receipt) }), /provenance/);
   assert.throws(() => renderVisualIndexProof('not-a-preset'), /Unknown FIELDWEAVER preset/);
+});
+
+test('offline board embeds four real CPU PNGs and complete provenance, with no scripts or remote assets', () => {
+  const tiles = exhibitionEntries().map((entry) => renderVisualIndexProof(entry.id));
+  const board = buildOfflineExhibitionBoard(tiles);
+  assert.equal(board.count, 4);
+  assert.match(board.html, /^<!doctype html>/i);
+  assert.equal((board.html.match(/<article id="work-/g) ?? []).length, 4);
+  assert.equal((board.html.match(/src="data:image\/png;base64,/g) ?? []).length, 4);
+  assert.equal((board.html.match(/<pre>/g) ?? []).length, 4);
+  assert.doesNotMatch(board.html, /<script\b|(?:src|href)="https?:\/\//i);
+  assert.match(board.html, /default-src &#39;none&#39;/);
+  for (const tile of tiles) {
+    assert(board.html.includes(tile.rawRgbaHash));
+    assert(board.html.includes(tile.recipeHash));
+  }
+  const embedded = /src="data:image\/png;base64,([^"]+)"/.exec(board.html)?.[1];
+  assert.deepEqual(Buffer.from(embedded, 'base64'), Buffer.from(tiles[0].png));
+});
+
+test('offline board rejects incomplete, duplicate, corrupted and forged canonical evidence', () => {
+  const tiles = exhibitionEntries().map((entry) => renderVisualIndexProof(entry.id));
+  assert.throws(() => buildOfflineExhibitionBoard(tiles.slice(1)), /all four/);
+  assert.throws(() => buildOfflineExhibitionBoard([tiles[0], tiles[0], tiles[2], tiles[3]]), /duplicate/);
+  assert.throws(() => buildOfflineExhibitionBoard([{ ...tiles[0], rawRgbaHash: '0000000000000000' }, ...tiles.slice(1)]), /PNG pixels/);
+  const corrupt = tiles[0].png.slice();
+  corrupt[corrupt.length - 8] ^= 1;
+  assert.throws(() => buildOfflineExhibitionBoard([{ ...tiles[0], png: corrupt }, ...tiles.slice(1)]), /PNG|CRC|IEND/);
+  const badSeed = JSON.parse(tiles[0].provenanceJson);
+  badSeed.recipe.seed ^= 1;
+  assert.throws(() => buildOfflineExhibitionBoard([{ ...tiles[0], provenanceJson: JSON.stringify(badSeed) }, ...tiles.slice(1)]), /provenance|recipe/);
+  const badCrop = JSON.parse(tiles[0].provenanceJson);
+  badCrop.crop.widthPx += 1;
+  assert.throws(() => buildOfflineExhibitionBoard([{ ...tiles[0], provenanceJson: JSON.stringify(badCrop) }, ...tiles.slice(1)]), /provenance/);
 });

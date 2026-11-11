@@ -34,7 +34,8 @@ export function verifyVisualIndexProof(id, proof) {
     id, name: entry.name, seed: entry.seed,
     targetTick: entry.targetTick, recipeHash: entry.recipeHash,
     rawRgbaHash: proof.rawRgbaHash, widthPx: decoded.widthPx,
-    heightPx: decoded.heightPx, png: proof.png
+    heightPx: decoded.heightPx, png: proof.png,
+    provenanceJson: proof.provenanceJson
   });
 }
 
