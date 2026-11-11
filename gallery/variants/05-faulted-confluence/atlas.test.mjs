@@ -112,6 +112,8 @@ function build(){
   // Editorial choice can be changed only after direct inspection of the
   // canonical sheet; the committed manifest records the chosen sibling.
   const chosen=finalists[0];
+  assert.equal(chosen.index,16,'pinned artistic selection changed');
+  assert.equal(chosen.output.rawRgbaHash,'c5a30c3fbf9025a4','canonical selected RGBA identity changed');
   const sheet=contact([parentProof,...finalists.map(x=>x.output)]);
   assert.deepEqual(decodePngRgba(sheet.png).rgba,sheet.rgba);
   const manifest={
@@ -141,26 +143,10 @@ function build(){
     contactSheet:{widthPx:sheet.widthPx,heightPx:sheet.heightPx,
       displayOnly:true,rawRgbaHash:rawRgbaHash(sheet.rgba)},
     selection:{siblingIndex:chosen.index,
-      rationale:'PROVISIONAL morphology ranking only. Editorial selection requires inspection of actual canonical CPU images before admission.'}
+      rationale:"Actual six-panel FW-012 CPU contact sheet and selected PNG inspected. Sibling 16 (panel 2) displaces the accepted parent diagonal into an almost horizontal two-bend cyan carrier, with an ochre speckle above, a clipped violet register high left and a small red-green signal below. Dark negative space dominates. Panels 3 and 4 remain arch-like, panel 5 breaks into separated fragments, and panel 6 trails into a longer multicolour diagonal. The horizontal carrier deliberately diverges from the opposing arcs of Countercurrent Canticle and Negative Loom."}
 
   };
-  const note=[
-    '# Faulted Confluence — double-generation displacement',
-    '',
-    'A bounded, two-generation FW-011 structural mutation study of the immutable accepted Operator Atlas preset. Twenty-four deterministic branches apply a bold six-operation compound mutation, then a second scoped intervention. This aims to explore bifurcation and interrupted confluences rather than the single-generation arc studies already submitted.',
-    '',
-    'SOURCE: exact accepted main '+SOURCE_MAIN+'. Parent: '+PRESET+' '+PARENT_HASH+'.',
-    'MUTATION: bridge seed '+(ROOT_SEED^0x418b322b)+' followed by child seed '+ROOT_SEED+'. Each bridge and final mutation is fully reproducible by recorded sibling index, scope, intensity and operation count.',
-    'FW-012 CPU canonical requested at tick '+TARGET_TICK+', early tick '+EARLY_TICK+', 192x144 crop centred (122,122) in chunk (0,0), 0.75 world units/pixel.',
-    'All twenty-four candidates are generated at identical canonical bounds. Finalists must differ by occupied-pixel morphology rather than colour alone. Each final recipe retains exact immediate-parent FW-011 lineage; the selected bridge recipe separately closes the ancestry to the admitted Operator Atlas parent.',
-    '',
-    '## Qualification',
-    '',
-    'This initial branch contains an executable Node 22/24 FW-012 native exporter test. When the archive is absent, the test emits exact binary PNG/recipe/manifest evidence into CI logs with SHA-256 receipts for independent commitment. Do not describe the image as visually inspected until actual output has been retrieved and opened. After committing evidence, the same test independently regenerates and byte-compares every accepted file.',
-    '',
-    'Run npm run verify or node --test gallery/variants/05-faulted-confluence/atlas.test.mjs.',
-    ''
-  ].join('\n');
+  const note=["# Faulted Confluence — the suspended carrier","","Two generations of topology-safe FW-011 mutation applied to the immutable accepted Operator Atlas preset. The first generation performs a six-operator bold compound mutation, then a second scoped mutation. Twenty-four independent and replayable branches explore how stacked field and emitter disruptions can reorganize a familiar current.","","## Selected composition","","Sibling 16 (contact-sheet panel 2) was chosen after actual inspection of the FW-012 CPU canonical contact sheet and the exact selected PNG, not merely its morphology rank. The original down-slanting cyan arc becomes a suspended, nearly horizontal cyan two-bend ribbon with a light inner seam. A small ochre particulate cluster above, a clipped violet strip high left, and a single vivid red-green registration mark below supply restrained counterweights. Much of the plate remains black by intention.","","The other finalists retain a tall cyan arch (panel 3), a downturned hook (panel 4), a disconnected set of fragments (panel 5), or a diagonal rainbow exit (panel 6). Unlike the previously submitted Countercurrent Canticle and Negative Loom, this piece has no opposing rising arc; its empty lower-right field is part of its formal tension.","","## Canonical lineage and use","","Accepted, unmodified parent: operator-atlas; recipe hash ab6f4e5af5842f3a.","Stage-one mutation seed 0x2af518be, stage-two seed 0x6b7e2a95, 24 sibling indexes (0 through 23), explicit per-index scopes, bold intensity and recorded operations.","Selected bridge recipe is selected-bridge.recipe.json. Its lineage points to Operator Atlas. selected.recipe.json is the loadable final child whose lineage points to that exact bridge hash. The full 24-candidate ledger and all rejected/finalist morphology values are in atlas.manifest.json.","FW-012 canonical CPU export at tick 164, early comparison tick 30, 192x144 pixels, centre world (122,122) in chunk (0,0), 0.75 world units per pixel; 4096-agent, 250000-deposition bounds; initial tile 31x23 and alternative tile 41x37.","Open atlas.png for panel 1 parent and panels 2-6 five diversity-filtered descendants. The sheet is a display-only assembly of real separately rendered CPU PNGs. The authoritative winner is selected.png, backed by selected.provenance.json and the normalized selected.recipe.json.","","## Verification","","Actual source: passing Node 22 and Node 24 CI workflow 42952456955; retrieved Node 24 frame bytes from job 130299696933 and confirmed all 18 transfer receipts agree with Node 22 job 130299696490. The selected canonical RGBA8 FNV hash is c5a30c3fbf9025a4. No WebGL framebuffer or screenshot is used as an export oracle.","Reproduction: npm run verify, or node --test gallery/variants/05-faulted-confluence/atlas.test.mjs. The exact deterministic test recreates all 18 art assets, checks import/export and tile equivalence, and rejects any archived byte mismatch.","Draft for Integration review; no previous art or core code has been changed.",""].join('\n');
   const files=[
     file('README.md',note),file('atlas.manifest.json',JSON.stringify(manifest,null,2)+'\n'),
     file('parent.png',parentProof.png),file('atlas.png',sheet.png),

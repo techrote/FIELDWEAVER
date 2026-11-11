@@ -1,0 +1,862 @@
+{
+  "version": "fw-variant-atlas-v1",
+  "title": "Faulted Confluence — double-generation field displacement",
+  "sourceMainCommit": "a940b79f8ae87a3f8f475283155bc97fadc62313",
+  "parent": {
+    "presetId": "operator-atlas",
+    "recipeHash": "ab6f4e5af5842f3a",
+    "rawRgbaHash": "2e6f238ca7d4994b"
+  },
+  "mutationVersion": "fw-mutation-v1",
+  "mutationSeed": 1803430549,
+  "targetTick": 164,
+  "earlyTick": 30,
+  "crop": {
+    "widthPx": 192,
+    "heightPx": 144,
+    "center": {
+      "chunkX": 0,
+      "chunkY": 0,
+      "localX": 7995392,
+      "localY": 7995392
+    },
+    "unitsPerPixelQ16": 49152
+  },
+  "agentCapacity": 4096,
+  "maxDepositions": 250000,
+  "candidateCount": 24,
+  "selectionCriteria": "Canonical decoded RGBA uniqueness; >=80 occupied pixels, >=5 occupied 16px cells, parent silhouette XOR >=70, finalist pairwise silhouette XOR >=110; hue-only changes cannot qualify.",
+  "candidates": [
+    {
+      "siblingIndex": 0,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 0,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 0,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "bba6f855aab09ffa",
+      "recipeHash": "5dbd1c337b5d1b69",
+      "rawRgbaHash": "ffcb3fbd63ce3d15",
+      "occupiedPixels": 935,
+      "coveredCells": 21,
+      "parentSilhouetteXor": 1067,
+      "operationTypes": [
+        "perturb-material-parameter",
+        "derive-sibling-seed",
+        "move-emitter",
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields",
+        "substitute-lut"
+      ]
+    },
+    {
+      "siblingIndex": 1,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 1,
+        "scope": "emitters",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 1,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "7be101bc7fee1d66",
+      "recipeHash": "dec582e0cc19e9f4",
+      "rawRgbaHash": "cc13d3ff9d6fb300",
+      "occupiedPixels": 1056,
+      "coveredCells": 22,
+      "parentSilhouetteXor": 1056,
+      "operationTypes": [
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 2,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 2,
+        "scope": "fields",
+        "intensity": "bold",
+        "operationCount": 2
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 2,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "2e5be89a51728e59",
+      "recipeHash": "5480389c0b107038",
+      "rawRgbaHash": "69e35c0f297d07e1",
+      "occupiedPixels": 800,
+      "coveredCells": 17,
+      "parentSilhouetteXor": 1268,
+      "operationTypes": [
+        "swap-adjacent-fields",
+        "adjust-field-strength-scale"
+      ]
+    },
+    {
+      "siblingIndex": 3,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 3,
+        "scope": "order",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 3,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "75c3cd4d5ad8bfda",
+      "recipeHash": "77ee31352745d376",
+      "rawRgbaHash": "1c875b2b8a196fa4",
+      "occupiedPixels": 1696,
+      "coveredCells": 31,
+      "parentSilhouetteXor": 1670,
+      "operationTypes": [
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "siblingIndex": 4,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 4,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 4,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "5c1c1beb7506c4b9",
+      "recipeHash": "53ee387240645af9",
+      "rawRgbaHash": "17007ee95a70009b",
+      "occupiedPixels": 1921,
+      "coveredCells": 28,
+      "parentSilhouetteXor": 2031,
+      "operationTypes": [
+        "derive-sibling-seed",
+        "substitute-lut",
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields",
+        "perturb-material-parameter",
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 5,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 5,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 5,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "34f4a90d38166600",
+      "recipeHash": "623d0a830456dcd1",
+      "rawRgbaHash": "4693e279d2d5896d",
+      "occupiedPixels": 1357,
+      "coveredCells": 19,
+      "parentSilhouetteXor": 1841,
+      "operationTypes": [
+        "perturb-material-parameter",
+        "swap-adjacent-fields",
+        "adjust-field-strength-scale",
+        "derive-sibling-seed",
+        "move-emitter",
+        "substitute-lut"
+      ]
+    },
+    {
+      "siblingIndex": 6,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 6,
+        "scope": "emitters",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 6,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "94a8cff0ca658ebf",
+      "recipeHash": "950932fbfc151d1f",
+      "rawRgbaHash": "0329c1da9385dce9",
+      "occupiedPixels": 1722,
+      "coveredCells": 31,
+      "parentSilhouetteXor": 1046,
+      "operationTypes": [
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 7,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 7,
+        "scope": "fields",
+        "intensity": "bold",
+        "operationCount": 2
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 7,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "631199160f7c3848",
+      "recipeHash": "b70edecc7b767508",
+      "rawRgbaHash": "357af1a4e578b850",
+      "occupiedPixels": 913,
+      "coveredCells": 19,
+      "parentSilhouetteXor": 1127,
+      "operationTypes": [
+        "swap-adjacent-fields",
+        "adjust-field-strength-scale"
+      ]
+    },
+    {
+      "siblingIndex": 8,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 8,
+        "scope": "order",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 8,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "e7c666e151083337",
+      "recipeHash": "b3a2214cf355428b",
+      "rawRgbaHash": "90d607b899cc014e",
+      "occupiedPixels": 1577,
+      "coveredCells": 26,
+      "parentSilhouetteXor": 1229,
+      "operationTypes": [
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "siblingIndex": 9,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 9,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 9,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "0ae7da8f8bf5b2b5",
+      "recipeHash": "1fec8cd7cdd9115c",
+      "rawRgbaHash": "6b54163998681d15",
+      "occupiedPixels": 1424,
+      "coveredCells": 21,
+      "parentSilhouetteXor": 914,
+      "operationTypes": [
+        "perturb-material-parameter",
+        "adjust-field-strength-scale",
+        "move-emitter",
+        "swap-adjacent-fields",
+        "derive-sibling-seed",
+        "substitute-lut"
+      ]
+    },
+    {
+      "siblingIndex": 10,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 10,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 10,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "289ed4ad635d90fb",
+      "recipeHash": "e5022aa0a6cc6fee",
+      "rawRgbaHash": "e43136e132dcf656",
+      "occupiedPixels": 641,
+      "coveredCells": 19,
+      "parentSilhouetteXor": 1487,
+      "operationTypes": [
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields",
+        "substitute-lut",
+        "derive-sibling-seed",
+        "move-emitter",
+        "perturb-material-parameter"
+      ]
+    },
+    {
+      "siblingIndex": 11,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 11,
+        "scope": "emitters",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 11,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "b236167613a9f400",
+      "recipeHash": "866706e28f7d70ef",
+      "rawRgbaHash": "71887f8e5c0709b8",
+      "occupiedPixels": 656,
+      "coveredCells": 16,
+      "parentSilhouetteXor": 1638,
+      "operationTypes": [
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 12,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 12,
+        "scope": "fields",
+        "intensity": "bold",
+        "operationCount": 2
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 12,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "c1b455660c601dc0",
+      "recipeHash": "28b470863c73827a",
+      "rawRgbaHash": "7233aa8d3d3b4b31",
+      "occupiedPixels": 1958,
+      "coveredCells": 28,
+      "parentSilhouetteXor": 1428,
+      "operationTypes": [
+        "swap-adjacent-fields",
+        "adjust-field-strength-scale"
+      ]
+    },
+    {
+      "siblingIndex": 13,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 13,
+        "scope": "order",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 13,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "cd565672b3ace221",
+      "recipeHash": "21529b6a5a1e7718",
+      "rawRgbaHash": "f9d9d5e6e42d8f4e",
+      "occupiedPixels": 704,
+      "coveredCells": 15,
+      "parentSilhouetteXor": 1036,
+      "operationTypes": [
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "siblingIndex": 14,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 14,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 14,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "101a9f46b211616a",
+      "recipeHash": "157edaa5d2964d9d",
+      "rawRgbaHash": "90d270674c930f4a",
+      "occupiedPixels": 1599,
+      "coveredCells": 28,
+      "parentSilhouetteXor": 947,
+      "operationTypes": [
+        "perturb-material-parameter",
+        "substitute-lut",
+        "swap-adjacent-fields",
+        "move-emitter",
+        "adjust-field-strength-scale",
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "siblingIndex": 15,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 15,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 15,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "5bcb1ab0b68ecfab",
+      "recipeHash": "a0655ef00efb41c3",
+      "rawRgbaHash": "1cb3a3f47803c1c1",
+      "occupiedPixels": 918,
+      "coveredCells": 23,
+      "parentSilhouetteXor": 1826,
+      "operationTypes": [
+        "substitute-lut",
+        "adjust-field-strength-scale",
+        "derive-sibling-seed",
+        "swap-adjacent-fields",
+        "perturb-material-parameter",
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 16,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 16,
+        "scope": "emitters",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 16,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "ec19e33f08faaf74",
+      "recipeHash": "54adab9b1a2eea9e",
+      "rawRgbaHash": "c5a30c3fbf9025a4",
+      "occupiedPixels": 1292,
+      "coveredCells": 27,
+      "parentSilhouetteXor": 2158,
+      "operationTypes": [
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 17,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 17,
+        "scope": "fields",
+        "intensity": "bold",
+        "operationCount": 2
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 17,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "8af63fc91e8d2828",
+      "recipeHash": "112a19bf4ddb941e",
+      "rawRgbaHash": "5999b649ee175955",
+      "occupiedPixels": 1595,
+      "coveredCells": 26,
+      "parentSilhouetteXor": 1537,
+      "operationTypes": [
+        "swap-adjacent-fields",
+        "adjust-field-strength-scale"
+      ]
+    },
+    {
+      "siblingIndex": 18,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 18,
+        "scope": "order",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 18,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "0efdcaf3cf8ab54b",
+      "recipeHash": "6ed44e225f4b8e50",
+      "rawRgbaHash": "6659cb4be0805146",
+      "occupiedPixels": 1790,
+      "coveredCells": 27,
+      "parentSilhouetteXor": 750,
+      "operationTypes": [
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "siblingIndex": 19,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 19,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 19,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "636c75538df798a2",
+      "recipeHash": "466c41eb2adc3a39",
+      "rawRgbaHash": "6a79827eaac6a68d",
+      "occupiedPixels": 1597,
+      "coveredCells": 24,
+      "parentSilhouetteXor": 1659,
+      "operationTypes": [
+        "substitute-lut",
+        "move-emitter",
+        "derive-sibling-seed",
+        "perturb-material-parameter",
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "siblingIndex": 20,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 20,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 20,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "2e6079a43802905f",
+      "recipeHash": "b30ffb3f5b7a60ae",
+      "rawRgbaHash": "cd81be8ff73c6c85",
+      "occupiedPixels": 1215,
+      "coveredCells": 21,
+      "parentSilhouetteXor": 1289,
+      "operationTypes": [
+        "swap-adjacent-fields",
+        "derive-sibling-seed",
+        "adjust-field-strength-scale",
+        "substitute-lut",
+        "move-emitter",
+        "perturb-material-parameter"
+      ]
+    },
+    {
+      "siblingIndex": 21,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 21,
+        "scope": "emitters",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 21,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "9361eab1871cf9e9",
+      "recipeHash": "c4b4f67f816a0232",
+      "rawRgbaHash": "ddcc48299811098b",
+      "occupiedPixels": 668,
+      "coveredCells": 15,
+      "parentSilhouetteXor": 1068,
+      "operationTypes": [
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 22,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 22,
+        "scope": "fields",
+        "intensity": "bold",
+        "operationCount": 2
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 22,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "53ab0eacf4add28b",
+      "recipeHash": "195550ac541b7ed9",
+      "rawRgbaHash": "ce9c559419c34e8e",
+      "occupiedPixels": 1612,
+      "coveredCells": 26,
+      "parentSilhouetteXor": 590,
+      "operationTypes": [
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "siblingIndex": 23,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 23,
+        "scope": "order",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeConfig": {
+        "mutationSeed": 720705726,
+        "siblingIndex": 23,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "73c3ca04fc3c2e08",
+      "recipeHash": "6c38053e4776487e",
+      "rawRgbaHash": "e67dea27edfc99e2",
+      "occupiedPixels": 1183,
+      "coveredCells": 27,
+      "parentSilhouetteXor": 1545,
+      "operationTypes": [
+        "swap-adjacent-fields"
+      ]
+    }
+  ],
+  "finalists": [
+    {
+      "panel": 2,
+      "siblingIndex": 16,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 16,
+        "scope": "emitters",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeRecipeHash": "ec19e33f08faaf74",
+      "lineageIdentity": "f3c27369ab94d4e0",
+      "recipeHash": "54adab9b1a2eea9e",
+      "rawRgbaHash": "c5a30c3fbf9025a4",
+      "stateHash": "a23d7d88f0a1e2ba",
+      "depositionHash": "a520a26a3519f83c",
+      "resultHash": "d2e597b03b99546e",
+      "occupiedPixels": 1292,
+      "coveredCells": 27,
+      "parentSilhouetteXor": 2158,
+      "earlyLateSilhouetteXor": 969,
+      "earlyRawRgbaHash": "11ee6d04755ddd5f",
+      "operationTypes": [
+        "move-emitter"
+      ]
+    },
+    {
+      "panel": 3,
+      "siblingIndex": 4,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 4,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "5c1c1beb7506c4b9",
+      "lineageIdentity": "95bda2af1a0fd537",
+      "recipeHash": "53ee387240645af9",
+      "rawRgbaHash": "17007ee95a70009b",
+      "stateHash": "12a67d7718a3c2c2",
+      "depositionHash": "d596e30ced16d3ee",
+      "resultHash": "204991ce8660aa8a",
+      "occupiedPixels": 1921,
+      "coveredCells": 28,
+      "parentSilhouetteXor": 2031,
+      "earlyLateSilhouetteXor": 1596,
+      "earlyRawRgbaHash": "54649ae61f3e7fcf",
+      "operationTypes": [
+        "derive-sibling-seed",
+        "substitute-lut",
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields",
+        "perturb-material-parameter",
+        "move-emitter"
+      ]
+    },
+    {
+      "panel": 4,
+      "siblingIndex": 5,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 5,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "34f4a90d38166600",
+      "lineageIdentity": "bf089911a28aedfa",
+      "recipeHash": "623d0a830456dcd1",
+      "rawRgbaHash": "4693e279d2d5896d",
+      "stateHash": "5c5f29b6852edd86",
+      "depositionHash": "def0ebc1565a507f",
+      "resultHash": "cf6f029b52292837",
+      "occupiedPixels": 1357,
+      "coveredCells": 19,
+      "parentSilhouetteXor": 1841,
+      "earlyLateSilhouetteXor": 1120,
+      "earlyRawRgbaHash": "49afb8f95e6e43f1",
+      "operationTypes": [
+        "perturb-material-parameter",
+        "swap-adjacent-fields",
+        "adjust-field-strength-scale",
+        "derive-sibling-seed",
+        "move-emitter",
+        "substitute-lut"
+      ]
+    },
+    {
+      "panel": 5,
+      "siblingIndex": 15,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 15,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "5bcb1ab0b68ecfab",
+      "lineageIdentity": "60768be498120476",
+      "recipeHash": "a0655ef00efb41c3",
+      "rawRgbaHash": "1cb3a3f47803c1c1",
+      "stateHash": "509df4cff70f1d1f",
+      "depositionHash": "9e6155ff5fdbdf54",
+      "resultHash": "7c4cbb4ef6d7bbbd",
+      "occupiedPixels": 918,
+      "coveredCells": 23,
+      "parentSilhouetteXor": 1826,
+      "earlyLateSilhouetteXor": 500,
+      "earlyRawRgbaHash": "c315f7f46e476179",
+      "operationTypes": [
+        "substitute-lut",
+        "adjust-field-strength-scale",
+        "derive-sibling-seed",
+        "swap-adjacent-fields",
+        "perturb-material-parameter",
+        "move-emitter"
+      ]
+    },
+    {
+      "panel": 6,
+      "siblingIndex": 3,
+      "config": {
+        "mutationSeed": 1803430549,
+        "siblingIndex": 3,
+        "scope": "order",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeRecipeHash": "75c3cd4d5ad8bfda",
+      "lineageIdentity": "e171cb8ba2b7b7b1",
+      "recipeHash": "77ee31352745d376",
+      "rawRgbaHash": "1c875b2b8a196fa4",
+      "stateHash": "99fc9dd1c1bfb61a",
+      "depositionHash": "43a80e992cf0afaf",
+      "resultHash": "a3793414919bde53",
+      "occupiedPixels": 1696,
+      "coveredCells": 31,
+      "parentSilhouetteXor": 1670,
+      "earlyLateSilhouetteXor": 1226,
+      "earlyRawRgbaHash": "bd5aebd97b3490ac",
+      "operationTypes": [
+        "swap-adjacent-fields"
+      ]
+    }
+  ],
+  "contactSheet": {
+    "widthPx": 600,
+    "heightPx": 306,
+    "displayOnly": true,
+    "rawRgbaHash": "2a3468cbaa9472a9"
+  },
+  "selection": {
+    "siblingIndex": 16,
+    "rationale": "Actual six-panel FW-012 CPU contact sheet and selected PNG inspected. Sibling 16 (panel 2) displaces the accepted parent diagonal into an almost horizontal two-bend cyan carrier, with an ochre speckle above, a clipped violet register high left and a small red-green signal below. Dark negative space dominates. Panels 3 and 4 remain arch-like, panel 5 breaks into separated fragments, and panel 6 trails into a longer multicolour diagonal. The horizontal carrier deliberately diverges from the opposing arcs of Countercurrent Canticle and Negative Loom."
+  }
+}
