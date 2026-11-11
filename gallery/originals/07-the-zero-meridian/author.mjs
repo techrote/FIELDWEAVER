@@ -120,7 +120,7 @@ export function createZeroMeridian(){
  };
  const fields=[
   layer(1,'uniform',{vectorXQ16:38,vectorYQ16:-55},[0,0],true),
-  layer(2,'turbulence',{amplitudeQ16:210,cellSizeQ16:q(16),seed:0xa10bc427},[0,0],true),
+  layer(2,'turbulence',{amplitudeQ16:210,cellSizeQ16:q(16),seed:0x510bc427},[0,0],true),
   layer(3,'vortex',{radiusQ16:q(77),strengthQ16:5200},[126,126]),
   layer(4,'vortex',{radiusQ16:q(48),strengthQ16:-6100},[181,112]),
   layer(5,'direction-quantizer',{sectors:8}),
