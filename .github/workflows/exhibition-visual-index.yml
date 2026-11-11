@@ -31,6 +31,9 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Full verification (Node 22)
+        if: matrix.browser == 'firefox'
+        run: npm run verify
       - name: Firefox virtual display
         if: matrix.browser == 'firefox'
         run: |
