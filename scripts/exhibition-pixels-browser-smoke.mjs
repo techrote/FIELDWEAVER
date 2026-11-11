@@ -303,7 +303,8 @@ try {
   await pressPixelKey('\uE007'); // Browser may transfer focus to the anchor target.
   const offlineNarrow = await execute("return {hash:location.hash,width:innerWidth,scrollWidth:document.documentElement.scrollWidth,articleCount:document.querySelectorAll('main article.work').length}");
   if (offlineNarrow.hash !== '#work-operator-atlas' ||
-      offlineNarrow.width > 550 || offlineNarrow.scrollWidth > offlineNarrow.width + 1 ||
+      offlineNarrow.width > (browser === 'chrome' ? 390 : 500) ||
+      offlineNarrow.scrollWidth > offlineNarrow.width + 1 ||
       offlineNarrow.articleCount !== 4) {
     throw new Error('Offline keyboard navigation or narrow layout failed: ' +
       JSON.stringify(offlineNarrow));
