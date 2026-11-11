@@ -132,13 +132,16 @@ toolbar.append(back, forward, pin, unpin, load, inspect);
   fields.append(sourceLabel, xLabel, yLabel, nextMark);
   const reading = make('output', { id: 'exhibition-study-pixel-reading',
     class: 'workspace-note', 'aria-live': 'polite' }, 'Choose a pixel.');
+  reading.hidden = true;
   const gridPixels = make('div', { id: 'exhibition-study-pixel-neighbours',
     class: 'exhibition-study-pixel-neighbours', role: 'img',
     'aria-label': 'Nine by nine nearest-neighbour display; selected centre outlined' });
-  desk.append(help, fields, reading, gridPixels);
+  desk.append(help, fields, gridPixels);
   const announce = make('output', { id: 'exhibition-study-status', 'aria-live': 'polite',
     class: 'workspace-note' }, 'No study open.');
-  dialog.append(header, toolbar, description, gallery, desk, announce);
+  // Keep the exact source-pixel readout visible above large framed works,
+  // including when A/B images stack at narrow viewport widths.
+  dialog.append(header, toolbar, description, reading, gallery, desk, announce);
   document.body.append(dialog);
 
   let currentId = ids[0];
@@ -243,11 +246,11 @@ toolbar.append(back, forward, pin, unpin, load, inspect);
     ++pixelToken; pixelCache.clear(); lastPixelId = null; pixelOpen = false;
     dialog.classList.remove('is-pixel-inspection');
     desk.hidden = true; inspect.setAttribute('aria-expanded', 'false'); inspect.textContent = 'Inspect exact pixels';
-    gridPixels.replaceChildren(); reading.textContent = 'Choose a pixel.';
+    gridPixels.replaceChildren(); reading.textContent = 'Choose a pixel.'; reading.hidden = true;
   }
   function openPixelDesk() {
     if (pixelOpen) return;
-    pixelOpen = true; desk.hidden = false;
+    pixelOpen = true; desk.hidden = false; reading.hidden = false;
     dialog.classList.add('is-pixel-inspection');
     inspect.setAttribute('aria-expanded', 'true');
     inspect.textContent = 'Hide pixel inspection';

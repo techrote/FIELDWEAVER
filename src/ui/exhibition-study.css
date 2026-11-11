@@ -69,6 +69,7 @@
 .exhibition-study-pixel-controls input { width: 5rem; }
 .exhibition-study-pixel-controls select { width: 5rem; }
 #exhibition-study-pixel-reading { display: block; margin: 0.6rem 0; overflow-wrap: anywhere; }
+#exhibition-study-pixel-reading[hidden] { display: none; }
 .exhibition-study-pixel-neighbours {
   display: grid; grid-template-columns: repeat(9,1fr); grid-template-rows: repeat(9,1fr);
   width: min(100%,216px); aspect-ratio: 1; background: #090b08; border: 1px solid #748a70;

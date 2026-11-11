@@ -155,8 +155,9 @@ try {
     throw new Error('B pixel movement navigated gallery or lost the verified image: ' + JSON.stringify(pixelBLeft));
   }
   await request('POST', '/session/' + sessionId + '/window/rect', { width: 390, height: 844 });
-  const narrow = await execute("const r=document.getElementById('exhibition-study-dialog').getBoundingClientRect();return {width:innerWidth,dialogLeft:r.left,dialogRight:r.right,scrollW:document.getElementById('exhibition-study-dialog').scrollWidth,clientW:document.getElementById('exhibition-study-dialog').clientWidth,selected:document.getElementById('exhibition-study-pixel-reading').textContent,focused:document.activeElement.tagName}");
+  const narrow = await execute("const r=document.getElementById('exhibition-study-dialog').getBoundingClientRect();const q=document.getElementById('exhibition-study-pixel-reading').getBoundingClientRect();return {width:innerWidth,height:innerHeight,dialogLeft:r.left,dialogRight:r.right,readingTop:q.top,readingBottom:q.bottom,scrollW:document.getElementById('exhibition-study-dialog').scrollWidth,clientW:document.getElementById('exhibition-study-dialog').clientWidth,selected:document.getElementById('exhibition-study-pixel-reading').textContent,focused:document.activeElement.tagName}");
   if (narrow.width > 550 || narrow.dialogLeft < -1 || narrow.dialogRight > narrow.width + 1 ||
+      narrow.readingTop < 0 || narrow.readingBottom > narrow.height + 1 ||
       !narrow.selected.includes('Timeline Pulse · (47, 32)') || narrow.focused !== 'IMG') {
     throw new Error('Narrow keyboard inspection failed: ' + JSON.stringify(narrow));
   }
