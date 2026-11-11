@@ -24,3 +24,9 @@ The gallery currently enumerates **only the four immutable built-in release pres
 **Accessibility:** native buttons/select, visible focus outlines, aria-pressed single selection, described selection metadata, and live status; no auto-playing animation or network activity.
 
 **Limitations:** proof generation runs on the main thread after one animation frame so it is synchronous canonical replay, not a continuously updating live thumbnail. The small 96×64 raster is a validation preview; users can increase output resolution through canonical export, but changing the crop or scale produces a different canonical pixel hash. No gallery screenshot or aesthetics claim is made without browser rendering evidence.
+
+## Larger proof inspection
+
+Once a CPU proof has rendered, choose **Inspect larger / compare**. A native modal dialog presents the existing canonical PNG at a larger fitting size, or at exact 2×, 4× and 8× nearest-neighbour display scale. This is strictly a *view transform* of the original PNG object URL: the CPU raster, recipe, tick, crop, and decoded RGBA8 identity are not recomputed or altered. The frame lists the seed, recipe identity and raw-pixel hash.
+
+If a proof is pinned as A and another proof is rendered as B, the dialog presents both independent outputs side by side. Without a pinned proof, it displays the current proof alone. When A is pinned but B has not been freshly rendered, it displays A alone. Press **Escape** or the **Close inspection** button to return to the editor; selection, re-render or unpin closes an open inspector before any PNG object URL is revoked, preventing stale or mislabelled images. Controls are native buttons/select/dialog and remain keyboard operable. This inspector does not inspect unmerged artwork, upscale canonical resolution or assert inferred aesthetic similarity.
