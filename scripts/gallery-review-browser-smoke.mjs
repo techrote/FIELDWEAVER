@@ -70,6 +70,30 @@ try {
   const url = pathToFileURL(page).href;
   await request('POST', '/session/' + sessionId + '/url', { url });
 
+  // A file:// navigation can finish before Firefox decodes embedded PNG data.
+  // Wait for real intrinsic dimensions; complete=true alone also describes a
+  // broken image. Never relax the following canonical/offline assertions.
+  const readinessScript = [
+    'return [...document.querySelectorAll(".work figure img")].map((img) => ({',
+    '  complete: img.complete, width: img.naturalWidth, height: img.naturalHeight,',
+    '  data: img.currentSrc.startsWith("data:image/png;base64,")',
+    '}));'
+  ].join('\n');
+  let imageReadiness = [];
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    imageReadiness = (await request('POST', '/session/' + sessionId + '/execute/sync',
+      { script: readinessScript, args: [] }))?.value ?? [];
+    if (imageReadiness.length === generated.entries.length &&
+        imageReadiness.every((image) => image.complete && image.width > 0 &&
+          image.height > 0 && image.data)) break;
+    await sleep(100);
+  }
+  if (imageReadiness.length !== generated.entries.length ||
+      imageReadiness.some((image) => !image.complete || image.width <= 0 ||
+        image.height <= 0 || !image.data)) {
+    throw new Error('Offline canonical PNGs failed to decode in browser: ' + JSON.stringify(imageReadiness));
+  }
+
   const evaluation = [
     'const cards = [...document.querySelectorAll(".work")];',
     'const images = [...document.querySelectorAll(".work figure img")];',

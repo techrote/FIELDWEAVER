@@ -1,5 +1,5 @@
 import { decodePngRgba, rawRgbaHash } from '../export/index.js';
-import { recipeHash } from '../recipe/index.js';
+import { parseRecipe, recipeHash, serializeRecipe } from '../recipe/index.js';
 import { exhibitionEntries } from './exhibition-catalog.js';
 
 export const OFFLINE_BOARD_VERSION = 'fw-exhibition-offline-board-v1';
@@ -10,13 +10,17 @@ function escapeHtml(value) {
   })[c]);
 }
 
-function base64Png(bytes) {
+function base64Bytes(bytes) {
   if (!(bytes instanceof Uint8Array)) throw new TypeError('Canonical PNG bytes are required.');
   let binary = '';
   for (let i = 0; i < bytes.length; i += 8192) {
     binary += String.fromCharCode(...bytes.subarray(i, i + 8192));
   }
   return btoa(binary);
+}
+
+function base64Utf8(text) {
+  return base64Bytes(new TextEncoder().encode(text));
 }
 
 function sameCrop(a, b) {
@@ -57,6 +61,7 @@ function verifyTile(entry, tile) {
       recipeHash(receipt.recipe) !== entry.recipeHash) {
     throw new Error('Offline board rejected mismatched canonical provenance or recipe.');
   }
+  return receipt;
 }
 
 export function buildOfflineExhibitionBoard(tiles) {
@@ -71,7 +76,13 @@ export function buildOfflineExhibitionBoard(tiles) {
   }
   const cards = entries.map((entry, index) => {
     const tile = byId.get(entry.id);
-    verifyTile(entry, tile);
+    const receipt = verifyTile(entry, tile);
+    const recipeJson = serializeRecipe(receipt.recipe);
+    if (recipeHash(parseRecipe(recipeJson)) !== entry.recipeHash) {
+      throw new Error('Offline board refused a non-importable accepted recipe.');
+    }
+    const recipeFile = 'fieldweaver-' + entry.id + '-' + entry.recipeHash + '.fwrecipe.json';
+    const receiptFile = 'fieldweaver-' + entry.id + '-' + tile.rawRgbaHash + '.fwprovenance.json';
     const crop = entry.exportCrop;
     const cropText = crop.widthPx + '×' + crop.heightPx +
       ' / Q16 ' + crop.unitsPerPixelQ16 +
@@ -84,7 +95,7 @@ export function buildOfflineExhibitionBoard(tiles) {
       '<h2>' + escapeHtml(entry.name) + '</h2>' +
       '<figure><img width="' + tile.widthPx + '" height="' + tile.heightPx +
       '" alt="' + escapeHtml('Canonical software-raster output of ' + entry.name + ' at tick ' + entry.targetTick) +
-      '" src="data:image/png;base64,' + base64Png(tile.png) + '">' +
+      '" src="data:image/png;base64,' + base64Bytes(tile.png) + '">' +
       '<figcaption>Original ' + tile.widthPx + '×' + tile.heightPx +
       ' pixels, nearest-neighbour presentation only</figcaption></figure>' +
       '<dl><dt>Root seed</dt><dd>' + entry.seed +
@@ -93,7 +104,12 @@ export function buildOfflineExhibitionBoard(tiles) {
       '</code></dd><dt>Raw RGBA8</dt><dd><code>' + escapeHtml(tile.rawRgbaHash) +
       '</code></dd><dt>Crop</dt><dd>' + escapeHtml(cropText) +
       '</dd><dt>Lineage</dt><dd>' + escapeHtml(lineage) +
-      '</dd></dl><details><summary>Inspect complete provenance and loadable recipe JSON</summary>' +
+      '</dd></dl><p class="work-actions">' +
+      '<a download="' + escapeHtml(recipeFile) + '" href="data:application/json;base64,' +
+      base64Utf8(recipeJson) + '">Save importable recipe</a>' +
+      '<a download="' + escapeHtml(receiptFile) + '" href="data:application/json;base64,' +
+      base64Utf8(tile.provenanceJson) + '">Save full provenance</a>' +
+      '</p><details><summary>Inspect complete provenance and loadable recipe JSON</summary>' +
       '<pre>' + escapeHtml(tile.provenanceJson) + '</pre></details></article>';
   });
   const nav = entries.map((entry, index) =>
@@ -104,14 +120,14 @@ export function buildOfflineExhibitionBoard(tiles) {
     '<meta name="referrer" content="no-referrer">' +
     '<meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; img-src data:; style-src &#39;unsafe-inline&#39;; object-src &#39;none&#39;; base-uri &#39;none&#39;; form-action &#39;none&#39;; connect-src &#39;none&#39;">' +
     '<title>FIELDWEAVER / Accepted canonical proofs</title>' +
-    '<style>*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#10140f;color:#e7e9d4;font:15px/1.55 system-ui,sans-serif}a{color:#b9e2c2}a:focus-visible,summary:focus-visible{outline:3px solid #e4b665;outline-offset:3px}.wrap{max-width:1420px;margin:auto;padding:clamp(16px,4vw,52px)}header{border-bottom:2px solid #738b6e}small,.overline,.work-index{font:700 12px/1.5 ui-monospace,monospace;letter-spacing:.12em;color:#b4c6a7}h1{font:600 clamp(30px,5vw,60px)/1.1 Georgia,serif;margin:.3em 0}header p{max-width:80ch}nav{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0}nav a{border:1px solid #6e856b;padding:8px 12px;text-decoration:none}nav a:hover{background:#283829}.gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.work{background:#1b241b;border:1px solid #6c8066;padding:clamp(14px,2vw,26px);min-width:0}.work h2{font:500 clamp(23px,3vw,35px)/1.2 Georgia,serif;margin:.3em 0 .8em}.work figure{margin:0}.work img{display:block;width:100%;height:auto;aspect-ratio:3/2;image-rendering:pixelated;object-fit:contain;background:#090b08;border:1px solid #5c6d55}.work figcaption{color:#b7bda8;font:12px ui-monospace,monospace;margin:7px 0 15px}.work dl{display:grid;grid-template-columns:110px minmax(0,1fr);gap:6px 12px;margin:0 0 20px}.work dt{color:#b0c19c}.work dd{margin:0;min-width:0;overflow-wrap:anywhere}.work code{font:12px ui-monospace,monospace}.work details{border-top:1px solid #6c8066;padding-top:12px}.work summary{cursor:pointer;color:#cde3bc}.work pre{font:11px/1.5 ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere;max-height:420px;overflow:auto;background:#10140f;padding:12px}footer{border-top:2px solid #738b6e;margin-top:30px;padding-top:18px;color:#b7bda8}@media(max-width:770px){.gallery{grid-template-columns:1fr}.work dl{grid-template-columns:85px minmax(0,1fr)}}@media print{body{background:#fff;color:#111}.work{break-inside:avoid;background:#fff;color:#111}.work dt,small,.overline,.work-index{color:#333}.work img{border:1px solid #555}.work figcaption,footer{color:#333}nav,details{display:none}.gallery{grid-template-columns:repeat(2,minmax(0,1fr))}}</style>' +
+    '<style>*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#10140f;color:#e7e9d4;font:15px/1.55 system-ui,sans-serif}a{color:#b9e2c2}a:focus-visible,summary:focus-visible{outline:3px solid #e4b665;outline-offset:3px}.wrap{max-width:1420px;margin:auto;padding:clamp(16px,4vw,52px)}header{border-bottom:2px solid #738b6e}small,.overline,.work-index{font:700 12px/1.5 ui-monospace,monospace;letter-spacing:.12em;color:#b4c6a7}h1{font:600 clamp(30px,5vw,60px)/1.1 Georgia,serif;margin:.3em 0}header p{max-width:80ch}nav{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0}nav a{border:1px solid #6e856b;padding:8px 12px;text-decoration:none}nav a:hover{background:#283829}.gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.work{background:#1b241b;border:1px solid #6c8066;padding:clamp(14px,2vw,26px);min-width:0}.work h2{font:500 clamp(23px,3vw,35px)/1.2 Georgia,serif;margin:.3em 0 .8em}.work figure{margin:0}.work img{display:block;width:100%;height:auto;aspect-ratio:3/2;image-rendering:pixelated;object-fit:contain;background:#090b08;border:1px solid #5c6d55}.work figcaption{color:#b7bda8;font:12px ui-monospace,monospace;margin:7px 0 15px}.work dl{display:grid;grid-template-columns:110px minmax(0,1fr);gap:6px 12px;margin:0 0 20px}.work dt{color:#b0c19c}.work dd{margin:0;min-width:0;overflow-wrap:anywhere}.work code{font:12px ui-monospace,monospace}.work-actions{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 16px}.work-actions a{display:inline-block;border:1px solid #6e856b;padding:7px 10px;text-decoration:none}.work-actions a:hover{background:#283829}.work details{border-top:1px solid #6c8066;padding-top:12px}.work summary{cursor:pointer;color:#cde3bc}.work pre{font:11px/1.5 ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere;max-height:420px;overflow:auto;background:#10140f;padding:12px}footer{border-top:2px solid #738b6e;margin-top:30px;padding-top:18px;color:#b7bda8}@media(max-width:770px){.gallery{grid-template-columns:1fr}.work dl{grid-template-columns:85px minmax(0,1fr)}}@media print{body{background:#fff;color:#111}.work{break-inside:avoid;background:#fff;color:#111}.work dt,small,.overline,.work-index{color:#333}.work img{border:1px solid #555}.work figcaption,footer{color:#333}nav,details,.work-actions{display:none}.gallery{grid-template-columns:repeat(2,minmax(0,1fr))}}</style>' +
     '</head><body><div class="wrap"><header><div class="overline">FIELDWEAVER / EXHIBITION RECORD / ' +
     OFFLINE_BOARD_VERSION + '</div><h1>Accepted canonical proofs</h1>' +
     '<p>Four independently replayed FW-012 CPU software-raster images. Every image, source recipe, seed, tick, crop and decoded RGBA8 identity was verified before export. No WebGL screenshots, unaccepted artworks or visual-similarity estimates.</p>' +
     '<p><small>STATIC / SELF-CONTAINED / OFFLINE / NO SCRIPTS OR REMOTE ASSETS</small></p></header>' +
     '<nav aria-label="Jump to accepted work">' + nav + '</nav>' +
     '<main class="gallery">' + cards.join('') + '</main>' +
-    '<footer>Each image is the original 96×64 canonical raster, enlarged for inspection. PNG bytes are not the pixel identity; raw decoded RGBA8 hashes are. Use the embedded provenance to reproduce the work. This board is a review record, not an artistic approval.</footer>' +
+    '<footer>Each image is the original 96×64 canonical raster, enlarged for inspection. PNG bytes are not the pixel identity; raw decoded RGBA8 hashes are. Use the per-work importable recipe and full provenance downloads to reproduce the proof; target tick and crop are in the provenance rather than the recipe. Browser downloads still require local file-manager confirmation. This board is a review record, not an artistic approval.</footer>' +
     '</div></body></html>\n';
   return Object.freeze({ version: OFFLINE_BOARD_VERSION, count: entries.length, html });
 }
