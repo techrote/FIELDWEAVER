@@ -1,5 +1,7 @@
 import { spawn, spawnSync } from 'node:child_process';
-import { writeFile } from 'node:fs/promises';
+import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { getBuiltinPreset } from '../src/presets/index.js';
 import { parseRecipe, recipeHash, serializeRecipe } from '../src/recipe/index.js';
 
@@ -10,6 +12,7 @@ const port = browser === 'chrome' ? 9518 : 4447;
 const baseUrl = `http://127.0.0.1:${port}`;
 const appUrl = process.env.FIELDWEAVER_SMOKE_URL ?? 'http://127.0.0.1:4173/';
 const evidencePath = `release-smoke-${browser}.log`;
+const downloadDir = await mkdtemp(join(tmpdir(), `fieldweaver-gallery-${browser}-`));
 
 function commandPath(name) {
   const result = spawnSync('bash', ['-lc', `command -v ${name}`], { encoding: 'utf8' });
@@ -44,8 +47,17 @@ async function waitForDriver() {
   throw new Error(`Timed out waiting for ${driverName}.\n${driverLog}`);
 }
 function capabilities() {
-  if (browser === 'chrome') return { capabilities: { alwaysMatch: { browserName: 'chrome', 'goog:chromeOptions': { args: ['--headless=new', '--no-sandbox', '--disable-dev-shm-usage', '--enable-webgl', '--ignore-gpu-blocklist', '--use-angle=swiftshader'] } } } };
-  return { capabilities: { alwaysMatch: { browserName: 'firefox', 'moz:firefoxOptions': { args: process.env.DISPLAY ? [] : ['-headless'], prefs: { 'webgl.disabled': false, 'webgl.force-enabled': true, 'gfx.webrender.software': true } } } } };
+  if (browser === 'chrome') return { capabilities: { alwaysMatch: { browserName: 'chrome', 'goog:chromeOptions': {
+    args: ['--headless=new', '--no-sandbox', '--disable-dev-shm-usage', '--enable-webgl', '--ignore-gpu-blocklist', '--use-angle=swiftshader'],
+    prefs: { 'download.default_directory': downloadDir, 'download.prompt_for_download': false, 'download.directory_upgrade': true }
+  } } } };
+  return { capabilities: { alwaysMatch: { browserName: 'firefox', 'moz:firefoxOptions': {
+    args: process.env.DISPLAY ? [] : ['-headless'],
+    prefs: { 'webgl.disabled': false, 'webgl.force-enabled': true, 'gfx.webrender.software': true,
+      'browser.download.dir': downloadDir, 'browser.download.folderList': 2, 'browser.download.useDownloadDir': true,
+      'browser.helperApps.neverAsk.saveToDisk': 'application/json,application/octet-stream',
+      'browser.download.alwaysOpenPanel': false }
+  } } } };
 }
 
 let sessionId = null;
@@ -91,55 +103,47 @@ try {
   if (initial.canvasRole !== 'region' || !initial.canvasDescribedBy || initial.fieldRole !== 'group' || initial.badFieldRoles !== 0) throw new Error(`Accessibility normalization failed: ${JSON.stringify(initial)}`);
   if (!initial.releaseDiagnostics.some((line) => line.includes('Mode boundary: canonical CPU'))) throw new Error(`Release diagnostics lack canonical/noncanonical boundary: ${JSON.stringify(initial.releaseDiagnostics)}`);
 
-  // Actual browser click; capture the generated local JSON Blob before the
-  // browser's download manager takes over. This does NOT claim OS persistence.
+  // Real WebDriver keyboard activation, browser download and disk byte check.
+  // No blob: fetch (forbidden by CSP), synthetic click or fake download.
   const editorBeforeHandoff = (await snapshot()).canonicalHash;
-  await execute(`
-    window.__fwRecipeHandoff = { filename: '', text: null };
-    const originalCreate = URL.createObjectURL;
-    const originalClick = HTMLAnchorElement.prototype.click;
-    URL.createObjectURL = function(blob) {
-      if (blob.type === 'application/json') {
-        void blob.text().then((text) => { window.__fwRecipeHandoff.text = text; });
-      }
-      return originalCreate.call(URL, blob);
-    };
-    HTMLAnchorElement.prototype.click = function() {
-      if (this.download.endsWith('.fwrecipe.json')) {
-        window.__fwRecipeHandoff.filename = this.download;
-        return; // Intercept only the test's recipe file download.
-      }
-      return originalClick.call(this);
-    };
-    document.querySelector('[data-exhibition-id="first-weave"]').click();
-    document.querySelector('#exhibition-download-recipe').click();
-    URL.createObjectURL = originalCreate;
-    HTMLAnchorElement.prototype.click = originalClick;
-  `);
-  let recipeHandoff;
-  for (let attempt = 0; attempt < 20; attempt += 1) {
-    recipeHandoff = await execute(`
-      return {
-        filename: window.__fwRecipeHandoff?.filename ?? '',
-        text: window.__fwRecipeHandoff?.text ?? null,
-        status: document.querySelector('#preset-status').textContent,
-        proofPending: document.querySelector('#exhibition-download-png').disabled
-      };
-    `);
-    if (recipeHandoff?.text) break;
-    await sleep(50);
-  }
   const accepted = getBuiltinPreset('first-weave');
-  if (!recipeHandoff?.text ||
-      recipeHandoff.filename !== 'fieldweaver-first-weave-' + accepted.recipeHash + '.fwrecipe.json' ||
-      recipeHandoff.text !== serializeRecipe(accepted.recipe) ||
-      recipeHash(parseRecipe(recipeHandoff.text)) !== accepted.recipeHash ||
+  const filename = 'fieldweaver-first-weave-' + accepted.recipeHash + '.fwrecipe.json';
+  const savedPath = join(downloadDir, filename);
+  await execute("document.querySelector('[data-exhibition-id=\"first-weave\"]').click();document.querySelector('#exhibition-download-recipe').focus()");
+  const enter = String.fromCharCode(0xe007);
+  await request('POST', `/session/${sessionId}/actions`, {
+    actions: [{ type: 'key', id: 'gallery-download-key', actions: [
+      { type: 'keyDown', value: enter }, { type: 'keyUp', value: enter }
+    ] }]
+  });
+  await request('DELETE', `/session/${sessionId}/actions`);
+  let downloaded = null;
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    try { downloaded = await readFile(savedPath, 'utf8'); } catch { /* still downloading */ }
+    if (downloaded === serializeRecipe(accepted.recipe)) break;
+    await sleep(100);
+  }
+  const recipeHandoff = await execute(`
+    return { status: document.querySelector('#preset-status').textContent,
+      proofPending: document.querySelector('#exhibition-download-png').disabled,
+      selected: document.querySelector('#preset-select').value,
+      focus: document.activeElement.id };
+  `);
+  if (downloaded !== serializeRecipe(accepted.recipe) ||
+      recipeHash(parseRecipe(downloaded)) !== accepted.recipeHash ||
+      recipeHandoff.selected !== 'first-weave' ||
+      recipeHandoff.focus !== 'exhibition-download-recipe' ||
       !recipeHandoff.proofPending ||
       !recipeHandoff.status.includes('editor unchanged') ||
       (await snapshot()).canonicalHash !== editorBeforeHandoff) {
-    throw new Error('Gallery recipe download did not preserve the importable accepted identity or live work: ' +
-      JSON.stringify({ filename: recipeHandoff?.filename, status: recipeHandoff?.status, proofPending: recipeHandoff?.proofPending }));
+    throw new Error('Real gallery recipe download failed file identity, keyboard or editor isolation: ' +
+      JSON.stringify({ filename, downloadedBytes: downloaded?.length, recipeHandoff }));
   }
+  await writeFile('release-exhibition-recipe-download-' + browser + '.fwrecipe.json', downloaded);
+  await writeFile('release-exhibition-recipe-download-' + browser + '.json',
+    JSON.stringify({ browser, filename, recipeHash: accepted.recipeHash,
+      bytes: Buffer.byteLength(downloaded), keyboardEnter: true, actualSavedFile: true,
+      editorPreserved: true, proofPending: recipeHandoff.proofPending }, null, 2) + '\n');
   await execute(`document.querySelector('#exhibition-download-recipe').scrollIntoView({ block: 'center' });`);
   const recipeCapture = await request('GET', `/session/${sessionId}/screenshot`);
   if (!recipeCapture?.value) throw new Error('Browser did not return gallery recipe handoff screenshot.');
@@ -344,7 +348,25 @@ try {
     throw new Error(`Clearing A retained stale comparison artifacts: ${JSON.stringify(cleared)}`);
   }
 
-  const evidence = { browser, initial, recipeHandoff: { filename: recipeHandoff.filename, recipeHash: accepted.recipeHash, browserBlobVerified: true, editorPreserved: true }, loaded, afterStamp, exhibition, pinned, moved, compared, decoded, inspected, invalidated, cleared, driverLog: driverLog.slice(-3000) };
+  // Reimport the file saved by the browser through the ordinary editor file input.
+  await execute("const f=document.getElementById('recipe-file');f.hidden=false;f.style.display='block'");
+  const located = await request('POST', `/session/${sessionId}/element`,
+    { using: 'css selector', value: '#recipe-file' });
+  const inputId = located?.value?.['element-6066-11e4-a52e-4f735466cecf'];
+  if (!inputId) throw new Error('Recipe upload input could not be located.');
+  await request('POST', `/session/${sessionId}/element/${inputId}/value`, { text: savedPath });
+  let reimport = null;
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    reimport = await execute("return {status:document.querySelector('#recipe-status').textContent,hash:document.documentElement.dataset.fieldweaverCanonicalRecipeHash}");
+    if (reimport.status.startsWith('Loaded ') || reimport.status.startsWith('Load rejected')) break;
+    await sleep(100);
+  }
+  if (reimport?.status !== 'Loaded ' + accepted.recipeHash || reimport.hash !== accepted.recipeHash) {
+    throw new Error('Browser-saved gallery recipe did not reimport exactly: ' + JSON.stringify(reimport));
+  }
+  const evidence = { browser, initial, recipeHandoff: { filename, recipeHash: accepted.recipeHash,
+    actualSavedFile: true, keyboardEnter: true, editorPreserved: true, reimport },
+    loaded, afterStamp, exhibition, pinned, moved, compared, decoded, inspected, invalidated, cleared, driverLog: driverLog.slice(-3000) };
   await writeFile(evidencePath, `${JSON.stringify(evidence, null, 2)}\n`);
   console.log(JSON.stringify({ browser, preset: loaded.presetId, presetHash: loaded.presetHash, keyboardStampHash: afterStamp.canonicalHash, releaseDiagnostics: afterStamp.releaseDiagnostics }, null, 2));
 } finally {
