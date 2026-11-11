@@ -67,6 +67,8 @@ jobs:
             exhibition-study-${{ matrix.browser }}.json
             exhibition-pixels-${{ matrix.browser }}.png
             exhibition-pixels-${{ matrix.browser }}.json
+            exhibition-pixel-keyboard-${{ matrix.browser }}.png
+            exhibition-pixel-keyboard-${{ matrix.browser }}.json
             visual-index-server.log
             xvfb.log
           if-no-files-found: ignore

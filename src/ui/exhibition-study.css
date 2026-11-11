@@ -76,6 +76,10 @@
 .exhibition-study-pixel-cell.is-centre { outline: 2px solid #f2e9bd; outline-offset: -2px; z-index: 1; }
 .exhibition-study-pixel-cell.is-outside { background: repeating-linear-gradient(45deg,#151b13,#151b13 3px,#384136 4px); }
 .exhibition-study-frame img { cursor: crosshair; }
+.exhibition-study-frame img:focus-visible {
+  outline: 3px solid #e5c073;
+  outline-offset: 3px;
+}
 
 /* Show pixel evidence and its source images together on ordinary laptop screens. */
 .exhibition-study-dialog.is-pixel-inspection .exhibition-study-frame img {

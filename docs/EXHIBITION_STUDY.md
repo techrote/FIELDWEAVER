@@ -22,3 +22,9 @@ Open the canonical gallery study after generating the four verified CPU proofs. 
 A/B comparison samples each image independently; their authored world crops must not be mistaken for aligned coordinates. The inspector retrieves only the visual index's already-verified, in-memory FW-012 PNG bytes (bound to the displayed local blob URL); it re-decodes using FW-012 and rejects dimensions or decoded-pixel hashes that disagree with accepted records. Rebuild, cancellation, closing and page disposal invalidate its cache. No WebGL readback, external resource, telemetry or recipe changes.
 
 Use **Next visible mark** to jump from the current coordinate to the next decoded pixel that differs from the versioned FW-012 background, wrapping around the crop. This is especially useful for sparse, mostly empty compositions; a wholly blank crop is reported without manufacturing a mark.
+
+### Keyboard-first canonical pixel navigation
+
+Tab to a visible artwork image in the study dialog. Press **Enter** to inspect its centre source pixel. With the image focused, arrow keys move **one decoded source pixel**; **Shift+arrow** moves ten (clamped to the crop). The readout, selected image A/B, and 9×9 neighbourhood follow each movement. On a two-up study, Tab to the other image and Enter starts at that image's own centre; the artworks' world crops are not aligned. The image receives a visible keyboard focus outline. When focus is elsewhere in the dialog, Left/Right continue to browse between accepted works.
+
+This uses the exact already-verified in-memory canonical PNG proof and never requests `blob:` over `fetch`, reads GPU pixels or changes the authored recipe. Dedicated Firefox/Chrome WebDriver coverage sends real key actions, checks A/B independence, Shift motion and a narrow viewport, and records screenshots. The numeric controls remain available to keyboard and assistive-technology users.

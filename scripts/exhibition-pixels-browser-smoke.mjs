@@ -118,6 +118,54 @@ try {
   if(!pixelShot?.value) throw new Error('Decoded pixel screenshot not captured');
   await writeFile('exhibition-pixels-'+browser+'.png',Buffer.from(pixelShot.value,'base64'));
   await writeFile('exhibition-pixels-'+browser+'.json',JSON.stringify({browser,sampled,aPixel,marked},null,2)+'\n');
+  // Real WebDriver key actions on focused canonical images; distinguish from
+  // gallery Left/Right while retaining source-specific A/B coordinates.
+  const pressPixelKey = async (value, shifted = false) => {
+    const keys = shifted
+      ? [{ type: 'keyDown', value: '\\uE008' }, { type: 'keyDown', value },
+         { type: 'keyUp', value }, { type: 'keyUp', value: '\\uE008' }]
+      : [{ type: 'keyDown', value }, { type: 'keyUp', value }];
+    await request('POST', '/session/' + sessionId + '/actions', {
+      actions: [{ type: 'key', id: 'pixel-keyboard', actions: keys }]
+    });
+    await request('DELETE', '/session/' + sessionId + '/actions');
+  };
+  await execute("const x=document.getElementById('exhibition-study-pixel-x');const y=document.getElementById('exhibition-study-pixel-y');x.value='10';y.value='10';x.dispatchEvent(new Event('input',{bubbles:true}));document.querySelectorAll('.exhibition-study-frame img')[0].focus()");
+  await pressPixelKey('\\uE014'); // ArrowRight on focused A image
+  const pixelRight = await execute("return {text:document.getElementById('exhibition-study-pixel-reading').textContent,status:document.getElementById('exhibition-study-status').textContent,source:document.getElementById('exhibition-study-pixel-source').value,focus:document.activeElement.tagName}");
+  if (!pixelRight.text.includes('Operator Atlas · (11, 10)') || !pixelRight.status.includes('Timeline Pulse') ||
+      pixelRight.source !== 'A' || pixelRight.focus !== 'IMG') {
+    throw new Error('Keyboard source-pixel right movement failed: ' + JSON.stringify(pixelRight));
+  }
+  await pressPixelKey('\\uE015', true); // Shift+ArrowDown: ten source rows
+  const pixelDown = await execute("return document.getElementById('exhibition-study-pixel-reading').textContent");
+  if (!pixelDown.includes('Operator Atlas · (11, 20)')) {
+    throw new Error('Coarse keyboard source-pixel movement failed: ' + pixelDown);
+  }
+  await execute("document.querySelectorAll('.exhibition-study-frame img')[1].focus()");
+  await pressPixelKey('\\uE007'); // Enter: centre the other canonical image
+  const pixelB = await execute("return {text:document.getElementById('exhibition-study-pixel-reading').textContent,source:document.getElementById('exhibition-study-pixel-source').value}");
+  if (!pixelB.text.includes('Timeline Pulse · (48, 32)') || pixelB.source !== 'B') {
+    throw new Error('Focused B image did not independently sample source centre: ' + JSON.stringify(pixelB));
+  }
+  await pressPixelKey('\\uE012'); // ArrowLeft on B must not navigate gallery
+  const pixelBLeft = await execute("return {text:document.getElementById('exhibition-study-pixel-reading').textContent,status:document.getElementById('exhibition-study-status').textContent}");
+  if (!pixelBLeft.text.includes('Timeline Pulse · (47, 32)') ||
+      !pixelBLeft.status.includes('Timeline Pulse')) {
+    throw new Error('B pixel movement navigated gallery or lost the verified image: ' + JSON.stringify(pixelBLeft));
+  }
+  await request('POST', '/session/' + sessionId + '/window/rect', { width: 390, height: 844 });
+  const narrow = await execute("const r=document.getElementById('exhibition-study-dialog').getBoundingClientRect();return {width:innerWidth,dialogLeft:r.left,dialogRight:r.right,scrollW:document.getElementById('exhibition-study-dialog').scrollWidth,clientW:document.getElementById('exhibition-study-dialog').clientWidth,selected:document.getElementById('exhibition-study-pixel-reading').textContent,focused:document.activeElement.tagName}");
+  if (narrow.width > 550 || narrow.dialogLeft < -1 || narrow.dialogRight > narrow.width + 1 ||
+      !narrow.selected.includes('Timeline Pulse · (47, 32)') || narrow.focused !== 'IMG') {
+    throw new Error('Narrow keyboard inspection failed: ' + JSON.stringify(narrow));
+  }
+  const narrowShot = await request('GET', '/session/' + sessionId + '/screenshot');
+  if (!narrowShot?.value) throw new Error('Narrow keyboard inspection screenshot absent.');
+  await writeFile('exhibition-pixel-keyboard-' + browser + '.png', Buffer.from(narrowShot.value, 'base64'));
+  await writeFile('exhibition-pixel-keyboard-' + browser + '.json',
+    JSON.stringify({ browser, pixelRight, pixelDown, pixelB, pixelBLeft, narrow }, null, 2) + '\\n');
+  await request('POST', '/session/' + sessionId + '/window/rect', { width: 1250, height: 900 });
   const keyboard = await execute("const dialog=document.getElementById('exhibition-study-dialog');dialog.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true,cancelable:true}));const back=document.getElementById('exhibition-study-status').textContent;dialog.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true}));return {back,forward:document.getElementById('exhibition-study-status').textContent}");
   if (!keyboard.back.includes('Operator Atlas') || !keyboard.forward.includes('Timeline Pulse')) {
     throw new Error('Study keyboard navigation failed: ' + JSON.stringify(keyboard));

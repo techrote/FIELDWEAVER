@@ -14,6 +14,26 @@ export function studyNextId(ids, currentId, offset) {
   return ids[((index + offset) % ids.length + ids.length) % ids.length];
 }
 
+
+// Keyboard navigation targets exact source pixels, never screen-space or WebGL.
+export function studyPixelCursor(width, height, x, y, key, coarse = false) {
+  if (![width, height, x, y].every(Number.isInteger) || width < 1 || height < 1 ||
+      x < 0 || x >= width || y < 0 || y >= height || typeof coarse !== 'boolean') {
+    throw new RangeError('Invalid canonical pixel cursor geometry.');
+  }
+  const vectors = {
+    ArrowLeft: [-1, 0], ArrowRight: [1, 0],
+    ArrowUp: [0, -1], ArrowDown: [0, 1]
+  };
+  const vector = vectors[key];
+  if (!vector) return null;
+  const step = coarse ? 10 : 1;
+  return Object.freeze({
+    x: Math.max(0, Math.min(width - 1, x + vector[0] * step)),
+    y: Math.max(0, Math.min(height - 1, y + vector[1] * step))
+  });
+}
+
 export function studyArtworkLabel(entry, rawRgbaHash) {
   if (!entry || typeof entry.id !== 'string' || !/^[0-9a-f]{16}$/.test(rawRgbaHash) ||
       !entry.exportCrop?.center || !Number.isInteger(entry.targetTick)) {
@@ -78,13 +98,13 @@ export function mountExhibitionStudy(panel) {
   class: 'button', 'aria-expanded': 'false', 'aria-controls': 'exhibition-study-pixel-desk' }, 'Inspect exact pixels');
 toolbar.append(back, forward, pin, unpin, load, inspect);
   const description = make('p', { class: 'workspace-note', id: 'exhibition-study-help' },
-    'Left/Right: browse · P: pin A · Escape: close. Only locally verified canonical CPU images; no WebGL pixels.');
+    'Left/Right: browse when outside images · P: pin A · Tab to image, Enter: inspect centre, arrows: move one source pixel, Shift+arrows: move ten · Escape: close. Canonical CPU only.');
   const gallery = make('div', { class: 'exhibition-study-frames', role: 'group',
     'aria-label': 'Accepted canonical artwork images' });
   function frame(letter) {
     const box = make('figure', { class: 'exhibition-study-frame' });
     const heading = make('h3');
-    const img = make('img', { alt: '' });
+    const img = make('img', { alt: '', tabindex: '0', 'aria-describedby': 'exhibition-study-help' });
     const caption = make('figcaption', { class: 'workspace-note' });
     box.append(heading, img, caption);
     gallery.append(box);
@@ -95,7 +115,7 @@ toolbar.append(back, forward, pin, unpin, load, inspect);
     'aria-label': 'Decoded canonical pixel inspection' });
   desk.hidden = true;
   const help = make('p', { class: 'workspace-note' },
-    'Click an image or enter a column/row. Sample the exact decoded CPU PNG. Image coordinates start at the top-left; A and B have separate authored world crops.');
+    'Click an image, focus it and use arrow keys (Shift: 10 pixels), or enter a column/row. Values are exact decoded CPU pixels, origin top-left. A and B have different authored world crops.');
   const fields = make('div', { class: 'exhibition-study-pixel-controls' });
   const sourceLabel = make('label', {}, 'Image ');
   const source = make('select', { id: 'exhibition-study-pixel-source' });
@@ -225,20 +245,45 @@ toolbar.append(back, forward, pin, unpin, load, inspect);
     desk.hidden = true; inspect.setAttribute('aria-expanded', 'false'); inspect.textContent = 'Inspect exact pixels';
     gridPixels.replaceChildren(); reading.textContent = 'Choose a pixel.';
   }
-  inspect.addEventListener('click', () => {
-    if (pixelOpen) { resetPixel(); return; }
+  function openPixelDesk() {
+    if (pixelOpen) return;
     pixelOpen = true; desk.hidden = false;
     dialog.classList.add('is-pixel-inspection');
-    source.value = pinnedId ? 'B' : 'A';
     inspect.setAttribute('aria-expanded', 'true');
     inspect.textContent = 'Hide pixel inspection';
+  }
+  inspect.addEventListener('click', () => {
+    if (pixelOpen) { resetPixel(); return; }
+    openPixelDesk();
+    source.value = pinnedId ? 'B' : 'A';
     void updatePixel(true); x.focus();
   });
   source.addEventListener('change', () => { lastPixelId = null; void updatePixel(true); });
   for (const input of [x, y]) input.addEventListener('input', () => void updatePixel());
   nextMark.addEventListener('click', () => void updatePixel(false, true));
   for (const [side, frameNode] of [['A', left], ['B', right]]) {
-    frameNode.img.title = 'Click to inspect a canonical decoded pixel';
+    frameNode.img.title = 'Focus and use Enter or arrow keys to inspect canonical pixels';
+    frameNode.img.addEventListener('keydown', (event) => {
+      if (!dialog.open || (side === 'B' && !pinnedId) ||
+          event.altKey || event.ctrlKey || event.metaKey) return;
+      if (event.key !== 'Enter' && !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) return;
+      event.preventDefault();
+      event.stopPropagation(); // Arrow keys inside an image move pixels, not gallery works.
+      const id = side === 'B' ? currentId : (pinnedId ?? currentId);
+      const record = snapshot()?.get(id), entry = lookup.get(id);
+      if (!record || !entry) return;
+      const width = entry.exportCrop.widthPx, height = entry.exportCrop.heightPx;
+      const sameImage = pixelOpen && source.value === side && lastPixelId === id;
+      const startX = sameImage ? Math.max(0, Math.min(width - 1, Math.trunc(Number(x.value) || 0))) : Math.floor(width / 2);
+      const startY = sameImage ? Math.max(0, Math.min(height - 1, Math.trunc(Number(y.value) || 0))) : Math.floor(height / 2);
+      const point = studyPixelCursor(width, height, startX, startY, event.key, event.shiftKey) ??
+        { x: startX, y: startY };
+      openPixelDesk();
+      source.value = side;
+      lastPixelId = id;
+      x.value = String(point.x); y.value = String(point.y);
+      void updatePixel();
+    });
     frameNode.img.addEventListener('click', (event) => {
       if (!dialog.open || (side === 'B' && !pinnedId)) return;
       const img = frameNode.img, bounds = img.getBoundingClientRect();
@@ -248,12 +293,7 @@ toolbar.append(back, forward, pin, unpin, load, inspect);
         width: img.clientWidth, height: img.clientHeight
       }, entry.exportCrop.widthPx, entry.exportCrop.heightPx, event.clientX, event.clientY);
       if (!point) return;
-      if (!pixelOpen) {
-        pixelOpen = true; desk.hidden = false;
-        dialog.classList.add('is-pixel-inspection');
-        inspect.setAttribute('aria-expanded', 'true');
-        inspect.textContent = 'Hide pixel inspection';
-      }
+      openPixelDesk();
       source.value = side; lastPixelId = pixelId();
       x.value = String(point.x); y.value = String(point.y);
       void updatePixel();
