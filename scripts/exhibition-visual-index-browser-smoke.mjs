@@ -64,6 +64,32 @@ try {
       selected.images !== 4 || selected.proof) {
     throw new Error('Gallery selection broke the accepted editor/proof workflow: ' + JSON.stringify(selected));
   }
+  // The study reel displays only images decoded by the authoritative CPU index.
+  const launchDisabled = await execute("return document.getElementById('exhibition-study-launch')?.disabled");
+  if (launchDisabled !== false) throw new Error('Study is unavailable after four verified CPU proofs.');
+  const opened = await execute("document.getElementById('exhibition-study-launch').click(); return {open:document.getElementById('exhibition-study-dialog').open,status:document.getElementById('exhibition-study-status').textContent,a:document.querySelector('.exhibition-study-frame img').naturalWidth}");
+  if (!opened.open || !opened.status.includes('Operator Atlas') || opened.a !== 96) {
+    throw new Error('Full-window study did not open on the accepted selection: ' + JSON.stringify(opened));
+  }
+  const compared = await execute("document.getElementById('exhibition-study-pin').click(); document.getElementById('exhibition-study-next').click(); return {status:document.getElementById('exhibition-study-status').textContent,images:[...document.querySelectorAll('.exhibition-study-frame:not([hidden]) img')].map(x=>({width:x.naturalWidth,height:x.naturalHeight,src:x.currentSrc})),captions:[...document.querySelectorAll('.exhibition-study-frame:not([hidden]) figcaption')].map(x=>x.textContent)}");
+  if (compared.images.length !== 2 || compared.images.some((x) => x.width !== 96 || x.height !== 64 || !x.src.startsWith('blob:')) ||
+      !compared.status.includes('Timeline Pulse') || !compared.captions.every((x) => x.includes('decoded RGBA8') && x.includes('recipe '))) {
+    throw new Error('Canonical two-up study was invalid: ' + JSON.stringify(compared));
+  }
+  await request('POST', '/session/' + sessionId + '/window/rect', { width: 1250, height: 900 });
+  const studyScreenshot = await request('GET', '/session/' + sessionId + '/screenshot');
+  if (!studyScreenshot?.value) throw new Error('Full-window study screenshot absent.');
+  await writeFile('exhibition-study-' + browser + '.png', Buffer.from(studyScreenshot.value, 'base64'));
+  const keyboard = await execute("const dialog=document.getElementById('exhibition-study-dialog');dialog.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true,cancelable:true}));const back=document.getElementById('exhibition-study-status').textContent;dialog.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true}));return {back,forward:document.getElementById('exhibition-study-status').textContent}");
+  if (!keyboard.back.includes('Operator Atlas') || !keyboard.forward.includes('Timeline Pulse')) {
+    throw new Error('Study keyboard navigation failed: ' + JSON.stringify(keyboard));
+  }
+  const loaded = await execute("document.getElementById('exhibition-study-load').click();return {dialogOpen:document.getElementById('exhibition-study-dialog').open,selected:document.getElementById('preset-select').value,status:document.getElementById('preset-status').textContent}");
+  if (loaded.dialogOpen || loaded.selected !== 'timeline-pulse' || !loaded.status.startsWith('Loaded Timeline Pulse')) {
+    throw new Error('Study did not invoke explicit recipe adoption: ' + JSON.stringify(loaded));
+  }
+  await writeFile('exhibition-study-' + browser + '.json',
+    JSON.stringify({ browser, opened, compared, keyboard, loaded }, null, 2) + '\\n');
   await request('POST', '/session/' + sessionId + '/window/rect', { width: 1250, height: 900 });
   await execute("document.querySelector('#exhibition-grid').scrollIntoView({block:'center'})");
   const screenshot = await request('GET', '/session/' + sessionId + '/screenshot');
