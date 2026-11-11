@@ -95,8 +95,8 @@ export function createZeroMeridian(){
   line(x1,38,x2,38,1,{startTick:32,duration:71,spread:75});
  }
  const materials=[
-  {id:1,kind:'ink',inertiaNumerator:1,inertiaDenominator:1,steeringNumerator:1,steeringDenominator:42,lifetimeTicks:96,depositEvery:1,primitive:'disc',radiusQ16:41000,strengthQ16:58000,quantizeAxis:false},
-  {id:2,kind:'filament',inertiaNumerator:1,inertiaDenominator:1,steeringNumerator:1,steeringDenominator:52,lifetimeTicks:116,depositEvery:1,primitive:'segment',radiusQ16:33000,strengthQ16:65536,quantizeAxis:false},
+  {id:1,kind:'ink',inertiaNumerator:1,inertiaDenominator:1,steeringNumerator:1,steeringDenominator:42,lifetimeTicks:96,depositEvery:1,primitive:'disc',radiusQ16:31500,strengthQ16:58000,quantizeAxis:false},
+  {id:2,kind:'filament',inertiaNumerator:1,inertiaDenominator:1,steeringNumerator:1,steeringDenominator:52,lifetimeTicks:116,depositEvery:1,primitive:'segment',radiusQ16:30000,strengthQ16:65536,quantizeAxis:false},
   {id:3,kind:'dust',inertiaNumerator:1,inertiaDenominator:3,steeringNumerator:2,steeringDenominator:3,lifetimeTicks:54,depositEvery:1,primitive:'point',radiusQ16:18000,strengthQ16:53000,quantizeAxis:false},
   {id:4,kind:'shard',inertiaNumerator:1,inertiaDenominator:1,steeringNumerator:1,steeringDenominator:16,lifetimeTicks:80,depositEvery:1,primitive:'segment',radiusQ16:31000,strengthQ16:60000,quantizeAxis:true}
  ];
@@ -115,7 +115,7 @@ export function createZeroMeridian(){
    {version:'fw-lut-map-v1',id:5,materialId:3,lutId:5,source:'ageTicks',
     channel:'logic',destination:'radiusQ16',addressMode:'clamp',
     inputMin:0,inputMax:53,scaleNumerator:1,scaleDenominator:1,bias:0,
-    outputMin:7500,outputMax:34000}
+    outputMin:7500,outputMax:32000}
   ]
  };
  const fields=[
