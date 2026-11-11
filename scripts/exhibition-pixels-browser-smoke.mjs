@@ -88,7 +88,18 @@ try {
   const selectedHash = result.tiles.find((tile) => tile.id === 'timeline-pulse').hash;
   const selectedEntry = exhibitionEntries().find((entry) => entry.id === 'timeline-pulse');
   if (!selectedHash || !selectedEntry) throw new Error('Missing accepted selected B identity.');
-  await execute("document.getElementById('exhibition-study-save-png').click();document.getElementById('exhibition-study-save-recipe').click()");
+  // Separate real keyboard gestures: Chrome blocks two automatic downloads
+  // from a single synthetic JS task even though owners click these separately.
+  const saveByKeyboard = async (id) => {
+    const focused = await execute("const button=document.getElementById('" + id + "');button.focus();return document.activeElement===button");
+    if (!focused) throw new Error('Study download control is not keyboard focusable: ' + id);
+    await request('POST', '/session/' + sessionId + '/actions', {
+      actions: [{ type: 'key', id: 'study-export-keyboard', actions: [
+        { type: 'keyDown', value: '\uE007' }, { type: 'keyUp', value: '\uE007' }
+      ] }]
+    });
+    await request('DELETE', '/session/' + sessionId + '/actions');
+  };
   const readSaved = async (name) => {
     for (let n = 0; n < 100; n++) {
       try { return await readFile(join(downloadDir, name)); } catch { await sleep(100); }
@@ -97,7 +108,9 @@ try {
   };
   const pngName = 'fieldweaver-timeline-pulse-' + selectedHash + '.png';
   const recipeName = 'fieldweaver-timeline-pulse-' + selectedEntry.recipeHash + '.fwrecipe.json';
+  await saveByKeyboard('exhibition-study-save-png');
   const savedPng = decodePngRgba(new Uint8Array(await readSaved(pngName)));
+  await saveByKeyboard('exhibition-study-save-recipe');
   const studySavedRecipe = parseRecipe((await readSaved(recipeName)).toString('utf8'));
   const editorAfterDirectExport = await execute("return {hash:document.documentElement.dataset.fieldweaverCanonicalRecipeHash,selected:document.getElementById('preset-select').value,open:document.getElementById('exhibition-study-dialog').open,status:document.getElementById('exhibition-study-status').textContent}");
   if (savedPng.widthPx !== 96 || savedPng.heightPx !== 64 ||
