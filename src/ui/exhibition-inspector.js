@@ -95,7 +95,10 @@ export function mountExhibitionInspector() {
     });
   };
   zoom.addEventListener('change', scale);
-  dialog.querySelector('#exhibition-inspector-close').addEventListener('click', () => dialog.close());
+  dialog.querySelector('#exhibition-inspector-close').addEventListener('click', () => {
+    dialog.close();
+    reset(); // Synchronous invalidation; the native close event fires later.
+  });
   dialog.addEventListener('close', reset);
   const close = () => {
     if (dialog.open) dialog.close();
