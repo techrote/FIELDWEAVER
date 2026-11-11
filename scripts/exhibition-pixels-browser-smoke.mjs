@@ -208,7 +208,7 @@ try {
       !boardResult.status.includes('Offline canonical board download requested: 4 accepted proofs') ||
       !boardResult.source.includes('Timeline Pulse · (48, 32)') ||
       (boardHtml.match(/<article id="work-/g) ?? []).length !== 4 ||
-      (boardHtml.match(/src="data:image\\/png;base64,/g) ?? []).length !== 4 ||
+      (boardHtml.match(/src="data:image\/png;base64,/g) ?? []).length !== 4 ||
       !boardHtml.includes('default-src &#39;none&#39;') ||
       /UNMERGED CANDIDATE/i.test(boardHtml) ||
       result.tiles.some((tile) => !boardHtml.includes(tile.hash))) {
