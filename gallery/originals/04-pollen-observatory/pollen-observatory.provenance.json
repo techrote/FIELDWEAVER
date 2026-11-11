@@ -1,0 +1,2267 @@
+{
+  "version": "fw-export-provenance-v1",
+  "exportVersion": "fw-canonical-export-v1",
+  "rasterVersion": "fw-canonical-raster-v1",
+  "pngVersion": "fw-png-rgba8-v1",
+  "recipeHash": "5cdf27d4b0c2e205",
+  "recipe": {
+    "schemaVersion": "fw-recipe-v1",
+    "engineVersion": "fw-agents-v1",
+    "seed": 1827969810,
+    "framing": {
+      "widthPx": 576,
+      "heightPx": 384,
+      "center": {
+        "chunkX": 0,
+        "chunkY": 0,
+        "localX": 8388608,
+        "localY": 7864320
+      },
+      "unitsPerPixelQ16": 32768
+    },
+    "fields": {
+      "format": "fw-fields-v1",
+      "nextId": 10,
+      "order": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "layers": [
+        {
+          "id": 1,
+          "kind": "vector",
+          "operator": "uniform",
+          "enabled": true,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 0,
+              "localY": 0
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "vectorXQ16": -2100,
+            "vectorYQ16": 1900
+          },
+          "chunks": []
+        },
+        {
+          "id": 2,
+          "kind": "vector",
+          "operator": "vortex",
+          "enabled": false,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 8257536,
+              "localY": 4325376
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "radiusQ16": 3538944,
+            "strengthQ16": 19000
+          },
+          "chunks": []
+        },
+        {
+          "id": 3,
+          "kind": "vector",
+          "operator": "vortex",
+          "enabled": false,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 5046272,
+              "localY": 10027008
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "radiusQ16": 2818048,
+            "strengthQ16": -24000
+          },
+          "chunks": []
+        },
+        {
+          "id": 4,
+          "kind": "vector",
+          "operator": "turbulence",
+          "enabled": true,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 0,
+              "localY": 0
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "amplitudeQ16": 2300,
+            "cellSizeQ16": 1048576,
+            "seed": 1243680377
+          },
+          "chunks": []
+        },
+        {
+          "id": 5,
+          "kind": "vector",
+          "operator": "direction-quantizer",
+          "enabled": true,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 0,
+              "localY": 0
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "sectors": 8
+          },
+          "chunks": []
+        },
+        {
+          "id": 6,
+          "kind": "vector",
+          "operator": "uniform",
+          "enabled": false,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 0,
+              "localY": 0
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "vectorXQ16": 7200,
+            "vectorYQ16": -4800
+          },
+          "chunks": []
+        },
+        {
+          "id": 7,
+          "kind": "vector",
+          "operator": "vortex",
+          "enabled": false,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 2949120,
+              "localY": 4325376
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "radiusQ16": 2621440,
+            "strengthQ16": -15000
+          },
+          "chunks": []
+        },
+        {
+          "id": 8,
+          "kind": "vector",
+          "operator": "vortex",
+          "enabled": false,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 13762560,
+              "localY": 5636096
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "radiusQ16": 2686976,
+            "strengthQ16": 18000
+          },
+          "chunks": []
+        },
+        {
+          "id": 9,
+          "kind": "vector",
+          "operator": "vortex",
+          "enabled": false,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 12058624,
+              "localY": 10747904
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "radiusQ16": 2031616,
+            "strengthQ16": -21000
+          },
+          "chunks": []
+        }
+      ]
+    },
+    "materials": [
+      {
+        "id": 1,
+        "kind": "ink",
+        "inertiaNumerator": 3,
+        "inertiaDenominator": 4,
+        "steeringNumerator": 1,
+        "steeringDenominator": 2,
+        "lifetimeTicks": 110,
+        "depositEvery": 1,
+        "primitive": "disc",
+        "radiusQ16": 18000,
+        "strengthQ16": 58000,
+        "quantizeAxis": false
+      },
+      {
+        "id": 2,
+        "kind": "filament",
+        "inertiaNumerator": 7,
+        "inertiaDenominator": 8,
+        "steeringNumerator": 1,
+        "steeringDenominator": 4,
+        "lifetimeTicks": 132,
+        "depositEvery": 1,
+        "primitive": "segment",
+        "radiusQ16": 11000,
+        "strengthQ16": 60000,
+        "quantizeAxis": false
+      },
+      {
+        "id": 3,
+        "kind": "dust",
+        "inertiaNumerator": 1,
+        "inertiaDenominator": 4,
+        "steeringNumerator": 3,
+        "steeringDenominator": 4,
+        "lifetimeTicks": 73,
+        "depositEvery": 2,
+        "primitive": "point",
+        "radiusQ16": 12000,
+        "strengthQ16": 58000,
+        "quantizeAxis": false
+      },
+      {
+        "id": 4,
+        "kind": "shard",
+        "inertiaNumerator": 1,
+        "inertiaDenominator": 2,
+        "steeringNumerator": 1,
+        "steeringDenominator": 1,
+        "lifetimeTicks": 72,
+        "depositEvery": 1,
+        "primitive": "segment",
+        "radiusQ16": 14200,
+        "strengthQ16": 65000,
+        "quantizeAxis": true
+      }
+    ],
+    "emitters": [
+      {
+        "id": 1,
+        "materialId": 2,
+        "startTick": 3,
+        "stopTick": 54,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 2949120,
+            "localY": 4325376
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": 29184,
+        "velocityYQ16": -704,
+        "velocityJitterQ16": 3200
+      },
+      {
+        "id": 2,
+        "materialId": 2,
+        "startTick": 5,
+        "stopTick": 56,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 2949120,
+            "localY": 4325376
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": 14688,
+        "velocityYQ16": -25933,
+        "velocityJitterQ16": 3200
+      },
+      {
+        "id": 3,
+        "materialId": 2,
+        "startTick": 7,
+        "stopTick": 58,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 2949120,
+            "localY": 4325376
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": -13920,
+        "velocityYQ16": -25933,
+        "velocityJitterQ16": 3200
+      },
+      {
+        "id": 4,
+        "materialId": 2,
+        "startTick": 3,
+        "stopTick": 54,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 2949120,
+            "localY": 4325376
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": -30720,
+        "velocityYQ16": -704,
+        "velocityJitterQ16": 3200
+      },
+      {
+        "id": 5,
+        "materialId": 2,
+        "startTick": 5,
+        "stopTick": 56,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 2949120,
+            "localY": 4325376
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": -14688,
+        "velocityYQ16": 24525,
+        "velocityJitterQ16": 3200
+      },
+      {
+        "id": 6,
+        "materialId": 2,
+        "startTick": 7,
+        "stopTick": 58,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 2949120,
+            "localY": 4325376
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": 15456,
+        "velocityYQ16": 24525,
+        "velocityJitterQ16": 3200
+      },
+      {
+        "id": 7,
+        "materialId": 2,
+        "startTick": 0,
+        "stopTick": 51,
+        "intervalTicks": 2,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8323072,
+            "localY": 4063232
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": 31290,
+        "velocityYQ16": -51684,
+        "velocityJitterQ16": 1890
+      },
+      {
+        "id": 8,
+        "materialId": 2,
+        "startTick": 2,
+        "stopTick": 53,
+        "intervalTicks": 2,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8323072,
+            "localY": 4063232
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": -30090,
+        "velocityYQ16": -51684,
+        "velocityJitterQ16": 1890
+      },
+      {
+        "id": 9,
+        "materialId": 2,
+        "startTick": 4,
+        "stopTick": 55,
+        "intervalTicks": 2,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8323072,
+            "localY": 4063232
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": -62560,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 1890
+      },
+      {
+        "id": 10,
+        "materialId": 2,
+        "startTick": 0,
+        "stopTick": 51,
+        "intervalTicks": 2,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8323072,
+            "localY": 4063232
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": -28890,
+        "velocityYQ16": 51684,
+        "velocityJitterQ16": 1890
+      },
+      {
+        "id": 11,
+        "materialId": 2,
+        "startTick": 2,
+        "stopTick": 53,
+        "intervalTicks": 2,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8323072,
+            "localY": 4063232
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": 30090,
+        "velocityYQ16": 51684,
+        "velocityJitterQ16": 1890
+      },
+      {
+        "id": 12,
+        "materialId": 2,
+        "startTick": 4,
+        "stopTick": 55,
+        "intervalTicks": 2,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8323072,
+            "localY": 4063232
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": 60160,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 1890
+      },
+      {
+        "id": 13,
+        "materialId": 2,
+        "startTick": 11,
+        "stopTick": 62,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 13762560,
+            "localY": 5636096
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": -17088,
+        "velocityYQ16": -27328,
+        "velocityJitterQ16": 3880
+      },
+      {
+        "id": 14,
+        "materialId": 2,
+        "startTick": 13,
+        "stopTick": 64,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 13762560,
+            "localY": 5636096
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": -33280,
+        "velocityYQ16": 704,
+        "velocityJitterQ16": 3880
+      },
+      {
+        "id": 15,
+        "materialId": 2,
+        "startTick": 15,
+        "stopTick": 66,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 13762560,
+            "localY": 5636096
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": -15552,
+        "velocityYQ16": 28736,
+        "velocityJitterQ16": 3880
+      },
+      {
+        "id": 16,
+        "materialId": 2,
+        "startTick": 11,
+        "stopTick": 62,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 13762560,
+            "localY": 5636096
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": 15552,
+        "velocityYQ16": 28736,
+        "velocityJitterQ16": 3880
+      },
+      {
+        "id": 17,
+        "materialId": 2,
+        "startTick": 13,
+        "stopTick": 64,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 13762560,
+            "localY": 5636096
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": 33280,
+        "velocityYQ16": 704,
+        "velocityJitterQ16": 3880
+      },
+      {
+        "id": 18,
+        "materialId": 2,
+        "startTick": 15,
+        "stopTick": 66,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 13762560,
+            "localY": 5636096
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": 17088,
+        "velocityYQ16": -27328,
+        "velocityJitterQ16": 3880
+      },
+      {
+        "id": 19,
+        "materialId": 2,
+        "startTick": 7,
+        "stopTick": 58,
+        "intervalTicks": 2,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5046272,
+            "localY": 10223616
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": -26340,
+        "velocityYQ16": 46204,
+        "velocityJitterQ16": 2570
+      },
+      {
+        "id": 20,
+        "materialId": 2,
+        "startTick": 9,
+        "stopTick": 60,
+        "intervalTicks": 2,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5046272,
+            "localY": 10223616
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": 27540,
+        "velocityYQ16": 46204,
+        "velocityJitterQ16": 2570
+      },
+      {
+        "id": 21,
+        "materialId": 2,
+        "startTick": 11,
+        "stopTick": 62,
+        "intervalTicks": 2,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5046272,
+            "localY": 10223616
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": 54960,
+        "velocityYQ16": -1100,
+        "velocityJitterQ16": 2570
+      },
+      {
+        "id": 22,
+        "materialId": 2,
+        "startTick": 7,
+        "stopTick": 58,
+        "intervalTicks": 2,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5046272,
+            "localY": 10223616
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": 28740,
+        "velocityYQ16": -48404,
+        "velocityJitterQ16": 2570
+      },
+      {
+        "id": 23,
+        "materialId": 2,
+        "startTick": 9,
+        "stopTick": 60,
+        "intervalTicks": 2,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5046272,
+            "localY": 10223616
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": -27540,
+        "velocityYQ16": -48404,
+        "velocityJitterQ16": 2570
+      },
+      {
+        "id": 24,
+        "materialId": 2,
+        "startTick": 11,
+        "stopTick": 62,
+        "intervalTicks": 2,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5046272,
+            "localY": 10223616
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": -57360,
+        "velocityYQ16": -1100,
+        "velocityJitterQ16": 2570
+      },
+      {
+        "id": 25,
+        "materialId": 2,
+        "startTick": 17,
+        "stopTick": 68,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12058624,
+            "localY": 10747904
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": 12778,
+        "velocityYQ16": 23267,
+        "velocityJitterQ16": 4560
+      },
+      {
+        "id": 26,
+        "materialId": 2,
+        "startTick": 19,
+        "stopTick": 70,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12058624,
+            "localY": 10747904
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": 27622,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 4560
+      },
+      {
+        "id": 27,
+        "materialId": 2,
+        "startTick": 21,
+        "stopTick": 72,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12058624,
+            "localY": 10747904
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": 14314,
+        "velocityYQ16": -23267,
+        "velocityJitterQ16": 4560
+      },
+      {
+        "id": 28,
+        "materialId": 2,
+        "startTick": 17,
+        "stopTick": 68,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12058624,
+            "localY": 10747904
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": -14314,
+        "velocityYQ16": -23267,
+        "velocityJitterQ16": 4560
+      },
+      {
+        "id": 29,
+        "materialId": 2,
+        "startTick": 19,
+        "stopTick": 70,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12058624,
+            "localY": 10747904
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": -27622,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 4560
+      },
+      {
+        "id": 30,
+        "materialId": 2,
+        "startTick": 21,
+        "stopTick": 72,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12058624,
+            "localY": 10747904
+          },
+          "widthQ16": 18000,
+          "heightQ16": 18000
+        },
+        "velocityXQ16": -12778,
+        "velocityYQ16": 23267,
+        "velocityJitterQ16": 4560
+      },
+      {
+        "id": 31,
+        "materialId": 1,
+        "startTick": 8,
+        "stopTick": 80,
+        "intervalTicks": 3,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 2949120,
+            "localY": 4325376
+          },
+          "widthQ16": 24000,
+          "heightQ16": 24000
+        },
+        "velocityXQ16": -6800,
+        "velocityYQ16": -9200,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 32,
+        "materialId": 1,
+        "startTick": 11,
+        "stopTick": 82,
+        "intervalTicks": 4,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8323072,
+            "localY": 4063232
+          },
+          "widthQ16": 24000,
+          "heightQ16": 24000
+        },
+        "velocityXQ16": -3400,
+        "velocityYQ16": 7800,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 33,
+        "materialId": 1,
+        "startTick": 14,
+        "stopTick": 84,
+        "intervalTicks": 3,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 13762560,
+            "localY": 5636096
+          },
+          "widthQ16": 24000,
+          "heightQ16": 24000
+        },
+        "velocityXQ16": 0,
+        "velocityYQ16": -9200,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 34,
+        "materialId": 1,
+        "startTick": 17,
+        "stopTick": 86,
+        "intervalTicks": 4,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5046272,
+            "localY": 10223616
+          },
+          "widthQ16": 24000,
+          "heightQ16": 24000
+        },
+        "velocityXQ16": 3400,
+        "velocityYQ16": 7800,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 35,
+        "materialId": 1,
+        "startTick": 20,
+        "stopTick": 88,
+        "intervalTicks": 3,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12058624,
+            "localY": 10747904
+          },
+          "widthQ16": 24000,
+          "heightQ16": 24000
+        },
+        "velocityXQ16": 6800,
+        "velocityYQ16": -9200,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 36,
+        "materialId": 3,
+        "startTick": 43,
+        "stopTick": 118,
+        "intervalTicks": 3,
+        "rate": 3,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 2555904,
+            "localY": 3997696
+          },
+          "widthQ16": 110000,
+          "heightQ16": 95000
+        },
+        "velocityXQ16": -27000,
+        "velocityYQ16": -22000,
+        "velocityJitterQ16": 19000
+      },
+      {
+        "id": 37,
+        "materialId": 3,
+        "startTick": 47,
+        "stopTick": 120,
+        "intervalTicks": 3,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8650752,
+            "localY": 4587520
+          },
+          "widthQ16": 110000,
+          "heightQ16": 95000
+        },
+        "velocityXQ16": -13500,
+        "velocityYQ16": 23500,
+        "velocityJitterQ16": 11500
+      },
+      {
+        "id": 38,
+        "materialId": 3,
+        "startTick": 51,
+        "stopTick": 122,
+        "intervalTicks": 3,
+        "rate": 3,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 13369344,
+            "localY": 5308416
+          },
+          "widthQ16": 110000,
+          "heightQ16": 95000
+        },
+        "velocityXQ16": 0,
+        "velocityYQ16": -22000,
+        "velocityJitterQ16": 19000
+      },
+      {
+        "id": 39,
+        "materialId": 3,
+        "startTick": 55,
+        "stopTick": 124,
+        "intervalTicks": 3,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5373952,
+            "localY": 10747904
+          },
+          "widthQ16": 110000,
+          "heightQ16": 95000
+        },
+        "velocityXQ16": 13500,
+        "velocityYQ16": 23500,
+        "velocityJitterQ16": 11500
+      },
+      {
+        "id": 40,
+        "materialId": 3,
+        "startTick": 59,
+        "stopTick": 126,
+        "intervalTicks": 3,
+        "rate": 3,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 11665408,
+            "localY": 10420224
+          },
+          "widthQ16": 110000,
+          "heightQ16": 95000
+        },
+        "velocityXQ16": 27000,
+        "velocityYQ16": -22000,
+        "velocityJitterQ16": 19000
+      },
+      {
+        "id": 41,
+        "materialId": 4,
+        "startTick": 106,
+        "stopTick": 133,
+        "intervalTicks": 5,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 3735552,
+            "localY": 3801088
+          },
+          "widthQ16": 14000,
+          "heightQ16": 14000
+        },
+        "velocityXQ16": -44000,
+        "velocityYQ16": 33000,
+        "velocityJitterQ16": 2300
+      },
+      {
+        "id": 42,
+        "materialId": 4,
+        "startTick": 109,
+        "stopTick": 136,
+        "intervalTicks": 5,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 7536640,
+            "localY": 3538944
+          },
+          "widthQ16": 14000,
+          "heightQ16": 14000
+        },
+        "velocityXQ16": 48000,
+        "velocityYQ16": -30000,
+        "velocityJitterQ16": 2300
+      },
+      {
+        "id": 43,
+        "materialId": 4,
+        "startTick": 112,
+        "stopTick": 139,
+        "intervalTicks": 5,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 14548992,
+            "localY": 5111808
+          },
+          "widthQ16": 14000,
+          "heightQ16": 14000
+        },
+        "velocityXQ16": -44000,
+        "velocityYQ16": -30000,
+        "velocityJitterQ16": 2300
+      },
+      {
+        "id": 44,
+        "materialId": 4,
+        "startTick": 115,
+        "stopTick": 142,
+        "intervalTicks": 5,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 4259840,
+            "localY": 9699328
+          },
+          "widthQ16": 14000,
+          "heightQ16": 14000
+        },
+        "velocityXQ16": 48000,
+        "velocityYQ16": 33000,
+        "velocityJitterQ16": 2300
+      },
+      {
+        "id": 45,
+        "materialId": 4,
+        "startTick": 118,
+        "stopTick": 145,
+        "intervalTicks": 5,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12845056,
+            "localY": 10223616
+          },
+          "widthQ16": 14000,
+          "heightQ16": 14000
+        },
+        "velocityXQ16": -44000,
+        "velocityYQ16": -30000,
+        "velocityJitterQ16": 2300
+      }
+    ],
+    "lut": {
+      "schemaVersion": "fw-lut-v1",
+      "assets": [
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 1,
+          "name": "Chalk / bleached shell heart",
+          "size": 32,
+          "channels": {
+            "a": [
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535
+            ],
+            "b": [
+              25000,
+              25710,
+              26419,
+              27129,
+              27839,
+              28548,
+              29258,
+              29968,
+              30677,
+              31387,
+              32097,
+              32806,
+              33516,
+              34226,
+              34935,
+              35645,
+              36355,
+              37065,
+              37774,
+              38484,
+              39194,
+              39903,
+              40613,
+              41323,
+              42032,
+              42742,
+              43452,
+              44161,
+              44871,
+              45581,
+              46290,
+              47000
+            ],
+            "g": [
+              28500,
+              29484,
+              30468,
+              31452,
+              32435,
+              33419,
+              34403,
+              35387,
+              36371,
+              37355,
+              38339,
+              39323,
+              40306,
+              41290,
+              42274,
+              43258,
+              44242,
+              45226,
+              46210,
+              47194,
+              48177,
+              49161,
+              50145,
+              51129,
+              52113,
+              53097,
+              54081,
+              55065,
+              56048,
+              57032,
+              58016,
+              59000
+            ],
+            "r": [
+              30000,
+              31097,
+              32194,
+              33290,
+              34387,
+              35484,
+              36581,
+              37677,
+              38774,
+              39871,
+              40968,
+              42065,
+              43161,
+              44258,
+              45355,
+              46452,
+              47548,
+              48645,
+              49742,
+              50839,
+              51935,
+              53032,
+              54129,
+              55226,
+              56323,
+              57419,
+              58516,
+              59613,
+              60710,
+              61806,
+              62903,
+              64000
+            ]
+          }
+        },
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 2,
+          "name": "Saffron / ferric petals",
+          "size": 32,
+          "channels": {
+            "a": [
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535
+            ],
+            "b": [
+              16000,
+              15865,
+              15729,
+              15594,
+              15458,
+              15323,
+              15187,
+              15052,
+              14916,
+              14781,
+              14645,
+              14510,
+              14374,
+              14239,
+              14103,
+              13968,
+              13832,
+              13697,
+              13561,
+              13426,
+              13290,
+              13155,
+              13019,
+              12884,
+              12748,
+              12613,
+              12477,
+              12342,
+              12206,
+              12071,
+              11935,
+              11800
+            ],
+            "g": [
+              10000,
+              11016,
+              12032,
+              13048,
+              14065,
+              15081,
+              16097,
+              17113,
+              18129,
+              19145,
+              20161,
+              21177,
+              22194,
+              23210,
+              24226,
+              25242,
+              26258,
+              27274,
+              28290,
+              29306,
+              30323,
+              31339,
+              32355,
+              33371,
+              34387,
+              35403,
+              36419,
+              37435,
+              38452,
+              39468,
+              40484,
+              41500
+            ],
+            "r": [
+              38000,
+              38888,
+              39776,
+              40665,
+              41553,
+              42441,
+              43329,
+              44218,
+              45106,
+              45994,
+              46882,
+              47770,
+              48659,
+              49547,
+              50435,
+              51323,
+              52212,
+              53100,
+              53988,
+              54876,
+              55765,
+              56653,
+              57541,
+              58429,
+              59317,
+              60206,
+              61094,
+              61982,
+              62870,
+              63759,
+              64647,
+              65535
+            ]
+          }
+        },
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 3,
+          "name": "Moss / suspended spores",
+          "size": 32,
+          "channels": {
+            "a": [
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535
+            ],
+            "b": [
+              18000,
+              18452,
+              18903,
+              19355,
+              19806,
+              20258,
+              20710,
+              21161,
+              21613,
+              22065,
+              22516,
+              22968,
+              23419,
+              23871,
+              24323,
+              24774,
+              25226,
+              25677,
+              26129,
+              26581,
+              27032,
+              27484,
+              27935,
+              28387,
+              28839,
+              29290,
+              29742,
+              30194,
+              30645,
+              31097,
+              31548,
+              32000
+            ],
+            "g": [
+              29000,
+              30113,
+              31226,
+              32339,
+              33452,
+              34565,
+              35677,
+              36790,
+              37903,
+              39016,
+              40129,
+              41242,
+              42355,
+              43468,
+              44581,
+              45694,
+              46806,
+              47919,
+              49032,
+              50145,
+              51258,
+              52371,
+              53484,
+              54597,
+              55710,
+              56823,
+              57935,
+              59048,
+              60161,
+              61274,
+              62387,
+              63500
+            ],
+            "r": [
+              12000,
+              12935,
+              13871,
+              14806,
+              15742,
+              16677,
+              17613,
+              18548,
+              19484,
+              20419,
+              21355,
+              22290,
+              23226,
+              24161,
+              25097,
+              26032,
+              26968,
+              27903,
+              28839,
+              29774,
+              30710,
+              31645,
+              32581,
+              33516,
+              34452,
+              35387,
+              36323,
+              37258,
+              38194,
+              39129,
+              40065,
+              41000
+            ]
+          }
+        },
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 4,
+          "name": "Iris / angular cilia",
+          "size": 32,
+          "channels": {
+            "a": [
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535
+            ],
+            "b": [
+              50000,
+              50501,
+              51002,
+              51503,
+              52005,
+              52506,
+              53007,
+              53508,
+              54009,
+              54510,
+              55011,
+              55512,
+              56014,
+              56515,
+              57016,
+              57517,
+              58018,
+              58519,
+              59020,
+              59521,
+              60023,
+              60524,
+              61025,
+              61526,
+              62027,
+              62528,
+              63029,
+              63530,
+              64032,
+              64533,
+              65034,
+              65535
+            ],
+            "g": [
+              17000,
+              17871,
+              18742,
+              19613,
+              20484,
+              21355,
+              22226,
+              23097,
+              23968,
+              24839,
+              25710,
+              26581,
+              27452,
+              28323,
+              29194,
+              30065,
+              30935,
+              31806,
+              32677,
+              33548,
+              34419,
+              35290,
+              36161,
+              37032,
+              37903,
+              38774,
+              39645,
+              40516,
+              41387,
+              42258,
+              43129,
+              44000
+            ],
+            "r": [
+              22500,
+              23516,
+              24532,
+              25548,
+              26565,
+              27581,
+              28597,
+              29613,
+              30629,
+              31645,
+              32661,
+              33677,
+              34694,
+              35710,
+              36726,
+              37742,
+              38758,
+              39774,
+              40790,
+              41806,
+              42823,
+              43839,
+              44855,
+              45871,
+              46887,
+              47903,
+              48919,
+              49935,
+              50952,
+              51968,
+              52984,
+              54000
+            ]
+          }
+        },
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 5,
+          "name": "Spore release / age-dependent branching",
+          "size": 32,
+          "channels": {
+            "logic": [
+              26000,
+              27988,
+              29230,
+              30290,
+              31247,
+              32134,
+              32969,
+              33763,
+              34524,
+              35256,
+              35965,
+              36652,
+              37321,
+              37974,
+              38611,
+              39235,
+              39847,
+              40447,
+              41037,
+              41617,
+              42188,
+              42750,
+              43305,
+              43852,
+              44392,
+              44925,
+              45451,
+              45972,
+              46487,
+              46997,
+              47501,
+              48000
+            ]
+          }
+        }
+      ],
+      "mappings": [
+        {
+          "version": "fw-lut-map-v1",
+          "id": 1,
+          "materialId": 1,
+          "lutId": 1,
+          "source": "lifetimeProgressQ16",
+          "channel": "rgba",
+          "destination": "color",
+          "addressMode": "clamp",
+          "inputMin": 0,
+          "inputMax": 65536,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 0,
+          "outputMax": 65535
+        },
+        {
+          "version": "fw-lut-map-v1",
+          "id": 2,
+          "materialId": 2,
+          "lutId": 2,
+          "source": "emitterId",
+          "channel": "rgba",
+          "destination": "color",
+          "addressMode": "clamp",
+          "inputMin": 1,
+          "inputMax": 45,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 0,
+          "outputMax": 65535
+        },
+        {
+          "version": "fw-lut-map-v1",
+          "id": 3,
+          "materialId": 3,
+          "lutId": 3,
+          "source": "lifetimeProgressQ16",
+          "channel": "rgba",
+          "destination": "color",
+          "addressMode": "clamp",
+          "inputMin": 0,
+          "inputMax": 65536,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 0,
+          "outputMax": 65535
+        },
+        {
+          "version": "fw-lut-map-v1",
+          "id": 4,
+          "materialId": 4,
+          "lutId": 4,
+          "source": "lifetimeProgressQ16",
+          "channel": "rgba",
+          "destination": "color",
+          "addressMode": "clamp",
+          "inputMin": 0,
+          "inputMax": 65536,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 0,
+          "outputMax": 65535
+        },
+        {
+          "version": "fw-lut-map-v1",
+          "id": 5,
+          "materialId": 3,
+          "lutId": 5,
+          "source": "ageTicks",
+          "channel": "logic",
+          "destination": "steeringMultiplierQ16",
+          "addressMode": "clamp",
+          "inputMin": 0,
+          "inputMax": 72,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 12000,
+          "outputMax": 65536
+        }
+      ]
+    },
+    "commands": [
+      {
+        "version": "fw-command-v1",
+        "id": 10,
+        "tick": 18,
+        "type": "release-burst",
+        "emitterId": 2,
+        "count": 9
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 20,
+        "tick": 27,
+        "type": "release-burst",
+        "emitterId": 10,
+        "count": 12
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 30,
+        "tick": 35,
+        "type": "set-field-enabled",
+        "fieldId": 5,
+        "enabled": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 40,
+        "tick": 41,
+        "type": "set-field-enabled",
+        "fieldId": 2,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 45,
+        "tick": 48,
+        "type": "set-field-enabled",
+        "fieldId": 7,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 50,
+        "tick": 50,
+        "type": "set-emitter-rate",
+        "emitterId": 14,
+        "rate": 0
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 60,
+        "tick": 57,
+        "type": "release-burst",
+        "emitterId": 19,
+        "count": 14
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 65,
+        "tick": 62,
+        "type": "set-field-enabled",
+        "fieldId": 8,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 70,
+        "tick": 65,
+        "type": "set-field-enabled",
+        "fieldId": 3,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 80,
+        "tick": 73,
+        "type": "set-emitter-rate",
+        "emitterId": 14,
+        "rate": 1
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 85,
+        "tick": 78,
+        "type": "set-field-enabled",
+        "fieldId": 9,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 90,
+        "tick": 84,
+        "type": "release-burst",
+        "emitterId": 37,
+        "count": 14
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 100,
+        "tick": 91,
+        "type": "set-simulation-frozen",
+        "frozen": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 110,
+        "tick": 96,
+        "type": "set-simulation-frozen",
+        "frozen": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 120,
+        "tick": 104,
+        "type": "set-field-enabled",
+        "fieldId": 6,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 130,
+        "tick": 116,
+        "type": "release-burst",
+        "emitterId": 39,
+        "count": 16
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 140,
+        "tick": 131,
+        "type": "set-field-enabled",
+        "fieldId": 2,
+        "enabled": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 150,
+        "tick": 137,
+        "type": "set-field-enabled",
+        "fieldId": 3,
+        "enabled": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 155,
+        "tick": 140,
+        "type": "set-field-enabled",
+        "fieldId": 7,
+        "enabled": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 160,
+        "tick": 144,
+        "type": "set-field-enabled",
+        "fieldId": 5,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 165,
+        "tick": 147,
+        "type": "set-field-enabled",
+        "fieldId": 8,
+        "enabled": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 170,
+        "tick": 151,
+        "type": "release-burst",
+        "emitterId": 43,
+        "count": 12
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 175,
+        "tick": 157,
+        "type": "set-field-enabled",
+        "fieldId": 9,
+        "enabled": false
+      }
+    ],
+    "lineage": null
+  },
+  "seed": 1827969810,
+  "schemaVersion": "fw-recipe-v1",
+  "engineVersion": "fw-agents-v1",
+  "targetTick": 176,
+  "crop": {
+    "widthPx": 576,
+    "heightPx": 384,
+    "center": {
+      "chunkX": 0,
+      "chunkY": 0,
+      "localX": 8388608,
+      "localY": 7864320
+    },
+    "unitsPerPixelQ16": 32768
+  },
+  "widthPx": 576,
+  "heightPx": 384,
+  "unitsPerPixelQ16": 32768,
+  "backgroundRgba8": [
+    9,
+    11,
+    8,
+    255
+  ],
+  "pixelFormat": "rgba8",
+  "rawRgbaHash": "194610dd7ca77ca1",
+  "stateHash": "a44142e5fcb73df5",
+  "depositionHash": "62e03786c103dee8",
+  "resultHash": "4e7ef6ed0d5a6bcd",
+  "lineage": null
+}

@@ -1,0 +1,22 @@
+{
+  "artwork": "04-pollen-observatory",
+  "seed": 1827969810,
+  "recipeHash": "5cdf27d4b0c2e205",
+  "targetTick": 176,
+  "crop": {
+    "widthPx": 576,
+    "heightPx": 384,
+    "center": {
+      "chunkX": 0,
+      "chunkY": 0,
+      "localX": 8388608,
+      "localY": 7864320
+    },
+    "unitsPerPixelQ16": 32768
+  },
+  "depositionCount": 185004,
+  "rawRgbaHash": "194610dd7ca77ca1",
+  "stateHash": "a44142e5fcb73df5",
+  "depositionHash": "62e03786c103dee8",
+  "resultHash": "4e7ef6ed0d5a6bcd"
+}
