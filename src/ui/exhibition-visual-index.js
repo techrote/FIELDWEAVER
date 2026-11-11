@@ -166,12 +166,14 @@ export function mountExhibitionVisualIndex(panel) {
 
   cancel.addEventListener('click', () => {
     generation += 1;
-    clearRenderedProofs();
+    // Completed proofs from this run remain genuinely verified and retain
+    // their live leases. Old proofs were already revoked at rebuild start.
+    // A partial index must never enable the four-work board or study.
     saveBoard.disabled = true;
     boardStatus.textContent = '';
     render.disabled = false;
     cancel.disabled = true;
-    status.textContent = 'Cancelled; partial CPU proofs and expired images cleared.';
+    status.textContent = 'Cancelled between entries; completed proofs remain.';
   });
   saveBoard.addEventListener('click', () => {
     if (leaving || saveBoard.disabled || verifiedProofs.size !== entries.length) return;
