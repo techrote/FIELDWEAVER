@@ -4,6 +4,11 @@ on:
   pull_request:
     paths:
       - 'src/ui/exhibition-visual-index*'
+      - 'src/ui/exhibition-offline-board.js'
+      - 'docs/VISUAL_INDEX.md'
+      - 'src/ui/exhibition-study*'
+      - 'tests/exhibition-study.test.mjs'
+      - 'docs/EXHIBITION_STUDY.md'
       - 'index.html'
       - 'tests/exhibition-visual-index.test.mjs'
       - 'scripts/exhibition-visual-index-browser-smoke.mjs'
@@ -28,6 +33,9 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Full verification (Node 22)
+        if: matrix.browser == 'firefox'
+        run: npm run verify
       - name: Firefox virtual display
         if: matrix.browser == 'firefox'
         run: |
@@ -52,8 +60,12 @@ jobs:
         with:
           name: exhibition-visual-index-${{ matrix.browser }}
           path: |
+            exhibition-offline-board-${{ matrix.browser }}.html
+            exhibition-offline-board-${{ matrix.browser }}.png
             exhibition-visual-index-${{ matrix.browser }}.png
             exhibition-visual-index-${{ matrix.browser }}.json
+            exhibition-study-${{ matrix.browser }}.png
+            exhibition-study-${{ matrix.browser }}.json
             visual-index-server.log
             xvfb.log
           if-no-files-found: ignore

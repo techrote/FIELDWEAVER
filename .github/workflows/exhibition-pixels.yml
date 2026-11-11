@@ -1,0 +1,86 @@
+name: Exhibition Pixel Inspection
+
+on:
+  pull_request:
+    paths:
+      - 'src/ui/exhibition-visual-index*'
+      - 'src/ui/exhibition-offline-board.js'
+      - 'src/ui/exhibition-study*'
+      - 'src/ui/exhibition-pixel-probe.js'
+      - 'tests/exhibition-pixel-probe.test.mjs'
+      - 'scripts/exhibition-pixels-browser-smoke.mjs'
+      - 'tests/exhibition-study.test.mjs'
+      - 'docs/EXHIBITION_STUDY.md'
+      - 'index.html'
+      - 'tests/exhibition-visual-index.test.mjs'
+      - 'scripts/exhibition-visual-index-browser-smoke.mjs'
+      - '.github/workflows/exhibition-pixels.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chrome, firefox]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Full verification (Node 22)
+        if: matrix.browser == 'firefox'
+        run: npm run verify
+      - name: Firefox virtual display
+        if: matrix.browser == 'firefox'
+        run: |
+          Xvfb :99 -screen 0 1280x1024x24 > xvfb.log 2>&1 &
+          echo 'DISPLAY=:99' >> "$GITHUB_ENV"
+          echo 'LIBGL_ALWAYS_SOFTWARE=1' >> "$GITHUB_ENV"
+          sleep 1
+      - name: Start local server
+        run: |
+          node scripts/serve.mjs > visual-index-server.log 2>&1 &
+          for i in {1..40}; do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then exit 0; fi
+            sleep 0.25
+          done
+          cat visual-index-server.log
+          exit 1
+      - name: Decode actual browser CPU gallery and select work
+        run: node scripts/exhibition-pixels-browser-smoke.mjs ${{ matrix.browser }}
+      - name: Preserve actual screenshot and browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exhibition-pixels-${{ matrix.browser }}
+          path: |
+            exhibition-visual-index-${{ matrix.browser }}.png
+            exhibition-visual-index-${{ matrix.browser }}.json
+            exhibition-study-${{ matrix.browser }}.png
+            exhibition-study-${{ matrix.browser }}.json
+            exhibition-pixels-${{ matrix.browser }}.png
+            exhibition-pixels-${{ matrix.browser }}.json
+            exhibition-pixel-keyboard-${{ matrix.browser }}.png
+            exhibition-pixel-keyboard-${{ matrix.browser }}.json
+            exhibition-study-export-${{ matrix.browser }}.png
+            exhibition-study-export-${{ matrix.browser }}.json
+            exhibition-study-selected-export-${{ matrix.browser }}.json
+            exhibition-accepted-offline-${{ matrix.browser }}.html
+            exhibition-accepted-offline-${{ matrix.browser }}.png
+            exhibition-accepted-offline-narrow-${{ matrix.browser }}.png
+            exhibition-accepted-offline-${{ matrix.browser }}.json
+            exhibition-offline-reimport-${{ matrix.browser }}.png
+            exhibition-offline-reimport-${{ matrix.browser }}.json
+            exhibition-offline-downloads-${{ matrix.browser }}/*.json
+            visual-index-server.log
+            xvfb.log
+          if-no-files-found: ignore
+          retention-days: 7

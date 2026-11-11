@@ -4,6 +4,7 @@
   gap: 0.35rem;
   margin: 0.4rem 0 0.8rem;
 }
+#exhibition-board-save { grid-column: 1 / -1; }
 .exhibition-index-controls output {
   grid-column: 1 / -1;
   min-height: 2.2em;
