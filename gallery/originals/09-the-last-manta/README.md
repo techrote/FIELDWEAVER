@@ -18,6 +18,14 @@ The PNG and provenance **are committed**, not pending. The explicit canonical ar
 
 ## Immediate offline curatorial comparison
 
+**Shortest owner/Integration route (Node 22/24, from this Draft checkout):**
+
+```sh
+node gallery/originals/09-the-last-manta/review.mjs
+```
+
+Open the printed `file://` URL in Firefox. It presents actual canonical CPU outputs from the accepted Operator Atlas and Timeline Pulse recipes beside this **UNMERGED CANDIDATE**, with recipe/PNG/provenance downloads. This launcher creates a fresh temporary review rather than overwriting a prior comparison. Its regression also verifies that the embedded candidate PNG is byte-identical to the committed archive and that the downloadable JSON recipe matches the normalized authored `recipe.json` exactly. Neither the launcher nor the comparison admits the candidate to the accepted catalog.
+
 Run from a checkout of **this PR branch**, with Node 22 or 24 installed:
 
 ```sh
