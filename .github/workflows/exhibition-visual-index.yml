@@ -52,6 +52,8 @@ jobs:
         with:
           name: exhibition-visual-index-${{ matrix.browser }}
           path: |
+            exhibition-offline-board-${{ matrix.browser }}.html
+            exhibition-offline-board-${{ matrix.browser }}.png
             exhibition-visual-index-${{ matrix.browser }}.png
             exhibition-visual-index-${{ matrix.browser }}.json
             visual-index-server.log
