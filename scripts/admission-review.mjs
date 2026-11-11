@@ -12,7 +12,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const ADMISSION_SELECTION = Object.freeze([
   Object.freeze({
     pr: 57, lane: 'ORIGINAL', title: 'Registry of Vacant Rooms',
-    head: 'c2acad1ee50047e49a02fe36ae6c946d18e89c1f',
+    head: '384ef7dd2f5d162b439b916e2ba03d6f30922e47',
     provenance: 'gallery/originals/08-registry-of-vacant-rooms/the-vacant-rooms.provenance.json',
     rgba: '56286fc4c1a47bb8'
   }),
@@ -24,7 +24,7 @@ export const ADMISSION_SELECTION = Object.freeze([
   }),
   Object.freeze({
     pr: 50, lane: 'MUTATION', title: 'Unwound Metronome — sibling 17',
-    head: '8dc942e3a75580e85983f53f97037e03fb26a06b',
+    head: '25e6de1906e3e5a4ee66345b8210028b47185507',
     provenance: 'gallery/variants/06-unwound-metronome/selected.provenance.json',
     rgba: '80a5a090d57b6d07'
   }),
