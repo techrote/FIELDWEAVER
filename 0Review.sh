@@ -27,9 +27,9 @@ fi
 printf 'Verified offline review: %s/%s\n' "$PWD" "$review"
 echo 'Accepted reference works and unmerged Drafts are labelled separately.'
 if command -v xdg-open >/dev/null 2>&1; then
-  xdg-open "$review" >/dev/null 2>&1 &
+  xdg-open "$review" >/dev/null 2>&1 || echo "Open $review manually in Firefox."
 elif command -v open >/dev/null 2>&1; then
-  open "$review" >/dev/null 2>&1 &
+  open "$review" >/dev/null 2>&1 || echo "Open $review manually in Firefox."
 else
   echo 'Open the HTML manually in Firefox.'
 fi
