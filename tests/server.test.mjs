@@ -77,6 +77,7 @@ test('static server serves local files, HEAD, security headers, and errors corre
   assert.equal(page.statusCode, 200);
   assert.match(page.body, /FIELDWEAVER/);
   assert.match(page.headers['content-security-policy'], /default-src 'self'/);
+  assert.match(page.headers['content-security-policy'], /img-src 'self' data: blob:/);
   assert.equal(page.headers['x-content-type-options'], 'nosniff');
 
   const head = await httpRequest(port, '/app.js', 'HEAD');
