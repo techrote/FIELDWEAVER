@@ -296,7 +296,7 @@ try {
   // Exercise data: download payloads in the real reopened offline document
   // without fetch(blob:) / fetch(data:), both forbidden by the strict CSP.
   // File-manager persistence remains a separate physical owner gate.
-  const offlineDownloads = await execute(`return [...document.querySelectorAll('.work article.work')].map(article => {
+  const offlineDownloads = await execute(`return [...document.querySelectorAll('main article.work')].map(article => {
     const provenance = article.querySelector('details pre')?.textContent;
     const record = JSON.parse(provenance);
     const links = [...article.querySelectorAll('.work-actions a')];
