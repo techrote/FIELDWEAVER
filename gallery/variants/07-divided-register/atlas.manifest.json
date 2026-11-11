@@ -1,0 +1,998 @@
+{
+  "version": "fw-variant-atlas-v1",
+  "title": "Divided Register — interrupted flow study",
+  "sourceMainCommit": "90b8f2ebe9ae523745f11006746b0feb1babaaf3",
+  "acceptedParent": {
+    "id": "first-weave",
+    "recipeHash": "bb1a24bc2c9cf0bc",
+    "rawRgbaHash": "ca40469a1fb9e595"
+  },
+  "mutationVersion": "fw-mutation-v1",
+  "firstMutationSeed": 2065543836,
+  "secondMutationSeed": 1386486894,
+  "targetTick": 172,
+  "earlyTick": 42,
+  "crop": {
+    "widthPx": 192,
+    "heightPx": 144,
+    "center": {
+      "chunkX": 0,
+      "chunkY": 0,
+      "localX": 9306112,
+      "localY": 8257536
+    },
+    "unitsPerPixelQ16": 49152
+  },
+  "agentCapacity": 4096,
+  "maxDepositions": 250000,
+  "candidateCount": 20,
+  "criteria": "20 two-stage FW-011 descendants; exact RGBA uniqueness, parent mask XOR >= 140, occupied pixels 85..8500, occupied 16px cells >= 5, and pairwise finalist mask XOR >= 140. Colour-only variants do not count.",
+  "candidates": [
+    {
+      "siblingIndex": 0,
+      "bridgeConfig": {
+        "mutationSeed": 2065543836,
+        "siblingIndex": 0,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "config": {
+        "mutationSeed": 1386486894,
+        "siblingIndex": 0,
+        "scope": "fields",
+        "intensity": "bold",
+        "operationCount": 2
+      },
+      "bridgeRecipeHash": "f649a52e9babea53",
+      "recipeHash": "3932712d92086384",
+      "rawRgbaHash": "14612a2997882b27",
+      "parentSilhouetteXor": 197,
+      "occupiedPixels": 497,
+      "occupiedCells": 10,
+      "quadrants": [
+        0,
+        0,
+        497,
+        0
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 90,
+        "maxX": 55,
+        "maxY": 143
+      },
+      "score": 1250.8799999999999,
+      "mutationOperators": [
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "siblingIndex": 1,
+      "bridgeConfig": {
+        "mutationSeed": 2065543836,
+        "siblingIndex": 1,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "config": {
+        "mutationSeed": 1386486894,
+        "siblingIndex": 1,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "d23d2a19b9d7ebf4",
+      "recipeHash": "2e1a96cb8e07140d",
+      "rawRgbaHash": "19a9abe493530e14",
+      "parentSilhouetteXor": 200,
+      "occupiedPixels": 494,
+      "occupiedCells": 9,
+      "quadrants": [
+        0,
+        0,
+        494,
+        0
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 89,
+        "maxX": 62,
+        "maxY": 143
+      },
+      "score": 1204.76,
+      "mutationOperators": [
+        "derive-sibling-seed",
+        "move-emitter",
+        "perturb-material-parameter",
+        "adjust-field-strength-scale",
+        "substitute-lut",
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "siblingIndex": 2,
+      "bridgeConfig": {
+        "mutationSeed": 2065543836,
+        "siblingIndex": 2,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "config": {
+        "mutationSeed": 1386486894,
+        "siblingIndex": 2,
+        "scope": "emitters",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeRecipeHash": "8ec5fb014f49dbf6",
+      "recipeHash": "5f36f0b1505d5b7e",
+      "rawRgbaHash": "0344cfb9713a38d7",
+      "parentSilhouetteXor": 253,
+      "occupiedPixels": 509,
+      "occupiedCells": 9,
+      "quadrants": [
+        0,
+        0,
+        509,
+        0
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 88,
+        "maxX": 61,
+        "maxY": 143
+      },
+      "score": 1364.3600000000001,
+      "mutationOperators": [
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 3,
+      "bridgeConfig": {
+        "mutationSeed": 2065543836,
+        "siblingIndex": 3,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "config": {
+        "mutationSeed": 1386486894,
+        "siblingIndex": 3,
+        "scope": "seed",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeRecipeHash": "a3fcfb009aacf6d2",
+      "recipeHash": "a9b8c834667fd186",
+      "rawRgbaHash": "8fcc8598310c0e2c",
+      "parentSilhouetteXor": 105,
+      "occupiedPixels": 615,
+      "occupiedCells": 10,
+      "quadrants": [
+        0,
+        0,
+        615,
+        0
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 89,
+        "maxX": 59,
+        "maxY": 143
+      },
+      "score": 979.6000000000001,
+      "mutationOperators": [
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "siblingIndex": 4,
+      "bridgeConfig": {
+        "mutationSeed": 2065543836,
+        "siblingIndex": 4,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "config": {
+        "mutationSeed": 1386486894,
+        "siblingIndex": 4,
+        "scope": "parameters",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeRecipeHash": "8c46ab04704fd937",
+      "recipeHash": "65a5a59df368bd9f",
+      "rawRgbaHash": "8d025f7e591505b3",
+      "parentSilhouetteXor": 100,
+      "occupiedPixels": 614,
+      "occupiedCells": 12,
+      "quadrants": [
+        0,
+        0,
+        608,
+        6
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 89,
+        "maxX": 146,
+        "maxY": 143
+      },
+      "score": 1076,
+      "mutationOperators": [
+        "perturb-material-parameter"
+      ]
+    },
+    {
+      "siblingIndex": 5,
+      "bridgeConfig": {
+        "mutationSeed": 2065543836,
+        "siblingIndex": 5,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "config": {
+        "mutationSeed": 1386486894,
+        "siblingIndex": 5,
+        "scope": "order",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeRecipeHash": "dfb9753f4b963688",
+      "recipeHash": "ba5e10f4aa7b5b5d",
+      "rawRgbaHash": "c7ef5c4bc943ed6b",
+      "parentSilhouetteXor": 326,
+      "occupiedPixels": 580,
+      "occupiedCells": 10,
+      "quadrants": [
+        0,
+        0,
+        580,
+        0
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 90,
+        "maxX": 56,
+        "maxY": 143
+      },
+      "score": 1641.2,
+      "mutationOperators": [
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "siblingIndex": 6,
+      "bridgeConfig": {
+        "mutationSeed": 2065543836,
+        "siblingIndex": 6,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "config": {
+        "mutationSeed": 1386486894,
+        "siblingIndex": 6,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "50158f8eb19634ad",
+      "recipeHash": "fbf9f94dd463dee9",
+      "rawRgbaHash": "ef81a7a53f64cf6a",
+      "parentSilhouetteXor": 1122,
+      "occupiedPixels": 1358,
+      "occupiedCells": 23,
+      "quadrants": [
+        129,
+        9,
+        861,
+        359
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 58,
+        "maxX": 137,
+        "maxY": 143
+      },
+      "score": 5043.639999999999,
+      "mutationOperators": [
+        "adjust-field-strength-scale",
+        "move-emitter",
+        "perturb-material-parameter",
+        "derive-sibling-seed",
+        "swap-adjacent-fields",
+        "substitute-lut"
+      ]
+    },
+    {
+      "siblingIndex": 7,
+      "bridgeConfig": {
+        "mutationSeed": 2065543836,
+        "siblingIndex": 7,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "config": {
+        "mutationSeed": 1386486894,
+        "siblingIndex": 7,
+        "scope": "fields",
+        "intensity": "bold",
+        "operationCount": 2
+      },
+      "bridgeRecipeHash": "ab6c8e2ff53a1b4a",
+      "recipeHash": "7ed4083ac8c57e3d",
+      "rawRgbaHash": "51f943c6904a2f99",
+      "parentSilhouetteXor": 442,
+      "occupiedPixels": 120,
+      "occupiedCells": 2,
+      "quadrants": [
+        0,
+        0,
+        120,
+        0
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 131,
+        "maxX": 17,
+        "maxY": 143
+      },
+      "score": 1530.8,
+      "mutationOperators": [
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "siblingIndex": 8,
+      "bridgeConfig": {
+        "mutationSeed": 2065543836,
+        "siblingIndex": 8,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "config": {
+        "mutationSeed": 1386486894,
+        "siblingIndex": 8,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "93492b441d2ed8dc",
+      "recipeHash": "fb43c5c87a5be6ae",
+      "rawRgbaHash": "fc2b015e823d2492",
+      "parentSilhouetteXor": 309,
+      "occupiedPixels": 671,
+      "occupiedCells": 12,
+      "quadrants": [
+        77,
+        0,
+        594,
+        0
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 7,
+        "maxX": 60,
+        "maxY": 143
+      },
+      "score": 1793.84,
+      "mutationOperators": [
+        "move-emitter",
+        "adjust-field-strength-scale",
+        "substitute-lut",
+        "swap-adjacent-fields",
+        "derive-sibling-seed",
+        "perturb-material-parameter"
+      ]
+    },
+    {
+      "siblingIndex": 9,
+      "bridgeConfig": {
+        "mutationSeed": 2065543836,
+        "siblingIndex": 9,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "config": {
+        "mutationSeed": 1386486894,
+        "siblingIndex": 9,
+        "scope": "emitters",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeRecipeHash": "57304894bebc5a4b",
+      "recipeHash": "9c9310e9637f9d93",
+      "rawRgbaHash": "f888bd748af9f716",
+      "parentSilhouetteXor": 157,
+      "occupiedPixels": 633,
+      "occupiedCells": 10,
+      "quadrants": [
+        0,
+        0,
+        633,
+        0
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 87,
+        "maxX": 61,
+        "maxY": 143
+      },
+      "score": 1136.32,
+      "mutationOperators": [
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 10,
+      "bridgeConfig": {
+        "mutationSeed": 2065543836,
+        "siblingIndex": 10,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "config": {
+        "mutationSeed": 1386486894,
+        "siblingIndex": 10,
+        "scope": "seed",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeRecipeHash": "8252d54451f3ee54",
+      "recipeHash": "ee9b3d177ae75982",
+      "rawRgbaHash": "22252fc6df4a1905",
+      "parentSilhouetteXor": 247,
+      "occupiedPixels": 685,
+      "occupiedCells": 11,
+      "quadrants": [
+        0,
+        0,
+        685,
+        0
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 89,
+        "maxX": 70,
+        "maxY": 143
+      },
+      "score": 1463.3999999999999,
+      "mutationOperators": [
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "siblingIndex": 11,
+      "bridgeConfig": {
+        "mutationSeed": 2065543836,
+        "siblingIndex": 11,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "config": {
+        "mutationSeed": 1386486894,
+        "siblingIndex": 11,
+        "scope": "parameters",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeRecipeHash": "90e06673ba64bf16",
+      "recipeHash": "992ee00f5c7720d0",
+      "rawRgbaHash": "a06d5f69dd3d9961",
+      "parentSilhouetteXor": 464,
+      "occupiedPixels": 102,
+      "occupiedCells": 1,
+      "quadrants": [
+        0,
+        0,
+        102,
+        0
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 132,
+        "maxX": 15,
+        "maxY": 143
+      },
+      "score": 1541.08,
+      "mutationOperators": [
+        "perturb-material-parameter"
+      ]
+    },
+    {
+      "siblingIndex": 12,
+      "bridgeConfig": {
+        "mutationSeed": 2065543836,
+        "siblingIndex": 12,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "config": {
+        "mutationSeed": 1386486894,
+        "siblingIndex": 12,
+        "scope": "order",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeRecipeHash": "bda0e798e42f9e3c",
+      "recipeHash": "d3a9b21546b545a3",
+      "rawRgbaHash": "c7b06663bbb37941",
+      "parentSilhouetteXor": 54,
+      "occupiedPixels": 576,
+      "occupiedCells": 10,
+      "quadrants": [
+        0,
+        0,
+        576,
+        0
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 89,
+        "maxX": 61,
+        "maxY": 143
+      },
+      "score": 825.04,
+      "mutationOperators": [
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "siblingIndex": 13,
+      "bridgeConfig": {
+        "mutationSeed": 2065543836,
+        "siblingIndex": 13,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "config": {
+        "mutationSeed": 1386486894,
+        "siblingIndex": 13,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "e86de93feebceba5",
+      "recipeHash": "104660a4347409c4",
+      "rawRgbaHash": "b242849e4e503ee6",
+      "parentSilhouetteXor": 446,
+      "occupiedPixels": 284,
+      "occupiedCells": 5,
+      "quadrants": [
+        0,
+        0,
+        284,
+        0
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 91,
+        "maxX": 28,
+        "maxY": 125
+      },
+      "score": 1714.3600000000001,
+      "mutationOperators": [
+        "adjust-field-strength-scale",
+        "move-emitter",
+        "derive-sibling-seed",
+        "substitute-lut",
+        "perturb-material-parameter",
+        "swap-adjacent-fields"
+      ]
+    },
+    {
+      "siblingIndex": 14,
+      "bridgeConfig": {
+        "mutationSeed": 2065543836,
+        "siblingIndex": 14,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "config": {
+        "mutationSeed": 1386486894,
+        "siblingIndex": 14,
+        "scope": "fields",
+        "intensity": "bold",
+        "operationCount": 2
+      },
+      "bridgeRecipeHash": "86ce22ef1f820fb8",
+      "recipeHash": "4cdb35dd8648fc1b",
+      "rawRgbaHash": "53d4c4f007cc6851",
+      "parentSilhouetteXor": 1415,
+      "occupiedPixels": 1097,
+      "occupiedCells": 20,
+      "quadrants": [
+        121,
+        0,
+        767,
+        209
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 62,
+        "maxX": 144,
+        "maxY": 143
+      },
+      "score": 5709.040000000001,
+      "mutationOperators": [
+        "swap-adjacent-fields",
+        "adjust-field-strength-scale"
+      ]
+    },
+    {
+      "siblingIndex": 15,
+      "bridgeConfig": {
+        "mutationSeed": 2065543836,
+        "siblingIndex": 15,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "config": {
+        "mutationSeed": 1386486894,
+        "siblingIndex": 15,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "bridgeRecipeHash": "292372d78ab712e7",
+      "recipeHash": "fd0848a1b5c6d121",
+      "rawRgbaHash": "db78ce9e21d39c31",
+      "parentSilhouetteXor": 1645,
+      "occupiedPixels": 1327,
+      "occupiedCells": 21,
+      "quadrants": [
+        0,
+        472,
+        197,
+        658
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 14,
+        "maxX": 165,
+        "maxY": 143
+      },
+      "score": 6460.36,
+      "mutationOperators": [
+        "adjust-field-strength-scale",
+        "swap-adjacent-fields",
+        "move-emitter",
+        "perturb-material-parameter",
+        "substitute-lut",
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "siblingIndex": 16,
+      "bridgeConfig": {
+        "mutationSeed": 2065543836,
+        "siblingIndex": 16,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "config": {
+        "mutationSeed": 1386486894,
+        "siblingIndex": 16,
+        "scope": "emitters",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeRecipeHash": "5cdac92819150771",
+      "recipeHash": "4909e96072ae5e19",
+      "rawRgbaHash": "0afc7f27fee22fe3",
+      "parentSilhouetteXor": 534,
+      "occupiedPixels": 216,
+      "occupiedCells": 4,
+      "quadrants": [
+        94,
+        0,
+        122,
+        0
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 32,
+        "maxX": 41,
+        "maxY": 143
+      },
+      "score": 2010.6399999999999,
+      "mutationOperators": [
+        "move-emitter"
+      ]
+    },
+    {
+      "siblingIndex": 17,
+      "bridgeConfig": {
+        "mutationSeed": 2065543836,
+        "siblingIndex": 17,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "config": {
+        "mutationSeed": 1386486894,
+        "siblingIndex": 17,
+        "scope": "seed",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeRecipeHash": "bec13b00dc25cbf5",
+      "recipeHash": "e56ecdc0458c54af",
+      "rawRgbaHash": "675a21d01c2b8349",
+      "parentSilhouetteXor": 86,
+      "occupiedPixels": 592,
+      "occupiedCells": 10,
+      "quadrants": [
+        0,
+        0,
+        592,
+        0
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 89,
+        "maxX": 62,
+        "maxY": 143
+      },
+      "score": 921.6800000000001,
+      "mutationOperators": [
+        "derive-sibling-seed"
+      ]
+    },
+    {
+      "siblingIndex": 18,
+      "bridgeConfig": {
+        "mutationSeed": 2065543836,
+        "siblingIndex": 18,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "config": {
+        "mutationSeed": 1386486894,
+        "siblingIndex": 18,
+        "scope": "parameters",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeRecipeHash": "58f9fb869d700fcc",
+      "recipeHash": "a141672eb3869005",
+      "rawRgbaHash": "71fe25e648c8d35a",
+      "parentSilhouetteXor": 119,
+      "occupiedPixels": 605,
+      "occupiedCells": 10,
+      "quadrants": [
+        0,
+        0,
+        605,
+        0
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 89,
+        "maxX": 61,
+        "maxY": 143
+      },
+      "score": 1021.1999999999999,
+      "mutationOperators": [
+        "perturb-material-parameter"
+      ]
+    },
+    {
+      "siblingIndex": 19,
+      "bridgeConfig": {
+        "mutationSeed": 2065543836,
+        "siblingIndex": 19,
+        "scope": "all",
+        "intensity": "bold",
+        "operationCount": 6
+      },
+      "config": {
+        "mutationSeed": 1386486894,
+        "siblingIndex": 19,
+        "scope": "order",
+        "intensity": "bold",
+        "operationCount": 1
+      },
+      "bridgeRecipeHash": "d29870d83ad5569d",
+      "recipeHash": "71a886d7eb54aed8",
+      "rawRgbaHash": "21f8587dc120a247",
+      "parentSilhouetteXor": 203,
+      "occupiedPixels": 683,
+      "occupiedCells": 12,
+      "quadrants": [
+        76,
+        0,
+        607,
+        0
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 50,
+        "maxX": 61,
+        "maxY": 143
+      },
+      "score": 1476.32,
+      "mutationOperators": [
+        "swap-adjacent-fields"
+      ]
+    }
+  ],
+  "finalists": [
+    {
+      "panel": 2,
+      "siblingIndex": 15,
+      "bridgeRecipeHash": "292372d78ab712e7",
+      "recipeHash": "fd0848a1b5c6d121",
+      "childIdentity": "3561893d9f5b9b92",
+      "rawRgbaHash": "db78ce9e21d39c31",
+      "stateHash": "afc8a7f170e2b515",
+      "depositionHash": "065423abd9b1a7dd",
+      "resultHash": "5ed9946d853a583a",
+      "parentSilhouetteXor": 1645,
+      "earlyRgbaHash": "03b8a008057013ae",
+      "earlyLateSilhouetteXor": 1049,
+      "occupiedPixels": 1327,
+      "occupiedCells": 21,
+      "quadrants": [
+        0,
+        472,
+        197,
+        658
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 14,
+        "maxX": 165,
+        "maxY": 143
+      },
+      "score": 6460.36
+    },
+    {
+      "panel": 3,
+      "siblingIndex": 14,
+      "bridgeRecipeHash": "86ce22ef1f820fb8",
+      "recipeHash": "4cdb35dd8648fc1b",
+      "childIdentity": "e52637cd1be111fc",
+      "rawRgbaHash": "53d4c4f007cc6851",
+      "stateHash": "30046996789509a0",
+      "depositionHash": "772a81c4dd998c7c",
+      "resultHash": "476564d5f810d406",
+      "parentSilhouetteXor": 1415,
+      "earlyRgbaHash": "0c1f6674877f5477",
+      "earlyLateSilhouetteXor": 889,
+      "occupiedPixels": 1097,
+      "occupiedCells": 20,
+      "quadrants": [
+        121,
+        0,
+        767,
+        209
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 62,
+        "maxX": 144,
+        "maxY": 143
+      },
+      "score": 5709.040000000001
+    },
+    {
+      "panel": 4,
+      "siblingIndex": 6,
+      "bridgeRecipeHash": "50158f8eb19634ad",
+      "recipeHash": "fbf9f94dd463dee9",
+      "childIdentity": "b0cfa2b93c864e82",
+      "rawRgbaHash": "ef81a7a53f64cf6a",
+      "stateHash": "63666dff35001adc",
+      "depositionHash": "038a50ceae5b8e76",
+      "resultHash": "141f46c6869e93ea",
+      "parentSilhouetteXor": 1122,
+      "earlyRgbaHash": "5e6d5d01a1fa6569",
+      "earlyLateSilhouetteXor": 1016,
+      "occupiedPixels": 1358,
+      "occupiedCells": 23,
+      "quadrants": [
+        129,
+        9,
+        861,
+        359
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 58,
+        "maxX": 137,
+        "maxY": 143
+      },
+      "score": 5043.639999999999
+    },
+    {
+      "panel": 5,
+      "siblingIndex": 8,
+      "bridgeRecipeHash": "93492b441d2ed8dc",
+      "recipeHash": "fb43c5c87a5be6ae",
+      "childIdentity": "c001cc731b2dee8f",
+      "rawRgbaHash": "fc2b015e823d2492",
+      "stateHash": "2dbfdca0754f8f8c",
+      "depositionHash": "8a6ed5a4157a2f76",
+      "resultHash": "7c1a088cd5ca6b64",
+      "parentSilhouetteXor": 309,
+      "earlyRgbaHash": "4a80e705dc174a90",
+      "earlyLateSilhouetteXor": 572,
+      "occupiedPixels": 671,
+      "occupiedCells": 12,
+      "quadrants": [
+        77,
+        0,
+        594,
+        0
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 7,
+        "maxX": 60,
+        "maxY": 143
+      },
+      "score": 1793.84
+    },
+    {
+      "panel": 6,
+      "siblingIndex": 13,
+      "bridgeRecipeHash": "e86de93feebceba5",
+      "recipeHash": "104660a4347409c4",
+      "childIdentity": "b68629054ca22616",
+      "rawRgbaHash": "b242849e4e503ee6",
+      "stateHash": "222e05cdaef1be49",
+      "depositionHash": "c179a88f2a39f647",
+      "resultHash": "7375a3bd63b813fc",
+      "parentSilhouetteXor": 446,
+      "earlyRgbaHash": "b66404deb9b159c9",
+      "earlyLateSilhouetteXor": 242,
+      "occupiedPixels": 284,
+      "occupiedCells": 5,
+      "quadrants": [
+        0,
+        0,
+        284,
+        0
+      ],
+      "bbox": {
+        "minX": 0,
+        "minY": 91,
+        "maxX": 28,
+        "maxY": 125
+      },
+      "score": 1714.3600000000001
+    }
+  ],
+  "contactSheet": {
+    "widthPx": 608,
+    "heightPx": 312,
+    "displayOnly": true,
+    "rawRgbaHash": "af56329bc4616ada"
+  },
+  "selection": {
+    "siblingIndex": 15,
+    "method": "direct-inspection-of-actual-canonical-CPU-contact-sheet",
+    "rationale": "Actual FW-012 CPU six-panel sheet and selected PNG inspected: sibling 15 climbs into a sharp upward cyan crescent in the upper-right, with parallel pale inner filaments. A tiny magenta/ochre clipped trace remains at the lower-left margin, separated by a deliberate black gulf. Against the same-tick parent, the support shifts from a single short lower-left diagonal to spatially disjoint marks. Unlike Unwound Metronome's central U, the selected gesture rises along the right edge. The clipped accent and severe sparsity are real aesthetic reservations, not hidden by the diversity score."
+  }
+}

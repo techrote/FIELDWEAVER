@@ -1,19 +1,35 @@
-# Divided Register — candidate evolutionary atlas
+# Divided Register — one hook, one broken footnote
 
-A FW-011 two-generation search from the **accepted, immutable First Weave** preset. This investigation asks whether a dense converging register can be split into multiple independent spatial gestures without merely recolouring the parent's marks.
+A two-stage FW-011 selection from the immutable accepted **First Weave** preset. Twenty seeded two-generation descendants were replayed at the same tick and crop. Five morphologically separated finalists survived canonical shape screening; one was selected after looking at the real CPU contact sheet and the full selected image, not by numeric ranking alone.
 
-The artwork is currently at its **canonical qualification/curation gate**. Only renderer-derived images qualify as visual evidence. The deterministic test at `atlas.test.mjs` enumerates 20 mutation descendants, replays all at the same exact integer tick/crop, removes degenerate forms and near-identical silhouettes, and produces a six-panel FW-012 CPU contact sheet. The first panel is the immutable parent, subsequent panels are ranked finalists. Its highest-scoring member is *provisional*, not a human-accepted artistic selection.
+## Actual selected composition — sibling 15
 
-## Reproduce
+A narrow cyan stroke rises into an almost vertical upper-right hook with pale parallel internal filaments. At the opposite lower-left edge, a tiny ochre/magenta registration trace survives, detached across a large expanse of black. The same-tick parent is a short lower-left diagonal; the selected child now makes two separate spatial statements. This is a high-right hook rather than *Unwound Metronome*'s lower-centred U or *Faulted Confluence*'s horizontal carrier.
 
-- Parent: `first-weave`; recipe hash `bb1a24bc2c9cf0bc`.
-- Bridge mutation seed `0x7b1db29c`; child mutation seed `0x52a41c6e`.
-- Sibling indices: 0–19; configs specified by `bridgeConfig` and `childConfig` and archived in `atlas.manifest.json` after qualification.
-- Exact tick: **172**; early reference tick **42**.
-- Crop: **192×144**, centre (142,126) in chunk (0,0), **0.75** world units per pixel.
-- Capacity: 4096 agents, 250000 depositions, FW-012 CPU tiles 31×23; same-tick independent 37×29 tile replay.
-- Output: loadable `selected.recipe.json`, intermediate `selected-bridge.recipe.json`, canonical `selected.png` and `selected.provenance.json`, parent and finalist canonical PNGs, and noncanonical presentation-only `atlas.png`.
+Reservations: the lower-left accent is clipped and the cyan arc still shares a visual language with earlier variants. The empty centre is deliberately strong but may read as too sparse. Integration/owner acceptance remains outstanding.
 
-Run `npm run verify` and `node --test gallery/variants/07-divided-register/atlas.test.mjs`. The test generates an exact archive when no evidence exists; after evidence admission it regenerates and byte-compares every archived item. There is no WebGL proxy or fabricated preview. Do not accept or merge until the actual contact sheet has been inspected and the selected specimen's aesthetic rationale recorded.
+The six-panel `atlas.png` is **presentation-only**, assembled from genuine FW-012 CPU images (parent in panel 1, five distinct finalists in panels 2–6). It is not a canonical frame; `selected.png` and each `candidates/*.png` *are* canonical exports.
 
-Only this independent `gallery/variants/07-divided-register/` subtree is owned by the variant worker. Existing artworks, accepted presets, UI and engine remain unchanged.
+## Exact identity and reproduction
+
+| Property | Value |
+|---|---|
+| Immutable accepted parent | `first-weave`, recipe `bb1a24bc2c9cf0bc` |
+| First mutation | `0x7b1db29c`, bold all, six operators |
+| Second mutation | `0x52a41c6e`, deterministic index-scoped operations |
+| Candidates / finalists | 20 / 5, colour-only duplicates rejected |
+| Selected sibling | 15 |
+| Bridge recipe hash | `292372d78ab712e7` |
+| Child recipe hash | `fd0848a1b5c6d121` |
+| FW-011 child lineage identity | `3561893d9f5b9b92` |
+| FW-012 canonical decoded RGBA8 hash | `db78ce9e21d39c31` |
+| Target / early tick | 172 / 42 |
+| Crop | 192×144 at (142,126), chunk (0,0), 0.75 world units/pixel |
+| Resource bounds | 4,096 agents, 250,000 depositions |
+| Raster | FW-012 CPU, 31×23 tiles with 37×29 alternate replay |
+
+Load `selected.recipe.json` through FIELDWEAVER's **Load recipe** control. `selected-bridge.recipe.json` is its exact immediate ancestor. The `selected.provenance.json` is the FW-012 export sidecar. `atlas.manifest.json` records all 20 mutation configurations, recipe and canonical pixel IDs, silhouette differences, coverage metrics and selection explanation. No earlier art, shared engine, editor or accepted preset has changed.
+
+Run `npm run verify` or `node --test gallery/variants/07-divided-register/atlas.test.mjs`. Once archived, the test regenerates and **byte-compares all 17 evidence artifacts**, tests import/export and FW-011 lineage, and proves canonical same-tick replay and tile-independent RGBA. WebGL/browser previews must never substitute for canonical evidence.
+
+Draft for Integration's independent aesthetic and recipe-load admission.

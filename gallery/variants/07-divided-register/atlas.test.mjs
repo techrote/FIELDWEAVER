@@ -133,8 +133,10 @@ function produce() {
     c.earlyHash=early.rawRgbaHash;
     c.temporalXor=xor(shape(early.rgba).mask,c.shape.mask);
   }
-  // Bootstrap candidate: final choice must be reassessed against actual CPU pixels.
-  const selected=finalists[0];
+  // Pinned after direct inspection of real FW-012 CPU output; numerical rank never decides taste.
+  const selected=finalists.find(c => c.i === 15);
+  assert.ok(selected,'curated sibling 15 missing; re-inspect actual pixels before changing');
+  assert.equal(selected.output.rawRgbaHash,'db78ce9e21d39c31','curated canonical pixels changed');
   const atlas=sheet([parentOut,...finalists.map(c=>c.output)]);
   assert.deepEqual(decodePngRgba(atlas.png).rgba,atlas.rgba);
   const manifest={
@@ -166,8 +168,8 @@ function produce() {
     })),
     contactSheet:{widthPx:atlas.width,heightPx:atlas.height,displayOnly:true,
       rawRgbaHash:rawRgbaHash(atlas.rgba)},
-    selection:{siblingIndex:selected.i,method:'provisional-morphological-ranking-pending-visual-review',
-      rationale:'The highest morphological score is a bootstrap candidate. No aesthetic observation or acceptance is asserted without seeing the CPU contact sheet.'}
+    selection:{siblingIndex:selected.i,method:'direct-inspection-of-actual-canonical-CPU-contact-sheet',
+      rationale:"Actual FW-012 CPU six-panel sheet and selected PNG inspected: sibling 15 climbs into a sharp upward cyan crescent in the upper-right, with parallel pale inner filaments. A tiny magenta/ochre clipped trace remains at the lower-left margin, separated by a deliberate black gulf. Against the same-tick parent, the support shifts from a single short lower-left diagonal to spatially disjoint marks. Unlike Unwound Metronome's central U, the selected gesture rises along the right edge. The clipped accent and severe sparsity are real aesthetic reservations, not hidden by the diversity score."}
   };
   const files=[
     ['atlas.manifest.json',JSON.stringify(manifest,null,2)+'\n'],
