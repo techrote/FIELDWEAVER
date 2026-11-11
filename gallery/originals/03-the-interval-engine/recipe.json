@@ -113,7 +113,7 @@
         },
         "parameters": {
           "amplitudeQ16": 1800,
-          "cellSizeQ16": 786432,
+          "cellSizeQ16": 1048576,
           "seed": 890744099
         },
         "chunks": []
