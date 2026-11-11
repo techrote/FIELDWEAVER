@@ -1,5 +1,11 @@
 # Owner admission review (accepted vs proposed, offline after generation)
 
+## One-command local review (no new gallery subsystem)
+
+On Windows double-click `0Review.cmd`; on Linux/macOS run `sh ./0Review.sh` from a checkout. The launchers run the **complete `npm run verify` gate** before calling the existing source-exact `scripts/admission-review.mjs`, then open its single standalone accepted-versus-proposed HTML. Generation requires Node.js 22 or 24, npm, Git and one-time access to GitHub's pinned artwork Draft heads; the resulting HTML needs **none** of these to be viewed offline.
+
+A numbered output filename is selected without overwriting any older review. If verification, exact-head fetching, canonical CPU replay or archived decoded-pixel identity fails, **no previous/stale review is opened**. Opened artwork remains **proposed**, not admitted by this workflow. On systems without a configured browser opener, open the printed HTML path manually in Firefox. This is a lightweight entrypoint to the existing reviewer, not a second viewer or a change to canonical semantics.
+
 From a checkout of FIELDWEAVER with Node.js 22 or 24 and Git installed:
 
 ```sh
