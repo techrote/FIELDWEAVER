@@ -39,6 +39,18 @@ export async function qualify({write=false}={}){
  const receipt={artwork:ART_ID,seed:SEED,recipeHash:recipeHash(recipe),targetTick:TARGET_TICK,crop:recipe.framing,
   depositionCount:a.depositionCount,rawRgbaHash:a.rawRgbaHash,stateHash:a.stateHash,
   depositionHash:a.depositionHash,resultHash:a.resultHash};
+ const expected={
+  recipeHash:'5cdf27d4b0c2e205',rawRgbaHash:'194610dd7ca77ca1',
+  stateHash:'a44142e5fcb73df5',depositionHash:'62e03786c103dee8',
+  resultHash:'4e7ef6ed0d5a6bcd',depositionCount:185004
+ };
+ for(const [key,value] of Object.entries(expected))assert.equal(receipt[key],value,'golden '+key);
+ assert.deepEqual(await readFile(new URL('./pollen-observatory.png',import.meta.url)),Buffer.from(a.png),
+  'archived canonical PNG is not byte-identical to fresh FW-012 output');
+ assert.equal(await readFile(new URL('./pollen-observatory.provenance.json',import.meta.url),'utf8'),
+  a.provenanceJson,'archived provenance differs from fresh FW-012 sidecar');
+ assert.deepEqual(JSON.parse(await readFile(new URL('./qualification.json',import.meta.url),'utf8')),receipt,
+  'qualification receipt differs from fresh FW-012 replay');
  if(write){
   await mkdir(new URL('./rendered/',import.meta.url),{recursive:true});
   await writeFile(new URL('./rendered/pollen-observatory.png',import.meta.url),a.png);
