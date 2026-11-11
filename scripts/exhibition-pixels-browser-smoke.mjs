@@ -2,6 +2,7 @@ import { spawn, spawnSync } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { parseRecipe, recipeHash } from '../src/recipe/index.js';
+import { exhibitionEntries } from '../src/ui/exhibition-catalog.js';
 import { pathToFileURL } from 'node:url';
 import { decodePngRgba, rawRgbaHash } from '../src/export/index.js';
 
@@ -355,7 +356,7 @@ try {
   // Actual browser keyboard activation of static data: download anchors.
   // Reading a href is insufficient: CSP and browser download policies must
   // permit a file to reach disk before the editor can re-import its bytes.
-  const embeddedDownloads = [...boardHtml.matchAll(/<a download="([^"]+)" href="data:application\\/json;base64,([^"]+)"/g)]
+  const embeddedDownloads = [...boardHtml.matchAll(/<a download="([^"]+)" href="data:application\/json;base64,([^"]+)"/g)]
     .map((match) => ({ name: match[1], bytes: Buffer.from(match[2], 'base64') }));
   if (embeddedDownloads.length !== 8) {
     throw new Error('Expected eight independent accepted JSON downloads.');
@@ -368,7 +369,7 @@ try {
     if (!focused.active || focused.name !== expected.name) {
       throw new Error('Offline recipe/provenance link cannot be activated by keyboard: ' + JSON.stringify(focused));
     }
-    await pressPixelKey('\\uE007'); // Real WebDriver Enter; no synthetic click or CSP fetch.
+    await pressPixelKey('\uE007'); // Real WebDriver Enter; no synthetic click or CSP fetch.
     let contents = null;
     for (let attempt = 0; attempt < 100; attempt += 1) {
       try { contents = await readFile(destination); } catch { /* download not complete */ }
@@ -386,8 +387,8 @@ try {
   const savedRecipePath = join(downloadDir, embeddedDownloads[0].name);
   const savedRecipe = await readFile(savedRecipePath, 'utf8');
   const acceptedRecipeHash = recipeHash(parseRecipe(savedRecipe));
-  const firstAccepted = result.tiles.find((tile) => tile.id === offlineDownloads[0].id);
-  if (acceptedRecipeHash !== firstAccepted?.hashRecipe && !embeddedDownloads[0].name.includes(acceptedRecipeHash)) {
+  const firstAccepted = exhibitionEntries().find((entry) => entry.id === offlineDownloads[0].id);
+  if (acceptedRecipeHash !== firstAccepted?.recipeHash || !embeddedDownloads[0].name.includes(acceptedRecipeHash)) {
     throw new Error('Saved recipe has an unexpected accepted recipe hash: ' + acceptedRecipeHash);
   }
   await request('POST', '/session/' + sessionId + '/url', { url: 'http://127.0.0.1:4173/' });
@@ -420,7 +421,7 @@ try {
     Buffer.from(importScreenshot.value, 'base64'));
   await writeFile('exhibition-offline-reimport-' + browser + '.json',
     JSON.stringify({ browser, savedDownloads, acceptedRecipeHash, imported,
-      source: 'Real file:// keyboard downloads followed by saved-file input re-import' }, null, 2) + '\\n');
+      source: 'Real file:// keyboard downloads followed by saved-file input re-import' }, null, 2) + '\n');
   await writeFile('exhibition-accepted-offline-' + browser + '.json',
     JSON.stringify({ browser, source:'existing study export HTML Blob; Node decoded RGBA8 independently',
       offlineDecoded, offlineDownloads, verifiedFromFileUrl:true, offlineNarrow,
