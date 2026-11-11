@@ -17,23 +17,11 @@ export const ADMISSION_SELECTION = Object.freeze([
     rgba: '56286fc4c1a47bb8'
   }),
   Object.freeze({
-    pr: 61, lane: 'ORIGINAL', title: 'The Last Manta',
-    head: '71a953981a7ef1cc38be9214d206c50ebe611910',
-    provenance: 'gallery/originals/09-the-last-manta/the-last-manta.provenance.json',
-    rgba: '5a819a6ffd149c9e'
-  }),
-  Object.freeze({
     pr: 50, lane: 'MUTATION', title: 'Unwound Metronome — sibling 17',
     head: '25e6de1906e3e5a4ee66345b8210028b47185507',
     provenance: 'gallery/variants/06-unwound-metronome/selected.provenance.json',
     rgba: '80a5a090d57b6d07'
   }),
-  Object.freeze({
-    pr: 62, lane: 'MUTATION', title: 'After the Fourth Pause — sibling 01',
-    head: '9dce8cb6f68d8f85906bde26329b39f635f072cc',
-    provenance: 'gallery/variants/09-after-the-fourth-pause/selected.provenance.json',
-    rgba: '753ce0ca6b5e2aea'
-  })
 ]);
 
 function git(args) {
