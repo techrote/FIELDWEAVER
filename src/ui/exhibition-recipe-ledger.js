@@ -2,6 +2,8 @@ import { canonicalHash, canonicalStringify } from '../core/canonical.js';
 import { getBuiltinPreset } from '../presets/index.js';
 import { recipeHash } from '../recipe/index.js';
 import { exhibitionEntries } from './exhibition-catalog.js';
+import { getAcceptedVisualIndexPng } from './exhibition-visual-index.js';
+import { verifyStudyPng } from './exhibition-pixel-probe.js';
 
 export const RECIPE_LEDGER_VERSION = 'fw-exhibition-recipe-ledger-v1';
 
@@ -83,19 +85,35 @@ function el(tag, attributes = {}, text = '') {
   return node;
 }
 
-function readStudyFrame(frame, prefix, accepted) {
+// The currently verified visual-index registry owns the proof source and its
+// lifetime. An image's DOM hash or a decoded <img> is not provenance.
+export function verifyLedgerCanonicalImage({ id, url, rawRgbaHash, png }) {
+  const entry = exhibitionEntries().find((item) => item.id === id);
+  if (!entry || typeof url !== 'string' || !url.startsWith('blob:')) {
+    throw new Error('An accepted live CPU image source is required.');
+  }
+  verifyStudyPng(png, entry.exportCrop.widthPx, entry.exportCrop.heightPx, rawRgbaHash);
+  return Object.freeze({ id: entry.id, rawRgbaHash });
+}
+
+function readStudyFrame(frame, prefix, accepted, panel) {
   if (!frame || frame.hidden) return null;
   const heading = frame.querySelector('h3')?.textContent ?? '';
   if (!heading.startsWith(prefix + ' · ')) return null;
-  const title = heading.slice((prefix + ' · ').length);
-  const entry = accepted.find((item) => item.name === title);
+  const entry = accepted.find((item) => item.name === heading.slice((prefix + ' · ').length));
   const img = frame.querySelector('img');
-  const card = entry && document.querySelector('[data-exhibition-id="' + entry.id + '"]');
+  const card = entry && panel.querySelector('[data-exhibition-id="' + entry.id + '"]');
   const rawRgbaHash = card?.dataset.canonicalRgbaHash;
   if (!entry || !img?.complete || img.naturalWidth !== entry.exportCrop.widthPx ||
-      img.naturalHeight !== entry.exportCrop.heightPx ||
-      !img.currentSrc.startsWith('blob:') || !/^[a-f0-9]{16}$/.test(rawRgbaHash ?? '')) return null;
-  return Object.freeze({ id: entry.id, rawRgbaHash });
+      img.naturalHeight !== entry.exportCrop.heightPx) return null;
+  try {
+    // The accessor rejects stale or misattributed blob URLs and forged hashes;
+    // the decoder independently rejects altered pixels, CRC and dimensions.
+    const png = getAcceptedVisualIndexPng(panel, entry.id, img.currentSrc, rawRgbaHash);
+    return verifyLedgerCanonicalImage({ id: entry.id, url: img.currentSrc, rawRgbaHash, png });
+  } catch {
+    return null;
+  }
 }
 
 export function mountExhibitionRecipeLedger(dialog) {
@@ -106,6 +124,8 @@ export function mountExhibitionRecipeLedger(dialog) {
   if (!status || frames.length !== 2) throw new Error('The canonical study must mount before the recipe ledger.');
 
   const accepted = exhibitionEntries();
+  const panel = document.querySelector('.preset-panel[data-visual-index-ready="true"]');
+  if (!panel) throw new Error('Verified canonical visual index required for recipe ledger.');
   const wrapper = el('details', { id: 'exhibition-recipe-ledger', class: 'exhibition-recipe-ledger' });
   wrapper.hidden = true;
   wrapper.append(el('summary', {}, 'Inspect recipe score / differences'));
@@ -127,11 +147,13 @@ export function mountExhibitionRecipeLedger(dialog) {
 
   let report = null;
   function render() {
-    if (!dialog.open) { wrapper.hidden = true; report = null; return; }
-    const left = readStudyFrame(frames[0], 'A', accepted);
-    const right = readStudyFrame(frames[1], 'B', accepted);
+    if (!dialog.open) { wrapper.hidden = true; report = null; download.disabled = true; return; }
+    const left = readStudyFrame(frames[0], 'A', accepted, panel);
+    const right = readStudyFrame(frames[1], 'B', accepted, panel);
     if (!left || (!frames[1].hidden && !right)) {
-      wrapper.hidden = true; report = null; return;
+      wrapper.hidden = true; report = null; download.disabled = true;
+      note.textContent = 'Verified CPU proof missing or stale. Rebuild visual index.';
+      return;
     }
     const a = acceptedRecipeLedger(left.id), b = right ? acceptedRecipeLedger(right.id) : null;
     const comparison = compareAcceptedRecipeLedgers(a, b);
@@ -167,13 +189,16 @@ export function mountExhibitionRecipeLedger(dialog) {
       comparison
     });
     wrapper.hidden = false;
+    download.disabled = false;
     note.textContent = right ? 'Two accepted recipes compared; images are individually framed.' : 'One accepted recipe inspected.';
   }
   const observer = new MutationObserver(render);
   observer.observe(status, { childList: true, characterData: true, subtree: true });
   dialog.addEventListener('close', render);
   download.addEventListener('click', () => {
-    if (!report || !dialog.open) return;
+    // Revalidate just before downloading; no stale cached provenance claims.
+    render();
+    if (!report || !dialog.open || download.disabled) return;
     const blob = new Blob([JSON.stringify(report, null, 2) + '\n'], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = el('a', { href: url, download: 'fieldweaver-recipe-score-' + report.a.id +

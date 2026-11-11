@@ -73,6 +73,48 @@ try {
       atlas.cells.find((x) => x.name === 'Ordered field stack')?.relation !== 'Different' ||
       atlas.cells.find((x) => x.name === 'Material behaviours')?.relation !== 'Identical' ||
       !atlas.notes.includes('Two accepted')) throw new Error('A/B exact recipe differences invalid: ' + JSON.stringify(atlas));
+  // Tampering with the 16-hex DOM hash must invalidate the current A proof,
+  // not silently produce a downloaded "canonical" score.
+  await execute("const c=document.querySelector('[data-exhibition-id=operator-atlas]');window.__oldLedgerHash=c.dataset.canonicalRgbaHash;c.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-status').textContent+=' / invalid hash'");
+  let stale;
+  for (let i = 0; i < 30; i += 1) {
+    stale = await execute("return {hidden:document.getElementById('exhibition-recipe-ledger').hidden,disabled:document.getElementById('exhibition-recipe-ledger-download').disabled}");
+    if (stale.hidden && stale.disabled) break;
+    await sleep(100);
+  }
+  if (!stale.hidden || !stale.disabled) throw new Error('Forged DOM hash escaped verified registry.');
+  await execute("const c=document.querySelector('[data-exhibition-id=operator-atlas]');c.dataset.canonicalRgbaHash=window.__oldLedgerHash;document.getElementById('exhibition-study-status').textContent+=' / restored hash'");
+  let restored;
+  for (let i = 0; i < 30; i += 1) {
+    restored = await execute("return {hidden:document.getElementById('exhibition-recipe-ledger').hidden,disabled:document.getElementById('exhibition-recipe-ledger-download').disabled}");
+    if (!restored.hidden && !restored.disabled) break;
+    await sleep(100);
+  }
+  if (restored.hidden || restored.disabled) throw new Error('Restored canonical image failed custody check.');
+  // The B image is real canonical PNG, but its URL cannot certify A's ID.
+  await execute("const imgs=[...document.querySelectorAll('.exhibition-study-frame:not([hidden]) img')];window.__oldLedgerSrc=imgs[0].src;imgs[0].src=imgs[1].src;document.getElementById('exhibition-study-status').textContent+=' / wrong image URL'");
+  let staleUrl;
+  for (let i = 0; i < 30; i += 1) {
+    staleUrl = await execute("return {hidden:document.getElementById('exhibition-recipe-ledger').hidden,disabled:document.getElementById('exhibition-recipe-ledger-download').disabled}");
+    if (staleUrl.hidden && staleUrl.disabled) break;
+    await sleep(100);
+  }
+  if (!staleUrl.hidden || !staleUrl.disabled) throw new Error('Wrong-work image URL escaped verified registry.');
+  await execute("const img=document.querySelector('.exhibition-study-frame:not([hidden]) img');img.src=window.__oldLedgerSrc;document.getElementById('exhibition-study-status').textContent+=' / restored image URL'");
+  for (let i = 0; i < 30; i += 1) {
+    const ready = await execute("const img=document.querySelector('.exhibition-study-frame:not([hidden]) img');return img.complete && img.naturalWidth===96 && img.naturalHeight===64");
+    if (ready) break;
+    await sleep(100);
+  }
+  await execute("document.getElementById('exhibition-study-status').textContent+=' / decoded image restored'");
+  let recovered;
+  for (let i = 0; i < 30; i += 1) {
+    recovered = await execute("return {hidden:document.getElementById('exhibition-recipe-ledger').hidden,disabled:document.getElementById('exhibition-recipe-ledger-download').disabled}");
+    if (!recovered.hidden && !recovered.disabled) break;
+    await sleep(100);
+  }
+  if (recovered.hidden || recovered.disabled) throw new Error('Restored image source failed custody check.');
+
   let pulse = await execute("document.getElementById('exhibition-study-next').click();return {status:document.getElementById('exhibition-study-status').textContent,timeline:[...document.querySelectorAll('#exhibition-recipe-ledger-commands section:last-child li')].map(x=>x.textContent),relation:[...document.querySelectorAll('#exhibition-recipe-ledger-rows tr')].find(x=>x.querySelector('th').textContent==='Interventions')?.lastElementChild.textContent}");
   for (let i = 0; i < 30 && pulse.timeline.length !== 6; i += 1) {
     await sleep(100);

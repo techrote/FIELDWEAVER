@@ -20,3 +20,7 @@ Only the four accepted builtin recipes can appear in this ledger. Pending origin
 ## Implementation boundary
 
 The gallery study owns image lifetimes and canonical proof validation. This component reads its already-decoded `blob:` images and their accepted visual-index hashes, not independent preview images. The authoring score is generated from trusted builtin normalized recipes; the panel closes when those verified image resources disappear. The structured score has version `fw-exhibition-recipe-ledger-v1`; it is a human selection/provenance report, not a new canonical export or recipe format.
+
+## Canonical-image custody
+
+The ledger now uses the live accepted visual-index registry to match accepted ID, current object URL and 64-bit decoded RGBA identity before reading the image. It independently decodes FW-012 PNG bytes and verifies dimensions and row-major RGBA hash, then revalidates again at download time. A forged HTML data hash, stale URL or revoked proof after cancellation/rebuild cannot produce an accepted comparison record. No CSP relaxation, `fetch(blob:)`, WebGL readback or new gallery screen is required.

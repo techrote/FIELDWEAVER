@@ -61,3 +61,31 @@
   .exhibition-study-frame { max-height: 42vh; }
   .exhibition-study-frame img { max-height: 27vh; }
 }
+
+.exhibition-study-pixel-desk { padding: 0.7rem 0; border-top: 1px solid var(--line); }
+.exhibition-study-pixel-desk[hidden] { display: none; }
+.exhibition-study-pixel-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 0.55rem; }
+.exhibition-study-pixel-controls label { display: flex; align-items: center; gap: 0.35rem; }
+.exhibition-study-pixel-controls input { width: 5rem; }
+.exhibition-study-pixel-controls select { width: 5rem; }
+#exhibition-study-pixel-reading { display: block; margin: 0.6rem 0; overflow-wrap: anywhere; }
+#exhibition-study-pixel-reading[hidden] { display: none; }
+.exhibition-study-pixel-neighbours {
+  display: grid; grid-template-columns: repeat(9,1fr); grid-template-rows: repeat(9,1fr);
+  width: min(100%,216px); aspect-ratio: 1; background: #090b08; border: 1px solid #748a70;
+}
+.exhibition-study-pixel-cell.is-centre { outline: 2px solid #f2e9bd; outline-offset: -2px; z-index: 1; }
+.exhibition-study-pixel-cell.is-outside { background: repeating-linear-gradient(45deg,#151b13,#151b13 3px,#384136 4px); }
+.exhibition-study-frame img { cursor: crosshair; }
+.exhibition-study-frame img:focus-visible {
+  outline: 3px solid #e5c073;
+  outline-offset: 3px;
+}
+
+/* Show pixel evidence and its source images together on ordinary laptop screens. */
+.exhibition-study-dialog.is-pixel-inspection .exhibition-study-frame img {
+  max-height: 22vh;
+}
+.exhibition-study-dialog.is-pixel-inspection .exhibition-study-frames {
+  margin: 0.4rem 0;
+}
