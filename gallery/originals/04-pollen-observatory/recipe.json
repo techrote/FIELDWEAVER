@@ -15,14 +15,17 @@
   },
   "fields": {
     "format": "fw-fields-v1",
-    "nextId": 7,
+    "nextId": 10,
     "order": [
       1,
       2,
       3,
       4,
       5,
-      6
+      6,
+      7,
+      8,
+      9
     ],
     "layers": [
       {
@@ -160,6 +163,75 @@
         "parameters": {
           "vectorXQ16": 7200,
           "vectorYQ16": -4800
+        },
+        "chunks": []
+      },
+      {
+        "id": 7,
+        "kind": "vector",
+        "operator": "vortex",
+        "enabled": false,
+        "blend": "add",
+        "cellsPerChunk": 256,
+        "transform": {
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 2949120,
+            "localY": 4325376
+          },
+          "scaleXQ16": 65536,
+          "scaleYQ16": 65536
+        },
+        "parameters": {
+          "radiusQ16": 2621440,
+          "strengthQ16": -15000
+        },
+        "chunks": []
+      },
+      {
+        "id": 8,
+        "kind": "vector",
+        "operator": "vortex",
+        "enabled": false,
+        "blend": "add",
+        "cellsPerChunk": 256,
+        "transform": {
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 13762560,
+            "localY": 5636096
+          },
+          "scaleXQ16": 65536,
+          "scaleYQ16": 65536
+        },
+        "parameters": {
+          "radiusQ16": 2686976,
+          "strengthQ16": 18000
+        },
+        "chunks": []
+      },
+      {
+        "id": 9,
+        "kind": "vector",
+        "operator": "vortex",
+        "enabled": false,
+        "blend": "add",
+        "cellsPerChunk": 256,
+        "transform": {
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12058624,
+            "localY": 10747904
+          },
+          "scaleXQ16": 65536,
+          "scaleYQ16": 65536
+        },
+        "parameters": {
+          "radiusQ16": 2031616,
+          "strengthQ16": -21000
         },
         "chunks": []
       }
@@ -2005,6 +2077,14 @@
     },
     {
       "version": "fw-command-v1",
+      "id": 45,
+      "tick": 48,
+      "type": "set-field-enabled",
+      "fieldId": 7,
+      "enabled": true
+    },
+    {
+      "version": "fw-command-v1",
       "id": 50,
       "tick": 50,
       "type": "set-emitter-rate",
@@ -2021,6 +2101,14 @@
     },
     {
       "version": "fw-command-v1",
+      "id": 65,
+      "tick": 62,
+      "type": "set-field-enabled",
+      "fieldId": 8,
+      "enabled": true
+    },
+    {
+      "version": "fw-command-v1",
       "id": 70,
       "tick": 65,
       "type": "set-field-enabled",
@@ -2034,6 +2122,14 @@
       "type": "set-emitter-rate",
       "emitterId": 14,
       "rate": 1
+    },
+    {
+      "version": "fw-command-v1",
+      "id": 85,
+      "tick": 78,
+      "type": "set-field-enabled",
+      "fieldId": 9,
+      "enabled": true
     },
     {
       "version": "fw-command-v1",
@@ -2091,6 +2187,14 @@
     },
     {
       "version": "fw-command-v1",
+      "id": 155,
+      "tick": 140,
+      "type": "set-field-enabled",
+      "fieldId": 7,
+      "enabled": false
+    },
+    {
+      "version": "fw-command-v1",
       "id": 160,
       "tick": 144,
       "type": "set-field-enabled",
@@ -2099,11 +2203,27 @@
     },
     {
       "version": "fw-command-v1",
+      "id": 165,
+      "tick": 147,
+      "type": "set-field-enabled",
+      "fieldId": 8,
+      "enabled": false
+    },
+    {
+      "version": "fw-command-v1",
       "id": 170,
       "tick": 151,
       "type": "release-burst",
       "emitterId": 43,
       "count": 12
+    },
+    {
+      "version": "fw-command-v1",
+      "id": 175,
+      "tick": 157,
+      "type": "set-field-enabled",
+      "fieldId": 9,
+      "enabled": false
     }
   ],
   "lineage": null
