@@ -1,5 +1,5 @@
 import { exhibitionEntries } from './exhibition-catalog.js';
-import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel, compareStudyPixelChannels, sameStudyCrop } from './exhibition-pixel-probe.js';
+import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel, compareStudyPixelChannels, sameStudyCrop, buildStudyPixelReceipt } from './exhibition-pixel-probe.js';
 import { getAcceptedVisualIndexPng, getAcceptedVisualIndexProvenance } from './exhibition-visual-index.js';
 import { verifyOfflineExhibitionTile } from './exhibition-offline-board.js';
 import { buildAcceptedRecipeHandoff } from './exhibition-recipe-handoff.js';
@@ -142,7 +142,9 @@ export function mountExhibitionStudy(panel) {
   yLabel.append(y);
   const nextMark = make('button', { id: 'exhibition-study-pixel-next', class: 'button',
     type: 'button' }, 'Next visible mark');
-  fields.append(sourceLabel, xLabel, yLabel, nextMark);
+  const savePixel = make('button', { id: 'exhibition-study-pixel-save', class: 'button',
+    type: 'button' }, 'Save exact pixel receipt (JSON)');
+  fields.append(sourceLabel, xLabel, yLabel, nextMark, savePixel);
   const reading = make('output', { id: 'exhibition-study-pixel-reading',
     class: 'workspace-note', 'aria-live': 'polite' }, 'Choose a pixel.');
   reading.hidden = true;
@@ -415,6 +417,36 @@ export function mountExhibitionStudy(panel) {
       window.setTimeout(() => URL.revokeObjectURL(url), 2000);
     }
   }
+  savePixel.addEventListener('click', () => {
+    try {
+      if (!pixelOpen || !dialog.open) throw new Error('Open exact pixel inspection first.');
+      const records = snapshot();
+      if (!records) throw new Error('Rebuild the verified accepted CPU index.');
+      const inspectedId = pixelId(), column = Number(x.value), row = Number(y.value);
+      const currentSource = (id) => {
+        const entry = lookup.get(id), record = records.get(id);
+        if (!entry || !record) throw new Error('Accepted source is unavailable.');
+        // A fresh lease and decoded PNG check for EACH source at download time:
+        // cached pixels and DOM readout alone do not authorize a saved receipt.
+        const png = getAcceptedVisualIndexPng(panel, id, record.url, record.hash);
+        const pixels = verifyStudyPng(png,
+          entry.exportCrop.widthPx, entry.exportCrop.heightPx, record.hash);
+        return { entry, pixels, hash: record.hash };
+      };
+      const a = currentSource(pinnedId ?? inspectedId);
+      const b = pinnedId ? currentSource(currentId) : null;
+      const receipt = buildStudyPixelReceipt(a, b, column, row, inspectedId);
+      const comparisonName = b ? a.entry.id + '-vs-' + b.entry.id : a.entry.id;
+      const filename = 'fieldweaver-pixel-' + comparisonName +
+        '-x' + column + '-y' + row + '.fwpixel.json';
+      saveSelectedBytes(new TextEncoder().encode(JSON.stringify(receipt, null, 2) + '\n'),
+        'application/json', filename);
+      announce.textContent = 'Requested exact CPU pixel receipt for ' + a.entry.name +
+        (b ? ' vs ' + b.entry.name : '') + '; file delivery is browser-controlled.';
+    } catch (error) {
+      announce.textContent = 'Pixel receipt refused: ' + (error?.message ?? String(error));
+    }
+  });
   exportPng.addEventListener('click', () => {
     try {
       const entry = lookup.get(currentId), record = snapshot()?.get(currentId);

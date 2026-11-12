@@ -76,3 +76,49 @@ export function sameStudyCrop(a, b) {
     a?.center?.localX === b?.center?.localX &&
     a?.center?.localY === b?.center?.localY;
 }
+
+export const STUDY_PIXEL_RECEIPT_VERSION = 'fw-exhibition-pixel-receipt-v1';
+
+// A portable, deterministic record of one or two independently verified CPU
+// source pixels. The caller must renew the live source leases and decode the
+// in-memory PNGs before calling. The same image-local coordinate is intentional;
+// only exactly identical authored crops identify the same world pixel centre.
+function receiptPixelSource(source, x, y) {
+  const { entry, pixels, hash } = source ?? {};
+  if (!entry || !pixels || !/^[0-9a-f]{16}$/.test(hash ?? '') ||
+      pixels.hash !== hash ||
+      entry.exportCrop?.widthPx !== pixels.width ||
+      entry.exportCrop?.heightPx !== pixels.height ||
+      !/^[0-9a-f]{16}$/.test(entry.recipeHash ?? '') ||
+      !Number.isInteger(entry.targetTick) || !Number.isInteger(entry.seed)) {
+    throw new Error('Pixel receipt requires a current accepted decoded CPU source.');
+  }
+  return Object.freeze({
+    id: entry.id, name: entry.name, recipeHash: entry.recipeHash,
+    seed: entry.seed, targetTick: entry.targetTick,
+    crop: entry.exportCrop, rawRgbaHash: hash,
+    pixel: sampleStudyPixel(pixels, x, y)
+  });
+}
+
+export function buildStudyPixelReceipt(aSource, bSource, x, y, inspectedId) {
+  const a = receiptPixelSource(aSource, x, y);
+  const b = bSource == null ? null : receiptPixelSource(bSource, x, y);
+  if (inspectedId !== a.id && inspectedId !== b?.id) {
+    throw new Error('Pixel receipt inspected image is not a current source.');
+  }
+  const sameCrop = b ? sameStudyCrop(a.crop, b.crop) : null;
+  const delta = b ? Object.freeze(a.pixel.rgba.map((v, i) => b.pixel.rgba[i] - v)) : null;
+  return Object.freeze({
+    version: STUDY_PIXEL_RECEIPT_VERSION,
+    coordinateSpace: 'image-local-top-left',
+    coordinate: Object.freeze({ x, y }),
+    inspectedId, a, b,
+    comparison: b ? Object.freeze({
+      deltaBMinusA: delta,
+      identical: delta.every(v => v === 0),
+      sameAuthoredCrop: sameCrop,
+      alignment: sameCrop ? 'same-authored-crop' : 'image-local-only-not-world-aligned'
+    }) : null
+  });
+}
