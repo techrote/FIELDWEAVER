@@ -351,6 +351,28 @@ try {
     throw new Error('Real offline changed-pixel table failed keyboard inspection: ' +
       JSON.stringify(ledgerOpen));
   }
+  // Validate swatch custody against accessible numeric bytes in actual offline
+  // Firefox/Chrome, not only in a generated HTML string.
+  const swatchBrowser = await execute(`const disclosures=[...document.querySelectorAll('#comparison-index .pair-pixels')];
+    const rows=disclosures.flatMap(d=>[...d.querySelectorAll('tbody tr[data-pixel-x]')]);
+    const valid=rows.every(row=>[1,2].every(index=>{
+      const swatch=row.cells[index].querySelector('.pair-swatch');
+      const fill=swatch?.querySelector('.pair-swatch-fill');
+      const text=row.cells[index].querySelector('code')?.textContent;
+      const expected=text?.split(',').map(part=>part.trim()).join(',');
+      return !!swatch && !!fill && swatch.getAttribute('aria-hidden')==='true' &&
+        swatch.dataset.rgba8===expected && !!fill.style.backgroundColor;
+    }));
+    const first=disclosures[0].querySelector('.pair-swatch').getBoundingClientRect();
+    return {origin:location.protocol,scripts:document.scripts.length,
+      rows:rows.length,swatches:document.querySelectorAll('#comparison-index .pair-swatch').length,
+      valid,visibleWidth:first.width,visibleHeight:first.height};`);
+  if (swatchBrowser.origin!=='file:' || swatchBrowser.scripts!==0 ||
+      swatchBrowser.rows!==comparisons.reduce((n,item)=>n+item.different,0) ||
+      swatchBrowser.swatches!==swatchBrowser.rows*2 || !swatchBrowser.valid ||
+      swatchBrowser.visibleWidth<16 || swatchBrowser.visibleHeight<16) {
+    throw new Error('Real offline exact RGBA8 colour samples failed: '+JSON.stringify(swatchBrowser));
+  }
   // Pixel positions must be browser-visible under file:// CSP with no script
   // running in the generated document. The diagnostic is deliberately not
   // another canonical artwork: compare every mark to the exact numeric table.
@@ -380,6 +402,13 @@ try {
   if (!ledgerShot?.value) throw new Error('Exact changed-pixel ledger screenshot absent.');
   await writeFile('exhibition-offline-pixel-ledger-'+browser+'.png',
     Buffer.from(ledgerShot.value,'base64'));
+  const swatchDesktopFocus = await execute("const r=document.querySelector('#comparison-index .pair-pixels .pair-pixel-scroll');r.scrollIntoView({block:'center',behavior:'instant'});r.focus();return document.activeElement===r");
+  if (!swatchDesktopFocus) throw new Error('RGBA8 swatch table lost keyboard access.');
+  const swatchDesktopShot = await request('GET','/session/'+sessionId+'/screenshot');
+  if (!swatchDesktopShot?.value) throw new Error('RGBA8 desktop screenshot absent.');
+  await writeFile('exhibition-offline-pixel-swatches-'+browser+'.png',
+    Buffer.from(swatchDesktopShot.value,'base64'));
+  await execute("document.querySelector('#comparison-index .pair-pixels summary').focus()");
   await pressEnter();
   if (await execute("return document.querySelector('#comparison-index .pair-pixels').open")) {
     throw new Error('Keyboard could not collapse exact pixel ledger.');
@@ -434,6 +463,19 @@ try {
   if (!narrowLocatorShot?.value) throw new Error('Narrow difference locator screenshot absent.');
   await writeFile('exhibition-offline-pixel-locator-narrow-'+browser+'.png',
     Buffer.from(narrowLocatorShot.value,'base64'));
+  const narrowSwatches = await execute(`const region=document.querySelector('#comparison-index .pair-pixels .pair-pixel-scroll');
+    region.scrollIntoView({block:'center',behavior:'instant'});region.focus();
+    const box=region.querySelector('.pair-swatch').getBoundingClientRect();
+    return {focused:document.activeElement===region,visible:box.width>=16&&box.height>=16,
+      bodyOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth};`);
+  if (!narrowSwatches.focused || !narrowSwatches.visible || narrowSwatches.bodyOverflow) {
+    throw new Error('Narrow offline RGBA8 swatch inspection failed: '+JSON.stringify(narrowSwatches));
+  }
+  const narrowSwatchShot=await request('GET','/session/'+sessionId+'/screenshot');
+  if (!narrowSwatchShot?.value) throw new Error('Narrow RGBA8 swatch screenshot absent.');
+  await writeFile('exhibition-offline-pixel-swatches-narrow-'+browser+'.png',
+    Buffer.from(narrowSwatchShot.value,'base64'));
+  await execute("document.querySelector('#comparison-index .pair-pixels summary').focus()");
   await pressEnter();
 
   await request('POST', '/session/' + sessionId + '/window/rect', { width: 1250, height: 900 });

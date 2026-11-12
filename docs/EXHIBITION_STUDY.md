@@ -97,6 +97,12 @@ Each accepted pair in the offline A/B index has an initially collapsed **Inspect
 
 Both the numeric table and downloadable CSV are computed only from independently verified FW-012 CPU PNG decoded bytes, after the accepted proof/provenance checks, and the ledger count is checked against the separate A/B summary. The rows denote image-local same-index comparisons, **never** alignment of different authored world crops. No derived pixel picture, artistic substitution, new gallery, editor or admission decision is involved. Node independently recomputes all six complete files; actual Chrome/Firefox `file://` browser checks exercise keyboard disclosure, row counts, CSV payloads and screenshots. Physical Windows acceptance remains a separate gate.
 
+### Literal A/B source-colour swatches (offline board)
+
+The existing **Inspect exact changed pixels** disclosure now pairs each A/B numerical RGBA8 tuple with a small alpha-aware checker-backed colour swatch. This makes transparency or subtle source-colour changes visible without decoding CSV columns manually. The numeric 8-bit RGBA8 tuples and signed B−A deltas remain authoritative. CSS sRGB blending is *noncanonical display only*, not new artwork, and never enters PNG, comparison JSON, exact CSV or bundled ZIP exports. Swatches are hidden from assistive technology because exact accessible numeric values are adjacent.
+
+Node tests check every sample against independently decoded accepted canonical PNG bytes. Dedicated real Firefox/Chrome tests inspect the script-free `file://` board under strict CSP, use keyboard focus in full/narrow layouts, and archive source-swatches screenshots.
+
 ### Source-exact changed-pixel locator (offline board)
 
 The existing **Inspect exact changed pixels** disclosure also displays a compact

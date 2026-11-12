@@ -66,6 +66,8 @@ jobs:
             exhibition-offline-pair-preview-${{ matrix.browser }}.png
             exhibition-offline-pair-preview-narrow-${{ matrix.browser }}.png
             exhibition-offline-pixel-ledger-${{ matrix.browser }}.png
+            exhibition-offline-pixel-swatches-${{ matrix.browser }}.png
+            exhibition-offline-pixel-swatches-narrow-${{ matrix.browser }}.png
             exhibition-offline-pixel-locator-narrow-${{ matrix.browser }}.png
             exhibition-offline-ab-bundle-${{ matrix.browser }}.png
             exhibition-visual-index-downloads-${{ matrix.browser }}/*.fwpixels.csv

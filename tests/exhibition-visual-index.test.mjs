@@ -179,6 +179,8 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
   assert.equal(locatorMaps.length, 6,
     'each accepted pair exposes a script-free diagnostic locator, not substitute artwork');
   const ledgerHeader = 'x,y,a_r,a_g,a_b,a_a,b_r,b_g,b_b,b_a,delta_r,delta_g,delta_b,delta_a';
+  const swatches = [...board.html.matchAll(/<span class="pair-swatch" data-rgba8="([\d,]+)" aria-hidden="true"><span class="pair-swatch-fill" style="background-color:rgba\((\d+),(\d+),(\d+),([\d.]+)\)"><\/span><\/span>/g)];
+  let swatchCursor = 0;
   for (let i = 0; i < pairRows.length; i += 1) {
     const [, aId, bId, changed] = pairRows[i];
     assert.deepEqual(ledgerDisclosures[i].slice(1),
@@ -205,6 +207,20 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
     assert.equal(actual, expected.join('\n') + '\n',
       'CSV must enumerate all source-exact signed channel differences in row-major order');
     assert.equal(expected.length - 1, Number(changed));
+    const sourceSamples = expected.slice(1).flatMap(row => {
+      const channels = row.split(',').map(Number);
+      return [channels.slice(2, 6), channels.slice(6, 10)];
+    });
+    const pairSwatches = swatches.slice(swatchCursor, swatchCursor + sourceSamples.length);
+    assert.equal(pairSwatches.length, sourceSamples.length, 'two decoded A/B swatches per changed pixel');
+    pairSwatches.forEach((swatch, index) => {
+      const rgba = sourceSamples[index];
+      assert.equal(swatch[1], rgba.join(','), 'sample binds original decoded source channels');
+      assert.deepEqual(swatch.slice(2, 5).map(Number), rgba.slice(0, 3));
+      assert(Math.abs(Number(swatch[5]) - rgba[3] / 255) <= 0.0000000051,
+        'display alpha must derive from original channel');
+    });
+    swatchCursor += sourceSamples.length;
     const locator = locatorMaps[i];
     assert.deepEqual(locator.slice(1, 6),
       [aId, bId, changed, String(Math.min(a.widthPx, b.widthPx)),
@@ -220,6 +236,8 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
     assert.doesNotMatch(locator[0], /<script|<image|<foreignObject|onload=/i,
       'the locator cannot introduce remote assets, script or alternative artwork');
   }
+  assert.equal(swatchCursor, swatches.length, 'no additional proxy samples');
+  assert.match(board.html, /class="pair-swatch" data-rgba8="[^"]+" aria-hidden="true"/);
   // Six portable comparison receipts must bind exact verified source identities,
   // bounds and counts; independently scan raw pixels instead of reusing the
   // production overlap helper as the sole oracle.
