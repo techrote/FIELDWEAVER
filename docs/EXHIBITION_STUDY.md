@@ -141,6 +141,14 @@ In any row of the accepted-only A/B comparison index, choose **Save complete A/B
 
 Node tests independently parse and CRC-check all six archives against original sources. Chrome/Firefox WebDriver tests keyboard activation and an actual saved ZIP from the offline file, with screenshot evidence. Physical Windows owner acceptance remains a separate gate.
 
+### Jump from exact A/B differences to source pixels (offline board)
+
+In the existing **A/B comparison index**, expand **Inspect exact changed pixels**. The amber locator is now actionable: a pointer click on any one-pixel mark jumps to the corresponding row of the unchanged, decoded-RGBA8 ledger. For keyboard use, Tab to the **Largest source-channel changes** navigation links and press Enter; five source-exact strongest differences are ranked by maximum absolute channel delta (0–255), with row-major position breaking ties. These are **not** aesthetic or perceptual scores and never imply world-space alignment across different authored crops.
+
+Each destination is a unique same-document fragment inside the existing scrollable table. The destination row is highlighted, retaining both original RGBA8 tuples, alpha-aware display swatches, signed B−A values and the unchanged full CSV/ZIP exports. SVG marker links are pointer-accessible but intentionally skipped in the Tab order; the bounded five-link index is the keyboard route rather than introducing hundreds of tiny focus stops. No additional modal, script, network fetch, renderer, recipe, artwork or admission state is involved. The offline HTML retains its original strict CSP and works through `file://`.
+
+Node regression independently reconstructs every source pixel coordinate and strongest-channel ranking from decoded canonical PNG bytes, and checks that all fragment destinations resolve to the actual table rows. Chrome/Firefox WebDriver regressions inspect those links in the reopened offline document, press Enter on a focused strongest-change link, physically click a diagnostic map marker, check the fragment target and retain a screenshot. Physical Windows owner acceptance is separate.
+
 ### Classify source RGB and alpha differences (offline board)
 
 The existing **A/B comparison index** reports, for every accepted canonical pair, how many overlapping image-local pixels change each individual decoded **R, G, B or A byte**. The display also partitions the changed pixels into **RGB-only**, **alpha-only**, and **RGB+alpha** classes. These three disjoint categories must sum to the original exact RGBA8 changed-pixel count; a pixel can contribute to multiple individual R/G/B/A channel counts. This helps distinguish changes to opacity from changes to source colour without interpreting the pair as perceptually similar or world-space registered.
