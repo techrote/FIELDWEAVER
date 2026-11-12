@@ -8,7 +8,7 @@ import { parseRecipe, recipeHash, serializeRecipe } from '../src/recipe/index.js
 import { BUILTIN_PRESETS } from '../src/presets/index.js';
 import { exhibitionEntries, renderExhibitionProof } from '../src/ui/exhibition-catalog.js';
 import { renderVisualIndexProof, verifyVisualIndexProof } from '../src/ui/exhibition-visual-index-model.js';
-import { buildOfflineExhibitionBoard } from '../src/ui/exhibition-offline-board.js';
+import { buildOfflineExhibitionBoard, exactPairChangeClasses } from '../src/ui/exhibition-offline-board.js';
 import { createStoredZip } from '../src/ui/exhibition-work-bundle.js';
 
 // Independent table-driven CRC oracle (the writer uses per-bit long division).
@@ -403,6 +403,26 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
     'collection and board bytes must be deterministic across repeated builds');
   const embedded = /src="data:image\/png;base64,([^"]+)"/.exec(board.html)?.[1];
   assert.deepEqual(Buffer.from(embedded, 'base64'), Buffer.from(tiles[0].png));
+});
+
+test('offline source-channel classes distinguish RGB, alpha and joint changes', () => {
+  const changed = [
+    { delta: [12, 0, 0, 0] },
+    { delta: [0, 0, 0, -7] },
+    { delta: [1, -3, 0, 11] },
+    { delta: [0, 0, 4, 0] }
+  ];
+  assert.deepEqual(exactPairChangeClasses(changed), {
+    perChannel: [2, 1, 1, 2],
+    rgbOnly: 2,
+    alphaOnly: 1,
+    both: 1
+  });
+  assert.deepEqual(exactPairChangeClasses([]), {
+    perChannel: [0, 0, 0, 0], rgbOnly: 0, alphaOnly: 0, both: 0
+  });
+  assert.throws(() => exactPairChangeClasses([{ delta: [0, 0, 0, 0] }]),
+    /identical RGBA8/, 'unchanged source pixels cannot enter the changed-pixel partition');
 });
 
 test('offline board rejects incomplete, duplicate, corrupted and forged canonical evidence', () => {

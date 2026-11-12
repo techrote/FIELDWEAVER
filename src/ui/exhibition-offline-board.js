@@ -56,7 +56,7 @@ function exactPairPixelChanges(a, b) {
 
 // Count literal source-channel changes, including whether opacity and RGB
 // differ independently or together. Not a perceptual score or world registration.
-function exactPairChangeClasses(changes) {
+export function exactPairChangeClasses(changes) {
   const perChannel = [0, 0, 0, 0];
   let rgbOnly = 0, alphaOnly = 0, both = 0;
   for (const { delta } of changes) {
