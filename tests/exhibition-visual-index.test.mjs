@@ -126,6 +126,26 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
   }
   const pairRows = [...board.html.matchAll(/<tr data-pair-a="([^"]+)" data-pair-b="([^"]+)" data-differences="(\d+)" data-overlap="(\d+)">/g)];
   assert.equal(pairRows.length, 6, 'four accepted works generate six source-exact pairs');
+  // The optional script-free A/B disclosure must use the exact same
+  // independently checked PNG source bytes as the four canonical work cards.
+  // CSS data: backgrounds avoid adding another raster/export subsystem.
+  const previews = [...board.html.matchAll(/<details class="pair-preview" data-pair-a="([^"]+)" data-pair-b="([^"]+)">/g)];
+  assert.equal(previews.length, 6, 'one native keyboard disclosure per accepted pair');
+  const rasterPreviews = [...board.html.matchAll(/<div class="pair-raster" role="img" data-work-id="([^"]+)" data-canonical-hash="([^"]+)" aria-label="([^"]+)" style="background-image:url\\(data:image\\/png;base64,([^)]*)\\)"><\\/div>/g)];
+  const expectedIds = exhibitionEntries().flatMap((entry, index, all) =>
+    all.slice(index + 1).flatMap((other) => [entry.id, other.id]));
+  assert.equal(rasterPreviews.length, 12, 'both originals visibly available per pair');
+  assert.deepEqual(rasterPreviews.map((preview) => preview[1]), expectedIds);
+  for (const [, id, hash, label, encoded] of rasterPreviews) {
+    const original = tiles.find((tile) => tile.id === id);
+    assert(original && label.includes(original.name));
+    assert.equal(hash, original.rawRgbaHash);
+    const actual = new Uint8Array(Buffer.from(encoded, 'base64'));
+    assert.deepEqual(actual, original.png, 'pair preview cannot substitute a thumbnail');
+    assert.equal(rawRgbaHash(decodePngRgba(actual).rgba), original.rawRgbaHash);
+  }
+  assert.equal((board.html.match(/<img\\b/g) ?? []).length, 4,
+    'optional previews cannot create additional visual index images');
   assert.match(board.html, /href="#comparison-index">A\/B comparison index/);
   assert.match(board.html, /id="comparison-scroll"[^>]+tabindex="0"/);
   const decodedById = new Map(tiles.map((tile) => [tile.id, decodePngRgba(tile.png)]));
