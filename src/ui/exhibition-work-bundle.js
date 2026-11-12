@@ -1,6 +1,9 @@
 // Dependency-free, deterministic ZIP/STORE packaging for accepted offline
 // exhibition handoff. This is a transport container, not a new artwork,
 // raster, recipe format, or canonical image identity.
+// The earliest representable DOS date is 1980-01-01 (0x0021), not zero:
+// zero month/day fields are invalid and can upset strict ZIP extractors.
+const ZIP_DOS_DATE = 0x0021;
 function crc32(bytes) {
   let value = 0xffffffff;
   for (const byte of bytes) {
@@ -48,7 +51,7 @@ export function createStoredZip(files) {
     write16(at + 4, 20);  // ZIP 2.0 / stored
     write16(at + 6, 0);   // ASCII filename, no descriptor
     write16(at + 8, 0);   // STORE, no lossy recompression
-    write16(at + 10, 0); write16(at + 12, 0); // fixed DOS time/date
+    write16(at + 10, 0); write16(at + 12, ZIP_DOS_DATE); // 00:00 on 1980-01-01
     write32(at + 14, file.crc);
     write32(at + 18, file.bytes.length);
     write32(at + 22, file.bytes.length);
@@ -63,7 +66,7 @@ export function createStoredZip(files) {
     write32(at, 0x02014b50);
     write16(at + 4, 20); write16(at + 6, 20);
     write16(at + 8, 0); write16(at + 10, 0);
-    write16(at + 12, 0); write16(at + 14, 0);
+    write16(at + 12, 0); write16(at + 14, ZIP_DOS_DATE);
     write32(at + 16, file.crc);
     write32(at + 20, file.bytes.length);
     write32(at + 24, file.bytes.length);
