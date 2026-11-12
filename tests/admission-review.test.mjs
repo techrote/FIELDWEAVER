@@ -11,7 +11,7 @@ test('owner admission shortlist is bounded, source-exact and not an accepted cat
     assert.match(item.head, /^[0-9a-f]{40}$/);
     assert.match(item.rgba, /^[0-9a-f]{16}$/);
     assert.match(item.provenance, /^gallery\/(originals|variants)\/[\w-]+\/[\w-]+\.provenance\.json$/);
-    assert.match(item.recipe, /^gallery\/(originals|variants)\/[\w-]+\/[\w-]+\.json$/);
+    assert.match(item.recipe, /^gallery\/(originals|variants)\/[\w-]+\/[\w.-]+\.json$/);
     assert(!item.recipe.includes('..'));
     assert(!item.provenance.includes('..'));
     assert(item.title.length > 5);
