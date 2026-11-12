@@ -501,7 +501,6 @@ try {
         ' (observed ' + (contents?.length ?? 'none') + ' of ' + expected.bytes.length + ' bytes)');
     }
     savedDownloads.push({ name: expected.name, bytes: contents.length, match: true });
-
   }
   const savedPngBytes = await readFile(join(downloadDir, pngDownloads[0].name));
   if (rawRgbaHash(decodePngRgba(new Uint8Array(savedPngBytes)).rgba) !== offlineDecoded[0].hash) {
