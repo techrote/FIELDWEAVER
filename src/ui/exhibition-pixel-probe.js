@@ -108,6 +108,44 @@ export function previousDifferingStudyPixel(aPixels, bPixels, x, y) {
   return scanDifferingStudyPixel(aPixels, bPixels, x, y, -1);
 }
 
+/**
+ * Quantify the exact decoded RGBA8 differences within the shared image-local
+ * rectangle. This is NOT a world-aligned or perceptual similarity score.
+ * The caller must independently renew both live proof leases before invoking.
+ * Right/bottom bounds are inclusive; a completely identical overlap has no
+ * difference bounds.
+ */
+export function summarizeDifferingStudyPixels(aPixels, bPixels) {
+  sampleStudyPixel(aPixels, 0, 0);
+  sampleStudyPixel(bPixels, 0, 0);
+  const width = Math.min(aPixels.width, bPixels.width);
+  const height = Math.min(aPixels.height, bPixels.height);
+  let differentPixels = 0;
+  let left = width, top = height, right = -1, bottom = -1;
+  const channelMaxAbsDelta = [0, 0, 0, 0];
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const aOffset = (y * aPixels.width + x) * 4;
+      const bOffset = (y * bPixels.width + x) * 4;
+      let different = false;
+      for (let channel = 0; channel < 4; channel += 1) {
+        const delta = Math.abs(bPixels.rgba[bOffset + channel] - aPixels.rgba[aOffset + channel]);
+        if (delta !== 0) different = true;
+        if (delta > channelMaxAbsDelta[channel]) channelMaxAbsDelta[channel] = delta;
+      }
+      if (!different) continue;
+      differentPixels += 1;
+      left = Math.min(left, x); top = Math.min(top, y);
+      right = Math.max(right, x); bottom = Math.max(bottom, y);
+    }
+  }
+  return Object.freeze({
+    width, height, overlapPixels: width * height, differentPixels,
+    bounds: differentPixels ? Object.freeze({ left, top, right, bottom }) : null,
+    channelMaxAbsDelta: Object.freeze(channelMaxAbsDelta)
+  });
+}
+
 export function sameStudyCrop(a, b) {
   return a?.widthPx === b?.widthPx && a?.heightPx === b?.heightPx &&
     a?.unitsPerPixelQ16 === b?.unitsPerPixelQ16 &&
