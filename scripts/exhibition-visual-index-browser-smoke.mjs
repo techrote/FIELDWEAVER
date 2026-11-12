@@ -208,7 +208,7 @@ try {
   }
   // Decode the real saved file:// page's receipt links inside Firefox/Chrome.
   // The page itself remains script-free; the WebDriver probe is external.
-  const comparisonReceipts = await execute("return [...document.querySelectorAll('#comparison-index a[download$=".fwcompare.json"]')].map(a=>({name:a.download,data:JSON.parse(atob(a.href.split(',')[1]))}))");
+  const comparisonReceipts = await execute("return [...document.querySelectorAll('#comparison-index a[download$=\\\".fwcompare.json\\\"]')].map(a=>({name:a.download,data:JSON.parse(atob(a.href.split(',')[1]))}))");
   if (comparisonReceipts.length !== 6 ||
       comparisonReceipts.some(item => item.data.version !== 'fw-exhibition-ab-comparison-v1' ||
         !item.name.endsWith('.fwcompare.json') ||
