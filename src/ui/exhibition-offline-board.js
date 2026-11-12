@@ -2,6 +2,7 @@ import { decodePngRgba, rawRgbaHash } from '../export/index.js';
 import { parseRecipe, recipeHash, serializeRecipe } from '../recipe/index.js';
 import { exhibitionEntries } from './exhibition-catalog.js';
 import { verifyStudyPng, summarizeDifferingStudyPixels } from './exhibition-pixel-probe.js';
+import { createStoredZip } from './exhibition-work-bundle.js';
 
 export const OFFLINE_BOARD_VERSION = 'fw-exhibition-offline-board-v1';
 
@@ -87,7 +88,14 @@ export function buildOfflineExhibitionBoard(tiles) {
     const recipeFile = 'fieldweaver-' + entry.id + '-' + entry.recipeHash + '.fwrecipe.json';
     const receiptFile = 'fieldweaver-' + entry.id + '-' + tile.rawRgbaHash + '.fwprovenance.json';
     const pngFile = 'fieldweaver-' + entry.id + '-' + tile.rawRgbaHash + '.canonical.png';
+    const bundleFile = 'fieldweaver-' + entry.id + '-' + tile.rawRgbaHash + '.fwpack.zip';
+    const bundleBytes = createStoredZip([
+      { name: pngFile, bytes: tile.png },
+      { name: recipeFile, bytes: new TextEncoder().encode(recipeJson) },
+      { name: receiptFile, bytes: new TextEncoder().encode(tile.provenanceJson) }
+    ]);
     const canonicalPng = base64Bytes(tile.png);
+    const workBundle = base64Bytes(bundleBytes);
     const crop = entry.exportCrop;
     const cropText = crop.widthPx + '×' + crop.heightPx +
       ' / Q16 ' + crop.unitsPerPixelQ16 +
@@ -116,6 +124,8 @@ export function buildOfflineExhibitionBoard(tiles) {
       base64Utf8(tile.provenanceJson) + '">Save full provenance</a>' +
       '<a download="' + escapeHtml(pngFile) + '" href="data:image/png;base64,' +
       canonicalPng + '">Save canonical PNG</a>' +
+      '<a download="' + escapeHtml(bundleFile) + '" href="data:application/zip;base64,' +
+      workBundle + '">Save complete work bundle (ZIP)</a>' +
       '</p><details><summary>Inspect complete provenance and loadable recipe JSON</summary>' +
       '<pre>' + escapeHtml(tile.provenanceJson) + '</pre></details></article>';
   });
@@ -180,7 +190,7 @@ export function buildOfflineExhibitionBoard(tiles) {
     '<p><small>STATIC / SELF-CONTAINED / OFFLINE / NO SCRIPTS OR REMOTE ASSETS</small></p></header>' +
     '<nav aria-label="Jump to accepted work">' + nav + '<a href="#comparison-index">A/B comparison index</a></nav>' +
     '<main class="gallery">' + cards.join('') + '</main>' + comparisonSection +
-    '<footer>Each image is the original 96×64 canonical raster, enlarged for inspection. PNG bytes are not the pixel identity; raw decoded RGBA8 hashes are. Save each work’s unchanged canonical PNG, importable recipe and full provenance directly from this file; target tick and crop are in the provenance rather than the recipe. Browser downloads still require local file-manager confirmation. This board is a review record, not an artistic approval.</footer>' +
+    '<footer>Each image is the original 96×64 canonical raster, enlarged for inspection. PNG bytes are not the pixel identity; raw decoded RGBA8 hashes are. Save each work’s unchanged canonical PNG, importable recipe and full provenance separately or as one ZIP bundle directly from this file; target tick and crop are in the provenance rather than the recipe. Browser downloads still require local file-manager confirmation. This board is a review record, not an artistic approval.</footer>' +
     '</div></body></html>\n';
   return Object.freeze({ version: OFFLINE_BOARD_VERSION, count: entries.length, html });
 }
