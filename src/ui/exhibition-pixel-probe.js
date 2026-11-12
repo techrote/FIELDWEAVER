@@ -55,3 +55,24 @@ export function nextVisibleStudyPixel(pixels, x, y) {
   }
   return null; // Entire canonical crop is blank.
 }
+
+
+// Numeric A/B comparison of the same *image-local* coordinate from two
+// independently verified decoded CPU rasters. Callers must label different
+// authored crops explicitly; this function does not infer world alignment.
+export function compareStudyPixelChannels(aPixels, bPixels, x, y) {
+  const a = sampleStudyPixel(aPixels, x, y);
+  const b = sampleStudyPixel(bPixels, x, y);
+  const delta = Object.freeze(a.rgba.map((value, channel) => b.rgba[channel] - value));
+  return Object.freeze({ x, y, a, b, delta,
+    identical: delta.every((difference) => difference === 0) });
+}
+
+export function sameStudyCrop(a, b) {
+  return a?.widthPx === b?.widthPx && a?.heightPx === b?.heightPx &&
+    a?.unitsPerPixelQ16 === b?.unitsPerPixelQ16 &&
+    a?.center?.chunkX === b?.center?.chunkX &&
+    a?.center?.chunkY === b?.center?.chunkY &&
+    a?.center?.localX === b?.center?.localX &&
+    a?.center?.localY === b?.center?.localY;
+}
