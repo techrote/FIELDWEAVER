@@ -1,5 +1,5 @@
 import { exhibitionEntries } from './exhibition-catalog.js';
-import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel } from './exhibition-pixel-probe.js';
+import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel, compareStudyPixelChannels, sameStudyCrop } from './exhibition-pixel-probe.js';
 import { getAcceptedVisualIndexPng, getAcceptedVisualIndexProvenance } from './exhibition-visual-index.js';
 import { verifyOfflineExhibitionTile } from './exhibition-offline-board.js';
 import { buildAcceptedRecipeHandoff } from './exhibition-recipe-handoff.js';
@@ -128,7 +128,7 @@ export function mountExhibitionStudy(panel) {
     'aria-label': 'Decoded canonical pixel inspection' });
   desk.hidden = true;
   const help = make('p', { class: 'workspace-note' },
-    'Click an image, focus it and use arrow keys (Shift: 10 pixels), or enter a column/row. Values are exact decoded CPU pixels, origin top-left. A and B have different authored world crops.');
+    'Click an image, focus it and use arrow keys (Shift: 10 pixels), or enter a column/row. Values are exact decoded CPU pixels, origin top-left. With A pinned, both RGBA8 values and B−A channel deltas use the same image-local pixel; authored crops may differ.');
   const fields = make('div', { class: 'exhibition-study-pixel-controls' });
   const sourceLabel = make('label', {}, 'Image ');
   const source = make('select', { id: 'exhibition-study-pixel-source' });
@@ -146,6 +146,9 @@ export function mountExhibitionStudy(panel) {
   const reading = make('output', { id: 'exhibition-study-pixel-reading',
     class: 'workspace-note', 'aria-live': 'polite' }, 'Choose a pixel.');
   reading.hidden = true;
+  const compareReading = make('output', { id: 'exhibition-study-pixel-ab',
+    class: 'workspace-note', 'aria-live': 'polite' });
+  compareReading.hidden = true;
   const gridPixels = make('div', { id: 'exhibition-study-pixel-neighbours',
     class: 'exhibition-study-pixel-neighbours', role: 'img',
     'aria-label': 'Nine by nine nearest-neighbour display; selected centre outlined' });
@@ -154,7 +157,7 @@ export function mountExhibitionStudy(panel) {
     class: 'workspace-note' }, 'No study open.');
   // Keep the exact source-pixel readout visible above large framed works,
   // including when A/B images stack at narrow viewport widths.
-  dialog.append(header, toolbar, description, reading, gallery, desk, announce);
+  dialog.append(header, toolbar, description, reading, compareReading, gallery, desk, announce);
   document.body.append(dialog);
 
   let currentId = ids[0];
@@ -199,6 +202,8 @@ export function mountExhibitionStudy(panel) {
   async function updatePixel(resetCoordinates = false, findNextMark = false) {
     if (!pixelOpen || !dialog.open) return;
     const token = ++pixelToken;
+    compareReading.hidden = true;
+    compareReading.textContent = '';
     const id = pixelId(), record = snapshot()?.get(id), entry = lookup.get(id);
     if (!record) { reading.textContent = 'Verified CPU image unavailable.'; gridPixels.replaceChildren(); return; }
     try {
@@ -236,6 +241,38 @@ export function mountExhibitionStudy(panel) {
       const sample = sampleStudyPixel(pixels, nextCol, nextRow);
       reading.textContent = entry.name + ' · (' + nextCol + ', ' + nextRow + ') · ' + sample.hex +
         ' · RGBA8 ' + sample.rgba.join(', ') + ' · image identity ' + pixels.hash;
+      if (pinnedId) {
+        // Renew BOTH proof leases, even on a cached pixel or while reading A.
+        // The comparison is source-local unless the authored crops coincide.
+        const otherId = id === pinnedId ? currentId : pinnedId;
+        const peer = snapshot()?.get(otherId), otherEntry = lookup.get(otherId);
+        if (!peer || !otherEntry) throw new Error('A/B peer CPU proof is unavailable.');
+        const peerPng = getAcceptedVisualIndexPng(panel, otherId, peer.url, peer.hash);
+        let peerPixels = pixelCache.get(peer.url);
+        if (!peerPixels || peerPixels.hash !== peer.hash) {
+          peerPixels = verifyStudyPng(peerPng,
+            otherEntry.exportCrop.widthPx, otherEntry.exportCrop.heightPx, peer.hash);
+          pixelCache.set(peer.url, peerPixels);
+        }
+        if (token !== pixelToken || !dialog.open) return;
+        if (nextCol >= peerPixels.width || nextRow >= peerPixels.height) {
+          compareReading.textContent = 'A/B source-local comparison unavailable at this coordinate: ' +
+            'the other image ends before (' + nextCol + ', ' + nextRow + ').';
+        } else {
+          const aPixels = id === pinnedId ? pixels : peerPixels;
+          const bPixels = id === pinnedId ? peerPixels : pixels;
+          const compared = compareStudyPixelChannels(aPixels, bPixels, nextCol, nextRow);
+          const aligned = sameStudyCrop(lookup.get(pinnedId).exportCrop, lookup.get(currentId).exportCrop);
+          compareReading.textContent = 'A ' + lookup.get(pinnedId).name + ': ' +
+            compared.a.hex + ' RGBA8 ' + compared.a.rgba.join(', ') +
+            ' · B ' + lookup.get(currentId).name + ': ' +
+            compared.b.hex + ' RGBA8 ' + compared.b.rgba.join(', ') +
+            ' · Δ(B−A) RGBA8 ' + compared.delta.join(', ') +
+            ' · ' + (aligned ? 'same authored crop' :
+              'IMAGE-LOCAL ONLY: authored crops differ; not a world-aligned comparison');
+        }
+        compareReading.hidden = false;
+      }
       const cells = [];
       for (let dy = -4; dy <= 4; dy += 1) {
         for (let dx = -4; dx <= 4; dx += 1) {
@@ -262,6 +299,7 @@ export function mountExhibitionStudy(panel) {
     dialog.classList.remove('is-pixel-inspection');
     desk.hidden = true; inspect.setAttribute('aria-expanded', 'false'); inspect.textContent = 'Inspect exact pixels';
     gridPixels.replaceChildren(); reading.textContent = 'Choose a pixel.'; reading.hidden = true;
+    compareReading.hidden = true; compareReading.textContent = '';
   }
   function openPixelDesk() {
     if (pixelOpen) return;

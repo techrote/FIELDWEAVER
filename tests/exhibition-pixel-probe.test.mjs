@@ -3,7 +3,7 @@ import test from 'node:test';
 import { BUILTIN_PRESETS } from '../src/presets/index.js';
 import { recipeHash } from '../src/recipe/index.js';
 import { renderVisualIndexProof } from '../src/ui/exhibition-visual-index-model.js';
-import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel } from '../src/ui/exhibition-pixel-probe.js';
+import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel, compareStudyPixelChannels, sameStudyCrop } from '../src/ui/exhibition-pixel-probe.js';
 
 test('inspection samples real verified CPU PNG bytes without changing accepted recipes', () => {
   const before = BUILTIN_PRESETS.map(p => recipeHash(p.recipe));
@@ -56,4 +56,29 @@ test('find next visible mark uses actual canonical decoded pixel bytes, wraps an
   assert.equal(nextVisibleStudyPixel({ width: 1, height: 1, rgba: Uint8Array.of(9,11,8,255) }, 0, 0), null);
   assert.deepEqual(nextVisibleStudyPixel({ width: 1, height: 1, rgba: Uint8Array.of(240,20,30,255) }, 0, 0), {x:0,y:0});
   assert.throws(() => nextVisibleStudyPixel({ width: 1, height: 1, rgba: Uint8Array.of(9,11,8,255) }, 1, 0), /outside/);
+});
+
+
+test('A/B source-local delta uses independently decoded canonical PNGs, not a preview', () => {
+  const aProof = renderVisualIndexProof('operator-atlas');
+  const bProof = renderVisualIndexProof('timeline-pulse');
+  const a = verifyStudyPng(aProof.png, aProof.widthPx, aProof.heightPx, aProof.rawRgbaHash);
+  const b = verifyStudyPng(bProof.png, bProof.widthPx, bProof.heightPx, bProof.rawRgbaHash);
+  for (const [x, y] of [[0, 0], [3, 7], [20, 35], [48, 32], [95, 63]]) {
+    const result = compareStudyPixelChannels(a, b, x, y);
+    assert.deepEqual(result.a, sampleStudyPixel(a, x, y));
+    assert.deepEqual(result.b, sampleStudyPixel(b, x, y));
+    assert.deepEqual(result.delta, result.a.rgba.map((value, channel) => result.b.rgba[channel] - value));
+    assert.equal(result.identical, result.delta.every((d) => d === 0));
+    assert.ok(Object.isFrozen(result) && Object.isFrozen(result.delta));
+  }
+  assert.deepEqual(compareStudyPixelChannels(a, b, 20, 35).delta, [7, 18, 20, 0],
+    'accepted fixture has a visible, non-zero exact CPU pixel difference');
+  assert.throws(() => compareStudyPixelChannels(a, b, 96, 0), /outside/);
+  assert.throws(() => compareStudyPixelChannels(a, { ...b, rgba: new Uint8Array(4) }, 3, 7), /outside/);
+  const original = BUILTIN_PRESETS[0].exportCrop;
+  assert.equal(sameStudyCrop(original, structuredClone(original)), true);
+  const moved = structuredClone(original);
+  moved.center.localX += 1;
+  assert.equal(sameStudyCrop(original, moved), false);
 });
