@@ -133,7 +133,7 @@ export function buildOfflineExhibitionBoard(tiles) {
     '<p><small>STATIC / SELF-CONTAINED / OFFLINE / NO SCRIPTS OR REMOTE ASSETS</small></p></header>' +
     '<nav aria-label="Jump to accepted work">' + nav + '</nav>' +
     '<main class="gallery">' + cards.join('') + '</main>' +
-    '<footer>Each image is the original 96×64 canonical raster, enlarged for inspection. PNG bytes are not the pixel identity; raw decoded RGBA8 hashes are. Save each work's unchanged canonical PNG, importable recipe and full provenance directly from this file; target tick and crop are in the provenance rather than the recipe. Browser downloads still require local file-manager confirmation. This board is a review record, not an artistic approval.</footer>' +
+    '<footer>Each image is the original 96×64 canonical raster, enlarged for inspection. PNG bytes are not the pixel identity; raw decoded RGBA8 hashes are. Save each work’s unchanged canonical PNG, importable recipe and full provenance directly from this file; target tick and crop are in the provenance rather than the recipe. Browser downloads still require local file-manager confirmation. This board is a review record, not an artistic approval.</footer>' +
     '</div></body></html>\n';
   return Object.freeze({ version: OFFLINE_BOARD_VERSION, count: entries.length, html });
 }
