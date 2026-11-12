@@ -414,6 +414,27 @@ try {
   if (!pairNarrowShot?.value) throw new Error('Narrow A/B pair screenshot absent.');
   await writeFile('exhibition-offline-pair-preview-narrow-'+browser+'.png',
     Buffer.from(pairNarrowShot.value,'base64'));
+  // The diagnostic locator must fit a narrow viewport and retain keyboard
+  // access on an actual file:// board, without body-level horizontal overflow.
+  const narrowLocatorFocus = await execute("const s=document.querySelector('#comparison-index .pair-pixels summary');s.scrollIntoView({block:'center',behavior:'instant'});s.focus();return document.activeElement===s");
+  if (!narrowLocatorFocus) throw new Error('Narrow offline diagnostic locator lost keyboard access.');
+  await pressEnter();
+  const narrowLocator = await execute(`const d=document.querySelector('#comparison-index .pair-pixels');
+    const r=d.querySelector('svg.pair-locator').getBoundingClientRect();
+    return {open:d.open,protocol:location.protocol,marks:d.querySelectorAll('svg.pair-locator rect[fill="#e4b665"]').length,
+      rectWidth:r.width,rectHeight:r.height,viewport:document.documentElement.clientWidth,
+      bodyOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth};`);
+  if (!narrowLocator.open || narrowLocator.protocol!=='file:' ||
+      narrowLocator.marks!==comparisons[0].different ||
+      narrowLocator.rectWidth<=80 || narrowLocator.rectWidth>narrowLocator.viewport ||
+      narrowLocator.rectHeight<=40 || narrowLocator.bodyOverflow) {
+    throw new Error('Narrow offline source-exact locator failed: ' + JSON.stringify(narrowLocator));
+  }
+  const narrowLocatorShot = await request('GET', '/session/' + sessionId + '/screenshot');
+  if (!narrowLocatorShot?.value) throw new Error('Narrow difference locator screenshot absent.');
+  await writeFile('exhibition-offline-pixel-locator-narrow-'+browser+'.png',
+    Buffer.from(narrowLocatorShot.value,'base64'));
+  await pressEnter();
 
   await request('POST', '/session/' + sessionId + '/window/rect', { width: 1250, height: 900 });
   await execute("window.scrollTo(0,0)");
