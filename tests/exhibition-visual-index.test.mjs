@@ -261,6 +261,37 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
     assert.deepEqual(receipt.overlap.boundsInclusive, bounds);
     assert.deepEqual(receipt.overlap.maxAbsDeltaRgba8, maximum);
   }
+  // All six accepted pairs carry exact eight-file review ZIPs. The independent
+  // ZIP reader verifies CRC, local/central offsets and fixed portable dates.
+  const pairBundles = [...board.html.matchAll(/<a download="([^"]+\.fwabpack\.zip)" href="data:application\/zip;base64,([^"]+)">Save complete A\/B evidence \(ZIP\)<\/a>/g)];
+  assert.equal(pairBundles.length, 6);
+  for (let i = 0; i < pairRows.length; i += 1) {
+    const [, aId, bId] = pairRows[i];
+    const aTile = tiles.find(tile => tile.id === aId);
+    const bTile = tiles.find(tile => tile.id === bId);
+    const [ , name, encoded ] = pairBundles[i];
+    assert.equal(name, 'fieldweaver-ab-' + aId + '-vs-' + bId + '-' +
+      aTile.rawRgbaHash + '-' + bTile.rawRgbaHash + '.fwabpack.zip');
+    const files = readStoredZip(new Uint8Array(Buffer.from(encoded, 'base64')));
+    assert.equal(files.size, 8, 'two source triplets plus receipt and CSV');
+    for (const tile of [aTile, bTile]) {
+      const png = 'fieldweaver-' + tile.id + '-' + tile.rawRgbaHash + '.canonical.png';
+      const recipe = 'fieldweaver-' + tile.id + '-' + tile.recipeHash + '.fwrecipe.json';
+      const provenance = 'fieldweaver-' + tile.id + '-' + tile.rawRgbaHash + '.fwprovenance.json';
+      assert.deepEqual(files.get(png), tile.png, 'unchanged original CPU PNG bytes');
+      assert.equal(rawRgbaHash(decodePngRgba(files.get(png)).rgba), tile.rawRgbaHash);
+      const recipeJson = Buffer.from(files.get(recipe)).toString('utf8');
+      assert.equal(recipeJson, serializeRecipe(JSON.parse(tile.provenanceJson).recipe));
+      assert.equal(recipeHash(parseRecipe(recipeJson)), tile.recipeHash);
+      assert.equal(Buffer.from(files.get(provenance)).toString('utf8'), tile.provenanceJson);
+    }
+    assert.deepEqual(files.get(comparisonDownloads[i][1]),
+      new Uint8Array(Buffer.from(comparisonDownloads[i][2], 'base64')),
+      'embedded comparison receipt equals standalone JSON');
+    assert.deepEqual(files.get(ledgers[i][1]),
+      new Uint8Array(Buffer.from(ledgers[i][2], 'base64')),
+      'embedded complete pixel ledger equals standalone CSV');
+  }
   // Offline data: downloads are user-initiated, self-contained and importable
   // without script execution or a network request.
   const recipeLinks = [...board.html.matchAll(/<a download="([^"]+\.fwrecipe\.json)" href="data:application\/json;base64,([^"]+)">Save importable recipe<\/a>/g)];
