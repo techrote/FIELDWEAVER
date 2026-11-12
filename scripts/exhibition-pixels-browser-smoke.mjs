@@ -694,7 +694,7 @@ try {
   const zipDownloads = [...boardHtml.matchAll(/<a download="([^"]+\.fwpack\.zip)" href="data:application\/zip;base64,([^"]+)">Save complete work bundle \(ZIP\)<\/a>/g)]
     .map((match) => ({ name: match[1], bytes: Buffer.from(match[2], 'base64') }));
   if (zipDownloads.length !== 4) throw new Error('Expected four portable accepted work ZIP bundles.');
-  const collectionDownloads = [...boardHtml.matchAll(/<a download="(fieldweaver-accepted-canonical-collection-v1\\.zip)" href="data:application\\/zip;base64,([^"]+)">Save all accepted works \\(ZIP\\)<\\/a>/g)]
+  const collectionDownloads = [...boardHtml.matchAll(/<a download="(fieldweaver-accepted-canonical-collection-v1\.zip)" href="data:application\/zip;base64,([^"]+)">Save all accepted works \(ZIP\)<\/a>/g)]
     .map((match) => ({ name: match[1], bytes: Buffer.from(match[2], 'base64') }));
   if (collectionDownloads.length !== 1) {
     throw new Error('Expected one offline accepted-only collection archive.');
