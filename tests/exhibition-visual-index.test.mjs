@@ -8,7 +8,7 @@ import { parseRecipe, recipeHash, serializeRecipe } from '../src/recipe/index.js
 import { BUILTIN_PRESETS } from '../src/presets/index.js';
 import { exhibitionEntries, renderExhibitionProof } from '../src/ui/exhibition-catalog.js';
 import { renderVisualIndexProof, verifyVisualIndexProof } from '../src/ui/exhibition-visual-index-model.js';
-import { buildOfflineExhibitionBoard } from '../src/ui/exhibition-offline-board.js';
+import { buildOfflineExhibitionBoard, exactPairChangeClasses } from '../src/ui/exhibition-offline-board.js';
 import { createStoredZip } from '../src/ui/exhibition-work-bundle.js';
 
 // Independent table-driven CRC oracle (the writer uses per-bit long division).
@@ -149,6 +149,8 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
   assert.match(board.html, /href="#comparison-index">A\/B comparison index/);
   assert.match(board.html, /id="comparison-scroll"[^>]+tabindex="0"/);
   const decodedById = new Map(tiles.map((tile) => [tile.id, decodePngRgba(tile.png)]));
+  const channelCells = [...board.html.matchAll(/<td class="pair-channel-counts" data-r="(\d+)" data-g="(\d+)" data-b="(\d+)" data-a="(\d+)" data-rgb-only="(\d+)" data-alpha-only="(\d+)" data-both="(\d+)">([^<]+)<\/td>/g)];
+  assert.equal(channelCells.length, 6, 'one complete source-channel classification for each accepted pair');
   const seenPairs = new Set();
   for (const [, aId, bId, countText, totalText] of pairRows) {
     const key = aId + '/' + bId;
@@ -159,25 +161,46 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
     const width = Math.min(a.widthPx, b.widthPx);
     const height = Math.min(a.heightPx, b.heightPx);
     let expected = 0;
+    const channelCounts = [0, 0, 0, 0];
+    let rgbOnly = 0, alphaOnly = 0, both = 0;
     for (let y = 0; y < height; y += 1) {
       for (let x = 0; x < width; x += 1) {
         const aAt = (y * a.widthPx + x) * 4;
         const bAt = (y * b.widthPx + x) * 4;
-        if ([0, 1, 2, 3].some((ch) => a.rgba[aAt + ch] !== b.rgba[bAt + ch])) expected += 1;
+        const flags = [0, 1, 2, 3].map(ch => a.rgba[aAt + ch] !== b.rgba[bAt + ch]);
+        flags.forEach((flag, ch) => { if (flag) channelCounts[ch] += 1; });
+        const rgb = flags.slice(0, 3).some(Boolean), alpha = flags[3];
+        if (rgb || alpha) {
+          expected += 1;
+          if (rgb && alpha) both += 1;
+          else if (rgb) rgbOnly += 1;
+          else alphaOnly += 1;
+        }
       }
     }
     assert.equal(Number(countText), expected, 'decoded CPU RGBA8 mismatch for ' + key);
     assert.equal(Number(totalText), width * height);
+    const channelCell = channelCells[seenPairs.size - 1];
+    assert.deepEqual(channelCell.slice(1, 8).map(Number),
+      [...channelCounts, rgbOnly, alphaOnly, both],
+      'source-channel and alpha/RGB partitions must independently match every decoded pixel: ' + key);
+    assert.equal(rgbOnly + alphaOnly + both, expected);
+    assert(channelCell[8].includes('RGB-only ' + rgbOnly) &&
+      channelCell[8].includes('alpha-only ' + alphaOnly),
+      'owner-visible breakdown must expose distinct opacity and colour changes');
   }
   // An independent raw-RGBA8 oracle must match every row of each complete
   // CSV, not merely the total, and its native disclosure count.
   const ledgers = [...board.html.matchAll(/<a download="([^"]+\.fwpixels\.csv)" href="data:text\/csv;base64,([^"]+)">Save exact pixel ledger \(CSV\)<\/a>/g)];
   const ledgerDisclosures = [...board.html.matchAll(/<details class="pair-pixels" data-pair-a="([^"]+)" data-pair-b="([^"]+)" data-count="(\d+)">/g)];
   const locatorMaps = [...board.html.matchAll(/<svg class="pair-locator" data-pair-a="([^"]+)" data-pair-b="([^"]+)" data-diff-count="(\d+)" viewBox="0 0 (\d+) (\d+)"[^>]*>([\s\S]*?)<\/svg>/g)];
+  const hotspotGroups = [...board.html.matchAll(/<div class="pair-hotspots" role="navigation" aria-label="Jump to strongest exact changed pixels: ([^"]+) versus ([^"]+)">([\s\S]*?)<\/div>/g)];
+  const identifiedRows = [...board.html.matchAll(/<tr data-pixel-x="(\d+)" data-pixel-y="(\d+)" id="([^"]+)">/g)];
   assert.equal(ledgers.length, 6, 'every accepted A/B pair exports exact changed pixels');
   assert.equal(ledgerDisclosures.length, 6, 'native keyboard inspection per accepted pair');
   assert.equal(locatorMaps.length, 6,
     'each accepted pair exposes a script-free diagnostic locator, not substitute artwork');
+  assert.equal(hotspotGroups.length, 6, 'one keyboard-native strongest-change index per pair');
   const ledgerHeader = 'x,y,a_r,a_g,a_b,a_a,b_r,b_g,b_b,b_a,delta_r,delta_g,delta_b,delta_a';
   const swatches = [...board.html.matchAll(/<span class="pair-swatch" data-rgba8="([\d,]+)" aria-hidden="true"><span class="pair-swatch-fill" style="background-color:rgba\((\d+),(\d+),(\d+),([\d.]+)\)"><\/span><\/span>/g)];
   let swatchCursor = 0;
@@ -232,6 +255,29 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
       row.split(',').slice(0, 2).map(Number));
     assert.deepEqual(marks, expectedLocations,
       'every diagnostic map mark must match one exact independently decoded RGBA8 change');
+    const rowIds = expectedLocations.map(([x, y]) =>
+      'ab-' + aId + '-vs-' + bId + '-pixel-' + x + '-' + y);
+    const rowsForPair = identifiedRows.filter(([, x, y, id]) =>
+      id.startsWith('ab-' + aId + '-vs-' + bId + '-pixel-'))
+      .map(([, x, y, id]) => [Number(x), Number(y), id]);
+    assert.deepEqual(rowsForPair, expectedLocations.map(([x, y], index) =>
+      [x, y, rowIds[index]]), 'each original numeric pixel row has a unique exact source anchor');
+    const mapLinks = [...locator[6].matchAll(/<a href="#([^"]+)" tabindex="-1"><rect x="(\d+)" y="(\d+)" width="1" height="1" fill="#e4b665"\/><\/a>/g)];
+    assert.deepEqual(mapLinks.map(([, href, x, y]) => [Number(x), Number(y), href]),
+      rowsForPair, 'every exact map coordinate links to its own source row, with no keyboard tab-stop flood');
+    const hotspots = hotspotGroups[i];
+    assert.deepEqual(hotspots.slice(1, 3), [aId, bId]);
+    const actualHotspots = [...hotspots[3].matchAll(/<a href="#([^"]+)"><code>(\d+),(\d+)<\/code> · max \|ΔRGBA8\| (\d+)<\/a>/g)]
+      .map(([, href, x, y, strength]) => ({href, x:Number(x), y:Number(y), strength:Number(strength)}));
+    const independentlyRanked = expected.slice(1).map(row => {
+      const values = row.split(',').map(Number);
+      return {x:values[0], y:values[1],
+        strength:Math.max(...values.slice(10, 14).map(Math.abs))};
+    }).sort((a, b) => b.strength - a.strength || a.y - b.y || a.x - b.x)
+      .slice(0, 5).map(({x, y, strength}) =>
+        ({href:'ab-' + aId + '-vs-' + bId + '-pixel-' + x + '-' + y, x, y, strength}));
+    assert.deepEqual(actualHotspots, independentlyRanked,
+      'keyboard jump targets are the five strongest source-exact channel changes with stable tie order');
     assert.match(locator[0], /role="img"[^>]+aria-label="Diagnostic image-local/);
     assert.doesNotMatch(locator[0], /<script|<image|<foreignObject|onload=/i,
       'the locator cannot introduce remote assets, script or alternative artwork');
@@ -383,6 +429,26 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
     'collection and board bytes must be deterministic across repeated builds');
   const embedded = /src="data:image\/png;base64,([^"]+)"/.exec(board.html)?.[1];
   assert.deepEqual(Buffer.from(embedded, 'base64'), Buffer.from(tiles[0].png));
+});
+
+test('offline source-channel classes distinguish RGB, alpha and joint changes', () => {
+  const changed = [
+    { delta: [12, 0, 0, 0] },
+    { delta: [0, 0, 0, -7] },
+    { delta: [1, -3, 0, 11] },
+    { delta: [0, 0, 4, 0] }
+  ];
+  assert.deepEqual(exactPairChangeClasses(changed), {
+    perChannel: [2, 1, 1, 2],
+    rgbOnly: 2,
+    alphaOnly: 1,
+    both: 1
+  });
+  assert.deepEqual(exactPairChangeClasses([]), {
+    perChannel: [0, 0, 0, 0], rgbOnly: 0, alphaOnly: 0, both: 0
+  });
+  assert.throws(() => exactPairChangeClasses([{ delta: [0, 0, 0, 0] }]),
+    /identical RGBA8/, 'unchanged source pixels cannot enter the changed-pixel partition');
 });
 
 test('offline board rejects incomplete, duplicate, corrupted and forged canonical evidence', () => {
