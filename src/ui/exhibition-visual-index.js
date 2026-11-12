@@ -88,13 +88,26 @@ export function mountExhibitionVisualIndex(panel) {
     if (urls.has(id)) URL.revokeObjectURL(urls.get(id));
     urls.delete(id);
   };
+  // A cancelled or failed rebuild must not leave old blob images and hashes
+  // appearing as current canonical evidence after their proof leases expire.
+  const clearRenderedProofs = () => {
+    verifiedProofs.clear();
+    for (const entry of entries) {
+      revoke(entry.id);
+      const { card, img, trace } = tiles.get(entry.id);
+      img.removeAttribute('src');
+      img.hidden = true;
+      delete card.dataset.canonicalRgbaHash;
+      trace.textContent = 'No canonical image yet';
+    }
+  };
 
   render.addEventListener('click', async () => {
     const run = ++generation;
     render.disabled = true;
     cancel.disabled = false;
     saveBoard.disabled = true;
-    verifiedProofs.clear();
+    clearRenderedProofs();
     boardStatus.textContent = '';
     let completed = 0;
     try {
@@ -138,7 +151,7 @@ export function mountExhibitionVisualIndex(panel) {
       }
     } catch (error) {
       if (!leaving && generation === run) {
-        verifiedProofs.clear();
+        clearRenderedProofs();
         saveBoard.disabled = true;
         status.textContent = 'Visual index stopped at ' + completed + '/' + entries.length +
           ': ' + (error?.message ?? String(error));
@@ -153,7 +166,9 @@ export function mountExhibitionVisualIndex(panel) {
 
   cancel.addEventListener('click', () => {
     generation += 1;
-    verifiedProofs.clear();
+    // Completed proofs from this run remain genuinely verified and retain
+    // their live leases. Old proofs were already revoked at rebuild start.
+    // A partial index must never enable the four-work board or study.
     saveBoard.disabled = true;
     boardStatus.textContent = '';
     render.disabled = false;
@@ -179,10 +194,9 @@ export function mountExhibitionVisualIndex(panel) {
   });
   window.addEventListener('pagehide', () => {
     leaving = true;
-    verifiedProofs.clear();
-    proofRegistries.delete(panel);
     generation += 1;
-    for (const id of [...urls.keys()]) revoke(id);
+    clearRenderedProofs();
+    proofRegistries.delete(panel);
   }, { once: true });
   panel.dataset.visualIndexReady = 'true';
 }

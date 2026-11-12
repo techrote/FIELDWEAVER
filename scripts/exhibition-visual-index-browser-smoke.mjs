@@ -115,6 +115,67 @@ try {
   const screenshot = await request('GET', '/session/' + sessionId + '/screenshot');
   if (!screenshot?.value) throw new Error('Browser screenshot absent.');
   await writeFile('exhibition-visual-index-' + browser + '.png', Buffer.from(screenshot.value, 'base64'));
+  // Rebuild/cancel must revoke the former image lease AND remove the visible
+  // old pixels, src and identity labels. Execute both clicks in one DOM turn
+  // so cancellation happens before the next requestAnimationFrame.
+  const lifecycle = await execute(`
+    const index = document.getElementById('exhibition-index-render');
+    const cancel = document.getElementById('exhibition-index-cancel');
+    const snapshot = () => ({
+      visible: document.querySelectorAll('.exhibition-index-image:not([hidden])').length,
+      sources: [...document.querySelectorAll('.exhibition-index-image')].filter(img => img.hasAttribute('src')).length,
+      identities: document.querySelectorAll('.exhibition-card[data-canonical-rgba-hash]').length,
+      boardDisabled: document.getElementById('exhibition-board-save').disabled
+    });
+    index.click();
+    const rebuilding = snapshot();
+    cancel.click();
+    return { rebuilding, cancelled: snapshot(),
+      status: document.getElementById('exhibition-index-status').textContent };
+  `);
+  for (const state of [lifecycle.rebuilding, lifecycle.cancelled]) {
+    if (state.visible || state.sources || state.identities || !state.boardDisabled) {
+      throw new Error('Expired canonical index pixels survived rebuild/cancellation: ' + JSON.stringify(lifecycle));
+    }
+  }
+  if (!lifecycle.status.includes('completed proofs remain') ||
+      await execute("return !document.getElementById('exhibition-study-launch').disabled")) {
+    throw new Error('Cancelled index incorrectly remains available for study: ' + JSON.stringify(lifecycle));
+  }
+  await sleep(200);
+  const lateTiles = await execute("return {shown:document.querySelectorAll('.exhibition-index-image:not([hidden])').length,hashes:document.querySelectorAll('.exhibition-card[data-canonical-rgba-hash]').length}");
+  if (lateTiles.shown || lateTiles.hashes) {
+    throw new Error('Cancelled asynchronous canonical render resurrected old images: ' + JSON.stringify(lateTiles));
+  }
+  // Force actual browser image decode rejection. No partial or previous proof
+  // is permitted to remain visible or exportable after a failed rebuild.
+  await execute("window.__nativeDecode = Image.prototype.decode; Image.prototype.decode = function(){return Promise.reject(new Error('injected-image-decode-failure'))}; document.getElementById('exhibition-index-render').click()");
+  let failedIndex = '';
+  for (let attempt = 0; attempt < 120; attempt += 1) {
+    failedIndex = await execute("return document.getElementById('exhibition-index-status').textContent");
+    if (failedIndex.includes('stopped at')) break;
+    await sleep(150);
+  }
+  const failedState = await execute("Image.prototype.decode = window.__nativeDecode; delete window.__nativeDecode; return {visible:document.querySelectorAll('.exhibition-index-image:not([hidden])').length,sources:[...document.querySelectorAll('.exhibition-index-image')].filter(img=>img.hasAttribute('src')).length,hashes:document.querySelectorAll('.exhibition-card[data-canonical-rgba-hash]').length,boardDisabled:document.getElementById('exhibition-board-save').disabled}");
+  if (!failedIndex.includes('injected-image-decode-failure') ||
+      failedState.visible || failedState.sources || failedState.hashes || !failedState.boardDisabled) {
+    throw new Error('Failed canonical index rebuild exposed expired pixels: ' + JSON.stringify({failedIndex,failedState}));
+  }
+  // Recovery proves invalidation did not poison the genuine CPU index path.
+  await execute("document.getElementById('exhibition-index-render').click()");
+  let recovered = '';
+  for (let attempt = 0; attempt < 160; attempt += 1) {
+    recovered = await execute("return document.getElementById('exhibition-index-status').textContent");
+    if (recovered.includes('ready:') || recovered.includes('stopped')) break;
+    await sleep(250);
+  }
+  const recoveredState = await execute("return {visible:document.querySelectorAll('.exhibition-index-image:not([hidden])').length,hashes:document.querySelectorAll('.exhibition-card[data-canonical-rgba-hash]').length,boardEnabled:!document.getElementById('exhibition-board-save').disabled}");
+  if (!recovered.includes('ready: 4/4') || recoveredState.visible !== 4 ||
+      recoveredState.hashes !== 4 || !recoveredState.boardEnabled) {
+    throw new Error('Index failed to recover after cleared and rejected proof leases: ' + JSON.stringify({recovered,recoveredState}));
+  }
+  await writeFile('exhibition-index-lifecycle-' + browser + '.json',
+    JSON.stringify({ lifecycle, lateTiles, failedIndex, failedState, recovered, recoveredState }, null, 2) + '\n');
   const offlinePath = resolve('exhibition-offline-board-' + browser + '.html');
   await writeFile(offlinePath, boardHtml);
   await request('POST', '/session/' + sessionId + '/url', { url: pathToFileURL(offlinePath).href });
