@@ -85,6 +85,8 @@ export function buildOfflineExhibitionBoard(tiles) {
     }
     const recipeFile = 'fieldweaver-' + entry.id + '-' + entry.recipeHash + '.fwrecipe.json';
     const receiptFile = 'fieldweaver-' + entry.id + '-' + tile.rawRgbaHash + '.fwprovenance.json';
+    const pngFile = 'fieldweaver-' + entry.id + '-' + tile.rawRgbaHash + '.canonical.png';
+    const canonicalPng = base64Bytes(tile.png);
     const crop = entry.exportCrop;
     const cropText = crop.widthPx + '×' + crop.heightPx +
       ' / Q16 ' + crop.unitsPerPixelQ16 +
@@ -97,7 +99,7 @@ export function buildOfflineExhibitionBoard(tiles) {
       '<h2>' + escapeHtml(entry.name) + '</h2>' +
       '<figure><img width="' + tile.widthPx + '" height="' + tile.heightPx +
       '" alt="' + escapeHtml('Canonical software-raster output of ' + entry.name + ' at tick ' + entry.targetTick) +
-      '" src="data:image/png;base64,' + base64Bytes(tile.png) + '">' +
+      '" src="data:image/png;base64,' + canonicalPng + '">' +
       '<figcaption>Original ' + tile.widthPx + '×' + tile.heightPx +
       ' pixels, nearest-neighbour presentation only</figcaption></figure>' +
       '<dl><dt>Root seed</dt><dd>' + entry.seed +
@@ -111,6 +113,8 @@ export function buildOfflineExhibitionBoard(tiles) {
       base64Utf8(recipeJson) + '">Save importable recipe</a>' +
       '<a download="' + escapeHtml(receiptFile) + '" href="data:application/json;base64,' +
       base64Utf8(tile.provenanceJson) + '">Save full provenance</a>' +
+      '<a download="' + escapeHtml(pngFile) + '" href="data:image/png;base64,' +
+      canonicalPng + '">Save canonical PNG</a>' +
       '</p><details><summary>Inspect complete provenance and loadable recipe JSON</summary>' +
       '<pre>' + escapeHtml(tile.provenanceJson) + '</pre></details></article>';
   });
@@ -129,7 +133,7 @@ export function buildOfflineExhibitionBoard(tiles) {
     '<p><small>STATIC / SELF-CONTAINED / OFFLINE / NO SCRIPTS OR REMOTE ASSETS</small></p></header>' +
     '<nav aria-label="Jump to accepted work">' + nav + '</nav>' +
     '<main class="gallery">' + cards.join('') + '</main>' +
-    '<footer>Each image is the original 96×64 canonical raster, enlarged for inspection. PNG bytes are not the pixel identity; raw decoded RGBA8 hashes are. Use the per-work importable recipe and full provenance downloads to reproduce the proof; target tick and crop are in the provenance rather than the recipe. Browser downloads still require local file-manager confirmation. This board is a review record, not an artistic approval.</footer>' +
+    '<footer>Each image is the original 96×64 canonical raster, enlarged for inspection. PNG bytes are not the pixel identity; raw decoded RGBA8 hashes are. Save each work's unchanged canonical PNG, importable recipe and full provenance directly from this file; target tick and crop are in the provenance rather than the recipe. Browser downloads still require local file-manager confirmation. This board is a review record, not an artistic approval.</footer>' +
     '</div></body></html>\n';
   return Object.freeze({ version: OFFLINE_BOARD_VERSION, count: entries.length, html });
 }
