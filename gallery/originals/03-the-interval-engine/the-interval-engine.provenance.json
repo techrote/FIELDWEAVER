@@ -1,0 +1,2016 @@
+{
+  "version": "fw-export-provenance-v1",
+  "exportVersion": "fw-canonical-export-v1",
+  "rasterVersion": "fw-canonical-raster-v1",
+  "pngVersion": "fw-png-rgba8-v1",
+  "recipeHash": "4adb2abba8c7999f",
+  "recipe": {
+    "schemaVersion": "fw-recipe-v1",
+    "engineVersion": "fw-agents-v1",
+    "seed": 1503731315,
+    "framing": {
+      "widthPx": 512,
+      "heightPx": 384,
+      "center": {
+        "chunkX": 0,
+        "chunkY": 0,
+        "localX": 8388608,
+        "localY": 8912896
+      },
+      "unitsPerPixelQ16": 32768
+    },
+    "fields": {
+      "format": "fw-fields-v1",
+      "nextId": 7,
+      "order": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "layers": [
+        {
+          "id": 1,
+          "kind": "vector",
+          "operator": "uniform",
+          "enabled": true,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 0,
+              "localY": 0
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "vectorXQ16": 6200,
+            "vectorYQ16": 0
+          },
+          "chunks": []
+        },
+        {
+          "id": 2,
+          "kind": "vector",
+          "operator": "vortex",
+          "enabled": false,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 8192000,
+              "localY": 6815744
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "radiusQ16": 4587520,
+            "strengthQ16": 28000
+          },
+          "chunks": []
+        },
+        {
+          "id": 3,
+          "kind": "vector",
+          "operator": "vortex",
+          "enabled": false,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 8716288,
+              "localY": 10747904
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "radiusQ16": 3670016,
+            "strengthQ16": -32000
+          },
+          "chunks": []
+        },
+        {
+          "id": 4,
+          "kind": "vector",
+          "operator": "turbulence",
+          "enabled": true,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 0,
+              "localY": 0
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "amplitudeQ16": 1800,
+            "cellSizeQ16": 1048576,
+            "seed": 890744099
+          },
+          "chunks": []
+        },
+        {
+          "id": 5,
+          "kind": "vector",
+          "operator": "direction-quantizer",
+          "enabled": true,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 0,
+              "localY": 0
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "sectors": 4
+          },
+          "chunks": []
+        },
+        {
+          "id": 6,
+          "kind": "vector",
+          "operator": "uniform",
+          "enabled": false,
+          "blend": "add",
+          "cellsPerChunk": 256,
+          "transform": {
+            "origin": {
+              "chunkX": 0,
+              "chunkY": 0,
+              "localX": 0,
+              "localY": 0
+            },
+            "scaleXQ16": 65536,
+            "scaleYQ16": 65536
+          },
+          "parameters": {
+            "vectorXQ16": -3100,
+            "vectorYQ16": 8200
+          },
+          "chunks": []
+        }
+      ]
+    },
+    "materials": [
+      {
+        "id": 1,
+        "kind": "ink",
+        "inertiaNumerator": 3,
+        "inertiaDenominator": 4,
+        "steeringNumerator": 1,
+        "steeringDenominator": 2,
+        "lifetimeTicks": 132,
+        "depositEvery": 1,
+        "primitive": "disc",
+        "radiusQ16": 23200,
+        "strengthQ16": 55000,
+        "quantizeAxis": false
+      },
+      {
+        "id": 2,
+        "kind": "filament",
+        "inertiaNumerator": 7,
+        "inertiaDenominator": 8,
+        "steeringNumerator": 1,
+        "steeringDenominator": 4,
+        "lifetimeTicks": 164,
+        "depositEvery": 1,
+        "primitive": "segment",
+        "radiusQ16": 12000,
+        "strengthQ16": 57000,
+        "quantizeAxis": false
+      },
+      {
+        "id": 3,
+        "kind": "dust",
+        "inertiaNumerator": 1,
+        "inertiaDenominator": 4,
+        "steeringNumerator": 3,
+        "steeringDenominator": 4,
+        "lifetimeTicks": 79,
+        "depositEvery": 2,
+        "primitive": "point",
+        "radiusQ16": 8192,
+        "strengthQ16": 52000,
+        "quantizeAxis": false
+      },
+      {
+        "id": 4,
+        "kind": "shard",
+        "inertiaNumerator": 1,
+        "inertiaDenominator": 2,
+        "steeringNumerator": 1,
+        "steeringDenominator": 1,
+        "lifetimeTicks": 104,
+        "depositEvery": 1,
+        "primitive": "segment",
+        "radiusQ16": 12000,
+        "strengthQ16": 64000,
+        "quantizeAxis": true
+      }
+    ],
+    "emitters": [
+      {
+        "id": 1,
+        "materialId": 2,
+        "startTick": 0,
+        "stopTick": 62,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 1114112,
+            "localY": 4325376
+          },
+          "widthQ16": 55706,
+          "heightQ16": 49152
+        },
+        "velocityXQ16": 142000,
+        "velocityYQ16": -4100,
+        "velocityJitterQ16": 2100
+      },
+      {
+        "id": 2,
+        "materialId": 2,
+        "startTick": 3,
+        "stopTick": 67,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 15597568,
+            "localY": 4128768
+          },
+          "widthQ16": 55706,
+          "heightQ16": 49152
+        },
+        "velocityXQ16": -137000,
+        "velocityYQ16": 3300,
+        "velocityJitterQ16": 2100
+      },
+      {
+        "id": 3,
+        "materialId": 2,
+        "startTick": 4,
+        "stopTick": 64,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 1310720,
+            "localY": 5767168
+          },
+          "widthQ16": 55706,
+          "heightQ16": 49152
+        },
+        "velocityXQ16": 142000,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 2100
+      },
+      {
+        "id": 4,
+        "materialId": 2,
+        "startTick": 7,
+        "stopTick": 69,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 15335424,
+            "localY": 6029312
+          },
+          "widthQ16": 55706,
+          "heightQ16": 49152
+        },
+        "velocityXQ16": -137000,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 2100
+      },
+      {
+        "id": 5,
+        "materialId": 2,
+        "startTick": 8,
+        "stopTick": 66,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 1114112,
+            "localY": 7143424
+          },
+          "widthQ16": 55706,
+          "heightQ16": 49152
+        },
+        "velocityXQ16": 142000,
+        "velocityYQ16": 4100,
+        "velocityJitterQ16": 2100
+      },
+      {
+        "id": 6,
+        "materialId": 2,
+        "startTick": 11,
+        "stopTick": 71,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 15597568,
+            "localY": 6946816
+          },
+          "widthQ16": 55706,
+          "heightQ16": 49152
+        },
+        "velocityXQ16": -137000,
+        "velocityYQ16": -3300,
+        "velocityJitterQ16": 2100
+      },
+      {
+        "id": 7,
+        "materialId": 2,
+        "startTick": 12,
+        "stopTick": 68,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 1310720,
+            "localY": 8585216
+          },
+          "widthQ16": 55706,
+          "heightQ16": 49152
+        },
+        "velocityXQ16": 142000,
+        "velocityYQ16": -4100,
+        "velocityJitterQ16": 2100
+      },
+      {
+        "id": 8,
+        "materialId": 2,
+        "startTick": 15,
+        "stopTick": 73,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 15335424,
+            "localY": 8847360
+          },
+          "widthQ16": 55706,
+          "heightQ16": 49152
+        },
+        "velocityXQ16": -137000,
+        "velocityYQ16": 3300,
+        "velocityJitterQ16": 2100
+      },
+      {
+        "id": 9,
+        "materialId": 2,
+        "startTick": 16,
+        "stopTick": 70,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 1114112,
+            "localY": 10289152
+          },
+          "widthQ16": 55706,
+          "heightQ16": 49152
+        },
+        "velocityXQ16": 142000,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 2100
+      },
+      {
+        "id": 10,
+        "materialId": 2,
+        "startTick": 19,
+        "stopTick": 75,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 15597568,
+            "localY": 10092544
+          },
+          "widthQ16": 55706,
+          "heightQ16": 49152
+        },
+        "velocityXQ16": -137000,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 2100
+      },
+      {
+        "id": 11,
+        "materialId": 2,
+        "startTick": 20,
+        "stopTick": 72,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 1310720,
+            "localY": 11927552
+          },
+          "widthQ16": 55706,
+          "heightQ16": 49152
+        },
+        "velocityXQ16": 142000,
+        "velocityYQ16": 4100,
+        "velocityJitterQ16": 2100
+      },
+      {
+        "id": 12,
+        "materialId": 2,
+        "startTick": 23,
+        "stopTick": 77,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 15335424,
+            "localY": 12189696
+          },
+          "widthQ16": 55706,
+          "heightQ16": 49152
+        },
+        "velocityXQ16": -137000,
+        "velocityYQ16": -3300,
+        "velocityJitterQ16": 2100
+      },
+      {
+        "id": 13,
+        "materialId": 1,
+        "startTick": 12,
+        "stopTick": 91,
+        "intervalTicks": 3,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 1966080,
+            "localY": 4980736
+          },
+          "widthQ16": 55706,
+          "heightQ16": 49152
+        },
+        "velocityXQ16": 102000,
+        "velocityYQ16": 4800,
+        "velocityJitterQ16": 3200
+      },
+      {
+        "id": 14,
+        "materialId": 1,
+        "startTick": 20,
+        "stopTick": 95,
+        "intervalTicks": 3,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 14548992,
+            "localY": 7340032
+          },
+          "widthQ16": 55706,
+          "heightQ16": 49152
+        },
+        "velocityXQ16": -102000,
+        "velocityYQ16": -5000,
+        "velocityJitterQ16": 3200
+      },
+      {
+        "id": 15,
+        "materialId": 1,
+        "startTick": 28,
+        "stopTick": 99,
+        "intervalTicks": 3,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 1966080,
+            "localY": 9764864
+          },
+          "widthQ16": 55706,
+          "heightQ16": 49152
+        },
+        "velocityXQ16": 102000,
+        "velocityYQ16": 4800,
+        "velocityJitterQ16": 3200
+      },
+      {
+        "id": 16,
+        "materialId": 1,
+        "startTick": 36,
+        "stopTick": 103,
+        "intervalTicks": 3,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 14548992,
+            "localY": 11862016
+          },
+          "widthQ16": 55706,
+          "heightQ16": 49152
+        },
+        "velocityXQ16": -102000,
+        "velocityYQ16": -5000,
+        "velocityJitterQ16": 3200
+      },
+      {
+        "id": 17,
+        "materialId": 3,
+        "startTick": 58,
+        "stopTick": 120,
+        "intervalTicks": 3,
+        "rate": 3,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8257536,
+            "localY": 7536640
+          },
+          "widthQ16": 55706,
+          "heightQ16": 49152
+        },
+        "velocityXQ16": 55000,
+        "velocityYQ16": 17000,
+        "velocityJitterQ16": 6800
+      },
+      {
+        "id": 18,
+        "materialId": 3,
+        "startTick": 72,
+        "stopTick": 133,
+        "intervalTicks": 3,
+        "rate": 3,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8519680,
+            "localY": 9502720
+          },
+          "widthQ16": 55706,
+          "heightQ16": 49152
+        },
+        "velocityXQ16": -49000,
+        "velocityYQ16": -25000,
+        "velocityJitterQ16": 6800
+      },
+      {
+        "id": 19,
+        "materialId": 4,
+        "startTick": 101,
+        "stopTick": 153,
+        "intervalTicks": 2,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8388608,
+            "localY": 6356992
+          },
+          "widthQ16": 55706,
+          "heightQ16": 49152
+        },
+        "velocityXQ16": 1500,
+        "velocityYQ16": 96000,
+        "velocityJitterQ16": 1400
+      },
+      {
+        "id": 20,
+        "materialId": 4,
+        "startTick": 109,
+        "stopTick": 160,
+        "intervalTicks": 2,
+        "rate": 2,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 8323072,
+            "localY": 10420224
+          },
+          "widthQ16": 55706,
+          "heightQ16": 49152
+        },
+        "velocityXQ16": -2800,
+        "velocityYQ16": -92000,
+        "velocityJitterQ16": 1400
+      },
+      {
+        "id": 21,
+        "materialId": 2,
+        "startTick": 29,
+        "stopTick": 76,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 3604480,
+            "localY": 4456448
+          },
+          "widthQ16": 60000,
+          "heightQ16": 45000
+        },
+        "velocityXQ16": 119000,
+        "velocityYQ16": -4500,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 22,
+        "materialId": 2,
+        "startTick": 31,
+        "stopTick": 76,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 6815744,
+            "localY": 4456448
+          },
+          "widthQ16": 60000,
+          "heightQ16": 45000
+        },
+        "velocityXQ16": 119000,
+        "velocityYQ16": -4500,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 23,
+        "materialId": 2,
+        "startTick": 33,
+        "stopTick": 76,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 9633792,
+            "localY": 4456448
+          },
+          "widthQ16": 60000,
+          "heightQ16": 45000
+        },
+        "velocityXQ16": -121000,
+        "velocityYQ16": -4500,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 24,
+        "materialId": 2,
+        "startTick": 35,
+        "stopTick": 76,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12713984,
+            "localY": 4456448
+          },
+          "widthQ16": 60000,
+          "heightQ16": 45000
+        },
+        "velocityXQ16": -121000,
+        "velocityYQ16": -4500,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 25,
+        "materialId": 2,
+        "startTick": 35,
+        "stopTick": 82,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 4063232,
+            "localY": 7012352
+          },
+          "widthQ16": 60000,
+          "heightQ16": 45000
+        },
+        "velocityXQ16": 119000,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 26,
+        "materialId": 2,
+        "startTick": 37,
+        "stopTick": 82,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 7274496,
+            "localY": 7012352
+          },
+          "widthQ16": 60000,
+          "heightQ16": 45000
+        },
+        "velocityXQ16": 119000,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 27,
+        "materialId": 2,
+        "startTick": 39,
+        "stopTick": 82,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 10092544,
+            "localY": 7012352
+          },
+          "widthQ16": 60000,
+          "heightQ16": 45000
+        },
+        "velocityXQ16": -121000,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 28,
+        "materialId": 2,
+        "startTick": 41,
+        "stopTick": 82,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 13172736,
+            "localY": 7012352
+          },
+          "widthQ16": 60000,
+          "heightQ16": 45000
+        },
+        "velocityXQ16": -121000,
+        "velocityYQ16": 0,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 29,
+        "materialId": 2,
+        "startTick": 41,
+        "stopTick": 88,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 3604480,
+            "localY": 9699328
+          },
+          "widthQ16": 60000,
+          "heightQ16": 45000
+        },
+        "velocityXQ16": 119000,
+        "velocityYQ16": 4500,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 30,
+        "materialId": 2,
+        "startTick": 43,
+        "stopTick": 88,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 6815744,
+            "localY": 9699328
+          },
+          "widthQ16": 60000,
+          "heightQ16": 45000
+        },
+        "velocityXQ16": 119000,
+        "velocityYQ16": 4500,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 31,
+        "materialId": 2,
+        "startTick": 45,
+        "stopTick": 88,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 9633792,
+            "localY": 9699328
+          },
+          "widthQ16": 60000,
+          "heightQ16": 45000
+        },
+        "velocityXQ16": -121000,
+        "velocityYQ16": 4500,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 32,
+        "materialId": 2,
+        "startTick": 47,
+        "stopTick": 88,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 12713984,
+            "localY": 9699328
+          },
+          "widthQ16": 60000,
+          "heightQ16": 45000
+        },
+        "velocityXQ16": -121000,
+        "velocityYQ16": 4500,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 33,
+        "materialId": 2,
+        "startTick": 47,
+        "stopTick": 94,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 4063232,
+            "localY": 12124160
+          },
+          "widthQ16": 60000,
+          "heightQ16": 45000
+        },
+        "velocityXQ16": 119000,
+        "velocityYQ16": 9000,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 34,
+        "materialId": 2,
+        "startTick": 49,
+        "stopTick": 94,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 7274496,
+            "localY": 12124160
+          },
+          "widthQ16": 60000,
+          "heightQ16": 45000
+        },
+        "velocityXQ16": 119000,
+        "velocityYQ16": 9000,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 35,
+        "materialId": 2,
+        "startTick": 51,
+        "stopTick": 94,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 10092544,
+            "localY": 12124160
+          },
+          "widthQ16": 60000,
+          "heightQ16": 45000
+        },
+        "velocityXQ16": -121000,
+        "velocityYQ16": 9000,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 36,
+        "materialId": 2,
+        "startTick": 53,
+        "stopTick": 94,
+        "intervalTicks": 1,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 13172736,
+            "localY": 12124160
+          },
+          "widthQ16": 60000,
+          "heightQ16": 45000
+        },
+        "velocityXQ16": -121000,
+        "velocityYQ16": 9000,
+        "velocityJitterQ16": 1800
+      },
+      {
+        "id": 37,
+        "materialId": 1,
+        "startTick": 66,
+        "stopTick": 106,
+        "intervalTicks": 2,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5505024,
+            "localY": 6422528
+          },
+          "widthQ16": 55000,
+          "heightQ16": 45000
+        },
+        "velocityXQ16": 96000,
+        "velocityYQ16": -4700,
+        "velocityJitterQ16": 2600
+      },
+      {
+        "id": 38,
+        "materialId": 1,
+        "startTick": 66,
+        "stopTick": 106,
+        "intervalTicks": 2,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 11272192,
+            "localY": 6422528
+          },
+          "widthQ16": 55000,
+          "heightQ16": 45000
+        },
+        "velocityXQ16": -95000,
+        "velocityYQ16": -4700,
+        "velocityJitterQ16": 2600
+      },
+      {
+        "id": 39,
+        "materialId": 1,
+        "startTick": 74,
+        "stopTick": 112,
+        "intervalTicks": 2,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 5505024,
+            "localY": 10616832
+          },
+          "widthQ16": 55000,
+          "heightQ16": 45000
+        },
+        "velocityXQ16": 96000,
+        "velocityYQ16": 4800,
+        "velocityJitterQ16": 2600
+      },
+      {
+        "id": 40,
+        "materialId": 1,
+        "startTick": 74,
+        "stopTick": 112,
+        "intervalTicks": 2,
+        "rate": 1,
+        "bursts": [],
+        "geometry": {
+          "type": "box",
+          "origin": {
+            "chunkX": 0,
+            "chunkY": 0,
+            "localX": 11272192,
+            "localY": 10616832
+          },
+          "widthQ16": 55000,
+          "heightQ16": 45000
+        },
+        "velocityXQ16": -95000,
+        "velocityYQ16": 4800,
+        "velocityJitterQ16": 2600
+      }
+    ],
+    "lut": {
+      "schemaVersion": "fw-lut-v1",
+      "assets": [
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 1,
+          "name": "Verdigris / magnetic ink",
+          "size": 32,
+          "channels": {
+            "a": [
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535
+            ],
+            "b": [
+              20817,
+              23569,
+              26322,
+              29074,
+              31827,
+              34579,
+              37331,
+              40084,
+              42297,
+              42894,
+              43491,
+              44088,
+              44685,
+              45282,
+              45879,
+              46476,
+              45680,
+              43491,
+              41302,
+              39114,
+              36925,
+              34736,
+              32548,
+              30359,
+              28394,
+              26504,
+              24614,
+              22724,
+              20834,
+              18943,
+              17053,
+              15163
+            ],
+            "g": [
+              20303,
+              23884,
+              27466,
+              31047,
+              34629,
+              38210,
+              41792,
+              45373,
+              48482,
+              50173,
+              51864,
+              53555,
+              55247,
+              56938,
+              58629,
+              60320,
+              60453,
+              59027,
+              57601,
+              56175,
+              54749,
+              53323,
+              51897,
+              50471,
+              46757,
+              42281,
+              37804,
+              33327,
+              28850,
+              24374,
+              19897,
+              15420
+            ],
+            "r": [
+              5140,
+              6102,
+              7063,
+              8025,
+              8987,
+              9948,
+              10910,
+              11872,
+              13878,
+              19018,
+              24158,
+              29298,
+              34438,
+              39578,
+              44718,
+              49858,
+              52992,
+              54119,
+              55247,
+              56374,
+              57502,
+              58629,
+              59757,
+              60884,
+              58356,
+              54608,
+              50861,
+              47114,
+              43367,
+              39619,
+              35872,
+              32125
+            ]
+          }
+        },
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 2,
+          "name": "Strata / twelve-channel horizon register",
+          "size": 32,
+          "channels": {
+            "a": [
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535
+            ],
+            "b": [
+              30583,
+              32208,
+              33833,
+              35458,
+              37083,
+              38409,
+              39512,
+              40614,
+              41717,
+              42645,
+              42529,
+              42413,
+              42297,
+              42181,
+              38252,
+              32797,
+              27341,
+              21886,
+              20162,
+              27764,
+              35367,
+              42969,
+              50571,
+              49817,
+              47669,
+              45522,
+              43375,
+              42347,
+              42811,
+              43275,
+              43740,
+              44204
+            ],
+            "g": [
+              24929,
+              26554,
+              28179,
+              29804,
+              31429,
+              33750,
+              36593,
+              39437,
+              42281,
+              45083,
+              47636,
+              50190,
+              52743,
+              55296,
+              51342,
+              44784,
+              38227,
+              31669,
+              29140,
+              36685,
+              44229,
+              51773,
+              59317,
+              57013,
+              53066,
+              49120,
+              45174,
+              43690,
+              45489,
+              47288,
+              49087,
+              50886
+            ],
+            "r": [
+              5397,
+              8183,
+              10968,
+              13754,
+              16539,
+              20353,
+              24937,
+              29522,
+              34106,
+              38741,
+              43673,
+              48606,
+              53539,
+              58472,
+              59176,
+              58190,
+              57203,
+              56217,
+              56009,
+              57750,
+              59491,
+              61232,
+              62973,
+              54716,
+              44793,
+              34869,
+              24946,
+              21812,
+              27731,
+              33650,
+              39570,
+              45489
+            ]
+          }
+        },
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 3,
+          "name": "Fault dust / copper sparks",
+          "size": 32,
+          "channels": {
+            "a": [
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535
+            ],
+            "b": [
+              9766,
+              10429,
+              11092,
+              11756,
+              12419,
+              13082,
+              13745,
+              14409,
+              15213,
+              16440,
+              17667,
+              18894,
+              20121,
+              21348,
+              22575,
+              23802,
+              25327,
+              27151,
+              28975,
+              30799,
+              32622,
+              34446,
+              36270,
+              38094,
+              38724,
+              38956,
+              39188,
+              39420,
+              39653,
+              39885,
+              40117,
+              40349
+            ],
+            "g": [
+              8224,
+              9749,
+              11275,
+              12800,
+              14326,
+              15851,
+              17377,
+              18902,
+              20651,
+              23072,
+              25493,
+              27914,
+              30334,
+              32755,
+              35176,
+              37597,
+              39968,
+              42289,
+              44610,
+              46932,
+              49253,
+              51574,
+              53895,
+              56217,
+              54981,
+              52561,
+              50140,
+              47719,
+              45298,
+              42878,
+              40457,
+              38036
+            ],
+            "r": [
+              29298,
+              32084,
+              34869,
+              37655,
+              40440,
+              43226,
+              46011,
+              48797,
+              51242,
+              52668,
+              54094,
+              55520,
+              56946,
+              58372,
+              59798,
+              61224,
+              62003,
+              62136,
+              62269,
+              62401,
+              62534,
+              62667,
+              62799,
+              62932,
+              58712,
+              53041,
+              47371,
+              41700,
+              36030,
+              30359,
+              24689,
+              19018
+            ]
+          }
+        },
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 4,
+          "name": "Splinter / ivory fracture",
+          "size": 32,
+          "channels": {
+            "a": [
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535,
+              65535
+            ],
+            "b": [
+              30069,
+              32423,
+              34778,
+              37132,
+              39487,
+              41841,
+              44196,
+              46550,
+              48474,
+              49104,
+              49734,
+              50364,
+              50994,
+              51624,
+              52254,
+              52884,
+              51773,
+              48921,
+              46069,
+              43217,
+              40366,
+              37514,
+              34662,
+              31810,
+              29704,
+              27847,
+              25990,
+              24133,
+              22276,
+              20419,
+              18562,
+              16705
+            ],
+            "g": [
+              24672,
+              27590,
+              30508,
+              33427,
+              36345,
+              39263,
+              42181,
+              45099,
+              47661,
+              49153,
+              50646,
+              52138,
+              53630,
+              55122,
+              56615,
+              58107,
+              58289,
+              57162,
+              56034,
+              54907,
+              53779,
+              52652,
+              51524,
+              50397,
+              46981,
+              42803,
+              38625,
+              34446,
+              30268,
+              26090,
+              21911,
+              17733
+            ],
+            "r": [
+              17733,
+              20121,
+              22508,
+              24896,
+              27283,
+              29671,
+              32059,
+              34446,
+              36991,
+              40009,
+              43027,
+              46044,
+              49062,
+              52080,
+              55097,
+              58115,
+              59939,
+              60569,
+              61199,
+              61829,
+              62459,
+              63089,
+              63719,
+              64349,
+              61299,
+              57021,
+              52743,
+              48465,
+              44187,
+              39910,
+              35632,
+              31354
+            ]
+          }
+        },
+        {
+          "schemaVersion": "fw-lut-v1",
+          "id": 5,
+          "name": "Aftershock / age-dependent dust steering",
+          "size": 32,
+          "channels": {
+            "logic": [
+              18000,
+              19400,
+              22200,
+              25000,
+              27800,
+              30600,
+              33400,
+              36200,
+              39000,
+              41800,
+              44600,
+              47400,
+              50200,
+              53000,
+              55800,
+              58600,
+              61400,
+              58600,
+              55800,
+              53000,
+              50200,
+              47400,
+              44600,
+              41800,
+              39000,
+              36200,
+              33400,
+              30600,
+              27800,
+              25000,
+              22200,
+              19400
+            ]
+          }
+        }
+      ],
+      "mappings": [
+        {
+          "version": "fw-lut-map-v1",
+          "id": 1,
+          "materialId": 1,
+          "lutId": 1,
+          "source": "lifetimeProgressQ16",
+          "channel": "rgba",
+          "destination": "color",
+          "addressMode": "clamp",
+          "inputMin": 0,
+          "inputMax": 65536,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 0,
+          "outputMax": 65535
+        },
+        {
+          "version": "fw-lut-map-v1",
+          "id": 2,
+          "materialId": 2,
+          "lutId": 2,
+          "source": "emitterId",
+          "channel": "rgba",
+          "destination": "color",
+          "addressMode": "clamp",
+          "inputMin": 1,
+          "inputMax": 40,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 0,
+          "outputMax": 65535
+        },
+        {
+          "version": "fw-lut-map-v1",
+          "id": 3,
+          "materialId": 3,
+          "lutId": 3,
+          "source": "lifetimeProgressQ16",
+          "channel": "rgba",
+          "destination": "color",
+          "addressMode": "clamp",
+          "inputMin": 0,
+          "inputMax": 65536,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 0,
+          "outputMax": 65535
+        },
+        {
+          "version": "fw-lut-map-v1",
+          "id": 4,
+          "materialId": 4,
+          "lutId": 4,
+          "source": "lifetimeProgressQ16",
+          "channel": "rgba",
+          "destination": "color",
+          "addressMode": "clamp",
+          "inputMin": 0,
+          "inputMax": 65536,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 0,
+          "outputMax": 65535
+        },
+        {
+          "version": "fw-lut-map-v1",
+          "id": 5,
+          "materialId": 3,
+          "lutId": 5,
+          "source": "ageTicks",
+          "channel": "logic",
+          "destination": "steeringMultiplierQ16",
+          "addressMode": "clamp",
+          "inputMin": 0,
+          "inputMax": 78,
+          "scaleNumerator": 1,
+          "scaleDenominator": 1,
+          "bias": 0,
+          "outputMin": 12000,
+          "outputMax": 65536
+        }
+      ]
+    },
+    "commands": [
+      {
+        "version": "fw-command-v1",
+        "id": 10,
+        "tick": 19,
+        "type": "release-burst",
+        "emitterId": 1,
+        "count": 14
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 20,
+        "tick": 25,
+        "type": "release-burst",
+        "emitterId": 12,
+        "count": 14
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 30,
+        "tick": 37,
+        "type": "set-emitter-rate",
+        "emitterId": 7,
+        "rate": 0
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 40,
+        "tick": 52,
+        "type": "set-field-enabled",
+        "fieldId": 2,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 50,
+        "tick": 56,
+        "type": "set-emitter-rate",
+        "emitterId": 7,
+        "rate": 1
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 60,
+        "tick": 70,
+        "type": "set-field-enabled",
+        "fieldId": 3,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 70,
+        "tick": 83,
+        "type": "set-field-enabled",
+        "fieldId": 5,
+        "enabled": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 80,
+        "tick": 94,
+        "type": "set-simulation-frozen",
+        "frozen": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 90,
+        "tick": 98,
+        "type": "set-simulation-frozen",
+        "frozen": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 100,
+        "tick": 105,
+        "type": "set-field-enabled",
+        "fieldId": 6,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 110,
+        "tick": 112,
+        "type": "release-burst",
+        "emitterId": 17,
+        "count": 18
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 120,
+        "tick": 126,
+        "type": "set-field-enabled",
+        "fieldId": 2,
+        "enabled": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 130,
+        "tick": 138,
+        "type": "set-field-enabled",
+        "fieldId": 3,
+        "enabled": false
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 140,
+        "tick": 146,
+        "type": "set-field-enabled",
+        "fieldId": 5,
+        "enabled": true
+      },
+      {
+        "version": "fw-command-v1",
+        "id": 150,
+        "tick": 152,
+        "type": "release-burst",
+        "emitterId": 20,
+        "count": 12
+      }
+    ],
+    "lineage": null
+  },
+  "seed": 1503731315,
+  "schemaVersion": "fw-recipe-v1",
+  "engineVersion": "fw-agents-v1",
+  "targetTick": 176,
+  "crop": {
+    "widthPx": 512,
+    "heightPx": 384,
+    "center": {
+      "chunkX": 0,
+      "chunkY": 0,
+      "localX": 8388608,
+      "localY": 8912896
+    },
+    "unitsPerPixelQ16": 32768
+  },
+  "widthPx": 512,
+  "heightPx": 384,
+  "unitsPerPixelQ16": 32768,
+  "backgroundRgba8": [
+    9,
+    11,
+    8,
+    255
+  ],
+  "pixelFormat": "rgba8",
+  "rawRgbaHash": "fd389a9bb0ce640f",
+  "stateHash": "65dfec3443bbf2a3",
+  "depositionHash": "b35798a4e049945c",
+  "resultHash": "468a91bf82bbb51d",
+  "lineage": null
+}

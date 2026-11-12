@@ -1,0 +1,22 @@
+{
+  "artwork": "03-the-interval-engine",
+  "seed": 1503731315,
+  "recipeHash": "4adb2abba8c7999f",
+  "targetTick": 176,
+  "crop": {
+    "widthPx": 512,
+    "heightPx": 384,
+    "center": {
+      "chunkX": 0,
+      "chunkY": 0,
+      "localX": 8388608,
+      "localY": 8912896
+    },
+    "unitsPerPixelQ16": 32768
+  },
+  "depositionCount": 210772,
+  "rawRgbaHash": "fd389a9bb0ce640f",
+  "stateHash": "65dfec3443bbf2a3",
+  "depositionHash": "b35798a4e049945c",
+  "resultHash": "468a91bf82bbb51d"
+}
