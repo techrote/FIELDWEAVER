@@ -15,6 +15,14 @@ The images are neither generated twice nor substituted with WebGL, stock images 
 Native dialog, buttons, visible focus indicators and keyboard shortcuts support accessibility; there is no autoplay, polling network API, telemetry or external asset. The source-only regression checks verify catalog cycling, display metadata, actual golden CPU proof identities and recipe immutability. The dedicated Chrome/Firefox smoke opens the dialog, browses, pins and loads, captures a real screenshot, and records image decoding. Those browser observations must be qualified separately from Node tests.
 
 
+## Export a portable exact-difference mask from the offline board
+
+The existing **A/B comparison index** now offers **Save diagnostic difference mask (PNG)** for each of its six accepted pairs, alongside its canonical originals, receipt, ledger and eight-file evidence ZIP. Each mask is an original-resolution, **noncanonical** RGBA8 image computed exclusively from the two independently verified accepted CPU rasters. Unchanged positions are fully transparent RGBA `(0,0,0,0)`; any position with an R, G, B **or alpha** source-byte difference is opaque amber `(228,182,101,255)`. The mask can be overlaid in an external image editor without exporting or modifying either original canonical artwork. It is not a source colour image or an artistic admission.
+
+Coordinate `(0,0)` is the image-local top-left. Only the overlapping pixel rectangle is encoded; **different authored world crops are not registered or spatially comparable**. Mask filenames include both accepted source IDs and their raw decoded RGBA8 hashes. Mask PNGs are deliberately separate from the stable eight-member A/B evidence ZIP and the twelve-member accepted collection ZIP, which continue to contain their original canonical source triplets and JSON/CSV data only.
+
+This export reuses the existing FW-012 PNG byte packager and source-exact decoded RGBA8 comparison; no WebGL, Canvas, script, external network service, CSP exception or new gallery is involved. Node regression independently recomputes every mask pixel from both original CPU rasters and exercises invalid/duplicate coordinates. The Chrome/Firefox offline `file://` gate performs a real keyboard Enter download, compares downloaded bytes against the link, checks mask pixel positions and retains screenshots. Browser CI does not establish physical Windows download-manager acceptance.
+
 ## Inspect actual decoded pixels
 
 Open the canonical gallery study after generating the four verified CPU proofs. Choose **Inspect exact pixels** or click an image. Column and row inputs are keyboard-editable and report its exact source pixel RGBA8 tuple, RGB hexadecimal colour and the complete decoded-image identity. The 9×9 magnification is a noncanonical nearest-neighbour presentation of the original PNG bytes, never a new export.
