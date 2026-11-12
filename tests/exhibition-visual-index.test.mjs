@@ -149,6 +149,8 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
   assert.match(board.html, /href="#comparison-index">A\/B comparison index/);
   assert.match(board.html, /id="comparison-scroll"[^>]+tabindex="0"/);
   const decodedById = new Map(tiles.map((tile) => [tile.id, decodePngRgba(tile.png)]));
+  const channelCells = [...board.html.matchAll(/<td class="pair-channel-counts" data-r="(\d+)" data-g="(\d+)" data-b="(\d+)" data-a="(\d+)" data-rgb-only="(\d+)" data-alpha-only="(\d+)" data-both="(\d+)">([^<]+)<\/td>/g)];
+  assert.equal(channelCells.length, 6, 'one complete source-channel classification for each accepted pair');
   const seenPairs = new Set();
   for (const [, aId, bId, countText, totalText] of pairRows) {
     const key = aId + '/' + bId;
@@ -159,15 +161,33 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
     const width = Math.min(a.widthPx, b.widthPx);
     const height = Math.min(a.heightPx, b.heightPx);
     let expected = 0;
+    const channelCounts = [0, 0, 0, 0];
+    let rgbOnly = 0, alphaOnly = 0, both = 0;
     for (let y = 0; y < height; y += 1) {
       for (let x = 0; x < width; x += 1) {
         const aAt = (y * a.widthPx + x) * 4;
         const bAt = (y * b.widthPx + x) * 4;
-        if ([0, 1, 2, 3].some((ch) => a.rgba[aAt + ch] !== b.rgba[bAt + ch])) expected += 1;
+        const flags = [0, 1, 2, 3].map(ch => a.rgba[aAt + ch] !== b.rgba[bAt + ch]);
+        flags.forEach((flag, ch) => { if (flag) channelCounts[ch] += 1; });
+        const rgb = flags.slice(0, 3).some(Boolean), alpha = flags[3];
+        if (rgb || alpha) {
+          expected += 1;
+          if (rgb && alpha) both += 1;
+          else if (rgb) rgbOnly += 1;
+          else alphaOnly += 1;
+        }
       }
     }
     assert.equal(Number(countText), expected, 'decoded CPU RGBA8 mismatch for ' + key);
     assert.equal(Number(totalText), width * height);
+    const channelCell = channelCells[seenPairs.size - 1];
+    assert.deepEqual(channelCell.slice(1, 8).map(Number),
+      [...channelCounts, rgbOnly, alphaOnly, both],
+      'source-channel and alpha/RGB partitions must independently match every decoded pixel: ' + key);
+    assert.equal(rgbOnly + alphaOnly + both, expected);
+    assert(channelCell[8].includes('RGB-only ' + rgbOnly) &&
+      channelCell[8].includes('alpha-only ' + alphaOnly),
+      'owner-visible breakdown must expose distinct opacity and colour changes');
   }
   // An independent raw-RGBA8 oracle must match every row of each complete
   // CSV, not merely the total, and its native disclosure count.

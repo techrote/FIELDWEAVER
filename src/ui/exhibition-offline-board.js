@@ -54,6 +54,25 @@ function exactPairPixelChanges(a, b) {
   return changes;
 }
 
+// Count literal source-channel changes, including whether opacity and RGB
+// differ independently or together. Not a perceptual score or world registration.
+function exactPairChangeClasses(changes) {
+  const perChannel = [0, 0, 0, 0];
+  let rgbOnly = 0, alphaOnly = 0, both = 0;
+  for (const { delta } of changes) {
+    for (let channel = 0; channel < 4; channel++) {
+      if (delta[channel] !== 0) perChannel[channel] += 1;
+    }
+    const rgb = delta[0] !== 0 || delta[1] !== 0 || delta[2] !== 0;
+    const alpha = delta[3] !== 0;
+    if (rgb && alpha) both += 1;
+    else if (rgb) rgbOnly += 1;
+    else if (alpha) alphaOnly += 1;
+    else throw new Error('A purported changed pixel has identical RGBA8 sources.');
+  }
+  return { perChannel, rgbOnly, alphaOnly, both };
+}
+
 // A diagnostic locator, never a replacement artwork or a canonical raster.
 // Each 1x1 rectangle represents one independently enumerated, differing
 // decoded RGBA8 pixel. Preserve image-local coordinates: distinct authored
@@ -267,6 +286,10 @@ export function buildOfflineExhibitionBoard(tiles) {
           bytes: new TextEncoder().encode(JSON.stringify(comparisonReceipt, null, 2) + '\n') },
         { name: ledgerFile, bytes: new TextEncoder().encode(ledgerCsv) }
       ]));
+      const changeClasses = exactPairChangeClasses(changes);
+      if (changeClasses.rgbOnly + changeClasses.alphaOnly + changeClasses.both !== stats.differentPixels) {
+        throw new Error('Offline A/B source-channel classes disagree with verified pixel counts.');
+      }
       const locatorSvg = exactPairLocatorSvg(stats.width, stats.height,
         changes, first.id, second.id);
       const pixelDisclosure = '<details class="pair-pixels" data-pair-a="' +
@@ -323,6 +346,17 @@ export function buildOfflineExhibitionBoard(tiles) {
         '</div></details>' + pixelDisclosure + '</th>' +
         '<td>' + stats.width + '×' + stats.height + '</td>' +
         '<td>' + stats.differentPixels + ' / ' + stats.overlapPixels + '</td>' +
+        '<td class="pair-channel-counts" data-r="' + changeClasses.perChannel[0] +
+        '" data-g="' + changeClasses.perChannel[1] +
+        '" data-b="' + changeClasses.perChannel[2] +
+        '" data-a="' + changeClasses.perChannel[3] +
+        '" data-rgb-only="' + changeClasses.rgbOnly +
+        '" data-alpha-only="' + changeClasses.alphaOnly +
+        '" data-both="' + changeClasses.both +
+        '">R ' + changeClasses.perChannel[0] + ' · G ' + changeClasses.perChannel[1] +
+        ' · B ' + changeClasses.perChannel[2] + ' · A ' + changeClasses.perChannel[3] +
+        '. RGB-only ' + changeClasses.rgbOnly + ', alpha-only ' +
+        changeClasses.alphaOnly + ', RGB+alpha ' + changeClasses.both + '.</td>' +
         '<td>' + bounds + '</td>' +
         '<td>' + stats.channelMaxAbsDelta.join(', ') + '</td>' +
         '<td>' + alignment + '</td>' +
@@ -343,11 +377,13 @@ export function buildOfflineExhibitionBoard(tiles) {
     '<p>Every accepted pair is compared using original decoded CPU RGBA8 bytes ' +
     'in its shared image-local rectangle. Changed means any RGBA channel differs; ' +
     'bounds are inclusive. Different authored crops are not registered in world space. ' +
+    'The per-channel counts show exactly how many pixels changed each R/G/B/A byte; RGB-only, alpha-only and combined classes partition the changed-pixel total. ' +
     'These are not perceptual similarity scores. Expand each pair to see exact canonical images and inspect every changed pixel on a diagnostic coordinate locator and in a lossless CSV ledger.</p>' +
     '<div id="comparison-scroll" class="comparison-scroll" tabindex="0" role="region" ' +
     'aria-label="Scrollable A/B comparison table"><table><thead><tr>' +
     '<th scope="col">Accepted works</th><th scope="col">Overlap (pixels)</th>' +
-    '<th scope="col">Changed RGBA8 pixels</th><th scope="col">Change bounds</th>' +
+    '<th scope="col">Changed RGBA8 pixels</th>' +
+    '<th scope="col">Changed source channels (pixels)</th><th scope="col">Change bounds</th>' +
     '<th scope="col">Maximum |ΔRGBA8| R, G, B, A</th><th scope="col">Coordinate meaning</th>' +
     '<th scope="col">Evidence</th>' +
     '</tr></thead><tbody>' + pairRows.join('') + '</tbody></table></div></section>';

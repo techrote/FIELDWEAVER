@@ -220,6 +220,17 @@ try {
     throw new Error('Offline pairwise comparison did not match accepted CPU identities: ' +
       JSON.stringify(comparisons));
   }
+  // The existing accepted-only table also reports exact changed channels,
+  // independently decoded from the same canonical CPU PNGs in Node tests.
+  const channelClasses = await execute("return [...document.querySelectorAll('#comparison-index tr[data-pair-a]')].map(row=>{const c=row.querySelector('td.pair-channel-counts');return c?{a:row.dataset.pairA,b:row.dataset.pairB,total:Number(row.dataset.differences),channels:['r','g','b','a'].map(k=>Number(c.dataset[k])),rgbOnly:Number(c.dataset.rgbOnly),alphaOnly:Number(c.dataset.alphaOnly),both:Number(c.dataset.both),text:c.textContent}:null})");
+  if (channelClasses.length !== 6 || channelClasses.some(c=>!c ||
+      c.rgbOnly+c.alphaOnly+c.both!==c.total ||
+      c.channels.some(n=>!Number.isInteger(n)||n<0||n>c.total) ||
+      !c.text.includes('RGB-only '+c.rgbOnly) ||
+      !c.text.includes('alpha-only '+c.alphaOnly) ||
+      !c.text.includes('RGB+alpha '+c.both))) {
+    throw new Error('Real offline channel-classification display is inconsistent: '+JSON.stringify(channelClasses));
+  }
   // Decode the real saved file:// page's receipt links inside Firefox/Chrome.
   // The page itself remains script-free; the WebDriver probe is external.
   const comparisonReceipts = await execute(`return [...document.querySelectorAll('#comparison-index a[download$=".fwcompare.json"]')].map(a=>({name:a.download,data:JSON.parse(atob(a.href.split(',')[1]))}))`);
