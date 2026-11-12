@@ -406,7 +406,7 @@ try {
     using:'css selector',value:'#comparison-index .pair-pixels svg.pair-locator a:last-child'});
   const elementId = elementReply?.value?.['element-6066-11e4-a52e-4f735466cecf'];
   if (!elementId) throw new Error('WebDriver did not locate physical SVG pixel marker.');
-  await request('POST','/session/'+sessionId+'/element/'+elementId+'/click');
+  await request('POST','/session/'+sessionId+'/element/'+elementId+'/click', {});
   const pointerResult = await execute(`const row=document.getElementById(location.hash.slice(1));
     return {hash:location.hash,valid:!!row&&row.matches(':target'),
       coordinates:row?.dataset.pixelX+','+row?.dataset.pixelY,
