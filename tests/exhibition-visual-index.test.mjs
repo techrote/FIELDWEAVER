@@ -131,7 +131,7 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
   // CSS data: backgrounds avoid adding another raster/export subsystem.
   const previews = [...board.html.matchAll(/<details class="pair-preview" data-pair-a="([^"]+)" data-pair-b="([^"]+)">/g)];
   assert.equal(previews.length, 6, 'one native keyboard disclosure per accepted pair');
-  const rasterPreviews = [...board.html.matchAll(/<div class="pair-raster" role="img" data-work-id="([^"]+)" data-canonical-hash="([^"]+)" aria-label="([^"]+)" style="background-image:url\\(data:image\\/png;base64,([^)]*)\\)"><\\/div>/g)];
+  const rasterPreviews = [...board.html.matchAll(/<div class="pair-raster" role="img" data-work-id="([^"]+)" data-canonical-hash="([^"]+)" aria-label="([^"]+)" style="background-image:url\(data:image\/png;base64,([^)]*)\)"><\/div>/g)];
   const expectedIds = exhibitionEntries().flatMap((entry, index, all) =>
     all.slice(index + 1).flatMap((other) => [entry.id, other.id]));
   assert.equal(rasterPreviews.length, 12, 'both originals visibly available per pair');
@@ -144,7 +144,7 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
     assert.deepEqual(actual, original.png, 'pair preview cannot substitute a thumbnail');
     assert.equal(rawRgbaHash(decodePngRgba(actual).rgba), original.rawRgbaHash);
   }
-  assert.equal((board.html.match(/<img\\b/g) ?? []).length, 4,
+  assert.equal((board.html.match(/<img\b/g) ?? []).length, 4,
     'optional previews cannot create additional visual index images');
   assert.match(board.html, /href="#comparison-index">A\/B comparison index/);
   assert.match(board.html, /id="comparison-scroll"[^>]+tabindex="0"/);
