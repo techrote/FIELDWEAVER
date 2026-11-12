@@ -60,15 +60,13 @@ node scripts/review-gallery.mjs --out rooms-review.html --preset operator-atlas 
 
 Open `rooms-review.html` directly in Firefox. The existing repository tool creates one offline, keyboard-navigable review with two **ACCEPTED PRESET** CPU proofs and this **UNMERGED CANDIDATE**, including recipe, canonical PNG and provenance downloads. It independently replays and checks the candidate's twenty canonical provenance fields and decoded pixels against the archived PNG before producing the page. This does not enroll the artwork into the accepted catalog or replace a working editor recipe. The output path is create-only; use another filename if the first review already exists.
 
-For a direct comparison against Original 09 `The Last Manta` while preserving isolated branches:
+### Current accepted-main admission route (after Integration #77)
 
-```sh
-git fetch origin pull/61/head:refs/heads/review/original-09
-git worktree add ../FIELDWEAVER-review-09 review/original-09
-node scripts/review-gallery.mjs --out rooms-manta-review.html --preset operator-atlas --provenance gallery/originals/08-registry-of-vacant-rooms/the-vacant-rooms.provenance.json --provenance ../FIELDWEAVER-review-09/gallery/originals/09-the-last-manta/the-last-manta.provenance.json
-```
+On **current main** (merge `275d6bf78d30feb368e76d24a30725232a9ba9fe` or later), run `0Review.cmd` on Windows or `0Review.sh` on POSIX. The source-pinned board now shows exactly two **ACCEPTED PRESET** controls (Operator Atlas, Timeline Pulse) and two **UNMERGED CANDIDATE** works: Rooms #57 and Unwound #50. The earlier proposed Manta #61 and Fourth Pause #62 were **closed unmerged**; they are not current admission targets. This main checkout is the simplest curated browse/compare/export experience; the artwork-local `review.mjs` above remains a self-contained three-card source-replay alternative when reviewing this Draft branch.
 
-No source artwork, accepted preset or authored canonical identity is modified by either comparison.
+For actual workbench import, save Rooms' recipe from the board, run `0Play.cmd`, choose **Load recipe**, then request **Canonical export** at tick **162**, crop **432×304**, world centre **(157,125)**, scale Q16 **49807**. Verify raw decoded RGBA8 FNV `56286fc4c1a47bb8`, rather than comparing browser screenshots or PNG compression alone. Browser smoke/CI cannot substitute for physical owner Firefox import and artwork selection.
+
+
 
 ### Actual native-pixel curatorial examination, 11 November 2026
 
@@ -76,4 +74,10 @@ The archived **432×304 FW-012 CPU PNG** was opened at source size. Its three se
 
 The **actual** competing CPU PNGs were also visually examined: Original 09 *The Last Manta* (`#61`) resolves into long paired cyan wing contours and very small central body, Original 07 *Zero Meridian* (`#54`) is an incomplete pair of circular bearings traversed by a needle, and Original 04 *Pollen Observatory* (`#47`) comprises five isolated warm-toned whorls. Rooms has a distinct rectilinear, vertically grouped silhouette and clearly separated ochre/chalk/violet structures; it is not an image duplicate. Its occupied fraction, 8,452/131,328 (6.44%), exceeds Manta's 4,431/153,600 (2.88%), but **these are different crops, not a perceptual-quality comparison**. Pollen's warm curved clusters and Meridian's circular ring are structurally different, although all four pieces employ very dark negative space and fine strokes.
 
-**Recommendation: prioritize Rooms for physical selection before Manta, but do not auto-admit.** It has a more developed internal rhythm and better separation between colour-coded regions, while the slight surface thinness and limited dramatic progression remain reasonable grounds for rejection. The two built-in accepted works can be re-rendered by the review command; their full-size canonical outputs were **not** newly viewed during this source-level comparison. Human Firefox import/canonical export and aesthetic acceptance remain open gates, not claimed tests.
+**Updated curatorial disposition: HOLD FOR FRAMING JUDGEMENT, not auto-admission.** Rooms has a clearer three-register silhouette than the now-withdrawn Manta #61, but the earlier claim that it should lead the queue is not a substitute for comparison against stronger legacy Drafts. Genuine full-size CPU images of Luminous Ledger #37 and Interval Engine #41 show substantially richer gesture/texture, while Rooms relies on severe rectilinear sparsity. Its restrained structure is intentional; whether that restraint is compelling enough belongs to the owner.
+
+#### Source-exact pixel-boundary audit (12 November 2026)
+
+Re-examined the archived Git-blob-identical **432×304 RGBA** PNG (blob `1eba3a0bd4100f79403c9a4022f250ebea34f5e3`), not a thumbnail or WebGL buffer. The background is `(9,11,8,255)`. Exactly **8,452 of 131,328** pixels (6.44%) are non-background; the occupied bounding box is **x=41..408, y=0..286**. **Ten** non-background pixels reach the **top image row** (x 56, 59, 145, 172–175, 271–273), whereas the bottom, left and right outer edges are empty. Thus the upper ochre and chalk uprights are *literally cut by the crop boundary*. This is verified framing evidence, not a claim that the artistic choice is incorrect.
+
+At actual native size the centre remains almost vacant; fine eastern lavender rules are vulnerable to reduced-size displays. Compare at **100% as well as gallery-card size**, and decide whether the top-edge interruptions are deliberate open-ended architecture. **Owner decision: ADMIT as intentional / REVISE FRAMING on a separately versioned candidate / REJECT.** Do not silently change the immutable canonical image or its hashes. No physical Firefox acceptance is claimed.
