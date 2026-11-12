@@ -32,3 +32,18 @@ The 576×384, tick-176 PNG was rendered by the repository's FW-012 Node 24 CPU i
 | Depositions | **185,004** of the 250,000 bounded allowance |
 
 The file `pollen-observatory.png` is the actual canonical CPU PNG; `pollen-observatory.provenance.json` is the exact versioned `fw-export-provenance-v1` sidecar; `qualification.json` is an independent artwork-specific replay receipt. Presentation resizing is noncanonical. The visual composition and admission remain subject to independent Integration judgement.
+
+
+## Bounded owner review — accepted versus proposed (12 November 2026)
+
+Run from this Draft branch with Node 22/24, after `npm run verify`:
+
+```sh
+node gallery/originals/04-pollen-observatory/review.mjs
+```
+
+Open the printed local `file://` HTML in Firefox. It reuses FIELDWEAVER's existing offline, keyboard-accessible, provenance-verified gallery builder; this is **not another viewer subsystem** or an accepted-catalog registration. It shows two labelled **ACCEPTED PRESET** CPU proofs (Operator Atlas, Timeline Pulse) beside this clearly labelled **UNMERGED CANDIDATE**. The downloadable original PNG, normalized recipe and full provenance have exact-byte tests. Import the downloaded recipe through `0Play` → **Load recipe** and reproduce **tick 176**, **576×384**, world centre **(128,120)**, Q16 scale **32768**; expected decoded RGBA8 `194610dd7ca77ca1`.
+
+**Curatorial comparison, based on actual canonical PNGs at native size:** Pollen's five ochre/shell-pink/rust whorls form separate, diagonally staggered focal clusters around black voids. Their relative sizes, fragment directions and internal density vary, but the repeated seedhead motif is a real limitation: the empty centre supplies space, not a linking gesture. The colder cyan/orange stratified sweep of *Interval Engine* (#41) and the dense descending filaments of *Luminous Ledger* (#37) have more continuous movement, while *Registry of Vacant Rooms* (#57) has a formally different sparse three-register rectilinear silhouette (and an unresolved top-edge crop). Do not confuse artistic differentiation with automatic acceptance.
+
+**Disposition:** retain #47 as a source-qualified Draft and a *secondary* original to consider **only after** the owner's #57 admission/framing decision. Do not repin or extend `0Review` merely to include it. This art-local comparison is optional; neither physical owner Firefox import/export nor human aesthetic approval is claimed by CI.

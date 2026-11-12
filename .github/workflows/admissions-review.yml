@@ -1,0 +1,69 @@
+name: Admission Review (exact canonical proposed vs accepted)
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/admission-review.mjs'
+      - 'scripts/admission-review-browser-smoke.mjs'
+      - 'tests/admission-review.test.mjs'
+      - 'docs/ADMISSION_REVIEW.md'
+      - '.github/workflows/admissions-review.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  canonical:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Full source-exact correctness gate
+        run: npm run verify
+      - name: Fetch two live Draft heads and verify archived CPU candidate images
+        run: node scripts/admission-review.mjs --out admission-review.html
+      - name: Publish single self-contained offline board
+        uses: actions/upload-artifact@v4
+        with:
+          name: fieldweaver-admission-review-html
+          path: admission-review.html
+          if-no-files-found: error
+          retention-days: 7
+
+  browser:
+    needs: canonical
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chrome, firefox]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: fieldweaver-admission-review-html
+      - name: Native file-protocol keyboard, CSP, decoded-image and narrow layout acceptance
+        run: node scripts/admission-review-browser-smoke.mjs ${{ matrix.browser }} admission-review.html
+      - name: Preserve genuine browser screenshots and observed source receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fieldweaver-admission-review-${{ matrix.browser }}
+          path: |
+            admission-review-${{ matrix.browser }}-desktop.png
+            admission-review-${{ matrix.browser }}-narrow.png
+            admission-review-${{ matrix.browser }}.json
+          if-no-files-found: ignore
+          retention-days: 7
