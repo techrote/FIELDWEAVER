@@ -251,7 +251,7 @@ try {
   if (!maskScreenshot?.value) throw new Error('Focused diagnostic mask screenshot absent.');
   await writeFile('exhibition-offline-diff-mask-'+browser+'.png',Buffer.from(maskScreenshot.value,'base64'));
   await request('POST','/session/'+sessionId+'/actions',{actions:[{type:'key',id:'keyboard',actions:[
-    {type:'keyDown',value:'\\uE007'},{type:'keyUp',value:'\\uE007'}]}]});
+    {type:'keyDown',value:'\uE007'},{type:'keyUp',value:'\uE007'}]}]});
   await request('DELETE','/session/'+sessionId+'/actions');
   const expectedMask = Buffer.from(maskDownloads[0].encoded, 'base64');
   let downloadedMask = null;
