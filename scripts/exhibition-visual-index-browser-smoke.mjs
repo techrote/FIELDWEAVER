@@ -248,7 +248,7 @@ try {
       })}`);
   if (!previewDesktop.opened || previewDesktop.origin!=='file:' ||
       previewDesktop.images.length!==2 || previewDesktop.images.some(img=>
-        !img.matchesCanonicalSource || !img.accessible || !img.width || !img.height ||
+        !img.matchesCanonicalSource || !img.accessible || img.width < 180 || img.height < 110 ||
         !result.tiles.some(tile=>tile.id===img.id && tile.hash===img.hash))) {
     throw new Error('Real A/B preview did not display unchanged accepted CPU images: '+
       JSON.stringify(previewDesktop));
