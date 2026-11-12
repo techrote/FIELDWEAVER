@@ -1,4 +1,4 @@
-import { decodePngRgba, rawRgbaHash } from '../export/index.js';
+import { decodePngRgba, encodePngRgba, rawRgbaHash } from '../export/index.js';
 import { parseRecipe, recipeHash, serializeRecipe } from '../recipe/index.js';
 import { exhibitionEntries } from './exhibition-catalog.js';
 import { verifyStudyPng, summarizeDifferingStudyPixels } from './exhibition-pixel-probe.js';
@@ -52,6 +52,36 @@ function exactPairPixelChanges(a, b) {
     }
   }
   return changes;
+}
+
+// Portable, fully transparent unchanged pixels and solid amber changed pixels.
+// This is NOT a canonical artwork/export: the existing verified FW-012 CPU PNGs
+// remain unmodified, and the image-local mask never registers disparate crops.
+// Reuse the existing deterministic dependency-free PNG packager, not a new
+// rendering engine, Canvas, WebGL or screenshot pathway.
+export function encodeDiagnosticDifferenceMaskPng(width, height, changes) {
+  if (!Number.isInteger(width) || !Number.isInteger(height) ||
+      width < 1 || height < 1 || width > 4096 || height > 4096 ||
+      width * height > 1_048_576 || !Array.isArray(changes)) {
+    throw new RangeError('Diagnostic difference mask requires bounded dimensions and changes.');
+  }
+  const rgba = new Uint8Array(width * height * 4);
+  for (const change of changes) {
+    const x = change?.x, y = change?.y;
+    if (!Number.isInteger(x) || !Number.isInteger(y) ||
+        x < 0 || y < 0 || x >= width || y >= height) {
+      throw new RangeError('Diagnostic difference mask refused an out-of-range pixel.');
+    }
+    const offset = (y * width + x) * 4;
+    if (rgba[offset + 3] !== 0) {
+      throw new Error('Diagnostic difference mask refused duplicate pixel coordinates.');
+    }
+    rgba[offset] = 228;
+    rgba[offset + 1] = 182;
+    rgba[offset + 2] = 101;
+    rgba[offset + 3] = 255;
+  }
+  return encodePngRgba(rgba, width, height);
 }
 
 // A diagnostic locator, never a replacement artwork or a canonical raster.
@@ -267,6 +297,10 @@ export function buildOfflineExhibitionBoard(tiles) {
           bytes: new TextEncoder().encode(JSON.stringify(comparisonReceipt, null, 2) + '\n') },
         { name: ledgerFile, bytes: new TextEncoder().encode(ledgerCsv) }
       ]));
+      const maskFile = 'fieldweaver-ab-' + first.id + '-vs-' + second.id +
+        '-' + byId.get(first.id).rawRgbaHash + '-' +
+        byId.get(second.id).rawRgbaHash + '.fwdiffmask.png';
+      const maskPng = encodeDiagnosticDifferenceMaskPng(stats.width, stats.height, changes);
       const locatorSvg = exactPairLocatorSvg(stats.width, stats.height,
         changes, first.id, second.id);
       const pixelDisclosure = '<details class="pair-pixels" data-pair-a="' +
@@ -333,6 +367,10 @@ export function buildOfflineExhibitionBoard(tiles) {
         '<a download="' + escapeHtml(ledgerFile) +
         '" href="data:text/csv;base64,' + base64Utf8(ledgerCsv) +
         '">Save exact pixel ledger (CSV)</a> ' +
+        '<a download="' + escapeHtml(maskFile) +
+        '" data-diagnostic="image-local-rgba8-mask" href="data:image/png;base64,' +
+        base64Bytes(maskPng) +
+        '">Save diagnostic difference mask (PNG)</a> ' +
         '<a download="' + escapeHtml(pairBundleFile) +
         '" href="data:application/zip;base64,' + pairBundle +
         '">Save complete A/B evidence (ZIP)</a></td></tr>');
@@ -343,7 +381,8 @@ export function buildOfflineExhibitionBoard(tiles) {
     '<p>Every accepted pair is compared using original decoded CPU RGBA8 bytes ' +
     'in its shared image-local rectangle. Changed means any RGBA channel differs; ' +
     'bounds are inclusive. Different authored crops are not registered in world space. ' +
-    'These are not perceptual similarity scores. Expand each pair to see exact canonical images and inspect every changed pixel on a diagnostic coordinate locator and in a lossless CSV ledger.</p>' +
+    'These are not perceptual similarity scores. Expand each pair to see exact canonical images and inspect every changed pixel on a diagnostic coordinate locator and in a lossless CSV ledger. ' +
+    'The optional transparent-unchanged/amber-changed PNG mask is a noncanonical, image-local diagnostic overlay, not a substitute artwork.</p>' +
     '<div id="comparison-scroll" class="comparison-scroll" tabindex="0" role="region" ' +
     'aria-label="Scrollable A/B comparison table"><table><thead><tr>' +
     '<th scope="col">Accepted works</th><th scope="col">Overlap (pixels)</th>' +
@@ -369,7 +408,7 @@ export function buildOfflineExhibitionBoard(tiles) {
     '" href="data:application/zip;base64,' + collectionZip +
     '">Save all accepted works (ZIP)</a> <small>12 original files / 4 verified works / offline</small></p>' +
     '<main class="gallery">' + cards.join('') + '</main>' + comparisonSection +
-    '<footer>Each optional A/B disclosure shows two unchanged CPU PNGs, a diagnostic changed-pixel location map and a separately downloadable exact changed-pixel CSV ledger without registering different crops; the complete A/B ZIP carries both original works, the pair receipt and that exact CSV together; each receipt records verified accepted identities and literal image-local RGBA8 difference statistics. No world-space alignment is inferred. Each image is the original 96×64 canonical raster, enlarged for inspection. PNG bytes are not the pixel identity; raw decoded RGBA8 hashes are. Save each work’s unchanged canonical PNG, importable recipe and full provenance separately, as one ZIP per work, or as a twelve-file accepted collection ZIP directly from this file; target tick and crop are in the provenance rather than the recipe. Browser downloads still require local file-manager confirmation. This board is a review record, not an artistic approval.</footer>' +
+    '<footer>Each optional A/B disclosure shows two unchanged CPU PNGs, a diagnostic changed-pixel location map and separately downloadable exact changed-pixel CSV ledger and noncanonical transparent difference-mask PNG without registering different crops; the complete A/B ZIP carries both original works, the pair receipt and that exact CSV together; each receipt records verified accepted identities and literal image-local RGBA8 difference statistics. No world-space alignment is inferred. Each image is the original 96×64 canonical raster, enlarged for inspection. PNG bytes are not the pixel identity; raw decoded RGBA8 hashes are. Save each work’s unchanged canonical PNG, importable recipe and full provenance separately, as one ZIP per work, or as a twelve-file accepted collection ZIP directly from this file; target tick and crop are in the provenance rather than the recipe. Browser downloads still require local file-manager confirmation. This board is a review record, not an artistic approval.</footer>' +
     '</div></body></html>\n';
   return Object.freeze({ version: OFFLINE_BOARD_VERSION, count: entries.length, html });
 }
