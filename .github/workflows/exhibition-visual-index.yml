@@ -70,6 +70,8 @@ jobs:
             exhibition-offline-pixel-swatches-narrow-${{ matrix.browser }}.png
             exhibition-offline-pixel-locator-narrow-${{ matrix.browser }}.png
             exhibition-offline-ab-bundle-${{ matrix.browser }}.png
+            exhibition-offline-diff-mask-${{ matrix.browser }}.png
+            exhibition-visual-index-downloads-${{ matrix.browser }}/*.fwdiffmask.png
             exhibition-visual-index-downloads-${{ matrix.browser }}/*.fwpixels.csv
             exhibition-visual-index-${{ matrix.browser }}.png
             exhibition-visual-index-${{ matrix.browser }}.json
