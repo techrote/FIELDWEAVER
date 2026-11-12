@@ -359,7 +359,7 @@ try {
   const pixelShot=await request('GET','/session/'+sessionId+'/screenshot');
   if(!pixelShot?.value) throw new Error('Decoded pixel screenshot not captured');
   await writeFile('exhibition-pixels-'+browser+'.png',Buffer.from(pixelShot.value,'base64'));
-  await writeFile('exhibition-pixels-'+browser+'.json',JSON.stringify({browser,sampled,expectedDelta,visibleDifference,invalidPeer,noStaleDelta,peerRestored,forgedPixel,restoredPixel,aPixel,marked},null,2)+'\n');
+  await writeFile('exhibition-pixels-'+browser+'.json',JSON.stringify({browser,sampled,expectedDelta,visibleDifference,expectedNextDifference,nextDifference,forgedDifference,invalidPeer,noStaleDelta,peerRestored,forgedPixel,restoredPixel,aPixel,marked},null,2)+'\n');
   // Real WebDriver key actions on focused canonical images; distinguish from
   // gallery Left/Right while retaining source-specific A/B coordinates.
   const pressPixelKey = async (value, shifted = false) => {
