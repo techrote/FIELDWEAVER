@@ -97,6 +97,31 @@ Each accepted pair in the offline A/B index has an initially collapsed **Inspect
 
 Both the numeric table and downloadable CSV are computed only from independently verified FW-012 CPU PNG decoded bytes, after the accepted proof/provenance checks, and the ledger count is checked against the separate A/B summary. The rows denote image-local same-index comparisons, **never** alignment of different authored world crops. No derived pixel picture, artistic substitution, new gallery, editor or admission decision is involved. Node independently recomputes all six complete files; actual Chrome/Firefox `file://` browser checks exercise keyboard disclosure, row counts, CSV payloads and screenshots. Physical Windows acceptance remains a separate gate.
 
+### Source-exact changed-pixel locator (offline board)
+
+The existing **Inspect exact changed pixels** disclosure also displays a compact
+**diagnostic location map**. Its amber unit squares identify the image-local
+`(x, y)` positions of *every* pixel whose decoded canonical A/B RGBA8 values
+differ; unchanged positions are dark. This is an index to the existing full
+numeric table and exported CSV, **not** another canonical image or a visual
+substitute for the original two CPU PNGs.
+
+The locator is generated from the same independently checked changed-pixel
+coordinates as the ledger, after source PNG, crop, recipe and provenance
+verification. It uses native inline SVG with no browser scripts, fetch, blob
+URLs, screenshot inputs or external images; it respects the original
+offline `file://` CSP. Coordinates are top-left **image-local**, not
+world-registered if the two authored crops differ. The original artwork bytes,
+canonical hashes, eight-file pair ZIP and accepted/admission boundary are
+unchanged.
+
+Node independently checks every diagnostic mark against a fresh decoded RGBA8
+scan for all six accepted pairs. The Chrome and Firefox real-browser smoke
+opens the offline file, activates the disclosure with the keyboard, validates
+all rendered mark coordinates against the numeric table, verifies visible
+dimensions and captures the expanded result. Physical Windows owner
+acceptance remains a separate gate.
+
 ### Portable A/B comparison receipts (offline board)
 
 In **A/B comparison index**, use **Save A/B receipt (JSON)** for any of the six accepted pairs. Each offline `.fwcompare.json` binds both already-verified canonical CPU PNG identities to their immutable recipe hash, root seed, tick and exact authored crop, plus the decoded image-local overlap, changed RGBA8 pixel count, inclusive bounds and maximum absolute channel differences. The receipt explicitly distinguishes identical authored crops from *image-local only / not world-aligned* comparisons. It contains no perceptual inference, recoloured preview, new canonical identity, or unadmitted artwork. Its local `data:` download works under the existing script-free `file://` CSP.
