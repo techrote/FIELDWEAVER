@@ -290,7 +290,7 @@ try {
     throw new Error('Keyboard could not collapse exact pixel ledger.');
   }
   await request('POST', '/session/' + sessionId + '/window/rect', { width: 390, height: 790 });
-  const comparisonNarrow = await execute("const section=document.getElementById('comparison-index');section.scrollIntoView({block:'start',behavior:'instant'});const region=document.getElementById('comparison-scroll');region.focus({preventScroll:true});return {protocol:location.protocol,viewport:document.documentElement.clientWidth,focused:document.activeElement===region,tableRows:region.querySelectorAll('tbody tr').length,horizontalOverflow:region.scrollWidth>region.clientWidth,top:Math.round(region.getBoundingClientRect().top),viewportHeight:innerHeight}");
+  const comparisonNarrow = await execute("const section=document.getElementById('comparison-index');section.scrollIntoView({block:'start',behavior:'instant'});const region=document.getElementById('comparison-scroll');region.focus({preventScroll:true});return {protocol:location.protocol,viewport:document.documentElement.clientWidth,focused:document.activeElement===region,tableRows:region.querySelectorAll(':scope > table > tbody > tr').length,horizontalOverflow:region.scrollWidth>region.clientWidth,top:Math.round(region.getBoundingClientRect().top),viewportHeight:innerHeight}");
   if (comparisonNarrow.protocol !== 'file:' || comparisonNarrow.viewport > 600 ||
       !comparisonNarrow.focused || comparisonNarrow.tableRows !== 6 ||
       !comparisonNarrow.horizontalOverflow || comparisonNarrow.top < 0 ||
