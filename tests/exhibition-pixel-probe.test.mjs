@@ -3,7 +3,8 @@ import test from 'node:test';
 import { BUILTIN_PRESETS } from '../src/presets/index.js';
 import { recipeHash } from '../src/recipe/index.js';
 import { renderVisualIndexProof } from '../src/ui/exhibition-visual-index-model.js';
-import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel, compareStudyPixelChannels, sameStudyCrop } from '../src/ui/exhibition-pixel-probe.js';
+import { exhibitionEntries } from '../src/ui/exhibition-catalog.js';
+import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel, compareStudyPixelChannels, sameStudyCrop, buildStudyPixelReceipt, STUDY_PIXEL_RECEIPT_VERSION } from '../src/ui/exhibition-pixel-probe.js';
 
 test('inspection samples real verified CPU PNG bytes without changing accepted recipes', () => {
   const before = BUILTIN_PRESETS.map(p => recipeHash(p.recipe));
@@ -81,4 +82,38 @@ test('A/B source-local delta uses independently decoded canonical PNGs, not a pr
   const moved = structuredClone(original);
   moved.center.localX += 1;
   assert.equal(sameStudyCrop(original, moved), false);
+});
+
+test('portable exact pixel receipt binds accepted CPU identity, tick/crop and deterministic A/B delta', () => {
+  const entries = exhibitionEntries();
+  const source = (id) => {
+    const entry = entries.find(item => item.id === id);
+    const proof = renderVisualIndexProof(id);
+    return { entry, hash: proof.rawRgbaHash,
+      pixels: verifyStudyPng(proof.png, proof.widthPx, proof.heightPx, proof.rawRgbaHash) };
+  };
+  const a = source('operator-atlas'), b = source('timeline-pulse');
+  const receipt = buildStudyPixelReceipt(a, b, 20, 35, 'timeline-pulse');
+  assert.equal(receipt.version, STUDY_PIXEL_RECEIPT_VERSION);
+  assert.equal(receipt.coordinateSpace, 'image-local-top-left');
+  assert.deepEqual(receipt.coordinate, { x: 20, y: 35 });
+  assert.equal(receipt.inspectedId, 'timeline-pulse');
+  assert.equal(receipt.a.recipeHash, a.entry.recipeHash);
+  assert.equal(receipt.b.rawRgbaHash, b.hash);
+  assert.equal(receipt.a.targetTick, a.entry.targetTick);
+  assert.deepEqual(receipt.b.crop, b.entry.exportCrop);
+  assert.deepEqual(receipt.comparison.deltaBMinusA, [7, 18, 20, 0]);
+  assert.equal(receipt.comparison.sameAuthoredCrop, sameStudyCrop(a.entry.exportCrop, b.entry.exportCrop));
+  assert.deepEqual(JSON.parse(JSON.stringify(receipt)), receipt);
+  assert.equal(JSON.stringify(buildStudyPixelReceipt(a, b, 20, 35, 'timeline-pulse')),
+    JSON.stringify(receipt), 'the receipt cannot depend on DOM clock or screenshot state');
+  assert.equal(buildStudyPixelReceipt(b, null, 3, 7, b.entry.id).comparison, null);
+  const shiftedCrop = { ...b.entry, exportCrop: { ...b.entry.exportCrop,
+    center: { ...b.entry.exportCrop.center, localX: b.entry.exportCrop.center.localX + 1 } } };
+  const shifted = buildStudyPixelReceipt(a, { ...b, entry: shiftedCrop }, 20, 35, 'operator-atlas');
+  assert.equal(shifted.comparison.alignment, 'image-local-only-not-world-aligned');
+  assert.throws(() => buildStudyPixelReceipt(a, b, 96, 35, 'operator-atlas'), /outside/);
+  assert.throws(() => buildStudyPixelReceipt(a, b, 20, 35, 'unadmitted-work'), /not a current source/);
+  assert.throws(() => buildStudyPixelReceipt({ ...a, hash: '0000000000000000' }, b, 20, 35, a.entry.id), /current accepted/);
+  assert.throws(() => buildStudyPixelReceipt(a, { ...b, pixels: { ...b.pixels, width: 95 } }, 20, 35, a.entry.id), /current accepted/);
 });
