@@ -4,7 +4,7 @@ import { BUILTIN_PRESETS } from '../src/presets/index.js';
 import { recipeHash } from '../src/recipe/index.js';
 import { renderVisualIndexProof } from '../src/ui/exhibition-visual-index-model.js';
 import { exhibitionEntries } from '../src/ui/exhibition-catalog.js';
-import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel, compareStudyPixelChannels, sameStudyCrop, buildStudyPixelReceipt, STUDY_PIXEL_RECEIPT_VERSION } from '../src/ui/exhibition-pixel-probe.js';
+import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel, nextDifferingStudyPixel, compareStudyPixelChannels, sameStudyCrop, buildStudyPixelReceipt, STUDY_PIXEL_RECEIPT_VERSION } from '../src/ui/exhibition-pixel-probe.js';
 
 test('inspection samples real verified CPU PNG bytes without changing accepted recipes', () => {
   const before = BUILTIN_PRESETS.map(p => recipeHash(p.recipe));
