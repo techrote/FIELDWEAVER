@@ -12,7 +12,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const ADMISSION_SELECTION = Object.freeze([
   Object.freeze({
     pr: 57, lane: 'ORIGINAL', title: 'Registry of Vacant Rooms',
-    head: 'c8bcd9bbae2407320e1010aad6d21d4778cc8344',
+    head: '23cd907ddf260baf5420b611fe8359d590fcd9dc',
     provenance: 'gallery/originals/08-registry-of-vacant-rooms/the-vacant-rooms.provenance.json',
     rgba: '56286fc4c1a47bb8'
   }),
