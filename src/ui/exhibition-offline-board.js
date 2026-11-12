@@ -78,6 +78,7 @@ export function buildOfflineExhibitionBoard(tiles) {
     if (!tile || byId.has(tile.id)) throw new Error('Offline board rejected missing or duplicate proof identity.');
     byId.set(tile.id, tile);
   }
+  const collectionFiles = [];
   const cards = entries.map((entry, index) => {
     const tile = byId.get(entry.id);
     const receipt = verifyOfflineExhibitionTile(entry, tile);
@@ -89,11 +90,13 @@ export function buildOfflineExhibitionBoard(tiles) {
     const receiptFile = 'fieldweaver-' + entry.id + '-' + tile.rawRgbaHash + '.fwprovenance.json';
     const pngFile = 'fieldweaver-' + entry.id + '-' + tile.rawRgbaHash + '.canonical.png';
     const bundleFile = 'fieldweaver-' + entry.id + '-' + tile.rawRgbaHash + '.fwpack.zip';
-    const bundleBytes = createStoredZip([
+    const exactFiles = [
       { name: pngFile, bytes: tile.png },
       { name: recipeFile, bytes: new TextEncoder().encode(recipeJson) },
       { name: receiptFile, bytes: new TextEncoder().encode(tile.provenanceJson) }
-    ]);
+    ];
+    collectionFiles.push(...exactFiles);
+    const bundleBytes = createStoredZip(exactFiles);
     const canonicalPng = base64Bytes(tile.png);
     const workBundle = base64Bytes(bundleBytes);
     const crop = entry.exportCrop;
@@ -129,6 +132,11 @@ export function buildOfflineExhibitionBoard(tiles) {
       '</p><details><summary>Inspect complete provenance and loadable recipe JSON</summary>' +
       '<pre>' + escapeHtml(tile.provenanceJson) + '</pre></details></article>';
   });
+  // This collection is produced only after all four complete accepted proofs
+  // passed verification. No proposed gallery work or generated substitute enters
+  // the archive; its twelve flat members are the exact individual downloads.
+  const collectionFile = 'fieldweaver-accepted-canonical-collection-v1.zip';
+  const collectionZip = base64Bytes(createStoredZip(collectionFiles));
   // The accepted offline board is also a literal A/B comparison record.
   // Re-decode source PNGs after receipt validation; no screenshots, resampling,
   // external images or assumptions that different crops are world-aligned.
@@ -189,8 +197,11 @@ export function buildOfflineExhibitionBoard(tiles) {
     '<p>Four independently replayed FW-012 CPU software-raster images. Every image, source recipe, seed, tick, crop and decoded RGBA8 identity was verified before export. No WebGL screenshots, unaccepted artworks or visual-similarity estimates.</p>' +
     '<p><small>STATIC / SELF-CONTAINED / OFFLINE / NO SCRIPTS OR REMOTE ASSETS</small></p></header>' +
     '<nav aria-label="Jump to accepted work">' + nav + '<a href="#comparison-index">A/B comparison index</a></nav>' +
+    '<p class="work-actions collection-actions"><a download="' + collectionFile +
+    '" href="data:application/zip;base64,' + collectionZip +
+    '">Save all accepted works (ZIP)</a> <small>12 original files / 4 verified works / offline</small></p>' +
     '<main class="gallery">' + cards.join('') + '</main>' + comparisonSection +
-    '<footer>Each image is the original 96×64 canonical raster, enlarged for inspection. PNG bytes are not the pixel identity; raw decoded RGBA8 hashes are. Save each work’s unchanged canonical PNG, importable recipe and full provenance separately or as one ZIP bundle directly from this file; target tick and crop are in the provenance rather than the recipe. Browser downloads still require local file-manager confirmation. This board is a review record, not an artistic approval.</footer>' +
+    '<footer>Each image is the original 96×64 canonical raster, enlarged for inspection. PNG bytes are not the pixel identity; raw decoded RGBA8 hashes are. Save each work’s unchanged canonical PNG, importable recipe and full provenance separately, as one ZIP per work, or as a twelve-file accepted collection ZIP directly from this file; target tick and crop are in the provenance rather than the recipe. Browser downloads still require local file-manager confirmation. This board is a review record, not an artistic approval.</footer>' +
     '</div></body></html>\n';
   return Object.freeze({ version: OFFLINE_BOARD_VERSION, count: entries.length, html });
 }
