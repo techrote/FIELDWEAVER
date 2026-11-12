@@ -1,6 +1,6 @@
 import { spawn, spawnSync } from 'node:child_process';
-import { writeFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const browser = process.argv[2] ?? 'firefox';
@@ -10,6 +10,8 @@ if (spawnSync('bash', ['-lc', 'command -v ' + executable], { encoding: 'utf8' })
   throw new Error(executable + ' unavailable; no browser result may be claimed.');
 }
 const port = browser === 'chrome' ? 9531 : 9532;
+const downloadDir = resolve('exhibition-visual-index-downloads-' + browser);
+await mkdir(downloadDir, { recursive: true });
 const driver = spawn(executable, browser === 'chrome' ? ['--port=' + port] : ['--port', String(port)], { stdio: ['ignore', 'pipe', 'pipe'] });
 let driverLog = '';
 driver.stdout.on('data', (data) => { driverLog += String(data); });
@@ -33,8 +35,19 @@ try {
   }
   if (!online) throw new Error('WebDriver did not start: ' + driverLog);
   const desired = browser === 'chrome'
-    ? { capabilities: { alwaysMatch: { browserName: 'chrome', 'goog:chromeOptions': { args: ['--headless=new', '--no-sandbox', '--disable-dev-shm-usage', '--enable-webgl', '--ignore-gpu-blocklist', '--use-angle=swiftshader'] } } } }
-    : { capabilities: { alwaysMatch: { browserName: 'firefox', 'moz:firefoxOptions': { args: process.env.DISPLAY ? [] : ['-headless'], prefs: { 'webgl.disabled': false, 'webgl.force-enabled': true, 'gfx.webrender.software': true } } } } };
+    ? { capabilities: { alwaysMatch: { browserName: 'chrome', 'goog:chromeOptions': {
+        args: ['--headless=new', '--no-sandbox', '--disable-dev-shm-usage', '--enable-webgl', '--ignore-gpu-blocklist', '--use-angle=swiftshader'],
+        prefs: { 'download.default_directory': downloadDir, 'download.prompt_for_download': false,
+          'download.directory_upgrade': true }
+      } } } }
+    : { capabilities: { alwaysMatch: { browserName: 'firefox', 'moz:firefoxOptions': {
+        args: process.env.DISPLAY ? [] : ['-headless'],
+        prefs: { 'webgl.disabled': false, 'webgl.force-enabled': true,
+          'gfx.webrender.software': true, 'browser.download.dir': downloadDir,
+          'browser.download.folderList': 2, 'browser.download.useDownloadDir': true,
+          'browser.helperApps.neverAsk.saveToDisk': 'text/csv,application/octet-stream',
+          'browser.download.alwaysOpenPanel': false }
+      } } } };
   const created = await request('POST', '/session', desired);
   sessionId = created?.value?.sessionId ?? created?.sessionId;
   if (!sessionId) throw new Error('Missing WebDriver session ID.');
@@ -270,6 +283,29 @@ try {
       item.lines.slice(1).some(line=>line.split(',').length !== 14))) {
     throw new Error('Offline exact changed-pixel CSV differs from accepted comparison totals: ' +
       JSON.stringify(ledgerLinks.map(item=>({name:item.name,count:item.lines.length-1}))));
+  }
+  // Verify a physical user-initiated CSV download from the actual offline
+  // board, not only a syntactically valid data URL. The generated CSV is
+  // independently decoded by the Node source-RGBA test.
+  const ledgerDownload = await execute("const a=document.querySelector('#comparison-index a[download$=\".fwpixels.csv\"]');a.scrollIntoView({block:'center',behavior:'instant'});a.focus();return {name:a.download,focused:document.activeElement===a,origin:location.protocol}");
+  if (!ledgerDownload.focused || ledgerDownload.origin!=='file:' ||
+      ledgerDownload.name!==ledgerLinks[0].name) {
+    throw new Error('Offline CSV download was not keyboard focusable: ' +
+      JSON.stringify(ledgerDownload));
+  }
+  await pressEnter();
+  await request('DELETE', '/session/' + sessionId + '/actions');
+  let persistedCsv = null, downloadFailure = 'not created';
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    try {
+      persistedCsv = await readFile(join(downloadDir, ledgerDownload.name), 'utf8');
+      if (persistedCsv === ledgerLinks[0].lines.join('\n') + '\n') break;
+      downloadFailure = 'incomplete or mismatched bytes (' + persistedCsv.length + ')';
+    } catch (error) { downloadFailure = error?.message ?? String(error); }
+    await sleep(100);
+  }
+  if (persistedCsv !== ledgerLinks[0].lines.join('\n') + '\n') {
+    throw new Error('Real keyboard offline CSV export did not persist exact bytes: ' + downloadFailure);
   }
   const ledgerFocused = await execute("const summary=document.querySelector('#comparison-index .pair-pixels summary');summary.scrollIntoView({block:'center',behavior:'instant'});summary.focus();return document.activeElement===summary");
   if (!ledgerFocused) throw new Error('Exact pixel ledger disclosure not keyboard-focusable.');
