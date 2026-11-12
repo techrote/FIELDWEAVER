@@ -63,6 +63,10 @@ jobs:
             exhibition-offline-board-${{ matrix.browser }}.html
             exhibition-offline-board-${{ matrix.browser }}.png
             exhibition-offline-comparisons-${{ matrix.browser }}.png
+            exhibition-offline-pair-preview-${{ matrix.browser }}.png
+            exhibition-offline-pair-preview-narrow-${{ matrix.browser }}.png
+            exhibition-offline-pixel-ledger-${{ matrix.browser }}.png
+            exhibition-visual-index-downloads-${{ matrix.browser }}/*.fwpixels.csv
             exhibition-visual-index-${{ matrix.browser }}.png
             exhibition-visual-index-${{ matrix.browser }}.json
             exhibition-index-lifecycle-${{ matrix.browser }}.json

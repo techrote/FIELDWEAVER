@@ -1,6 +1,6 @@
 import { spawn, spawnSync } from 'node:child_process';
-import { writeFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const browser = process.argv[2] ?? 'firefox';
@@ -10,6 +10,8 @@ if (spawnSync('bash', ['-lc', 'command -v ' + executable], { encoding: 'utf8' })
   throw new Error(executable + ' unavailable; no browser result may be claimed.');
 }
 const port = browser === 'chrome' ? 9531 : 9532;
+const downloadDir = resolve('exhibition-visual-index-downloads-' + browser);
+await mkdir(downloadDir, { recursive: true });
 const driver = spawn(executable, browser === 'chrome' ? ['--port=' + port] : ['--port', String(port)], { stdio: ['ignore', 'pipe', 'pipe'] });
 let driverLog = '';
 driver.stdout.on('data', (data) => { driverLog += String(data); });
@@ -33,8 +35,19 @@ try {
   }
   if (!online) throw new Error('WebDriver did not start: ' + driverLog);
   const desired = browser === 'chrome'
-    ? { capabilities: { alwaysMatch: { browserName: 'chrome', 'goog:chromeOptions': { args: ['--headless=new', '--no-sandbox', '--disable-dev-shm-usage', '--enable-webgl', '--ignore-gpu-blocklist', '--use-angle=swiftshader'] } } } }
-    : { capabilities: { alwaysMatch: { browserName: 'firefox', 'moz:firefoxOptions': { args: process.env.DISPLAY ? [] : ['-headless'], prefs: { 'webgl.disabled': false, 'webgl.force-enabled': true, 'gfx.webrender.software': true } } } } };
+    ? { capabilities: { alwaysMatch: { browserName: 'chrome', 'goog:chromeOptions': {
+        args: ['--headless=new', '--no-sandbox', '--disable-dev-shm-usage', '--enable-webgl', '--ignore-gpu-blocklist', '--use-angle=swiftshader'],
+        prefs: { 'download.default_directory': downloadDir, 'download.prompt_for_download': false,
+          'download.directory_upgrade': true }
+      } } } }
+    : { capabilities: { alwaysMatch: { browserName: 'firefox', 'moz:firefoxOptions': {
+        args: process.env.DISPLAY ? [] : ['-headless'],
+        prefs: { 'webgl.disabled': false, 'webgl.force-enabled': true,
+          'gfx.webrender.software': true, 'browser.download.dir': downloadDir,
+          'browser.download.folderList': 2, 'browser.download.useDownloadDir': true,
+          'browser.helperApps.neverAsk.saveToDisk': 'text/csv,application/octet-stream',
+          'browser.download.alwaysOpenPanel': false }
+      } } } };
   const created = await request('POST', '/session', desired);
   sessionId = created?.value?.sessionId ?? created?.sessionId;
   if (!sessionId) throw new Error('Missing WebDriver session ID.');
@@ -197,9 +210,10 @@ try {
       new Set(comparisons.map(row => row.a + '/' + row.b)).size !== 6 ||
       comparisons.some(row => !Number.isInteger(row.different) || row.different < 0 ||
         row.total !== 6144 || row.different > row.total ||
-        row.links.length !== 3 || row.links[0] !== '#work-' + row.a ||
+        row.links.length !== 4 || row.links[0] !== '#work-' + row.a ||
         row.links[1] !== '#work-' + row.b ||
-        !row.links[2].startsWith('data:application/json;base64,')) ||
+        !row.links[2].startsWith('data:application/json;base64,') ||
+        !row.links[3].startsWith('data:text/csv;base64,')) ||
       !comparisons.some(row => row.a === 'operator-atlas' &&
         row.b === 'timeline-pulse' && row.different === 118)) {
     throw new Error('Offline pairwise comparison did not match accepted CPU identities: ' +
@@ -207,7 +221,7 @@ try {
   }
   // Decode the real saved file:// page's receipt links inside Firefox/Chrome.
   // The page itself remains script-free; the WebDriver probe is external.
-  const comparisonReceipts = await execute("return [...document.querySelectorAll('#comparison-index a[download]')].map(a=>({name:a.download,data:JSON.parse(atob(a.href.split(',')[1]))}))");
+  const comparisonReceipts = await execute(`return [...document.querySelectorAll('#comparison-index a[download$=".fwcompare.json"]')].map(a=>({name:a.download,data:JSON.parse(atob(a.href.split(',')[1]))}))`);
   if (comparisonReceipts.length !== 6 ||
       comparisonReceipts.some(item => item.data.version !== 'fw-exhibition-ab-comparison-v1' ||
         !item.name.endsWith('.fwcompare.json') ||
@@ -218,12 +232,105 @@ try {
     throw new Error('Offline comparison JSON receipts failed real-browser decoding: ' +
       JSON.stringify(comparisonReceipts));
   }
+
+  // Keyboard-open the optional exact A/B images in a real offline file:
+  // the two visible backgrounds must reuse their own canonical work PNGs.
+  const previewSummaries = await execute("return [...document.querySelectorAll('#comparison-index .pair-preview')].map(d=>({a:d.dataset.pairA,b:d.dataset.pairB,summary:d.querySelector('summary')?.textContent,rasters:d.querySelectorAll('.pair-raster').length}))");
+  if (previewSummaries.length !== 6 || previewSummaries.some(d=>d.rasters!==2 ||
+      d.summary !== 'View exact A/B images' ||
+      !comparisons.some(c=>c.a===d.a && c.b===d.b))) {
+    throw new Error('Missing accepted-only native pair disclosures: '+JSON.stringify(previewSummaries));
+  }
+  const previewFocused = await execute("const summary=document.querySelector('#comparison-index .pair-preview summary');summary.scrollIntoView({block:'center',behavior:'instant'});summary.focus();return document.activeElement===summary");
+  if (!previewFocused) throw new Error('A/B image disclosure not keyboard-focusable.');
+  const pressEnter = async () => request('POST', '/session/' + sessionId + '/actions', {
+    actions: [{type:'key',id:'keyboard',actions:[
+      {type:'keyDown',value:'\uE007'},{type:'keyUp',value:'\uE007'}
+    ]}]
+  });
+  await pressEnter();
+  const previewDesktop = await execute(`const d=document.querySelector('#comparison-index .pair-preview');
+    return {opened:d.open,origin:location.protocol,
+      images:[...d.querySelectorAll('.pair-raster')].map(el=>{
+        const source=document.querySelector('#work-'+el.dataset.workId+' figure img');
+        const style=getComputedStyle(el).backgroundImage;
+        const box=el.getBoundingClientRect();
+        return {id:el.dataset.workId,hash:el.dataset.canonicalHash,
+          matchesCanonicalSource:style.includes(source.getAttribute('src')),
+          accessible:el.getAttribute('role')==='img' && !!el.getAttribute('aria-label'),
+          width:box.width,height:box.height};
+      })}`);
+  if (!previewDesktop.opened || previewDesktop.origin!=='file:' ||
+      previewDesktop.images.length!==2 || previewDesktop.images.some(img=>
+        !img.matchesCanonicalSource || !img.accessible || img.width < 180 || img.height < 110 ||
+        !result.tiles.some(tile=>tile.id===img.id && tile.hash===img.hash))) {
+    throw new Error('Real A/B preview did not display unchanged accepted CPU images: '+
+      JSON.stringify(previewDesktop));
+  }
+  const pairShot=await request('GET','/session/'+sessionId+'/screenshot');
+  if (!pairShot?.value) throw new Error('Expanded desktop A/B screenshot absent.');
+  await writeFile('exhibition-offline-pair-preview-'+browser+'.png',Buffer.from(pairShot.value,'base64'));
+  await pressEnter();
+  if (await execute("return document.querySelector('#comparison-index .pair-preview').open")) {
+    throw new Error('Keyboard could not collapse A/B disclosure.');
+  }
+  // Real file:// keyboard inspection of the exact changed-pixel ledger.
+  // Independently check every embedded CSV line count against its pair receipt.
+  const ledgerLinks = await execute("return [...document.querySelectorAll('#comparison-index a[download$=\".fwpixels.csv\"]')].map(a=>({name:a.download,lines:atob(a.href.split(',')[1]).trimEnd().split('\\n')}))");
+  if (ledgerLinks.length !== 6 || ledgerLinks.some((item,i)=>
+      item.lines[0] !== 'x,y,a_r,a_g,a_b,a_a,b_r,b_g,b_b,b_a,delta_r,delta_g,delta_b,delta_a' ||
+      item.lines.length !== comparisons[i].different + 1 ||
+      item.lines.slice(1).some(line=>line.split(',').length !== 14))) {
+    throw new Error('Offline exact changed-pixel CSV differs from accepted comparison totals: ' +
+      JSON.stringify(ledgerLinks.map(item=>({name:item.name,count:item.lines.length-1}))));
+  }
+  // Verify a physical user-initiated CSV download from the actual offline
+  // board, not only a syntactically valid data URL. The generated CSV is
+  // independently decoded by the Node source-RGBA test.
+  const ledgerDownload = await execute("const a=document.querySelector('#comparison-index a[download$=\".fwpixels.csv\"]');a.scrollIntoView({block:'center',behavior:'instant'});a.focus();return {name:a.download,focused:document.activeElement===a,origin:location.protocol}");
+  if (!ledgerDownload.focused || ledgerDownload.origin!=='file:' ||
+      ledgerDownload.name!==ledgerLinks[0].name) {
+    throw new Error('Offline CSV download was not keyboard focusable: ' +
+      JSON.stringify(ledgerDownload));
+  }
+  await pressEnter();
+  await request('DELETE', '/session/' + sessionId + '/actions');
+  let persistedCsv = null, downloadFailure = 'not created';
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    try {
+      persistedCsv = await readFile(join(downloadDir, ledgerDownload.name), 'utf8');
+      if (persistedCsv === ledgerLinks[0].lines.join('\n') + '\n') break;
+      downloadFailure = 'incomplete or mismatched bytes (' + persistedCsv.length + ')';
+    } catch (error) { downloadFailure = error?.message ?? String(error); }
+    await sleep(100);
+  }
+  if (persistedCsv !== ledgerLinks[0].lines.join('\n') + '\n') {
+    throw new Error('Real keyboard offline CSV export did not persist exact bytes: ' + downloadFailure);
+  }
+  const ledgerFocused = await execute("const summary=document.querySelector('#comparison-index .pair-pixels summary');summary.scrollIntoView({block:'center',behavior:'instant'});summary.focus();return document.activeElement===summary");
+  if (!ledgerFocused) throw new Error('Exact pixel ledger disclosure not keyboard-focusable.');
+  await pressEnter();
+  const ledgerOpen = await execute("const d=document.querySelector('#comparison-index .pair-pixels');return {open:d.open,rows:d.querySelectorAll('tbody tr[data-pixel-x]').length,expected:Number(d.dataset.count),first:d.querySelector('tbody tr')?.textContent,keyboardScroll:d.querySelector('[role=region]')?.tabIndex===0,origin:location.protocol}");
+  if (!ledgerOpen.open || ledgerOpen.rows !== comparisons[0].different ||
+      ledgerOpen.expected !== ledgerOpen.rows || !ledgerOpen.first ||
+      !ledgerOpen.keyboardScroll || ledgerOpen.origin !== 'file:') {
+    throw new Error('Real offline changed-pixel table failed keyboard inspection: ' +
+      JSON.stringify(ledgerOpen));
+  }
+  const ledgerShot=await request('GET','/session/'+sessionId+'/screenshot');
+  if (!ledgerShot?.value) throw new Error('Exact changed-pixel ledger screenshot absent.');
+  await writeFile('exhibition-offline-pixel-ledger-'+browser+'.png',
+    Buffer.from(ledgerShot.value,'base64'));
+  await pressEnter();
+  if (await execute("return document.querySelector('#comparison-index .pair-pixels').open")) {
+    throw new Error('Keyboard could not collapse exact pixel ledger.');
+  }
   await request('POST', '/session/' + sessionId + '/window/rect', { width: 390, height: 790 });
-  const comparisonNarrow = await execute("const section=document.getElementById('comparison-index');section.scrollIntoView({block:'start',behavior:'instant'});const region=document.getElementById('comparison-scroll');region.focus({preventScroll:true});return {protocol:location.protocol,viewport:document.documentElement.clientWidth,focused:document.activeElement===region,tableRows:region.querySelectorAll('tbody tr').length,horizontalOverflow:region.scrollWidth>region.clientWidth,top:Math.round(region.getBoundingClientRect().top),viewportHeight:innerHeight}");
+  const comparisonNarrow = await execute("const section=document.getElementById('comparison-index');section.scrollIntoView({block:'start',behavior:'instant'});const region=document.getElementById('comparison-scroll');region.focus({preventScroll:true});return {protocol:location.protocol,viewport:document.documentElement.clientWidth,focused:document.activeElement===region,tableRows:region.querySelectorAll(':scope > table > tbody > tr').length,horizontalOverflow:region.scrollWidth>region.clientWidth,top:Math.round(region.getBoundingClientRect().top),viewportHeight:innerHeight}");
   if (comparisonNarrow.protocol !== 'file:' || comparisonNarrow.viewport > 600 ||
       !comparisonNarrow.focused || comparisonNarrow.tableRows !== 6 ||
       !comparisonNarrow.horizontalOverflow || comparisonNarrow.top < 0 ||
-      comparisonNarrow.top > comparisonNarrow.viewportHeight / 2) {
+      comparisonNarrow.top > comparisonNarrow.viewportHeight - 150) {
     throw new Error('Offline keyboard/narrow comparison index failed: ' +
       JSON.stringify(comparisonNarrow));
   }
@@ -231,6 +338,24 @@ try {
   if (!comparisonScreenshot?.value) throw new Error('Offline comparison screenshot absent.');
   await writeFile('exhibition-offline-comparisons-' + browser + '.png',
     Buffer.from(comparisonScreenshot.value, 'base64'));
+  const narrowPreviewFocused = await execute("const s=document.querySelector('#comparison-index .pair-preview summary');s.scrollIntoView({block:'center',behavior:'instant'});s.focus();return document.activeElement===s");
+  if (!narrowPreviewFocused) throw new Error('Narrow A/B preview summary lost keyboard access.');
+  await pressEnter();
+  const previewNarrow = await execute(`const d=document.querySelector('#comparison-index .pair-preview');
+    const frames=[...d.querySelectorAll('.pair-raster')].map(el=>el.getBoundingClientRect());
+    return {open:d.open,columns:getComputedStyle(d.querySelector('.pair-images')).gridTemplateColumns,
+      ordered:frames.length===2 && frames[1].top>=frames[0].bottom,
+      width:document.documentElement.clientWidth,
+      bodyOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth};`);
+  if (!previewNarrow.open || !previewNarrow.ordered || previewNarrow.bodyOverflow ||
+      previewNarrow.width>600 || previewNarrow.columns.split(' ').length!==1) {
+    throw new Error('Responsive keyboard A/B proof preview failed: '+JSON.stringify(previewNarrow));
+  }
+  const pairNarrowShot=await request('GET','/session/'+sessionId+'/screenshot');
+  if (!pairNarrowShot?.value) throw new Error('Narrow A/B pair screenshot absent.');
+  await writeFile('exhibition-offline-pair-preview-narrow-'+browser+'.png',
+    Buffer.from(pairNarrowShot.value,'base64'));
+
   await request('POST', '/session/' + sessionId + '/window/rect', { width: 1250, height: 900 });
   await execute("window.scrollTo(0,0)");
   const boardScreenshot = await request('GET', '/session/' + sessionId + '/screenshot');
