@@ -441,8 +441,8 @@ export function mountExhibitionStudy(panel) {
         '-x' + column + '-y' + row + '.fwpixel.json';
       saveSelectedBytes(new TextEncoder().encode(JSON.stringify(receipt, null, 2) + '\n'),
         'application/json', filename);
-      announce.textContent = 'Requested exact CPU pixel receipt for ' + comparisonName +
-        '; file delivery is browser-controlled.';
+      announce.textContent = 'Requested exact CPU pixel receipt for ' + a.entry.name +
+        (b ? ' vs ' + b.entry.name : '') + '; file delivery is browser-controlled.';
     } catch (error) {
       announce.textContent = 'Pixel receipt refused: ' + (error?.message ?? String(error));
     }
