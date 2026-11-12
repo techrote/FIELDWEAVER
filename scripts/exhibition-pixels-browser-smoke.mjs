@@ -125,6 +125,13 @@ try {
     } catch { return false; }
   });
   const savedPng = decodePngRgba(new Uint8Array(pngBytes));
+  // The PNG and provenance already refuse a forged gallery proof lease.
+  // Recheck that recipe download cannot quietly bypass this boundary just
+  // because its immutable accepted recipe hash is otherwise valid.
+  const forgedRecipeExport = await execute("const card=document.querySelector('[data-exhibition-id=timeline-pulse]');const original=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-save-recipe').click();const status=document.getElementById('exhibition-study-status').textContent;card.dataset.canonicalRgbaHash=original;return status");
+  if (!forgedRecipeExport.includes('Recipe export refused: Current verified CPU proof is unavailable or mismatched.')) {
+    throw new Error('Recipe download accepted a forged live canonical source: ' + forgedRecipeExport);
+  }
   await saveByKeyboard('exhibition-study-save-recipe');
   const recipeBytes = await readSaved(recipeName, (bytes) => {
     try {
@@ -163,7 +170,7 @@ try {
     throw new Error('Selected B direct export was stale or changed the editor: ' + JSON.stringify(editorAfterDirectExport));
   }
   await writeFile('exhibition-study-selected-export-' + browser + '.json',
-    JSON.stringify({browser,pngName,recipeName,provenanceName,rgbaHash:rawRgbaHash(savedPng.rgba),
+    JSON.stringify({browser,pngName,recipeName,provenanceName,forgedRecipeExport,rgbaHash:rawRgbaHash(savedPng.rgba),
       recipeHash:recipeHash(studySavedRecipe),receiptTick:studySavedProvenance.targetTick,
       receiptRawRgbaHash:studySavedProvenance.rawRgbaHash,
       editorBeforeDirectExport,editorAfterDirectExport},null,2)+'\n');
