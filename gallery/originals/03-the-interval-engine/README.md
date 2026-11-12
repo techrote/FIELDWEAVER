@@ -33,3 +33,18 @@ The final **512×384** FW-012 software raster was directly inspected from the No
 - **State / deposition / result:** `65dfec3443bbf2a3` / `b35798a4e049945c` / `468a91bf82bbb51d`.
 - **Depositions:** **210,772**. The checked-in native FW-012 PNG and provenance are verified byte-for-byte against fresh canonical exports and dissimilar raster tile dimensions. The image was inspected, but independent artistic acceptance remains with Integration.
  No historical artwork, external texture or core function is modified.
+
+## Offline source-exact admission review (unmerged)
+
+From the PR #41 branch on Node 22 or 24:
+
+```sh
+npm run verify
+node gallery/originals/03-the-interval-engine/review.mjs
+```
+
+Open the printed `file://` URL in Firefox. The single standalone, network-free page uses FIELDWEAVER's **existing** offline exhibition generator and independently replays the archived provenance and PNG against twenty canonical identity fields. It compares two immutable **ACCEPTED** presets (Operator Atlas and Timeline Pulse) with the separately labelled **UNMERGED CANDIDATE**, provides genuine canonical PNG/recipe/provenance downloads, and fails closed if any source or image identity disagrees. It does not admit #41 into the shipped catalogue.
+
+In the existing `0Play.cmd` editor, **Load recipe** using the candidate's downloaded `*.recipe.json`, seek to **tick 176**, and evaluate crop **512×384**, centre **(128,136)**, **32768 Q16 units/pixel**, root seed **0x59a11e73**. Compare decoded raw RGBA8 **`fd389a9bb0ce640f`**. Same-tick, imported-recipe and source-exact download regressions run in `npm run verify`.
+
+**Curatorial status:** HOLD / human review. Direct native-size observation confirms a layered interrupted strata silhouette with valuable open upper/central space, complementary warm/cool currents and richer rhythm than the very sparse Rooms #57. The primary weakness is some similar repeated right-margin return strokes; left/right entries touch their frame intentionally. Do not infer equal world coordinates or pixel identity across competing crops. No aesthetics/physical Firefox sign-off or Integration approval is implied.
