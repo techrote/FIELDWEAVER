@@ -411,6 +411,14 @@ export function mountExhibitionStudy(panel) {
         ' · ' + cropLabel;
       compareSummary.hidden = false;
     } catch (error) {
+      // A failed lease discredits previously displayed pixel and A/B evidence
+      // as well as the full-overlap summary.
+      ++pixelToken;
+      pixelCache.clear();
+      reading.textContent = 'Cannot inspect verified A/B images: ' + (error?.message ?? String(error));
+      compareReading.textContent = '';
+      compareReading.hidden = true;
+      gridPixels.replaceChildren();
       compareSummary.textContent = 'A/B summary refused: ' + (error?.message ?? String(error));
       compareSummary.hidden = false;
     }
