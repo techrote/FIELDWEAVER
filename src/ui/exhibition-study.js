@@ -1,5 +1,5 @@
 import { exhibitionEntries } from './exhibition-catalog.js';
-import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel, compareStudyPixelChannels, sameStudyCrop, buildStudyPixelReceipt } from './exhibition-pixel-probe.js';
+import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel, nextDifferingStudyPixel, compareStudyPixelChannels, sameStudyCrop, buildStudyPixelReceipt } from './exhibition-pixel-probe.js';
 import { getAcceptedVisualIndexPng, getAcceptedVisualIndexProvenance } from './exhibition-visual-index.js';
 import { verifyOfflineExhibitionTile } from './exhibition-offline-board.js';
 import { buildAcceptedRecipeHandoff } from './exhibition-recipe-handoff.js';
@@ -142,9 +142,12 @@ export function mountExhibitionStudy(panel) {
   yLabel.append(y);
   const nextMark = make('button', { id: 'exhibition-study-pixel-next', class: 'button',
     type: 'button' }, 'Next visible mark');
+  const nextDifference = make('button', { id: 'exhibition-study-pixel-difference',
+    class: 'button', type: 'button' }, 'Next A/B difference');
+  nextDifference.disabled = true;
   const savePixel = make('button', { id: 'exhibition-study-pixel-save', class: 'button',
     type: 'button' }, 'Save exact pixel receipt (JSON)');
-  fields.append(sourceLabel, xLabel, yLabel, nextMark, savePixel);
+  fields.append(sourceLabel, xLabel, yLabel, nextMark, nextDifference, savePixel);
   const reading = make('output', { id: 'exhibition-study-pixel-reading',
     class: 'workspace-note', 'aria-live': 'polite' }, 'Choose a pixel.');
   reading.hidden = true;
@@ -319,6 +322,43 @@ export function mountExhibitionStudy(panel) {
   source.addEventListener('change', () => { lastPixelId = null; void updatePixel(true); });
   for (const input of [x, y]) input.addEventListener('input', () => void updatePixel());
   nextMark.addEventListener('click', () => void updatePixel(false, true));
+  nextDifference.addEventListener('click', () => {
+    if (!pixelOpen || !dialog.open || !pinnedId) return;
+    try {
+      const records = snapshot();
+      if (!records) throw new Error('Rebuild the verified accepted CPU index.');
+      const decodeCurrent = (id) => {
+        const record = records.get(id), entry = lookup.get(id);
+        if (!record || !entry) throw new Error('A/B accepted source is unavailable.');
+        // The comparison must renew and re-decode BOTH leases even when the
+        // pixel desk already holds cached rasters. CSP forbids fetch(blob:).
+        const png = getAcceptedVisualIndexPng(panel, id, record.url, record.hash);
+        return verifyStudyPng(png,
+          entry.exportCrop.widthPx, entry.exportCrop.heightPx, record.hash);
+      };
+      const a = decodeCurrent(pinnedId), b = decodeCurrent(currentId);
+      const hit = nextDifferingStudyPixel(a, b, Number(x.value), Number(y.value));
+      if (!hit) {
+        compareReading.textContent = 'No different decoded RGBA8 pixels in the ' +
+          Math.min(a.width, b.width) + '×' + Math.min(a.height, b.height) +
+          ' image-local overlap · ' +
+          (sameStudyCrop(lookup.get(pinnedId).exportCrop, lookup.get(currentId).exportCrop)
+            ? 'same authored crop' : 'authored crops differ; NOT world-aligned');
+        compareReading.hidden = false;
+        return;
+      }
+      x.value = String(hit.x); y.value = String(hit.y);
+      void updatePixel(); // Ordinary source revalidation and A/B evidence display.
+    } catch (error) {
+      // A forged or expired peer cannot retain the previous displayed delta.
+      ++pixelToken;
+      pixelCache.clear();
+      reading.textContent = 'Cannot inspect verified A/B images: ' + (error?.message ?? String(error));
+      compareReading.textContent = '';
+      compareReading.hidden = true;
+      gridPixels.replaceChildren();
+    }
+  });
   for (const [side, frameNode] of [['A', left], ['B', right]]) {
     frameNode.img.title = 'Focus and use Enter or arrow keys to inspect canonical pixels';
     frameNode.img.addEventListener('keydown', (event) => {
@@ -365,6 +405,7 @@ export function mountExhibitionStudy(panel) {
     source.querySelector('[value="B"]').disabled = !pinnedId;
     if (!pinnedId && source.value === 'B') source.value = 'A';
     unpin.disabled = !pinnedId;
+    nextDifference.disabled = !pinnedId;
     pin.disabled = pinnedId === currentId;
     announce.textContent = 'Work ' + (ids.indexOf(currentId) + 1) + '/' + ids.length +
       ': ' + lookup.get(currentId).name +
