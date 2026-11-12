@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { parseRecipe, recipeHash } from '../src/recipe/index.js';
 import { exhibitionEntries } from '../src/ui/exhibition-catalog.js';
+import { renderVisualIndexProof } from '../src/ui/exhibition-visual-index-model.js';
 import { pathToFileURL } from 'node:url';
 import { decodePngRgba, rawRgbaHash } from '../src/export/index.js';
 
@@ -125,6 +126,13 @@ try {
     } catch { return false; }
   });
   const savedPng = decodePngRgba(new Uint8Array(pngBytes));
+  // The PNG and provenance already refuse a forged gallery proof lease.
+  // Recheck that recipe download cannot quietly bypass this boundary just
+  // because its immutable accepted recipe hash is otherwise valid.
+  const forgedRecipeExport = await execute("const card=document.querySelector('[data-exhibition-id=timeline-pulse]');const original=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-save-recipe').click();const status=document.getElementById('exhibition-study-status').textContent;card.dataset.canonicalRgbaHash=original;return status");
+  if (!forgedRecipeExport.includes('Recipe export refused: Current verified CPU proof is unavailable or mismatched.')) {
+    throw new Error('Recipe download accepted a forged live canonical source: ' + forgedRecipeExport);
+  }
   await saveByKeyboard('exhibition-study-save-recipe');
   const recipeBytes = await readSaved(recipeName, (bytes) => {
     try {
@@ -163,7 +171,7 @@ try {
     throw new Error('Selected B direct export was stale or changed the editor: ' + JSON.stringify(editorAfterDirectExport));
   }
   await writeFile('exhibition-study-selected-export-' + browser + '.json',
-    JSON.stringify({browser,pngName,recipeName,provenanceName,rgbaHash:rawRgbaHash(savedPng.rgba),
+    JSON.stringify({browser,pngName,recipeName,provenanceName,forgedRecipeExport,rgbaHash:rawRgbaHash(savedPng.rgba),
       recipeHash:recipeHash(studySavedRecipe),receiptTick:studySavedProvenance.targetTick,
       receiptRawRgbaHash:studySavedProvenance.rawRgbaHash,
       editorBeforeDirectExport,editorAfterDirectExport},null,2)+'\n');
@@ -175,7 +183,7 @@ try {
   await execute("document.getElementById('exhibition-study-pixel-toggle').click(); const x=document.getElementById('exhibition-study-pixel-x');const y=document.getElementById('exhibition-study-pixel-y');x.value='3';y.value='7';x.dispatchEvent(new Event('input',{bubbles:true}))");
   let sampled;
   for(let i=0;i<50;i++){
-    sampled=await execute("return {text:document.getElementById('exhibition-study-pixel-reading').textContent,neighbours:document.querySelectorAll('.exhibition-study-pixel-cell').length,centres:document.querySelectorAll('.exhibition-study-pixel-cell.is-centre').length,colour:document.querySelector('.exhibition-study-pixel-cell.is-centre')?.style.backgroundColor,expanded:document.getElementById('exhibition-study-pixel-toggle').getAttribute('aria-expanded')}");
+    sampled=await execute("return {text:document.getElementById('exhibition-study-pixel-reading').textContent,ab:document.getElementById('exhibition-study-pixel-ab').textContent,neighbours:document.querySelectorAll('.exhibition-study-pixel-cell').length,centres:document.querySelectorAll('.exhibition-study-pixel-cell.is-centre').length,colour:document.querySelector('.exhibition-study-pixel-cell.is-centre')?.style.backgroundColor,expanded:document.getElementById('exhibition-study-pixel-toggle').getAttribute('aria-expanded')}");
     if(sampled.text.includes('(3, 7)')) break;
     await sleep(100);
   }
@@ -183,6 +191,184 @@ try {
      sampled.neighbours!==81 || sampled.centres!==1 || !sampled.colour || sampled.expanded!=='true') {
     throw new Error('Exact decoded pixel inspection failed: '+JSON.stringify(sampled));
   }
+  const comparisonA = decodePngRgba(renderVisualIndexProof('operator-atlas').png).rgba;
+  const comparisonB = decodePngRgba(renderVisualIndexProof('timeline-pulse').png).rgba;
+  const pixelOffset = (7 * 96 + 3) * 4;
+  const expectedDelta = Array.from({ length: 4 }, (_, channel) =>
+    comparisonB[pixelOffset + channel] - comparisonA[pixelOffset + channel]).join(', ');
+  if (!sampled.ab.includes('A Operator Atlas: ') ||
+      !sampled.ab.includes('B Timeline Pulse: ') ||
+      !sampled.ab.includes('Δ(B−A) RGBA8 ' + expectedDelta) ||
+      !(/same authored crop|IMAGE-LOCAL ONLY/.test(sampled.ab))) {
+    throw new Error('Actual A/B source-pixel channel delta is incorrect: ' +
+      JSON.stringify({ ab: sampled.ab, expectedDelta }));
+  }
+  // Save an actual browser-downloaded, source-exact A/B pixel research receipt.
+  // It has no invented world alignment and cannot outlive either proof lease.
+  const pixelReceiptName = 'fieldweaver-pixel-operator-atlas-vs-timeline-pulse-x3-y7.fwpixel.json';
+  await saveByKeyboard('exhibition-study-pixel-save');
+  const pixelReceiptBytes = await readSaved(pixelReceiptName, (bytes) => {
+    try {
+      const receipt = JSON.parse(bytes.toString('utf8'));
+      return receipt.version === 'fw-exhibition-pixel-receipt-v1' &&
+        receipt.coordinateSpace === 'image-local-top-left' &&
+        receipt.coordinate.x === 3 && receipt.coordinate.y === 7 &&
+        receipt.a.id === 'operator-atlas' && receipt.b.id === 'timeline-pulse' &&
+        receipt.b.rawRgbaHash === selectedHash &&
+        receipt.comparison.deltaBMinusA.join(', ') === expectedDelta;
+    } catch { return false; }
+  });
+  const pixelReceipt = JSON.parse(pixelReceiptBytes.toString('utf8'));
+  // Invalidating only the *peer* proof must also refuse cached A/B readings.
+  await execute("const card=document.querySelector('[data-exhibition-id=operator-atlas]');window.__studyPeerHash=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-pixel-x').dispatchEvent(new Event('input',{bubbles:true}))");
+  let invalidPeer = '';
+  for (let i = 0; i < 30; i++) {
+    invalidPeer = await execute("return document.getElementById('exhibition-study-pixel-reading').textContent");
+    if (invalidPeer.includes('Cannot inspect this verified PNG:')) break;
+    await sleep(100);
+  }
+  const noStaleDelta = await execute("return {hidden:document.getElementById('exhibition-study-pixel-ab').hidden,text:document.getElementById('exhibition-study-pixel-ab').textContent}");
+  if (!invalidPeer.includes('Current verified CPU proof is unavailable or mismatched') ||
+      !noStaleDelta.hidden || noStaleDelta.text) {
+    throw new Error('Stale peer survived source-exact A/B lease invalidation: ' +
+      JSON.stringify({invalidPeer,noStaleDelta}));
+  }
+  await execute("const card=document.querySelector('[data-exhibition-id=operator-atlas]');card.dataset.canonicalRgbaHash=window.__studyPeerHash;document.getElementById('exhibition-study-pixel-x').dispatchEvent(new Event('input',{bubbles:true}))");
+  let peerRestored = '';
+  for (let i = 0; i < 30; i++) {
+    peerRestored = await execute("return document.getElementById('exhibition-study-pixel-ab').textContent");
+    if (peerRestored.includes('Δ(B−A) RGBA8 ' + expectedDelta)) break;
+    await sleep(100);
+  }
+  if (!peerRestored.includes('Δ(B−A) RGBA8 ' + expectedDelta)) {
+    throw new Error('A/B peer evidence did not recover after restored registry: ' + peerRestored);
+  }
+  // Exercise a visibly different accepted source pixel, not only shared
+  // background colours. The exact numeric oracle is independently decoded.
+  await execute("const x=document.getElementById('exhibition-study-pixel-x');const y=document.getElementById('exhibition-study-pixel-y');x.value='20';y.value='35';x.dispatchEvent(new Event('input',{bubbles:true}))");
+  let visibleDifference = '';
+  for (let i = 0; i < 30; i++) {
+    visibleDifference = await execute("return document.getElementById('exhibition-study-pixel-ab').textContent");
+    if (visibleDifference.includes('Δ(B−A) RGBA8 7, 18, 20, 0')) break;
+    await sleep(100);
+  }
+  const visibleOffset = (35 * 96 + 20) * 4;
+  const visibleDelta = Array.from({ length: 4 }, (_, channel) =>
+    comparisonB[visibleOffset + channel] - comparisonA[visibleOffset + channel]).join(', ');
+  if (visibleDelta !== '7, 18, 20, 0' ||
+      !visibleDifference.includes('Δ(B−A) RGBA8 ' + visibleDelta) ||
+      !visibleDifference.includes('A Operator Atlas: #51ccdb') ||
+      !visibleDifference.includes('B Timeline Pulse: #58deef')) {
+    throw new Error('Non-background A/B pixel delta was not source exact: ' +
+      JSON.stringify({visibleDifference,visibleDelta}));
+  }
+  // Actual browser action: find the next differing source pixel, not merely
+  // check the known nonzero delta at the initial position.
+  const expectedNextDifference = (() => {
+    const count = 96 * 64, start = 35 * 96 + 20;
+    for (let step = 1; step <= count; step += 1) {
+      const pos = (start + step) % count, offset = pos * 4;
+      if ([0, 1, 2, 3].some(ch => comparisonA[offset + ch] !== comparisonB[offset + ch])) {
+        return { x: pos % 96, y: Math.floor(pos / 96),
+          delta: Array.from({length: 4}, (_, ch) =>
+            comparisonB[offset + ch] - comparisonA[offset + ch]).join(', ') };
+      }
+    }
+    return null;
+  })();
+  if (!expectedNextDifference || expectedNextDifference.delta === '0, 0, 0, 0') {
+    throw new Error('Accepted canonical A/B oracle has no next differing pixel.');
+  }
+  const differenceEnabled = await execute("return !document.getElementById('exhibition-study-pixel-difference').disabled");
+  if (!differenceEnabled) throw new Error('A/B difference navigation disabled despite pinned A and current B.');
+  await execute("document.getElementById('exhibition-study-pixel-difference').click()");
+  let nextDifference = null;
+  for (let i = 0; i < 35; i += 1) {
+    nextDifference = await execute("return {text:document.getElementById('exhibition-study-pixel-reading').textContent,ab:document.getElementById('exhibition-study-pixel-ab').textContent,x:Number(document.getElementById('exhibition-study-pixel-x').value),y:Number(document.getElementById('exhibition-study-pixel-y').value)}");
+    if (nextDifference.x === expectedNextDifference.x &&
+        nextDifference.y === expectedNextDifference.y &&
+        nextDifference.ab.includes('Δ(B−A) RGBA8 ' + expectedNextDifference.delta)) break;
+    await sleep(100);
+  }
+  if (nextDifference.x !== expectedNextDifference.x || nextDifference.y !== expectedNextDifference.y ||
+      !nextDifference.text.includes('Timeline Pulse') ||
+      !nextDifference.ab.includes('Δ(B−A) RGBA8 ' + expectedNextDifference.delta) ||
+      !nextDifference.ab.match(/same authored crop|IMAGE-LOCAL ONLY/)) {
+    throw new Error('Next A/B difference failed decoded CPU oracle: ' +
+      JSON.stringify({nextDifference,expectedNextDifference}));
+  }
+  const differenceShot = await request('GET', '/session/' + sessionId + '/screenshot');
+  if (!differenceShot?.value) throw new Error('Exact A/B difference screenshot unavailable.');
+  await writeFile('exhibition-pixel-difference-' + browser + '.png',
+    Buffer.from(differenceShot.value, 'base64'));
+  // Real keyboard backward action returns to the exact previous source pixel.
+  await saveByKeyboard('exhibition-study-pixel-difference-prev');
+  let previousDifference = null;
+  for (let i = 0; i < 35; i += 1) {
+    previousDifference = await execute("return {x:Number(document.getElementById('exhibition-study-pixel-x').value),y:Number(document.getElementById('exhibition-study-pixel-y').value),ab:document.getElementById('exhibition-study-pixel-ab').textContent}");
+    if (previousDifference.x === 20 && previousDifference.y === 35 &&
+        previousDifference.ab.includes('Δ(B−A) RGBA8 7, 18, 20, 0')) break;
+    await sleep(100);
+  }
+  if (previousDifference.x !== 20 || previousDifference.y !== 35 ||
+      !previousDifference.ab.includes('Δ(B−A) RGBA8 7, 18, 20, 0')) {
+    throw new Error('Keyboard previous A/B difference failed canonical round-trip: ' +
+      JSON.stringify(previousDifference));
+  }
+  await saveByKeyboard('exhibition-study-pixel-difference');
+  let forwardAgain = null;
+  for (let i = 0; i < 35; i += 1) {
+    forwardAgain = await execute("return {x:Number(document.getElementById('exhibition-study-pixel-x').value),y:Number(document.getElementById('exhibition-study-pixel-y').value),ab:document.getElementById('exhibition-study-pixel-ab').textContent}");
+    if (forwardAgain.x === expectedNextDifference.x && forwardAgain.y === expectedNextDifference.y &&
+        forwardAgain.ab.includes('Δ(B−A) RGBA8 ' + expectedNextDifference.delta)) break;
+    await sleep(100);
+  }
+  if (forwardAgain.x !== expectedNextDifference.x ||
+      forwardAgain.y !== expectedNextDifference.y ||
+      !forwardAgain.ab.includes('Δ(B−A) RGBA8 ' + expectedNextDifference.delta)) {
+    throw new Error('Keyboard A/B forward recovery failed decoded CPU oracle: ' + JSON.stringify(forwardAgain));
+  }
+  // The summary is an independent full-overlap decoded-CPU measurement.
+  const expectedSummaryCount = (() => {
+    let count = 0;
+    for (let pixel = 0; pixel < comparisonA.length; pixel += 4) {
+      if ([0, 1, 2, 3].some(ch => comparisonA[pixel + ch] !== comparisonB[pixel + ch])) count += 1;
+    }
+    return count;
+  })();
+  await saveByKeyboard('exhibition-study-pixel-summary');
+  const overlapSummary = await execute("return {text:document.getElementById('exhibition-study-pixel-summary-reading').textContent,hidden:document.getElementById('exhibition-study-pixel-summary-reading').hidden}");
+  if (overlapSummary.hidden ||
+      !overlapSummary.text.includes('differing pixels ' + expectedSummaryCount + '/6144') ||
+      !overlapSummary.text.includes('maximum |Δ(B−A)| RGBA8')) {
+    throw new Error('A/B summary did not match independent canonical PNG byte oracle: ' +
+      JSON.stringify({overlapSummary,expectedSummaryCount}));
+  }
+  const summaryShot = await request('GET', '/session/' + sessionId + '/screenshot');
+  if (!summaryShot?.value) throw new Error('A/B summary screenshot unavailable.');
+  await writeFile('exhibition-pixel-summary-' + browser + '.png',
+    Buffer.from(summaryShot.value, 'base64'));
+  await writeFile('exhibition-pixel-summary-' + browser + '.json',
+    JSON.stringify({ browser, expectedDifferentPixels: expectedSummaryCount,
+      overlapPixels: 6144, observed: overlapSummary }, null, 2) + '\n');
+  const forgedSummary = await execute("const card=document.querySelector('[data-exhibition-id=operator-atlas]');const old=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-pixel-summary').click();const result={summary:document.getElementById('exhibition-study-pixel-summary-reading').textContent,reading:document.getElementById('exhibition-study-pixel-reading').textContent,abHidden:document.getElementById('exhibition-study-pixel-ab').hidden,ab:document.getElementById('exhibition-study-pixel-ab').textContent};card.dataset.canonicalRgbaHash=old;return result");
+  if (!forgedSummary.summary.startsWith('A/B summary refused:') ||
+      forgedSummary.summary.includes('differing pixels ' + expectedSummaryCount) ||
+      !forgedSummary.reading.startsWith('Cannot inspect verified A/B images:') ||
+      !forgedSummary.abHidden || forgedSummary.ab) {
+    throw new Error('A/B summary retained stale pixel or statistics with a forged proof: ' +
+      JSON.stringify(forgedSummary));
+  }
+  // The new traversal must refuse a forged peer even if previously cached.
+  const forgedDifference = await execute("const card=document.querySelector('[data-exhibition-id=operator-atlas]');const previous=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-pixel-difference').click();const evidence={reading:document.getElementById('exhibition-study-pixel-reading').textContent,abHidden:document.getElementById('exhibition-study-pixel-ab').hidden,ab:document.getElementById('exhibition-study-pixel-ab').textContent};card.dataset.canonicalRgbaHash=previous;return evidence");
+  if (!forgedDifference.reading.includes('Cannot inspect verified A/B images:') ||
+      !forgedDifference.reading.includes('Current verified CPU proof is unavailable or mismatched') ||
+      !forgedDifference.abHidden || forgedDifference.ab) {
+    throw new Error('Next-difference traversal retained a forged A/B proof: ' +
+      JSON.stringify(forgedDifference));
+  }
+  // Restore the previous source coordinate for cache-forgery and recovery gates.
+  await execute("const x=document.getElementById('exhibition-study-pixel-x');const y=document.getElementById('exhibition-study-pixel-y');x.value='3';y.value='7';x.dispatchEvent(new Event('input',{bubbles:true}))");
   // Cached pixel reads must revalidate current registry custody, not trust
   // a previously decoded PNG after a changed DOM identity.
   await execute("const card=document.querySelector('[data-exhibition-id=timeline-pulse]');window.__originalStudyHash=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-pixel-x').dispatchEvent(new Event('input',{bubbles:true}))");
@@ -231,7 +417,7 @@ try {
   const pixelShot=await request('GET','/session/'+sessionId+'/screenshot');
   if(!pixelShot?.value) throw new Error('Decoded pixel screenshot not captured');
   await writeFile('exhibition-pixels-'+browser+'.png',Buffer.from(pixelShot.value,'base64'));
-  await writeFile('exhibition-pixels-'+browser+'.json',JSON.stringify({browser,sampled,forgedPixel,restoredPixel,aPixel,marked},null,2)+'\n');
+  await writeFile('exhibition-pixels-'+browser+'.json',JSON.stringify({browser,sampled,expectedDelta,visibleDifference,expectedNextDifference,nextDifference,previousDifference,forwardAgain,forgedDifference,invalidPeer,noStaleDelta,peerRestored,forgedPixel,restoredPixel,aPixel,marked},null,2)+'\n');
   // Real WebDriver key actions on focused canonical images; distinguish from
   // gallery Left/Right while retaining source-specific A/B coordinates.
   const pressPixelKey = async (value, shifted = false) => {
@@ -281,6 +467,14 @@ try {
   await writeFile('exhibition-pixel-keyboard-' + browser + '.json',
     JSON.stringify({ browser, pixelRight, pixelDown, pixelB, pixelBLeft, narrow }, null, 2) + '\n');
   await request('POST', '/session/' + sessionId + '/window/rect', { width: 1250, height: 900 });
+  // Check a forged A after keyboard/narrow assertions but before re-pinning;
+  // the receipt still compares Operator Atlas (A) against Timeline Pulse (B).
+  const forgedPixelReceipt = await execute("const card=document.querySelector('[data-exhibition-id=operator-atlas]');const old=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-pixel-save').click();const msg=document.getElementById('exhibition-study-status').textContent;card.dataset.canonicalRgbaHash=old;return msg");
+  if (!forgedPixelReceipt.includes('Pixel receipt refused: Current verified CPU proof is unavailable or mismatched')) {
+    throw new Error('Forged A source was allowed to export an A/B pixel receipt: ' + forgedPixelReceipt);
+  }
+  await writeFile('exhibition-pixel-receipt-' + browser + '.json',
+    JSON.stringify({browser,pixelReceiptName,pixelReceipt,forgedPixelReceipt},null,2) + '\n');
   // Keyboard P re-pins the current B artwork as A. The visible pixel reading
   // must switch from the old A PNG identity to the current accepted CPU proof.
   await execute("const pick=document.getElementById('exhibition-study-pixel-source');pick.value='A';pick.dispatchEvent(new Event('change',{bubbles:true}));document.querySelectorAll('.exhibition-study-frame img')[0].focus()");
@@ -394,7 +588,11 @@ try {
   if (offlinePage.heading !== 'Accepted canonical proofs' ||
       !offlinePage.csp?.includes("default-src 'none'") ||
       !offlinePage.csp.includes("connect-src 'none'") ||
-      offlinePage.articleIds.length !== 4 || offlinePage.anchors.length !== 4 ||
+      offlinePage.articleIds.length !== 4 || offlinePage.anchors.length !== 5 ||
+      offlinePage.anchors.filter((anchor) => anchor.startsWith('#work-')).length !== 4 ||
+      !offlinePage.anchors.includes('#comparison-index') ||
+      offlinePage.anchors.some((anchor) => anchor !== '#comparison-index' &&
+        !offlinePage.articleIds.includes(anchor.slice(1))) ||
       offlinePage.scriptCount !== 0 || offlinePage.externalResources.length !== 0 ||
       encoded.some((match) => !offlinePage.articleIds.includes('work-' + match[1]) ||
         !offlinePage.bodyText.includes(offlineDecoded.find((p) => p.id === match[1]).hash)) ||

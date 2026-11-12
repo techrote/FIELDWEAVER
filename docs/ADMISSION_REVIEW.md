@@ -10,7 +10,7 @@ Requires Node.js 22/24, npm and Git. Initial review generation requires one-time
 - **Linux/macOS:** run `sh ./0Review.sh`.
 - **Manual:** run `npm ci`, `npm run verify`, then `node scripts/admission-review.mjs --out FIELDWEAVER-admission-review.html`; open the resulting HTML.
 
-The launchers run the full `npm run verify` gate and choose an unused numbered HTML filename. The generator makes detached temporary Git worktrees for the exact candidate heads, independently replays their recipes, checks the versioned provenance and decoded canonical RGBA8 against the archived PNGs, then writes the HTML only after all entries verify. Moved source commits, replay/identity mismatches or verification failures stop generation; a previous review is never reopened as if current. The generated page has no JavaScript, external assets or telemetry.
+The launchers run the full `npm run verify` gate and choose an unused numbered HTML filename. The generator makes detached temporary Git worktrees for the exact candidate heads, rejects any separately committed authored recipe JSON that differs from the recipe recorded in its provenance, independently replays the latter, checks the versioned provenance and decoded canonical RGBA8 against the archived PNGs, then writes the HTML only after all entries verify. Moved source commits, replay/identity mismatches or verification failures stop generation; a previous review is never reopened as if current. The generated page has no JavaScript, external assets or telemetry.
 
 ## Admission queue — 11 November 2026
 

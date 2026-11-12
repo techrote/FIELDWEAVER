@@ -1,5 +1,5 @@
 import { exhibitionEntries } from './exhibition-catalog.js';
-import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel } from './exhibition-pixel-probe.js';
+import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel, nextDifferingStudyPixel, previousDifferingStudyPixel, summarizeDifferingStudyPixels, compareStudyPixelChannels, sameStudyCrop, buildStudyPixelReceipt } from './exhibition-pixel-probe.js';
 import { getAcceptedVisualIndexPng, getAcceptedVisualIndexProvenance } from './exhibition-visual-index.js';
 import { verifyOfflineExhibitionTile } from './exhibition-offline-board.js';
 import { buildAcceptedRecipeHandoff } from './exhibition-recipe-handoff.js';
@@ -128,7 +128,7 @@ export function mountExhibitionStudy(panel) {
     'aria-label': 'Decoded canonical pixel inspection' });
   desk.hidden = true;
   const help = make('p', { class: 'workspace-note' },
-    'Click an image, focus it and use arrow keys (Shift: 10 pixels), or enter a column/row. Values are exact decoded CPU pixels, origin top-left. A and B have different authored world crops.');
+    'Click an image, focus it and use arrow keys (Shift: 10 pixels), or enter a column/row. Values are exact decoded CPU pixels, origin top-left. With A pinned, both RGBA8 values and B−A channel deltas use the same image-local pixel; authored crops may differ.');
   const fields = make('div', { class: 'exhibition-study-pixel-controls' });
   const sourceLabel = make('label', {}, 'Image ');
   const source = make('select', { id: 'exhibition-study-pixel-source' });
@@ -142,10 +142,27 @@ export function mountExhibitionStudy(panel) {
   yLabel.append(y);
   const nextMark = make('button', { id: 'exhibition-study-pixel-next', class: 'button',
     type: 'button' }, 'Next visible mark');
-  fields.append(sourceLabel, xLabel, yLabel, nextMark);
+  const nextDifference = make('button', { id: 'exhibition-study-pixel-difference',
+    class: 'button', type: 'button' }, 'Next A/B difference');
+  nextDifference.disabled = true;
+  const previousDifference = make('button', { id: 'exhibition-study-pixel-difference-prev',
+    class: 'button', type: 'button' }, 'Previous A/B difference');
+  previousDifference.disabled = true;
+  const summarizeDifference = make('button', { id: 'exhibition-study-pixel-summary',
+    class: 'button', type: 'button' }, 'Summarize A/B overlap');
+  summarizeDifference.disabled = true;
+  const savePixel = make('button', { id: 'exhibition-study-pixel-save', class: 'button',
+    type: 'button' }, 'Save exact pixel receipt (JSON)');
+  fields.append(sourceLabel, xLabel, yLabel, nextMark, previousDifference, nextDifference, summarizeDifference, savePixel);
   const reading = make('output', { id: 'exhibition-study-pixel-reading',
     class: 'workspace-note', 'aria-live': 'polite' }, 'Choose a pixel.');
   reading.hidden = true;
+  const compareReading = make('output', { id: 'exhibition-study-pixel-ab',
+    class: 'workspace-note', 'aria-live': 'polite' });
+  compareReading.hidden = true;
+  const compareSummary = make('output', { id: 'exhibition-study-pixel-summary-reading',
+    class: 'workspace-note', 'aria-live': 'polite' });
+  compareSummary.hidden = true;
   const gridPixels = make('div', { id: 'exhibition-study-pixel-neighbours',
     class: 'exhibition-study-pixel-neighbours', role: 'img',
     'aria-label': 'Nine by nine nearest-neighbour display; selected centre outlined' });
@@ -154,7 +171,7 @@ export function mountExhibitionStudy(panel) {
     class: 'workspace-note' }, 'No study open.');
   // Keep the exact source-pixel readout visible above large framed works,
   // including when A/B images stack at narrow viewport widths.
-  dialog.append(header, toolbar, description, reading, gallery, desk, announce);
+  dialog.append(header, toolbar, description, reading, compareReading, compareSummary, gallery, desk, announce);
   document.body.append(dialog);
 
   let currentId = ids[0];
@@ -196,11 +213,22 @@ export function mountExhibitionStudy(panel) {
     frameNode.caption.textContent = record.label.details;
   }
   const pixelId = () => source.value === 'B' && pinnedId ? currentId : (pinnedId ?? currentId);
+  function clearSummary() {
+    compareSummary.textContent = '';
+    compareSummary.hidden = true;
+  }
   async function updatePixel(resetCoordinates = false, findNextMark = false) {
     if (!pixelOpen || !dialog.open) return;
     const token = ++pixelToken;
+    compareReading.hidden = true;
+    compareReading.textContent = '';
     const id = pixelId(), record = snapshot()?.get(id), entry = lookup.get(id);
-    if (!record) { reading.textContent = 'Verified CPU image unavailable.'; gridPixels.replaceChildren(); return; }
+    if (!record) {
+      clearSummary();
+      reading.textContent = 'Verified CPU image unavailable.';
+      gridPixels.replaceChildren();
+      return;
+    }
     try {
       // Renew the live proof lease on *every* sample, including cache hits.
       // A forged hash/rebuilt proof cannot retain an old decoded readout.
@@ -236,6 +264,38 @@ export function mountExhibitionStudy(panel) {
       const sample = sampleStudyPixel(pixels, nextCol, nextRow);
       reading.textContent = entry.name + ' · (' + nextCol + ', ' + nextRow + ') · ' + sample.hex +
         ' · RGBA8 ' + sample.rgba.join(', ') + ' · image identity ' + pixels.hash;
+      if (pinnedId) {
+        // Renew BOTH proof leases, even on a cached pixel or while reading A.
+        // The comparison is source-local unless the authored crops coincide.
+        const otherId = id === pinnedId ? currentId : pinnedId;
+        const peer = snapshot()?.get(otherId), otherEntry = lookup.get(otherId);
+        if (!peer || !otherEntry) throw new Error('A/B peer CPU proof is unavailable.');
+        const peerPng = getAcceptedVisualIndexPng(panel, otherId, peer.url, peer.hash);
+        let peerPixels = pixelCache.get(peer.url);
+        if (!peerPixels || peerPixels.hash !== peer.hash) {
+          peerPixels = verifyStudyPng(peerPng,
+            otherEntry.exportCrop.widthPx, otherEntry.exportCrop.heightPx, peer.hash);
+          pixelCache.set(peer.url, peerPixels);
+        }
+        if (token !== pixelToken || !dialog.open) return;
+        if (nextCol >= peerPixels.width || nextRow >= peerPixels.height) {
+          compareReading.textContent = 'A/B source-local comparison unavailable at this coordinate: ' +
+            'the other image ends before (' + nextCol + ', ' + nextRow + ').';
+        } else {
+          const aPixels = id === pinnedId ? pixels : peerPixels;
+          const bPixels = id === pinnedId ? peerPixels : pixels;
+          const compared = compareStudyPixelChannels(aPixels, bPixels, nextCol, nextRow);
+          const aligned = sameStudyCrop(lookup.get(pinnedId).exportCrop, lookup.get(currentId).exportCrop);
+          compareReading.textContent = 'A ' + lookup.get(pinnedId).name + ': ' +
+            compared.a.hex + ' RGBA8 ' + compared.a.rgba.join(', ') +
+            ' · B ' + lookup.get(currentId).name + ': ' +
+            compared.b.hex + ' RGBA8 ' + compared.b.rgba.join(', ') +
+            ' · Δ(B−A) RGBA8 ' + compared.delta.join(', ') +
+            ' · ' + (aligned ? 'same authored crop' :
+              'IMAGE-LOCAL ONLY: authored crops differ; not a world-aligned comparison');
+        }
+        compareReading.hidden = false;
+      }
       const cells = [];
       for (let dy = -4; dy <= 4; dy += 1) {
         for (let dx = -4; dx <= 4; dx += 1) {
@@ -254,6 +314,7 @@ export function mountExhibitionStudy(panel) {
     } catch (error) {
       if (token !== pixelToken) return;
       reading.textContent = 'Cannot inspect this verified PNG: ' + (error?.message ?? String(error));
+      clearSummary();
       gridPixels.replaceChildren();
     }
   }
@@ -262,6 +323,8 @@ export function mountExhibitionStudy(panel) {
     dialog.classList.remove('is-pixel-inspection');
     desk.hidden = true; inspect.setAttribute('aria-expanded', 'false'); inspect.textContent = 'Inspect exact pixels';
     gridPixels.replaceChildren(); reading.textContent = 'Choose a pixel.'; reading.hidden = true;
+    compareReading.hidden = true; compareReading.textContent = '';
+    clearSummary();
   }
   function openPixelDesk() {
     if (pixelOpen) return;
@@ -279,6 +342,89 @@ export function mountExhibitionStudy(panel) {
   source.addEventListener('change', () => { lastPixelId = null; void updatePixel(true); });
   for (const input of [x, y]) input.addEventListener('input', () => void updatePixel());
   nextMark.addEventListener('click', () => void updatePixel(false, true));
+  const navigateDifference = (direction) => {
+    if (!pixelOpen || !dialog.open || !pinnedId) return;
+    try {
+      const records = snapshot();
+      if (!records) throw new Error('Rebuild the verified accepted CPU index.');
+      const decodeCurrent = (id) => {
+        const record = records.get(id), entry = lookup.get(id);
+        if (!record || !entry) throw new Error('A/B accepted source is unavailable.');
+        // The comparison must renew and re-decode BOTH leases even when the
+        // pixel desk already holds cached rasters. CSP forbids fetch(blob:).
+        const png = getAcceptedVisualIndexPng(panel, id, record.url, record.hash);
+        return verifyStudyPng(png,
+          entry.exportCrop.widthPx, entry.exportCrop.heightPx, record.hash);
+      };
+      const a = decodeCurrent(pinnedId), b = decodeCurrent(currentId);
+      const hit = (direction > 0 ? nextDifferingStudyPixel : previousDifferingStudyPixel)(
+        a, b, Number(x.value), Number(y.value));
+      if (!hit) {
+        compareReading.textContent = 'No different decoded RGBA8 pixels in the ' +
+          Math.min(a.width, b.width) + '×' + Math.min(a.height, b.height) +
+          ' image-local overlap · ' +
+          (sameStudyCrop(lookup.get(pinnedId).exportCrop, lookup.get(currentId).exportCrop)
+            ? 'same authored crop' : 'authored crops differ; NOT world-aligned');
+        compareReading.hidden = false;
+        return;
+      }
+      x.value = String(hit.x); y.value = String(hit.y);
+      void updatePixel(); // Ordinary source revalidation and A/B evidence display.
+    } catch (error) {
+      // A forged or expired peer cannot retain the previous displayed delta.
+      ++pixelToken;
+      pixelCache.clear();
+      reading.textContent = 'Cannot inspect verified A/B images: ' + (error?.message ?? String(error));
+      compareReading.textContent = '';
+      compareReading.hidden = true;
+      clearSummary();
+      gridPixels.replaceChildren();
+    }
+  };
+  summarizeDifference.addEventListener('click', () => {
+    clearSummary(); // A failure must never preserve a previous A/B result.
+    if (!pixelOpen || !dialog.open || !pinnedId) return;
+    try {
+      const records = snapshot();
+      if (!records) throw new Error('Rebuild the verified accepted CPU index.');
+      const verified = (id) => {
+        const record = records.get(id), entry = lookup.get(id);
+        if (!record || !entry) throw new Error('A/B accepted source is unavailable.');
+        // Never trust the pixel desk cache: revalidate both live leases and
+        // independently decode their actual in-memory canonical PNG bytes.
+        const png = getAcceptedVisualIndexPng(panel, id, record.url, record.hash);
+        return verifyStudyPng(png,
+          entry.exportCrop.widthPx, entry.exportCrop.heightPx, record.hash);
+      };
+      const summary = summarizeDifferingStudyPixels(verified(pinnedId), verified(currentId));
+      const bounds = summary.bounds
+        ? '(' + summary.bounds.left + ', ' + summary.bounds.top + ')–(' +
+          summary.bounds.right + ', ' + summary.bounds.bottom + ')'
+        : 'none';
+      const cropLabel = sameStudyCrop(lookup.get(pinnedId).exportCrop, lookup.get(currentId).exportCrop)
+        ? 'same authored crop'
+        : 'IMAGE-LOCAL ONLY: authored crops differ; NOT world-aligned';
+      compareSummary.textContent = 'A/B exact RGBA8 overlap ' + summary.width + '×' + summary.height +
+        ' · differing pixels ' + summary.differentPixels + '/' + summary.overlapPixels +
+        ' · difference bounds ' + bounds +
+        ' · maximum |Δ(B−A)| RGBA8 ' + summary.channelMaxAbsDelta.join(', ') +
+        ' · ' + cropLabel;
+      compareSummary.hidden = false;
+    } catch (error) {
+      // A failed lease discredits previously displayed pixel and A/B evidence
+      // as well as the full-overlap summary.
+      ++pixelToken;
+      pixelCache.clear();
+      reading.textContent = 'Cannot inspect verified A/B images: ' + (error?.message ?? String(error));
+      compareReading.textContent = '';
+      compareReading.hidden = true;
+      gridPixels.replaceChildren();
+      compareSummary.textContent = 'A/B summary refused: ' + (error?.message ?? String(error));
+      compareSummary.hidden = false;
+    }
+  });
+  nextDifference.addEventListener('click', () => navigateDifference(1));
+  previousDifference.addEventListener('click', () => navigateDifference(-1));
   for (const [side, frameNode] of [['A', left], ['B', right]]) {
     frameNode.img.title = 'Focus and use Enter or arrow keys to inspect canonical pixels';
     frameNode.img.addEventListener('keydown', (event) => {
@@ -318,6 +464,7 @@ export function mountExhibitionStudy(panel) {
     });
   }
   function paint() {
+    clearSummary(); // The previous A/B source pair is no longer in view.
     const frames = snapshot();
     if (!frames) { close(); return; }
     present(left, frames.get(pinnedId ?? currentId));
@@ -325,6 +472,9 @@ export function mountExhibitionStudy(panel) {
     source.querySelector('[value="B"]').disabled = !pinnedId;
     if (!pinnedId && source.value === 'B') source.value = 'A';
     unpin.disabled = !pinnedId;
+    nextDifference.disabled = !pinnedId;
+    previousDifference.disabled = !pinnedId;
+    summarizeDifference.disabled = !pinnedId;
     pin.disabled = pinnedId === currentId;
     announce.textContent = 'Work ' + (ids.indexOf(currentId) + 1) + '/' + ids.length +
       ': ' + lookup.get(currentId).name +
@@ -377,6 +527,36 @@ export function mountExhibitionStudy(panel) {
       window.setTimeout(() => URL.revokeObjectURL(url), 2000);
     }
   }
+  savePixel.addEventListener('click', () => {
+    try {
+      if (!pixelOpen || !dialog.open) throw new Error('Open exact pixel inspection first.');
+      const records = snapshot();
+      if (!records) throw new Error('Rebuild the verified accepted CPU index.');
+      const inspectedId = pixelId(), column = Number(x.value), row = Number(y.value);
+      const currentSource = (id) => {
+        const entry = lookup.get(id), record = records.get(id);
+        if (!entry || !record) throw new Error('Accepted source is unavailable.');
+        // A fresh lease and decoded PNG check for EACH source at download time:
+        // cached pixels and DOM readout alone do not authorize a saved receipt.
+        const png = getAcceptedVisualIndexPng(panel, id, record.url, record.hash);
+        const pixels = verifyStudyPng(png,
+          entry.exportCrop.widthPx, entry.exportCrop.heightPx, record.hash);
+        return { entry, pixels, hash: record.hash };
+      };
+      const a = currentSource(pinnedId ?? inspectedId);
+      const b = pinnedId ? currentSource(currentId) : null;
+      const receipt = buildStudyPixelReceipt(a, b, column, row, inspectedId);
+      const comparisonName = b ? a.entry.id + '-vs-' + b.entry.id : a.entry.id;
+      const filename = 'fieldweaver-pixel-' + comparisonName +
+        '-x' + column + '-y' + row + '.fwpixel.json';
+      saveSelectedBytes(new TextEncoder().encode(JSON.stringify(receipt, null, 2) + '\n'),
+        'application/json', filename);
+      announce.textContent = 'Requested exact CPU pixel receipt for ' + a.entry.name +
+        (b ? ' vs ' + b.entry.name : '') + '; file delivery is browser-controlled.';
+    } catch (error) {
+      announce.textContent = 'Pixel receipt refused: ' + (error?.message ?? String(error));
+    }
+  });
   exportPng.addEventListener('click', () => {
     try {
       const entry = lookup.get(currentId), record = snapshot()?.get(currentId);
@@ -395,6 +575,11 @@ export function mountExhibitionStudy(panel) {
     try {
       const entry = lookup.get(currentId), record = snapshot()?.get(currentId);
       if (!entry || !record) throw new Error('Rebuild the verified accepted CPU index.');
+      // Recipe identity alone does not establish that the displayed CPU proof
+      // still belongs to this live gallery generation. Match the same lease
+      // and re-decoded RGBA8 oracle required by PNG/provenance exports.
+      const png = getAcceptedVisualIndexPng(panel, currentId, record.url, record.hash);
+      verifyStudyPng(png, entry.exportCrop.widthPx, entry.exportCrop.heightPx, record.hash);
       // B is the currently browsed work when A is pinned. No editor adoption.
       const handoff = buildAcceptedRecipeHandoff(currentId);
       if (handoff.recipeHash !== entry.recipeHash) throw new Error('Accepted recipe identity mismatch.');

@@ -55,3 +55,148 @@ export function nextVisibleStudyPixel(pixels, x, y) {
   }
   return null; // Entire canonical crop is blank.
 }
+
+
+// Numeric A/B comparison of the same *image-local* coordinate from two
+// independently verified decoded CPU rasters. Callers must label different
+// authored crops explicitly; this function does not infer world alignment.
+export function compareStudyPixelChannels(aPixels, bPixels, x, y) {
+  const a = sampleStudyPixel(aPixels, x, y);
+  const b = sampleStudyPixel(bPixels, x, y);
+  const delta = Object.freeze(a.rgba.map((value, channel) => b.rgba[channel] - value));
+  return Object.freeze({ x, y, a, b, delta,
+    identical: delta.every((difference) => difference === 0) });
+}
+
+// Traverse independently decoded, source-exact RGBA8 in either direction.
+// Coordinates are image-local, never aligned across different authored crops.
+// A cursor outside the shared overlap but still inside one source starts at
+// the first/last overlap pixel instead of trapping navigation at that edge.
+function scanDifferingStudyPixel(aPixels, bPixels, x, y, direction) {
+  sampleStudyPixel(aPixels, 0, 0);
+  sampleStudyPixel(bPixels, 0, 0);
+  if (!Number.isInteger(x) || !Number.isInteger(y) || x < 0 || y < 0 ||
+      ((x >= aPixels.width || y >= aPixels.height) &&
+       (x >= bPixels.width || y >= bPixels.height))) {
+    throw new RangeError('Pixel coordinates outside decoded image.');
+  }
+  const width = Math.min(aPixels.width, bPixels.width);
+  const height = Math.min(aPixels.height, bPixels.height);
+  const count = width * height;
+  const inOverlap = x < width && y < height;
+  const start = inOverlap ? y * width + x : (direction === 1 ? count - 1 : 0);
+  for (let advance = 1; advance <= count; advance += 1) {
+    const index = (start + direction * advance + count) % count;
+    const col = index % width, row = Math.floor(index / width);
+    const aOffset = (row * aPixels.width + col) * 4;
+    const bOffset = (row * bPixels.width + col) * 4;
+    if (aPixels.rgba[aOffset] !== bPixels.rgba[bOffset] ||
+        aPixels.rgba[aOffset + 1] !== bPixels.rgba[bOffset + 1] ||
+        aPixels.rgba[aOffset + 2] !== bPixels.rgba[bOffset + 2] ||
+        aPixels.rgba[aOffset + 3] !== bPixels.rgba[bOffset + 3]) {
+      return Object.freeze({ x: col, y: row });
+    }
+  }
+  return null; // Entire decoded overlap is identical.
+}
+
+export function nextDifferingStudyPixel(aPixels, bPixels, x, y) {
+  return scanDifferingStudyPixel(aPixels, bPixels, x, y, 1);
+}
+
+export function previousDifferingStudyPixel(aPixels, bPixels, x, y) {
+  return scanDifferingStudyPixel(aPixels, bPixels, x, y, -1);
+}
+
+/**
+ * Quantify the exact decoded RGBA8 differences within the shared image-local
+ * rectangle. This is NOT a world-aligned or perceptual similarity score.
+ * The caller must independently renew both live proof leases before invoking.
+ * Right/bottom bounds are inclusive; a completely identical overlap has no
+ * difference bounds.
+ */
+export function summarizeDifferingStudyPixels(aPixels, bPixels) {
+  sampleStudyPixel(aPixels, 0, 0);
+  sampleStudyPixel(bPixels, 0, 0);
+  const width = Math.min(aPixels.width, bPixels.width);
+  const height = Math.min(aPixels.height, bPixels.height);
+  let differentPixels = 0;
+  let left = width, top = height, right = -1, bottom = -1;
+  const channelMaxAbsDelta = [0, 0, 0, 0];
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const aOffset = (y * aPixels.width + x) * 4;
+      const bOffset = (y * bPixels.width + x) * 4;
+      let different = false;
+      for (let channel = 0; channel < 4; channel += 1) {
+        const delta = Math.abs(bPixels.rgba[bOffset + channel] - aPixels.rgba[aOffset + channel]);
+        if (delta !== 0) different = true;
+        if (delta > channelMaxAbsDelta[channel]) channelMaxAbsDelta[channel] = delta;
+      }
+      if (!different) continue;
+      differentPixels += 1;
+      left = Math.min(left, x); top = Math.min(top, y);
+      right = Math.max(right, x); bottom = Math.max(bottom, y);
+    }
+  }
+  return Object.freeze({
+    width, height, overlapPixels: width * height, differentPixels,
+    bounds: differentPixels ? Object.freeze({ left, top, right, bottom }) : null,
+    channelMaxAbsDelta: Object.freeze(channelMaxAbsDelta)
+  });
+}
+
+export function sameStudyCrop(a, b) {
+  return a?.widthPx === b?.widthPx && a?.heightPx === b?.heightPx &&
+    a?.unitsPerPixelQ16 === b?.unitsPerPixelQ16 &&
+    a?.center?.chunkX === b?.center?.chunkX &&
+    a?.center?.chunkY === b?.center?.chunkY &&
+    a?.center?.localX === b?.center?.localX &&
+    a?.center?.localY === b?.center?.localY;
+}
+
+export const STUDY_PIXEL_RECEIPT_VERSION = 'fw-exhibition-pixel-receipt-v1';
+
+// A portable, deterministic record of one or two independently verified CPU
+// source pixels. The caller must renew the live source leases and decode the
+// in-memory PNGs before calling. The same image-local coordinate is intentional;
+// only exactly identical authored crops identify the same world pixel centre.
+function receiptPixelSource(source, x, y) {
+  const { entry, pixels, hash } = source ?? {};
+  if (!entry || !pixels || !/^[0-9a-f]{16}$/.test(hash ?? '') ||
+      pixels.hash !== hash ||
+      entry.exportCrop?.widthPx !== pixels.width ||
+      entry.exportCrop?.heightPx !== pixels.height ||
+      !/^[0-9a-f]{16}$/.test(entry.recipeHash ?? '') ||
+      !Number.isInteger(entry.targetTick) || !Number.isInteger(entry.seed)) {
+    throw new Error('Pixel receipt requires a current accepted decoded CPU source.');
+  }
+  return Object.freeze({
+    id: entry.id, name: entry.name, recipeHash: entry.recipeHash,
+    seed: entry.seed, targetTick: entry.targetTick,
+    crop: entry.exportCrop, rawRgbaHash: hash,
+    pixel: sampleStudyPixel(pixels, x, y)
+  });
+}
+
+export function buildStudyPixelReceipt(aSource, bSource, x, y, inspectedId) {
+  const a = receiptPixelSource(aSource, x, y);
+  const b = bSource == null ? null : receiptPixelSource(bSource, x, y);
+  if (inspectedId !== a.id && inspectedId !== b?.id) {
+    throw new Error('Pixel receipt inspected image is not a current source.');
+  }
+  const sameCrop = b ? sameStudyCrop(a.crop, b.crop) : null;
+  const delta = b ? Object.freeze(a.pixel.rgba.map((v, i) => b.pixel.rgba[i] - v)) : null;
+  return Object.freeze({
+    version: STUDY_PIXEL_RECEIPT_VERSION,
+    coordinateSpace: 'image-local-top-left',
+    coordinate: Object.freeze({ x, y }),
+    inspectedId, a, b,
+    comparison: b ? Object.freeze({
+      deltaBMinusA: delta,
+      identical: delta.every(v => v === 0),
+      sameAuthoredCrop: sameCrop,
+      alignment: sameCrop ? 'same-authored-crop' : 'image-local-only-not-world-aligned'
+    }) : null
+  });
+}
