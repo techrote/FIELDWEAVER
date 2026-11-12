@@ -151,7 +151,7 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
     const images = [...board.html.matchAll(/src="data:image\/png;base64,([^"]+)"/g)];
     assert.equal(pngLinks[i][2], images[i][1], 'displayed and downloadable CPU PNG bytes must match');
   }
-  const zipLinks = [...board.html.matchAll(/<a download="([^"]+\\.fwpack\\.zip)" href="data:application\\/zip;base64,([^"]+)">Save complete work bundle \\(ZIP\\)<\\/a>/g)];
+  const zipLinks = [...board.html.matchAll(/<a download="([^"]+\.fwpack\.zip)" href="data:application\/zip;base64,([^"]+)">Save complete work bundle \(ZIP\)<\/a>/g)];
   assert.equal(zipLinks.length, 4, 'one offline single-download package per accepted work');
   for (let i = 0; i < zipLinks.length; i += 1) {
     const tile = tiles[i], [ , filename, encoded ] = zipLinks[i];
@@ -168,7 +168,7 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
     assert.equal(rawRgbaHash(decodePngRgba(files.get(pngName)).rgba), tile.rawRgbaHash);
     assert.equal(recipeHash(parseRecipe(Buffer.from(files.get(recipeName)).toString('utf8'))), tile.recipeHash);
   }
-  const embedded = /src="data:image\\/png;base64,([^"]+)"/.exec(board.html)?.[1];
+  const embedded = /src="data:image\/png;base64,([^"]+)"/.exec(board.html)?.[1];
   assert.deepEqual(Buffer.from(embedded, 'base64'), Buffer.from(tiles[0].png));
 });
 
