@@ -68,6 +68,29 @@ export function compareStudyPixelChannels(aPixels, bPixels, x, y) {
     identical: delta.every((difference) => difference === 0) });
 }
 
+// Advance in row-major order through the shared image-local intersection of
+// two independently verified CPU rasters. The source pixel under the cursor
+// is visited last on wraparound, so a sole difference is still discoverable.
+// No crop alignment, resampling, RGB compositing or WebGL data is inferred.
+export function nextDifferingStudyPixel(aPixels, bPixels, x, y) {
+  sampleStudyPixel(aPixels, x, y);
+  sampleStudyPixel(bPixels, x, y);
+  const width = Math.min(aPixels.width, bPixels.width);
+  const height = Math.min(aPixels.height, bPixels.height);
+  const count = width * height, start = y * width + x;
+  for (let advance = 1; advance <= count; advance += 1) {
+    const index = (start + advance) % count;
+    const col = index % width, row = Math.floor(index / width);
+    const aOffset = (row * aPixels.width + col) * 4;
+    const bOffset = (row * bPixels.width + col) * 4;
+    if ([0, 1, 2, 3].some(channel =>
+      aPixels.rgba[aOffset + channel] !== bPixels.rgba[bOffset + channel])) {
+      return Object.freeze({ x: col, y: row });
+    }
+  }
+  return null;
+}
+
 export function sameStudyCrop(a, b) {
   return a?.widthPx === b?.widthPx && a?.heightPx === b?.heightPx &&
     a?.unitsPerPixelQ16 === b?.unitsPerPixelQ16 &&
