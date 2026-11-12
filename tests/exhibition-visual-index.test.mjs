@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
+import { decodePngRgba, rawRgbaHash } from '../src/export/index.js';
+
 import { parseRecipe, recipeHash, serializeRecipe } from '../src/recipe/index.js';
 import { BUILTIN_PRESETS } from '../src/presets/index.js';
 import { exhibitionEntries, renderExhibitionProof } from '../src/ui/exhibition-catalog.js';
@@ -62,8 +64,10 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
   // without script execution or a network request.
   const recipeLinks = [...board.html.matchAll(/<a download="([^"]+\.fwrecipe\.json)" href="data:application\/json;base64,([^"]+)">Save importable recipe<\/a>/g)];
   const receiptLinks = [...board.html.matchAll(/<a download="([^"]+\.fwprovenance\.json)" href="data:application\/json;base64,([^"]+)">Save full provenance<\/a>/g)];
+  const pngLinks = [...board.html.matchAll(/<a download="([^"]+\.canonical\.png)" href="data:image\/png;base64,([^"]+)">Save canonical PNG<\/a>/g)];
   assert.equal(recipeLinks.length, 4);
   assert.equal(receiptLinks.length, 4);
+  assert.equal(pngLinks.length, 4);
   for (let i = 0; i < 4; i += 1) {
     const tile = tiles[i];
     const recipeText = Buffer.from(recipeLinks[i][2], 'base64').toString('utf8');
@@ -73,6 +77,12 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
     assert.equal(recipeText, serializeRecipe(JSON.parse(tile.provenanceJson).recipe));
     assert.equal(recipeHash(parseRecipe(recipeText)), tile.recipeHash);
     assert.equal(receiptText, tile.provenanceJson);
+    assert.equal(pngLinks[i][1], 'fieldweaver-' + tile.id + '-' + tile.rawRgbaHash + '.canonical.png');
+    const pngBytes = Buffer.from(pngLinks[i][2], 'base64');
+    assert.deepEqual(pngBytes, Buffer.from(tile.png), 'download preserves exact verified CPU PNG bytes');
+    assert.equal(rawRgbaHash(decodePngRgba(new Uint8Array(pngBytes)).rgba), tile.rawRgbaHash);
+    const images = [...board.html.matchAll(/src="data:image\/png;base64,([^"]+)"/g)];
+    assert.equal(pngLinks[i][2], images[i][1], 'displayed and downloadable CPU PNG bytes must match');
   }
   const embedded = /src="data:image\/png;base64,([^"]+)"/.exec(board.html)?.[1];
   assert.deepEqual(Buffer.from(embedded, 'base64'), Buffer.from(tiles[0].png));
