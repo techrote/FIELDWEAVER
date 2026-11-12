@@ -205,7 +205,7 @@ try {
   }
   // Exercise the new accepted-only A/B index in the *reopened file:// page*,
   // not just the generated string or the live-server study dialog.
-  const comparisons = await execute("return [...document.querySelectorAll('#comparison-index tbody tr[data-pair-a]')].map(row=>({a:row.dataset.pairA,b:row.dataset.pairB,different:Number(row.dataset.differences),total:Number(row.dataset.overlap),links:[...row.querySelectorAll('a')].map(a=>a.getAttribute('href'))}))");
+  const comparisons = await execute("return [...document.querySelectorAll('#comparison-index tbody tr[data-pair-a]')].map(row=>({a:row.dataset.pairA,b:row.dataset.pairB,different:Number(row.dataset.differences),total:Number(row.dataset.overlap),links:[...row.querySelectorAll(':scope > th > a, :scope > td > a')].map(a=>a.getAttribute('href'))}))");
   if (comparisons.length !== 6 ||
       new Set(comparisons.map(row => row.a + '/' + row.b)).size !== 6 ||
       comparisons.some(row => !Number.isInteger(row.different) || row.different < 0 ||
