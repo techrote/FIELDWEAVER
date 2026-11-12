@@ -362,6 +362,14 @@ try {
   await writeFile('exhibition-pixel-keyboard-' + browser + '.json',
     JSON.stringify({ browser, pixelRight, pixelDown, pixelB, pixelBLeft, narrow }, null, 2) + '\n');
   await request('POST', '/session/' + sessionId + '/window/rect', { width: 1250, height: 900 });
+  // Check a forged A after keyboard/narrow assertions but before re-pinning;
+  // the receipt still compares Operator Atlas (A) against Timeline Pulse (B).
+  const forgedPixelReceipt = await execute("const card=document.querySelector('[data-exhibition-id=operator-atlas]');const old=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-pixel-save').click();const msg=document.getElementById('exhibition-study-status').textContent;card.dataset.canonicalRgbaHash=old;return msg");
+  if (!forgedPixelReceipt.includes('Pixel receipt refused: Current verified CPU proof is unavailable or mismatched')) {
+    throw new Error('Forged A source was allowed to export an A/B pixel receipt: ' + forgedPixelReceipt);
+  }
+  await writeFile('exhibition-pixel-receipt-' + browser + '.json',
+    JSON.stringify({browser,pixelReceiptName,pixelReceipt,forgedPixelReceipt},null,2) + '\n');
   // Keyboard P re-pins the current B artwork as A. The visible pixel reading
   // must switch from the old A PNG identity to the current accepted CPU proof.
   await execute("const pick=document.getElementById('exhibition-study-pixel-source');pick.value='A';pick.dispatchEvent(new Event('change',{bubbles:true}));document.querySelectorAll('.exhibition-study-frame img')[0].focus()");
@@ -421,14 +429,6 @@ try {
   if (!keyboard.back.includes('Operator Atlas') || !keyboard.forward.includes('Timeline Pulse')) {
     throw new Error('Study keyboard navigation failed: ' + JSON.stringify(keyboard));
   }
-  // Check a forged A lease only after keyboard/status assertions: a refused
-  // download deliberately leaves the safety message visible for the owner.
-  const forgedPixelReceipt = await execute("const card=document.querySelector('[data-exhibition-id=operator-atlas]');const old=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-pixel-save').click();const msg=document.getElementById('exhibition-study-status').textContent;card.dataset.canonicalRgbaHash=old;return msg");
-  if (!forgedPixelReceipt.includes('Pixel receipt refused: Current verified CPU proof is unavailable or mismatched')) {
-    throw new Error('Forged A source was allowed to export an A/B pixel receipt: ' + forgedPixelReceipt);
-  }
-  await writeFile('exhibition-pixel-receipt-' + browser + '.json',
-    JSON.stringify({browser,pixelReceiptName,pixelReceipt,forgedPixelReceipt},null,2) + '\n');
   const loaded = await execute("document.getElementById('exhibition-study-load').click();return {dialogOpen:document.getElementById('exhibition-study-dialog').open,selected:document.getElementById('preset-select').value,status:document.getElementById('preset-status').textContent}");
   if (loaded.dialogOpen || loaded.selected !== 'timeline-pulse' || !loaded.status.startsWith('Loaded Timeline Pulse')) {
     throw new Error('Study did not invoke explicit recipe adoption: ' + JSON.stringify(loaded));
