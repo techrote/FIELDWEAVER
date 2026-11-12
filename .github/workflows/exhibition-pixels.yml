@@ -84,7 +84,7 @@ jobs:
             exhibition-offline-reimport-${{ matrix.browser }}.png
             exhibition-offline-reimport-${{ matrix.browser }}.json
             exhibition-offline-downloads-${{ matrix.browser }}/*.json
-            exhibition-offline-downloads-${{ matrix.browser }}/*.fwpack.zip
+            exhibition-offline-downloads-${{ matrix.browser }}/*.zip
             exhibition-offline-downloads-${{ matrix.browser }}/*.canonical.png
             visual-index-server.log
             xvfb.log
