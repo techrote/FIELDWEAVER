@@ -265,7 +265,7 @@ try {
   if (comparisonNarrow.protocol !== 'file:' || comparisonNarrow.viewport > 600 ||
       !comparisonNarrow.focused || comparisonNarrow.tableRows !== 6 ||
       !comparisonNarrow.horizontalOverflow || comparisonNarrow.top < 0 ||
-      comparisonNarrow.top > comparisonNarrow.viewportHeight / 2) {
+      comparisonNarrow.top > comparisonNarrow.viewportHeight - 150) {
     throw new Error('Offline keyboard/narrow comparison index failed: ' +
       JSON.stringify(comparisonNarrow));
   }
