@@ -218,6 +218,48 @@ try {
     throw new Error('Offline comparison JSON receipts failed real-browser decoding: ' +
       JSON.stringify(comparisonReceipts));
   }
+
+  // Keyboard-open the optional exact A/B images in a real offline file:
+  // the two visible backgrounds must reuse their own canonical work PNGs.
+  const previewSummaries = await execute("return [...document.querySelectorAll('#comparison-index .pair-preview')].map(d=>({a:d.dataset.pairA,b:d.dataset.pairB,summary:d.querySelector('summary')?.textContent,rasters:d.querySelectorAll('.pair-raster').length}))");
+  if (previewSummaries.length !== 6 || previewSummaries.some(d=>d.rasters!==2 ||
+      d.summary !== 'View exact A/B images' ||
+      !comparisons.some(c=>c.a===d.a && c.b===d.b))) {
+    throw new Error('Missing accepted-only native pair disclosures: '+JSON.stringify(previewSummaries));
+  }
+  const previewFocused = await execute("const summary=document.querySelector('#comparison-index .pair-preview summary');summary.scrollIntoView({block:'center',behavior:'instant'});summary.focus();return document.activeElement===summary");
+  if (!previewFocused) throw new Error('A/B image disclosure not keyboard-focusable.');
+  const pressEnter = async () => request('POST', '/session/' + sessionId + '/actions', {
+    actions: [{type:'key',id:'keyboard',actions:[
+      {type:'keyDown',value:'\\uE007'},{type:'keyUp',value:'\\uE007'}
+    ]}]
+  });
+  await pressEnter();
+  const previewDesktop = await execute(`const d=document.querySelector('#comparison-index .pair-preview');
+    return {opened:d.open,origin:location.protocol,
+      images:[...d.querySelectorAll('.pair-raster')].map(el=>{
+        const source=document.querySelector('#work-'+el.dataset.workId+' figure img');
+        const style=getComputedStyle(el).backgroundImage;
+        const box=el.getBoundingClientRect();
+        return {id:el.dataset.workId,hash:el.dataset.canonicalHash,
+          matchesCanonicalSource:style.includes(source.getAttribute('src')),
+          accessible:el.getAttribute('role')==='img' && !!el.getAttribute('aria-label'),
+          width:box.width,height:box.height};
+      })}`);
+  if (!previewDesktop.opened || previewDesktop.origin!=='file:' ||
+      previewDesktop.images.length!==2 || previewDesktop.images.some(img=>
+        !img.matchesCanonicalSource || !img.accessible || !img.width || !img.height ||
+        !result.tiles.some(tile=>tile.id===img.id && tile.hash===img.hash))) {
+    throw new Error('Real A/B preview did not display unchanged accepted CPU images: '+
+      JSON.stringify(previewDesktop));
+  }
+  const pairShot=await request('GET','/session/'+sessionId+'/screenshot');
+  if (!pairShot?.value) throw new Error('Expanded desktop A/B screenshot absent.');
+  await writeFile('exhibition-offline-pair-preview-'+browser+'.png',Buffer.from(pairShot.value,'base64'));
+  await pressEnter();
+  if (await execute("return document.querySelector('#comparison-index .pair-preview').open")) {
+    throw new Error('Keyboard could not collapse A/B disclosure.');
+  }
   await request('POST', '/session/' + sessionId + '/window/rect', { width: 390, height: 790 });
   const comparisonNarrow = await execute("const section=document.getElementById('comparison-index');section.scrollIntoView({block:'start',behavior:'instant'});const region=document.getElementById('comparison-scroll');region.focus({preventScroll:true});return {protocol:location.protocol,viewport:document.documentElement.clientWidth,focused:document.activeElement===region,tableRows:region.querySelectorAll('tbody tr').length,horizontalOverflow:region.scrollWidth>region.clientWidth,top:Math.round(region.getBoundingClientRect().top),viewportHeight:innerHeight}");
   if (comparisonNarrow.protocol !== 'file:' || comparisonNarrow.viewport > 600 ||
@@ -231,6 +273,24 @@ try {
   if (!comparisonScreenshot?.value) throw new Error('Offline comparison screenshot absent.');
   await writeFile('exhibition-offline-comparisons-' + browser + '.png',
     Buffer.from(comparisonScreenshot.value, 'base64'));
+  const narrowPreviewFocused = await execute("const s=document.querySelector('#comparison-index .pair-preview summary');s.scrollIntoView({block:'center',behavior:'instant'});s.focus();return document.activeElement===s");
+  if (!narrowPreviewFocused) throw new Error('Narrow A/B preview summary lost keyboard access.');
+  await pressEnter();
+  const previewNarrow = await execute(`const d=document.querySelector('#comparison-index .pair-preview');
+    const frames=[...d.querySelectorAll('.pair-raster')].map(el=>el.getBoundingClientRect());
+    return {open:d.open,columns:getComputedStyle(d.querySelector('.pair-images')).gridTemplateColumns,
+      ordered:frames.length===2 && frames[1].top>=frames[0].bottom,
+      width:document.documentElement.clientWidth,
+      bodyOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth};`);
+  if (!previewNarrow.open || !previewNarrow.ordered || previewNarrow.bodyOverflow ||
+      previewNarrow.width>600 || previewNarrow.columns.split(' ').length!==1) {
+    throw new Error('Responsive keyboard A/B proof preview failed: '+JSON.stringify(previewNarrow));
+  }
+  const pairNarrowShot=await request('GET','/session/'+sessionId+'/screenshot');
+  if (!pairNarrowShot?.value) throw new Error('Narrow A/B pair screenshot absent.');
+  await writeFile('exhibition-offline-pair-preview-narrow-'+browser+'.png',
+    Buffer.from(pairNarrowShot.value,'base64'));
+
   await request('POST', '/session/' + sessionId + '/window/rect', { width: 1250, height: 900 });
   await execute("window.scrollTo(0,0)");
   const boardScreenshot = await request('GET', '/session/' + sessionId + '/screenshot');
