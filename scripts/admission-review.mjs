@@ -25,6 +25,14 @@ export const ADMISSION_SELECTION = Object.freeze([
     provenance: 'gallery/variants/06-unwound-metronome/selected.provenance.json',
     rgba: '80a5a090d57b6d07'
   }),
+  // Strongest reserve original: included for owner comparison, not admitted.
+  Object.freeze({
+    pr: 41, lane: 'ORIGINAL', title: 'The Interval Engine — Strata Under Load',
+    head: 'c6f5ecc0995071c45ae90a00d53ee23dc53b6641',
+    recipe: 'gallery/originals/03-the-interval-engine/recipe.json',
+    provenance: 'gallery/originals/03-the-interval-engine/the-interval-engine.provenance.json',
+    rgba: 'fd389a9bb0ce640f'
+  }),
 ]);
 
 /**

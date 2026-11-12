@@ -3,9 +3,9 @@ import assert from 'node:assert/strict';
 import { ADMISSION_SELECTION, assertArchivedRecipeMatchesProvenance } from '../scripts/admission-review.mjs';
 
 test('owner admission shortlist is bounded, source-exact and not an accepted catalog mutation', () => {
-  assert.equal(ADMISSION_SELECTION.length, 2);
-  assert.equal(new Set(ADMISSION_SELECTION.map((x) => x.pr)).size, 2);
-  assert.equal(ADMISSION_SELECTION.filter((x) => x.lane === 'ORIGINAL').length, 1);
+  assert.equal(ADMISSION_SELECTION.length, 3);
+  assert.equal(new Set(ADMISSION_SELECTION.map((x) => x.pr)).size, 3);
+  assert.equal(ADMISSION_SELECTION.filter((x) => x.lane === 'ORIGINAL').length, 2);
   assert.equal(ADMISSION_SELECTION.filter((x) => x.lane === 'MUTATION').length, 1);
   for (const item of ADMISSION_SELECTION) {
     assert.match(item.head, /^[0-9a-f]{40}$/);
@@ -16,8 +16,10 @@ test('owner admission shortlist is bounded, source-exact and not an accepted cat
     assert(!item.provenance.includes('..'));
     assert(item.title.length > 5);
   }
-  assert.equal(new Set(ADMISSION_SELECTION.map((x) => x.rgba)).size, 2);
-  assert.deepEqual(ADMISSION_SELECTION.map((x) => x.pr), [57, 50]);
+  assert.equal(new Set(ADMISSION_SELECTION.map((x) => x.rgba)).size, 3);
+  assert.deepEqual(ADMISSION_SELECTION.map((x) => x.pr), [57, 50, 41]);
+  assert.equal(ADMISSION_SELECTION[2].head, 'c6f5ecc0995071c45ae90a00d53ee23dc53b6641');
+  assert.equal(ADMISSION_SELECTION[2].rgba, 'fd389a9bb0ce640f');
   assert(!ADMISSION_SELECTION.some((x) => [61, 62].includes(x.pr)),
     'Withdrawn/rejected artworks must not appear as active admission candidates.');
 });

@@ -50,10 +50,10 @@ try {
     if (desktop.images.every((img) => img.complete && img.w && img.h)) break;
     await sleep(100);
   }
-  const expected = ['ACCEPTED PRESET', 'ACCEPTED PRESET', 'UNMERGED CANDIDATE', 'UNMERGED CANDIDATE'];
-  if (desktop.cards !== 4 || JSON.stringify(desktop.labels) !== JSON.stringify(expected) ||
+  const expected = ['ACCEPTED PRESET', 'ACCEPTED PRESET', 'UNMERGED CANDIDATE', 'UNMERGED CANDIDATE', 'UNMERGED CANDIDATE'];
+  if (desktop.cards !== 5 || JSON.stringify(desktop.labels) !== JSON.stringify(expected) ||
       desktop.scripts !== 0 || !desktop.csp.includes("default-src 'none'") ||
-      desktop.remote !== 0 || desktop.images.length !== 4 ||
+      desktop.remote !== 0 || desktop.images.length !== 5 ||
       desktop.images.some((img) => !img.complete || !img.data || !img.w || !img.h)) {
     throw new Error('Offline canonical admission HTML was not verified: ' + JSON.stringify(desktop));
   }
@@ -89,7 +89,7 @@ try {
       };
     });
   `);
-  if (exports.length !== 4 || exports.some((item, i) =>
+  if (exports.length !== 5 || exports.some((item, i) =>
     item.id !== 'work-' + (i + 1) || item.files.length !== 3 ||
     item.files[0] !== 'fieldweaver-work-' + (i + 1) + '.png' ||
     item.files[1] !== 'fieldweaver-work-' + (i + 1) + '.recipe.json' ||
@@ -102,19 +102,23 @@ try {
     throw new Error('Offline source-identical PNG/recipe/provenance exports failed: ' +
       JSON.stringify(exports));
   }
+  if (exports[4].rawRgbaHash !== 'fd389a9bb0ce640f' ||
+      desktop.images[4].w !== 512 || desktop.images[4].h !== 384) {
+    throw new Error('Interval Engine reserve did not carry its exact canonical 512x384 proof.');
+  }
   const screenshot = await request('GET', base + '/screenshot');
   await writeFile('admission-review-' + browser + '-desktop.png', Buffer.from(screenshot, 'base64'));
   const found = await request('POST', base + '/elements',
     { using: 'css selector', value: 'nav[aria-label="Jump to artwork"] a' });
-  if (found.length !== 4) throw new Error('Offline gallery navigation has wrong anchor count.');
-  const anchor = found[3]['element-6066-11e4-a52e-4f735466cecf'] || found[3].ELEMENT;
+  if (found.length !== 5) throw new Error('Offline gallery navigation has wrong anchor count.');
+  const anchor = found[4]['element-6066-11e4-a52e-4f735466cecf'] || found[4].ELEMENT;
   await request('POST', base + '/element/' + anchor + '/value', { text: '\uE007' });
   const hash = await execute('return window.location.hash');
-  if (hash !== '#work-4') throw new Error('Keyboard navigation failed: ' + hash);
+  if (hash !== '#work-5') throw new Error('Keyboard navigation failed: ' + hash);
   await request('POST', base + '/window/rect', { width: 390, height: 844 });
   await sleep(150);
-  const narrow = await execute("return {width:document.documentElement.clientWidth,scrollWidth:document.documentElement.scrollWidth,cards:document.querySelectorAll('article.work').length,label:document.querySelector('#work-4 .state')?.textContent.trim()}");
-  if (narrow.cards !== 4 || narrow.label !== 'UNMERGED CANDIDATE' ||
+  const narrow = await execute("return {width:document.documentElement.clientWidth,scrollWidth:document.documentElement.scrollWidth,cards:document.querySelectorAll('article.work').length,label:document.querySelector('#work-5 .state')?.textContent.trim()}");
+  if (narrow.cards !== 5 || narrow.label !== 'UNMERGED CANDIDATE' ||
       narrow.scrollWidth > narrow.width + 2) throw new Error('Narrow-layout failure: ' + JSON.stringify(narrow));
   const mobile = await request('GET', base + '/screenshot');
   await writeFile('admission-review-' + browser + '-narrow.png', Buffer.from(mobile, 'base64'));
