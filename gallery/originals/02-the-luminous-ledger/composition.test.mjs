@@ -32,8 +32,8 @@ test('Original 02 offline review verifies archived pixels, downloads and editabl
     const html = await readFile(result.output, 'utf8');
     assert.match(html, /ACCEPTED PRESET/);
     assert.match(html, /UNMERGED CANDIDATE/);
-    assert.doesNotMatch(html, /<script\\b|<iframe\\b|src="https?:|href="https?:/i);
-    const imgs = [...html.matchAll(/<img[^>]+src="data:image\\/png;base64,([^"]+)"/g)];
+    assert.doesNotMatch(html, /<script\b|<iframe\b|src="https?:|href="https?:/i);
+    const imgs = [...html.matchAll(/<img[^>]+src="data:image\/png;base64,([^"]+)"/g)];
     assert.equal(imgs.length, 3);
     function download(name) {
       const tag = [...html.matchAll(/<a [^>]*>/g)].map(x => x[0])
