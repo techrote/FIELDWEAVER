@@ -8,7 +8,7 @@ import { parseRecipe, recipeHash, serializeRecipe } from '../src/recipe/index.js
 import { BUILTIN_PRESETS } from '../src/presets/index.js';
 import { exhibitionEntries, renderExhibitionProof } from '../src/ui/exhibition-catalog.js';
 import { renderVisualIndexProof, verifyVisualIndexProof } from '../src/ui/exhibition-visual-index-model.js';
-import { buildOfflineExhibitionBoard } from '../src/ui/exhibition-offline-board.js';
+import { buildOfflineExhibitionBoard, encodeDiagnosticDifferenceMaskPng } from '../src/ui/exhibition-offline-board.js';
 import { createStoredZip } from '../src/ui/exhibition-work-bundle.js';
 
 // Independent table-driven CRC oracle (the writer uses per-bit long division).
@@ -73,6 +73,24 @@ function readStoredZip(bytes) {
   assert.equal(pos, end);
   return files;
 }
+
+test('diagnostic mask PNG is source-pixel-exact and rejects invalid coordinates', () => {
+  const mask = decodePngRgba(encodeDiagnosticDifferenceMaskPng(3, 2,
+    [{ x: 0, y: 0 }, { x: 2, y: 1 }]));
+  assert.deepEqual([mask.widthPx, mask.heightPx], [3, 2]);
+  assert.deepEqual(Array.from(mask.rgba.slice(0, 4)), [228, 182, 101, 255]);
+  assert.deepEqual(Array.from(mask.rgba.slice(4, 8)), [0, 0, 0, 0]);
+  assert.deepEqual(Array.from(mask.rgba.slice(20, 24)), [228, 182, 101, 255]);
+  assert.deepEqual(Array.from(decodePngRgba(
+    encodeDiagnosticDifferenceMaskPng(1, 1, [])).rgba), [0, 0, 0, 0]);
+  assert.deepEqual(encodeDiagnosticDifferenceMaskPng(3, 2,
+    [{ x: 0, y: 0 }, { x: 2, y: 1 }]),
+    encodeDiagnosticDifferenceMaskPng(3, 2, [{ x: 0, y: 0 }, { x: 2, y: 1 }]));
+  assert.throws(() => encodeDiagnosticDifferenceMaskPng(0, 2, []), /bounded dimensions/);
+  assert.throws(() => encodeDiagnosticDifferenceMaskPng(4096, 4096, []), /bounded dimensions/);
+  assert.throws(() => encodeDiagnosticDifferenceMaskPng(3, 2, [{ x: 3, y: 0 }]), /out-of-range/);
+  assert.throws(() => encodeDiagnosticDifferenceMaskPng(3, 2, [{ x: 0, y: 0 }, { x: 0, y: 0 }]), /duplicate/);
+});
 
 test('visual index decodes all accepted CPU proofs at golden tick/crop without editing recipes', async () => {
   const fixtures = JSON.parse(await readFile(new URL('../fixtures/fw-014-presets.json', import.meta.url), 'utf8'));
@@ -169,6 +187,38 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
     assert.equal(Number(countText), expected, 'decoded CPU RGBA8 mismatch for ' + key);
     assert.equal(Number(totalText), width * height);
   }
+  // A portable 1:1 diagnostic PNG mask must enumerate exactly the differing
+  // decoded source RGBA8 pixels (including alpha-only changes), with unchanged
+  // locations fully transparent. It must not alter or replace original PNGs.
+  const maskLinks = [...board.html.matchAll(/<a download="([^"]+\.fwdiffmask\.png)" data-diagnostic="image-local-rgba8-mask" href="data:image\/png;base64,([^"]+)">Save diagnostic difference mask \(PNG\)<\/a>/g)];
+  assert.equal(maskLinks.length, 6, 'one noncanonical portable mask per accepted pair');
+  for (let i = 0; i < pairRows.length; i += 1) {
+    const [, aId, bId, countText] = pairRows[i];
+    const a = decodedById.get(aId), b = decodedById.get(bId);
+    const [, filename, payload] = maskLinks[i];
+    assert(filename.includes(aId + '-vs-' + bId));
+    assert(filename.includes(tiles.find(t => t.id === aId).rawRgbaHash));
+    assert(filename.includes(tiles.find(t => t.id === bId).rawRgbaHash));
+    const mask = decodePngRgba(new Uint8Array(Buffer.from(payload, 'base64')));
+    const width = Math.min(a.widthPx, b.widthPx);
+    const height = Math.min(a.heightPx, b.heightPx);
+    assert.deepEqual([mask.widthPx, mask.heightPx], [width, height]);
+    let opaque = 0;
+    for (let y = 0; y < height; y += 1) {
+      for (let x = 0; x < width; x += 1) {
+        const left = (y * a.widthPx + x) * 4;
+        const right = (y * b.widthPx + x) * 4;
+        const at = (y * width + x) * 4;
+        const differs = [0, 1, 2, 3].some(ch => a.rgba[left + ch] !== b.rgba[right + ch]);
+        const actual = Array.from(mask.rgba.subarray(at, at + 4));
+        assert.deepEqual(actual, differs ? [228, 182, 101, 255] : [0, 0, 0, 0],
+          aId + '/' + bId + ' at ' + x + ',' + y);
+        if (differs) opaque++;
+      }
+    }
+    assert.equal(opaque, Number(countText));
+  }
+  assert.match(board.html, /noncanonical, image-local diagnostic overlay/);
   // An independent raw-RGBA8 oracle must match every row of each complete
   // CSV, not merely the total, and its native disclosure count.
   const ledgers = [...board.html.matchAll(/<a download="([^"]+\.fwpixels\.csv)" href="data:text\/csv;base64,([^"]+)">Save exact pixel ledger \(CSV\)<\/a>/g)];
