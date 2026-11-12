@@ -351,6 +351,31 @@ try {
     throw new Error('Real offline changed-pixel table failed keyboard inspection: ' +
       JSON.stringify(ledgerOpen));
   }
+  // Pixel positions must be browser-visible under file:// CSP with no script
+  // running in the generated document. The diagnostic is deliberately not
+  // another canonical artwork: compare every mark to the exact numeric table.
+  const locatorVisual = await execute(`const d=document.querySelector('#comparison-index .pair-pixels');
+    const svg=d.querySelector('svg.pair-locator');
+    const marks=[...svg.querySelectorAll('rect[fill="#e4b665"]')]
+      .map(r=>r.getAttribute('x')+','+r.getAttribute('y'));
+    const rows=[...d.querySelectorAll('tbody tr[data-pixel-x]')]
+      .map(r=>r.dataset.pixelX+','+r.dataset.pixelY);
+    const rect=svg.getBoundingClientRect();
+    return {origin:location.protocol,role:svg.getAttribute('role'),
+      labelled:svg.getAttribute('aria-label')?.includes('Diagnostic image-local'),
+      count:Number(svg.dataset.diffCount),marks:marks.length,
+      matchesRows:JSON.stringify(marks)===JSON.stringify(rows),
+      viewBox:svg.getAttribute('viewBox'),width:rect.width,height:rect.height,
+      scripts:document.scripts.length};`);
+  if (locatorVisual.origin!=='file:' || locatorVisual.role!=='img' ||
+      !locatorVisual.labelled || locatorVisual.count!==comparisons[0].different ||
+      locatorVisual.marks!==comparisons[0].different ||
+      !locatorVisual.matchesRows || locatorVisual.viewBox!=='0 0 96 64' ||
+      locatorVisual.width < 200 || locatorVisual.height < 100 ||
+      locatorVisual.scripts!==0) {
+    throw new Error('Offline browser source-exact difference locator failed: '+
+      JSON.stringify(locatorVisual));
+  }
   const ledgerShot=await request('GET','/session/'+sessionId+'/screenshot');
   if (!ledgerShot?.value) throw new Error('Exact changed-pixel ledger screenshot absent.');
   await writeFile('exhibition-offline-pixel-ledger-'+browser+'.png',
@@ -389,6 +414,27 @@ try {
   if (!pairNarrowShot?.value) throw new Error('Narrow A/B pair screenshot absent.');
   await writeFile('exhibition-offline-pair-preview-narrow-'+browser+'.png',
     Buffer.from(pairNarrowShot.value,'base64'));
+  // The diagnostic locator must fit a narrow viewport and retain keyboard
+  // access on an actual file:// board, without body-level horizontal overflow.
+  const narrowLocatorFocus = await execute("const s=document.querySelector('#comparison-index .pair-pixels summary');s.scrollIntoView({block:'center',behavior:'instant'});s.focus();return document.activeElement===s");
+  if (!narrowLocatorFocus) throw new Error('Narrow offline diagnostic locator lost keyboard access.');
+  await pressEnter();
+  const narrowLocator = await execute(`const d=document.querySelector('#comparison-index .pair-pixels');
+    const r=d.querySelector('svg.pair-locator').getBoundingClientRect();
+    return {open:d.open,protocol:location.protocol,marks:d.querySelectorAll('svg.pair-locator rect[fill="#e4b665"]').length,
+      rectWidth:r.width,rectHeight:r.height,viewport:document.documentElement.clientWidth,
+      bodyOverflow:document.documentElement.scrollWidth>document.documentElement.clientWidth};`);
+  if (!narrowLocator.open || narrowLocator.protocol!=='file:' ||
+      narrowLocator.marks!==comparisons[0].different ||
+      narrowLocator.rectWidth<=80 || narrowLocator.rectWidth>narrowLocator.viewport ||
+      narrowLocator.rectHeight<=40 || narrowLocator.bodyOverflow) {
+    throw new Error('Narrow offline source-exact locator failed: ' + JSON.stringify(narrowLocator));
+  }
+  const narrowLocatorShot = await request('GET', '/session/' + sessionId + '/screenshot');
+  if (!narrowLocatorShot?.value) throw new Error('Narrow difference locator screenshot absent.');
+  await writeFile('exhibition-offline-pixel-locator-narrow-'+browser+'.png',
+    Buffer.from(narrowLocatorShot.value,'base64'));
+  await pressEnter();
 
   await request('POST', '/session/' + sessionId + '/window/rect', { width: 1250, height: 900 });
   await execute("window.scrollTo(0,0)");
