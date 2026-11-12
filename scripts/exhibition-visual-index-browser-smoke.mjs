@@ -190,10 +190,38 @@ try {
       offline.images.some(img=>!img.complete || img.width!==96 || img.height!==64)) {
     throw new Error('Saved offline HTML failed real browser file rendering: ' + JSON.stringify(offline));
   }
+  // Exercise the new accepted-only A/B index in the *reopened file:// page*,
+  // not just the generated string or the live-server study dialog.
+  const comparisons = await execute("return [...document.querySelectorAll('#comparison-index tbody tr[data-pair-a]')].map(row=>({a:row.dataset.pairA,b:row.dataset.pairB,different:Number(row.dataset.differences),total:Number(row.dataset.overlap),links:[...row.querySelectorAll('a')].map(a=>a.getAttribute('href'))}))");
+  if (comparisons.length !== 6 ||
+      new Set(comparisons.map(row => row.a + '/' + row.b)).size !== 6 ||
+      comparisons.some(row => !Number.isInteger(row.different) || row.different < 0 ||
+        row.total !== 6144 || row.different > row.total ||
+        row.links.length !== 2 || row.links[0] !== '#work-' + row.a ||
+        row.links[1] !== '#work-' + row.b) ||
+      !comparisons.some(row => row.a === 'operator-atlas' &&
+        row.b === 'timeline-pulse' && row.different === 118)) {
+    throw new Error('Offline pairwise comparison did not match accepted CPU identities: ' +
+      JSON.stringify(comparisons));
+  }
+  await request('POST', '/session/' + sessionId + '/window/rect', { width: 390, height: 790 });
+  const comparisonNarrow = await execute("const section=document.getElementById('comparison-index');section.scrollIntoView({block:'start'});const region=document.getElementById('comparison-scroll');region.focus();return {protocol:location.protocol,viewport:document.documentElement.clientWidth,focused:document.activeElement===region,tableRows:region.querySelectorAll('tbody tr').length,horizontalOverflow:region.scrollWidth>region.clientWidth}");
+  if (comparisonNarrow.protocol !== 'file:' || comparisonNarrow.viewport > 600 ||
+      !comparisonNarrow.focused || comparisonNarrow.tableRows !== 6 ||
+      !comparisonNarrow.horizontalOverflow) {
+    throw new Error('Offline keyboard/narrow comparison index failed: ' +
+      JSON.stringify(comparisonNarrow));
+  }
+  const comparisonScreenshot = await request('GET', '/session/' + sessionId + '/screenshot');
+  if (!comparisonScreenshot?.value) throw new Error('Offline comparison screenshot absent.');
+  await writeFile('exhibition-offline-comparisons-' + browser + '.png',
+    Buffer.from(comparisonScreenshot.value, 'base64'));
+  await request('POST', '/session/' + sessionId + '/window/rect', { width: 1250, height: 900 });
+  await execute("window.scrollTo(0,0)");
   const boardScreenshot = await request('GET', '/session/' + sessionId + '/screenshot');
   if (!boardScreenshot?.value) throw new Error('Offline board screenshot absent.');
   await writeFile('exhibition-offline-board-' + browser + '.png', Buffer.from(boardScreenshot.value, 'base64'));
-  await writeFile('exhibition-visual-index-' + browser + '.json', JSON.stringify({ browser, initial, result, board, selected, offline }, null, 2) + '\n');
+  await writeFile('exhibition-visual-index-' + browser + '.json', JSON.stringify({ browser, initial, result, board, selected, offline, comparisons, comparisonNarrow }, null, 2) + '\n');
   console.log(JSON.stringify({ browser, status:'four actual decoded canonical CPU images', hashes:result.tiles.map((tile) => tile.hash), selected:selected.id }, null, 2));
 } finally {
   if (sessionId) { try { await request('DELETE', '/session/' + sessionId); } catch { /* cleanup */ } }

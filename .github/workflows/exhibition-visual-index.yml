@@ -62,6 +62,7 @@ jobs:
           path: |
             exhibition-offline-board-${{ matrix.browser }}.html
             exhibition-offline-board-${{ matrix.browser }}.png
+            exhibition-offline-comparisons-${{ matrix.browser }}.png
             exhibition-visual-index-${{ matrix.browser }}.png
             exhibition-visual-index-${{ matrix.browser }}.json
             exhibition-index-lifecycle-${{ matrix.browser }}.json

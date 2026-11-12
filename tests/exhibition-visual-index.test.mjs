@@ -60,6 +60,31 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
     assert(board.html.includes(tile.rawRgbaHash));
     assert(board.html.includes(tile.recipeHash));
   }
+  const pairRows = [...board.html.matchAll(/<tr data-pair-a="([^"]+)" data-pair-b="([^"]+)" data-differences="(\d+)" data-overlap="(\d+)">/g)];
+  assert.equal(pairRows.length, 6, 'four accepted works generate six source-exact pairs');
+  assert.match(board.html, /href="#comparison-index">A\/B comparison index/);
+  assert.match(board.html, /id="comparison-scroll"[^>]+tabindex="0"/);
+  const decodedById = new Map(tiles.map((tile) => [tile.id, decodePngRgba(tile.png)]));
+  const seenPairs = new Set();
+  for (const [, aId, bId, countText, totalText] of pairRows) {
+    const key = aId + '/' + bId;
+    assert(!seenPairs.has(key), 'duplicate pair ' + key);
+    seenPairs.add(key);
+    const a = decodedById.get(aId), b = decodedById.get(bId);
+    assert(a && b, 'only accepted original CPU rasters may be compared');
+    const width = Math.min(a.widthPx, b.widthPx);
+    const height = Math.min(a.heightPx, b.heightPx);
+    let expected = 0;
+    for (let y = 0; y < height; y += 1) {
+      for (let x = 0; x < width; x += 1) {
+        const aAt = (y * a.widthPx + x) * 4;
+        const bAt = (y * b.widthPx + x) * 4;
+        if ([0, 1, 2, 3].some((ch) => a.rgba[aAt + ch] !== b.rgba[bAt + ch])) expected += 1;
+      }
+    }
+    assert.equal(Number(countText), expected, 'decoded CPU RGBA8 mismatch for ' + key);
+    assert.equal(Number(totalText), width * height);
+  }
   // Offline data: downloads are user-initiated, self-contained and importable
   // without script execution or a network request.
   const recipeLinks = [...board.html.matchAll(/<a download="([^"]+\.fwrecipe\.json)" href="data:application\/json;base64,([^"]+)">Save importable recipe<\/a>/g)];
