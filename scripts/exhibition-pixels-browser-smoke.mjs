@@ -39,7 +39,7 @@ try {
   if (!online) throw new Error('WebDriver did not start: ' + driverLog);
   const desired = browser === 'chrome'
     ? { capabilities: { alwaysMatch: { browserName: 'chrome', 'goog:chromeOptions': { args: ['--headless=new', '--no-sandbox', '--disable-dev-shm-usage', '--enable-webgl', '--ignore-gpu-blocklist', '--use-angle=swiftshader'], prefs: { 'download.default_directory': downloadDir, 'download.prompt_for_download': false, 'download.directory_upgrade': true } } } } }
-    : { capabilities: { alwaysMatch: { browserName: 'firefox', 'moz:firefoxOptions': { args: process.env.DISPLAY ? [] : ['-headless'], prefs: { 'webgl.disabled': false, 'webgl.force-enabled': true, 'gfx.webrender.software': true, 'browser.download.dir': downloadDir, 'browser.download.folderList': 2, 'browser.download.useDownloadDir': true, 'browser.helperApps.neverAsk.saveToDisk': 'application/json,application/octet-stream', 'browser.download.alwaysOpenPanel': false } } } } };
+    : { capabilities: { alwaysMatch: { browserName: 'firefox', 'moz:firefoxOptions': { args: process.env.DISPLAY ? [] : ['-headless'], prefs: { 'webgl.disabled': false, 'webgl.force-enabled': true, 'gfx.webrender.software': true, 'browser.download.dir': downloadDir, 'browser.download.folderList': 2, 'browser.download.useDownloadDir': true, 'browser.helperApps.neverAsk.saveToDisk': 'application/json,application/octet-stream,image/png', 'browser.download.alwaysOpenPanel': false } } } } };
   const created = await request('POST', '/session', desired);
   sessionId = created?.value?.sessionId ?? created?.sessionId;
   if (!sessionId) throw new Error('Missing WebDriver session ID.');
@@ -415,6 +415,13 @@ try {
       id: article.id.replace(/^work-/, ''),
       links: links.map(link => {
         const uri = link.getAttribute('href') || '';
+        const pngPrefix = 'data:image/png;base64,';
+        if (uri.startsWith(pngPrefix)) {
+          const bytes = Uint8Array.from(atob(uri.slice(pngPrefix.length)), char => char.charCodeAt(0));
+          return { valid: true, isPng: true, download: link.download,
+            matchesSource: uri === article.querySelector('figure img')?.getAttribute('src'),
+            length: bytes.length };
+        }
         const prefix = 'data:application/json;base64,';
         if (!uri.startsWith(prefix)) return { valid: false };
         const bytes = Uint8Array.from(atob(uri.slice(prefix.length)), char => char.charCodeAt(0));
@@ -430,13 +437,16 @@ try {
   })`);
   if (offlineDownloads.length !== 4 || offlineDownloads.some((record) => {
     const canonical = offlineDecoded.find((item) => item.id === record.id);
-    return !canonical || record.links.length !== 2 ||
+    return !canonical || record.links.length !== 3 ||
       record.links.some((link) => !link.valid || !link.matchesSource || link.length < 16) ||
       !record.links[0].isRecipe || record.links[1].isRecipe ||
+      record.links[0].isPng || record.links[1].isPng || !record.links[2].isPng ||
       !record.links[0].download.includes(record.id) ||
-      !record.links[1].download.includes(canonical.hash);
+      !record.links[1].download.includes(canonical.hash) ||
+      !record.links[2].download.includes(record.id) ||
+      !record.links[2].download.includes(canonical.hash);
   })) {
-    throw new Error('Offline accepted recipe/provenance downloads are invalid: ' + JSON.stringify(offlineDownloads));
+    throw new Error('Offline accepted recipe/provenance/PNG downloads are invalid: ' + JSON.stringify(offlineDownloads));
   }
   const downloadFocus = await execute("const link=document.querySelector('.work-actions a');link.focus();return document.activeElement===link");
   if (!downloadFocus) throw new Error('Offline accepted recipe download is not keyboard focusable.');
@@ -468,13 +478,16 @@ try {
   if (embeddedDownloads.length !== 8) {
     throw new Error('Expected eight independent accepted JSON downloads.');
   }
+  const pngDownloads = [...boardHtml.matchAll(/<a download="([^"]+\.canonical\.png)" href="data:image\/png;base64,([^"]+)">Save canonical PNG<\/a>/g)]
+    .map((match) => ({ name: match[1], bytes: Buffer.from(match[2], 'base64') }));
+  if (pngDownloads.length !== 4) throw new Error('Expected four accepted canonical PNG downloads.');
+  const downloadTargets = [embeddedDownloads[0], embeddedDownloads[1], pngDownloads[0]];
   const savedDownloads = [];
-  for (const index of [0, 1]) {
-    const expected = embeddedDownloads[index];
+  for (const [index, expected] of downloadTargets.entries()) {
     const destination = join(downloadDir, expected.name);
     const focused = await execute("const a=document.querySelectorAll('main article.work')[0].querySelectorAll('.work-actions a')[" + index + "];a.focus();return {active:document.activeElement===a,name:a.download}");
     if (!focused.active || focused.name !== expected.name) {
-      throw new Error('Offline recipe/provenance link cannot be activated by keyboard: ' + JSON.stringify(focused));
+      throw new Error('Offline recipe/provenance/PNG link cannot be activated by keyboard: ' + JSON.stringify(focused));
     }
     await pressPixelKey('\uE007'); // Real WebDriver Enter; no synthetic click or CSP fetch.
     let contents = null;
@@ -488,6 +501,11 @@ try {
         ' (observed ' + (contents?.length ?? 'none') + ' of ' + expected.bytes.length + ' bytes)');
     }
     savedDownloads.push({ name: expected.name, bytes: contents.length, match: true });
+
+  }
+  const savedPngBytes = await readFile(join(downloadDir, pngDownloads[0].name));
+  if (rawRgbaHash(decodePngRgba(new Uint8Array(savedPngBytes)).rgba) !== offlineDecoded[0].hash) {
+    throw new Error('Actual saved offline PNG does not match the accepted canonical RGBA8 identity.');
   }
   // Reopen the real workbench and import the file that the browser actually
   // saved, rather than regenerating or injecting the recipe JSON from Node.
