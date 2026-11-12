@@ -588,7 +588,11 @@ try {
   if (offlinePage.heading !== 'Accepted canonical proofs' ||
       !offlinePage.csp?.includes("default-src 'none'") ||
       !offlinePage.csp.includes("connect-src 'none'") ||
-      offlinePage.articleIds.length !== 4 || offlinePage.anchors.length !== 4 ||
+      offlinePage.articleIds.length !== 4 || offlinePage.anchors.length !== 5 ||
+      offlinePage.anchors.filter((anchor) => anchor.startsWith('#work-')).length !== 4 ||
+      !offlinePage.anchors.includes('#comparison-index') ||
+      offlinePage.anchors.some((anchor) => anchor !== '#comparison-index' &&
+        !offlinePage.articleIds.includes(anchor.slice(1))) ||
       offlinePage.scriptCount !== 0 || offlinePage.externalResources.length !== 0 ||
       encoded.some((match) => !offlinePage.articleIds.includes('work-' + match[1]) ||
         !offlinePage.bodyText.includes(offlineDecoded.find((p) => p.id === match[1]).hash)) ||
