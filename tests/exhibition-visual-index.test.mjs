@@ -179,7 +179,7 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
   assert.equal(locatorMaps.length, 6,
     'each accepted pair exposes a script-free diagnostic locator, not substitute artwork');
   const ledgerHeader = 'x,y,a_r,a_g,a_b,a_a,b_r,b_g,b_b,b_a,delta_r,delta_g,delta_b,delta_a';
-  const swatches = [...board.html.matchAll(/<span class="pair-swatch" data-rgba8="([\\d,]+)" aria-hidden="true"><span class="pair-swatch-fill" style="background-color:rgba\\((\\d+),(\\d+),(\\d+),([\\d.]+)\\)"><\\/span><\\/span>/g)];
+  const swatches = [...board.html.matchAll(/<span class="pair-swatch" data-rgba8="([\d,]+)" aria-hidden="true"><span class="pair-swatch-fill" style="background-color:rgba\((\d+),(\d+),(\d+),([\d.]+)\)"><\/span><\/span>/g)];
   let swatchCursor = 0;
   for (let i = 0; i < pairRows.length; i += 1) {
     const [, aId, bId, changed] = pairRows[i];
