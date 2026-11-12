@@ -1,0 +1,231 @@
+.exhibition-panel .exhibition-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem;
+  margin: 0.65rem 0;
+}
+.exhibition-card {
+  min-width: 0;
+  min-height: 3.65rem;
+  padding: 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: #11150f;
+  color: #eaeedc;
+  text-align: left;
+  cursor: pointer;
+}
+.exhibition-card:hover,
+.exhibition-card[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: #272319;
+}
+.exhibition-card strong,
+.exhibition-card span { display: block; }
+.exhibition-card strong { font-size: 0.74rem; line-height: 1.3; }
+.exhibition-card span { margin-top: 0.3rem; color: var(--muted); font-size: 0.63rem; overflow-wrap: anywhere; }
+.exhibition-nav,
+.exhibition-actions {
+  display: grid;
+  gap: 0.35rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0.5rem 0;
+}
+.exhibition-panel .button { min-width: 0; white-space: normal; }
+.exhibition-description { margin: 0.5rem 0 0.35rem; }
+.exhibition-identity {
+  display: grid;
+  grid-template-columns: minmax(5.5rem, 1fr) minmax(0, 2fr);
+  gap: 0.24rem 0.55rem;
+  margin: 0.65rem 0;
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  font-size: 0.66rem;
+}
+.exhibition-identity dt { color: var(--muted); }
+.exhibition-identity dd { margin: 0; color: #edede1; overflow-wrap: anywhere; }
+.exhibition-figure {
+  margin: 0.5rem 0;
+  min-height: 9rem;
+  border: 1px solid var(--line);
+  background: #090b08;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  padding: 0.55rem;
+  gap: 0.5rem;
+}
+.exhibition-figure img {
+  display: block;
+  max-width: 100%;
+  width: min(100%, 24rem);
+  aspect-ratio: 3 / 2;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+.exhibition-figure img[hidden],
+.exhibition-figure p[hidden] { display: none; }
+.exhibition-figure p { text-align: center; }
+.exhibition-figure figcaption { width: 100%; text-align: center; }
+
+.exhibition-compare {
+  margin-top: 0.85rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--line);
+}
+.exhibition-compare h3 {
+  margin: 0 0 0.45rem;
+  font-size: 0.81rem;
+  line-height: 1.3;
+}
+.exhibition-compare-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem;
+  margin: 0.65rem 0;
+}
+.exhibition-compare-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem;
+  margin: 0.5rem 0;
+}
+.exhibition-compare-slot {
+  min-width: 0;
+  margin: 0;
+  padding: 0.4rem;
+  border: 1px solid var(--line);
+  background: #090b08;
+  color: #eaeedc;
+}
+.exhibition-compare-slot strong {
+  display: block;
+  min-height: 2.2em;
+  font-size: 0.72rem;
+  line-height: 1.15;
+}
+.exhibition-compare-slot img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  display: block;
+  object-fit: contain;
+  image-rendering: pixelated;
+  margin: 0.4rem 0;
+}
+.exhibition-compare-slot img[hidden],
+.exhibition-compare-slot p[hidden] { display: none; }
+.exhibition-compare-slot figcaption {
+  overflow-wrap: anywhere;
+  font-size: 0.63rem;
+  line-height: 1.45;
+}
+.exhibition-compare-slot p {
+  min-height: 5rem;
+  margin: 0.4rem 0;
+}
+
+/* Full-window proof inspection only enlarges existing canonical PNG object URLs. */
+.exhibition-inspector {
+  box-sizing: border-box;
+  width: min(95vw, 1350px);
+  max-width: 1350px;
+  max-height: 94vh;
+  margin: auto;
+  padding: 1rem;
+  border: 1px solid var(--accent);
+  border-radius: 0;
+  background: #121711;
+  color: #eaeedc;
+  box-shadow: 0 1rem 4rem #000c;
+}
+.exhibition-inspector::backdrop { background: #020400de; }
+.exhibition-inspector-header,
+.exhibition-inspector-toolbar {
+  display: flex;
+  gap: 0.8rem;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.85rem;
+}
+.exhibition-inspector-header h2 { margin: 0; font-size: 1.25rem; }
+.exhibition-inspector-toolbar label { font-size: 0.83rem; }
+.exhibition-inspector-toolbar select {
+  min-height: 2.5rem;
+  background: #11180f;
+  border: 1px solid var(--line);
+  color: #eaeedc;
+  border-radius: 0;
+  padding: 0.35rem;
+}
+.exhibition-inspector-toolbar select:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+.exhibition-inspector-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+  align-items: start;
+  gap: 0.75rem;
+}
+.exhibition-inspector-frame {
+  margin: 0;
+  padding: 0.6rem;
+  min-width: 0;
+  max-height: 66vh;
+  overflow: auto;
+  border: 1px solid var(--line);
+  background: #060806;
+  text-align: center;
+}
+.exhibition-inspector-frame[hidden] { display: none; }
+.exhibition-inspector-frame h3 { margin: 0 0 0.6rem; font-size: 0.86rem; }
+.exhibition-inspector-frame img {
+  display: block;
+  height: auto;
+  max-width: none;
+  margin: auto;
+  image-rendering: pixelated;
+}
+.exhibition-inspector-frame figcaption {
+  margin-top: 0.7rem;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 760px) {
+  .exhibition-inspector { padding: 0.5rem; }
+  .exhibition-inspector-frame { max-height: 40vh; }
+}
+
+/* Read-only accepted-recipe anatomy, subordinate to genuine CPU artwork proofs. */
+.exhibition-recipe-ledger {
+  border: 1px solid var(--line);
+  padding: 0.55rem 0.7rem;
+  margin: 0.6rem 0;
+  background: #0c110c;
+}
+.exhibition-recipe-ledger[hidden] { display: none; }
+.exhibition-recipe-ledger summary { cursor: pointer; color: #eaeedc; font-weight: 600; }
+.exhibition-recipe-ledger summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.exhibition-ledger-table { border-collapse: collapse; width: 100%; margin: 0.65rem 0; font-size: 0.72rem; table-layout: fixed; }
+.exhibition-ledger-table th, .exhibition-ledger-table td {
+  border-bottom: 1px solid #30372b;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  padding: 0.45rem;
+}
+.exhibition-ledger-table thead th { color: #eaeedc; font-size: 0.76rem; }
+.exhibition-ledger-table tbody th { color: #b5c4a6; }
+.exhibition-ledger-table .exhibition-ledger-different { background: #22271a; }
+.exhibition-ledger-commands { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 0.65rem; }
+.exhibition-ledger-commands section { min-width: 0; }
+.exhibition-ledger-commands h3 { margin: 0.4rem 0; font-size: 0.78rem; }
+.exhibition-ledger-commands ol { font-size: 0.68rem; overflow-wrap: anywhere; padding-left: 1.5rem; line-height: 1.6; }
+#exhibition-recipe-ledger-status { display: block; margin-top: 0.5rem; }
+@media (max-width: 760px) {
+  .exhibition-ledger-table { display: block; overflow-x: auto; table-layout: auto; }
+  .exhibition-ledger-table th, .exhibition-ledger-table td { min-width: 7rem; }
+}
