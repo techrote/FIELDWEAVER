@@ -4,6 +4,18 @@ The accepted browser Exhibition panel deliberately contains only admitted recipe
 
 It generates one static, offline HTML file. Every image is produced by the existing FW-012 CPU software exporter, never by WebGL, screenshots, an image service or the browser canvas. A candidate can appear only if its versioned `*.provenance.json` file replays to the recorded recipe/state/deposition/result/raw-RGBA identities **and** its sibling `*.png` decodes to exactly the regenerated RGBA pixels. The candidate is explicitly labelled *UNMERGED CANDIDATE*. Failure stops the review; it does not silently replace the archived work.
 
+## Current curated shortlist — single owner entrypoint
+
+Run `0Review.cmd` on Windows or `sh ./0Review.sh` on POSIX from current main. After `npm run verify`, the launcher checks each live PR head against the exact SHA pinned in `scripts/admission-review.mjs`, compares each authored recipe with its provenance recipe, reproduces and byte-compares its canonical CPU image, and opens **one** new offline HTML. It never registers or admits a Draft. Network/GitHub access is needed during generation to fetch candidate heads; the resulting HTML is self-contained and works offline.
+
+| Rank | Unmerged Draft | Exact source at curatorial pin | Decoded RGBA8 identity | Admission gate |
+| --- | --- | --- | --- | --- |
+| 1 | [#57 Registry of Vacant Rooms](https://github.com/techrote/FIELDWEAVER/pull/57) (original) | `23cd907ddf260baf5420b611fe8359d590fcd9dc` | `56286fc4c1a47bb8` | Owner judgement on composition and ten occupied top-edge pixels (author advises keeping crop) |
+| 2 | [#50 Unwound Metronome, sibling 17](https://github.com/techrote/FIELDWEAVER/pull/50) (mutation) | `25e6de1906e3e5a4ee66345b8210028b47185507` | `80a5a090d57b6d07` | Owner judgement on lateral crop and selected variant |
+| 3 | [#41 The Interval Engine](https://github.com/techrote/FIELDWEAVER/pull/41) (reserve original) | `c6f5ecc0995071c45ae90a00d53ee23dc53b6641` | `fd389a9bb0ce640f` | Owner compare/admit/revise/reject; no substitute for physical import/export inspection |
+
+This remains a **bounded, ranked comparison**, not automatic artistic acceptance. A live head moving invalidates its pin and stops generation until Integration reviews and updates the exact source. No accepted catalogue or artwork bytes change when a candidate enters this review. Do not infer artistic quality from passing deterministic tests.
+
 ## From accepted main
 
 Requires Node.js 22–24. From the repository root:
