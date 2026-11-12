@@ -301,6 +301,33 @@ try {
   if (!differenceShot?.value) throw new Error('Exact A/B difference screenshot unavailable.');
   await writeFile('exhibition-pixel-difference-' + browser + '.png',
     Buffer.from(differenceShot.value, 'base64'));
+  // Real keyboard backward action returns to the exact previous source pixel.
+  await saveByKeyboard('exhibition-study-pixel-difference-prev');
+  let previousDifference = null;
+  for (let i = 0; i < 35; i += 1) {
+    previousDifference = await execute("return {x:Number(document.getElementById('exhibition-study-pixel-x').value),y:Number(document.getElementById('exhibition-study-pixel-y').value),ab:document.getElementById('exhibition-study-pixel-ab').textContent}");
+    if (previousDifference.x === 20 && previousDifference.y === 35 &&
+        previousDifference.ab.includes('Δ(B−A) RGBA8 7, 18, 20, 0')) break;
+    await sleep(100);
+  }
+  if (previousDifference.x !== 20 || previousDifference.y !== 35 ||
+      !previousDifference.ab.includes('Δ(B−A) RGBA8 7, 18, 20, 0')) {
+    throw new Error('Keyboard previous A/B difference failed canonical round-trip: ' +
+      JSON.stringify(previousDifference));
+  }
+  await saveByKeyboard('exhibition-study-pixel-difference');
+  let forwardAgain = null;
+  for (let i = 0; i < 35; i += 1) {
+    forwardAgain = await execute("return {x:Number(document.getElementById('exhibition-study-pixel-x').value),y:Number(document.getElementById('exhibition-study-pixel-y').value),ab:document.getElementById('exhibition-study-pixel-ab').textContent}");
+    if (forwardAgain.x === expectedNextDifference.x && forwardAgain.y === expectedNextDifference.y &&
+        forwardAgain.ab.includes('Δ(B−A) RGBA8 ' + expectedNextDifference.delta)) break;
+    await sleep(100);
+  }
+  if (forwardAgain.x !== expectedNextDifference.x ||
+      forwardAgain.y !== expectedNextDifference.y ||
+      !forwardAgain.ab.includes('Δ(B−A) RGBA8 ' + expectedNextDifference.delta)) {
+    throw new Error('Keyboard A/B forward recovery failed decoded CPU oracle: ' + JSON.stringify(forwardAgain));
+  }
   // The new traversal must refuse a forged peer even if previously cached.
   const forgedDifference = await execute("const card=document.querySelector('[data-exhibition-id=operator-atlas]');const previous=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-pixel-difference').click();const evidence={reading:document.getElementById('exhibition-study-pixel-reading').textContent,abHidden:document.getElementById('exhibition-study-pixel-ab').hidden,ab:document.getElementById('exhibition-study-pixel-ab').textContent};card.dataset.canonicalRgbaHash=previous;return evidence");
   if (!forgedDifference.reading.includes('Cannot inspect verified A/B images:') ||
@@ -359,7 +386,7 @@ try {
   const pixelShot=await request('GET','/session/'+sessionId+'/screenshot');
   if(!pixelShot?.value) throw new Error('Decoded pixel screenshot not captured');
   await writeFile('exhibition-pixels-'+browser+'.png',Buffer.from(pixelShot.value,'base64'));
-  await writeFile('exhibition-pixels-'+browser+'.json',JSON.stringify({browser,sampled,expectedDelta,visibleDifference,expectedNextDifference,nextDifference,forgedDifference,invalidPeer,noStaleDelta,peerRestored,forgedPixel,restoredPixel,aPixel,marked},null,2)+'\n');
+  await writeFile('exhibition-pixels-'+browser+'.json',JSON.stringify({browser,sampled,expectedDelta,visibleDifference,expectedNextDifference,nextDifference,previousDifference,forwardAgain,forgedDifference,invalidPeer,noStaleDelta,peerRestored,forgedPixel,restoredPixel,aPixel,marked},null,2)+'\n');
   // Real WebDriver key actions on focused canonical images; distinguish from
   // gallery Left/Right while retaining source-specific A/B coordinates.
   const pressPixelKey = async (value, shifted = false) => {

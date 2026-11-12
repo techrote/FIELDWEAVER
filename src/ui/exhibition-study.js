@@ -1,5 +1,5 @@
 import { exhibitionEntries } from './exhibition-catalog.js';
-import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel, nextDifferingStudyPixel, compareStudyPixelChannels, sameStudyCrop, buildStudyPixelReceipt } from './exhibition-pixel-probe.js';
+import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel, nextDifferingStudyPixel, previousDifferingStudyPixel, compareStudyPixelChannels, sameStudyCrop, buildStudyPixelReceipt } from './exhibition-pixel-probe.js';
 import { getAcceptedVisualIndexPng, getAcceptedVisualIndexProvenance } from './exhibition-visual-index.js';
 import { verifyOfflineExhibitionTile } from './exhibition-offline-board.js';
 import { buildAcceptedRecipeHandoff } from './exhibition-recipe-handoff.js';
@@ -145,9 +145,12 @@ export function mountExhibitionStudy(panel) {
   const nextDifference = make('button', { id: 'exhibition-study-pixel-difference',
     class: 'button', type: 'button' }, 'Next A/B difference');
   nextDifference.disabled = true;
+  const previousDifference = make('button', { id: 'exhibition-study-pixel-difference-prev',
+    class: 'button', type: 'button' }, 'Previous A/B difference');
+  previousDifference.disabled = true;
   const savePixel = make('button', { id: 'exhibition-study-pixel-save', class: 'button',
     type: 'button' }, 'Save exact pixel receipt (JSON)');
-  fields.append(sourceLabel, xLabel, yLabel, nextMark, nextDifference, savePixel);
+  fields.append(sourceLabel, xLabel, yLabel, nextMark, previousDifference, nextDifference, savePixel);
   const reading = make('output', { id: 'exhibition-study-pixel-reading',
     class: 'workspace-note', 'aria-live': 'polite' }, 'Choose a pixel.');
   reading.hidden = true;
@@ -322,7 +325,7 @@ export function mountExhibitionStudy(panel) {
   source.addEventListener('change', () => { lastPixelId = null; void updatePixel(true); });
   for (const input of [x, y]) input.addEventListener('input', () => void updatePixel());
   nextMark.addEventListener('click', () => void updatePixel(false, true));
-  nextDifference.addEventListener('click', () => {
+  const navigateDifference = (direction) => {
     if (!pixelOpen || !dialog.open || !pinnedId) return;
     try {
       const records = snapshot();
@@ -337,7 +340,8 @@ export function mountExhibitionStudy(panel) {
           entry.exportCrop.widthPx, entry.exportCrop.heightPx, record.hash);
       };
       const a = decodeCurrent(pinnedId), b = decodeCurrent(currentId);
-      const hit = nextDifferingStudyPixel(a, b, Number(x.value), Number(y.value));
+      const hit = (direction > 0 ? nextDifferingStudyPixel : previousDifferingStudyPixel)(
+        a, b, Number(x.value), Number(y.value));
       if (!hit) {
         compareReading.textContent = 'No different decoded RGBA8 pixels in the ' +
           Math.min(a.width, b.width) + '×' + Math.min(a.height, b.height) +
@@ -358,7 +362,9 @@ export function mountExhibitionStudy(panel) {
       compareReading.hidden = true;
       gridPixels.replaceChildren();
     }
-  });
+  };
+  nextDifference.addEventListener('click', () => navigateDifference(1));
+  previousDifference.addEventListener('click', () => navigateDifference(-1));
   for (const [side, frameNode] of [['A', left], ['B', right]]) {
     frameNode.img.title = 'Focus and use Enter or arrow keys to inspect canonical pixels';
     frameNode.img.addEventListener('keydown', (event) => {
@@ -406,6 +412,7 @@ export function mountExhibitionStudy(panel) {
     if (!pinnedId && source.value === 'B') source.value = 'A';
     unpin.disabled = !pinnedId;
     nextDifference.disabled = !pinnedId;
+    previousDifference.disabled = !pinnedId;
     pin.disabled = pinnedId === currentId;
     announce.textContent = 'Work ' + (ids.indexOf(currentId) + 1) + '/' + ids.length +
       ': ' + lookup.get(currentId).name +

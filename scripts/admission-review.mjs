@@ -1,8 +1,9 @@
 // Source-exact, opt-in admission board; never installs candidate art into the accepted gallery.
 // Generates one standalone file using the existing FW-012 CPU verifier and gallery renderer.
+import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { constants } from 'node:fs';
-import { copyFile, mkdtemp, rm } from 'node:fs/promises';
+import { copyFile, mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -13,16 +14,37 @@ export const ADMISSION_SELECTION = Object.freeze([
   Object.freeze({
     pr: 57, lane: 'ORIGINAL', title: 'Registry of Vacant Rooms',
     head: '23cd907ddf260baf5420b611fe8359d590fcd9dc',
+    recipe: 'gallery/originals/08-registry-of-vacant-rooms/recipe.json',
     provenance: 'gallery/originals/08-registry-of-vacant-rooms/the-vacant-rooms.provenance.json',
     rgba: '56286fc4c1a47bb8'
   }),
   Object.freeze({
     pr: 50, lane: 'MUTATION', title: 'Unwound Metronome — sibling 17',
     head: '25e6de1906e3e5a4ee66345b8210028b47185507',
+    recipe: 'gallery/variants/06-unwound-metronome/selected.recipe.json',
     provenance: 'gallery/variants/06-unwound-metronome/selected.provenance.json',
     rgba: '80a5a090d57b6d07'
   }),
 ]);
+
+/**
+ * A verified provenance can produce a valid exhibition while the separately
+ * committed artist recipe has drifted. Reject that source-package mismatch.
+ * Key ordering/JSON whitespace do not affect recipe semantics.
+ */
+export function assertArchivedRecipeMatchesProvenance(authored, provenance, pr) {
+  if (!authored || typeof authored !== 'object' || Array.isArray(authored) ||
+      !provenance || typeof provenance !== 'object' || Array.isArray(provenance) ||
+      !provenance.recipe || typeof provenance.recipe !== 'object' ||
+      Array.isArray(provenance.recipe)) {
+    throw new Error('PR #' + pr + ' missing a valid authored or provenance recipe.');
+  }
+  try {
+    assert.deepStrictEqual(authored, provenance.recipe);
+  } catch {
+    throw new Error('PR #' + pr + ' authored recipe differs from its verified provenance recipe.');
+  }
+}
 
 function git(args) {
   const result = spawnSync('git', ['-C', ROOT, ...args], {
@@ -52,6 +74,16 @@ export async function buildAdmissionReview(outputFile) {
       const path = join(tmp, 'pr-' + candidate.pr);
       git(['worktree', 'add', '--detach', '--quiet', path, fetched]);
       worktrees.push(path);
+      // Match the separately submitted importable recipe against the exact
+      // recipe that the canonical PNG/provenance verifier will replay.
+      // Do not rewrite either source artifact to make them agree.
+      const [authoredText, provenanceText] = await Promise.all([
+        readFile(join(path, candidate.recipe), 'utf8'),
+        readFile(join(path, candidate.provenance), 'utf8')
+      ]);
+      assertArchivedRecipeMatchesProvenance(
+        JSON.parse(authoredText), JSON.parse(provenanceText), candidate.pr
+      );
       args.push('--provenance', join(path, candidate.provenance));
     }
     const result = await runCli(args);

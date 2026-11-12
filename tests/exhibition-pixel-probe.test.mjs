@@ -4,7 +4,7 @@ import { BUILTIN_PRESETS } from '../src/presets/index.js';
 import { recipeHash } from '../src/recipe/index.js';
 import { renderVisualIndexProof } from '../src/ui/exhibition-visual-index-model.js';
 import { exhibitionEntries } from '../src/ui/exhibition-catalog.js';
-import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel, nextDifferingStudyPixel, compareStudyPixelChannels, sameStudyCrop, buildStudyPixelReceipt, STUDY_PIXEL_RECEIPT_VERSION } from '../src/ui/exhibition-pixel-probe.js';
+import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel, nextDifferingStudyPixel, previousDifferingStudyPixel, compareStudyPixelChannels, sameStudyCrop, buildStudyPixelReceipt, STUDY_PIXEL_RECEIPT_VERSION } from '../src/ui/exhibition-pixel-probe.js';
 
 test('inspection samples real verified CPU PNG bytes without changing accepted recipes', () => {
   const before = BUILTIN_PRESETS.map(p => recipeHash(p.recipe));
@@ -102,9 +102,23 @@ test('next A/B difference scans decoded CPU RGBA8, wraps and never invents world
     }
   }
   assert.deepEqual(actual, expected, 'the next difference is independently derived from the accepted CPU rasters');
+  let expectedPrevious = null;
+  for (let step = 1; step <= a.width * a.height; step += 1) {
+    const position = (startY * a.width + startX - step + a.width * a.height) % (a.width * a.height);
+    const offset = position * 4;
+    if ([0, 1, 2, 3].some(channel => a.rgba[offset + channel] !== b.rgba[offset + channel])) {
+      expectedPrevious = { x: position % a.width, y: Math.floor(position / a.width) };
+      break;
+    }
+  }
+  assert.deepEqual(previousDifferingStudyPixel(a, b, startX, startY), expectedPrevious,
+    'reverse traversal matches an independent decoded-CPU reference oracle');
+  assert.deepEqual(previousDifferingStudyPixel(a, b, actual.x, actual.y), { x: startX, y: startY },
+    'next and previous round-trip on an actually differing accepted pixel');
   assert.equal(compareStudyPixelChannels(a, b, actual.x, actual.y).identical, false);
   assert.ok(Object.isFrozen(actual));
   assert.equal(nextDifferingStudyPixel(a, a, 20, 35), null);
+  assert.equal(previousDifferingStudyPixel(a, a, 20, 35), null);
 
   const blank = (width, height) => ({ width, height, rgba: new Uint8Array(width * height * 4) });
   const first = blank(3, 2), second = blank(3, 2);
@@ -113,6 +127,8 @@ test('next A/B difference scans decoded CPU RGBA8, wraps and never invents world
   assert.deepEqual(nextDifferingStudyPixel(first, second, 0, 0), { x: 2, y: 0 });
   assert.deepEqual(nextDifferingStudyPixel(first, second, 2, 0), { x: 1, y: 1 });
   assert.deepEqual(nextDifferingStudyPixel(first, second, 1, 1), { x: 2, y: 0 });
+  assert.deepEqual(previousDifferingStudyPixel(first, second, 2, 0), { x: 1, y: 1 });
+  assert.deepEqual(previousDifferingStudyPixel(first, second, 1, 1), { x: 2, y: 0 });
   assert.equal(nextDifferingStudyPixel(first, blank(3, 2), 0, 0), null);
   assert.deepEqual(nextDifferingStudyPixel(blank(1, 1), { width: 1, height: 1, rgba: Uint8Array.of(1, 0, 0, 0) }, 0, 0), { x: 0, y: 0 });
 
@@ -121,7 +137,12 @@ test('next A/B difference scans decoded CPU RGBA8, wraps and never invents world
   narrow.rgba[(0 * 2 + 0) * 4] = 3;
   assert.deepEqual(nextDifferingStudyPixel(wide, narrow, 1, 0), { x: 0, y: 0 },
     'different strides use the shared rectangle, without pretending crops align');
-  assert.throws(() => nextDifferingStudyPixel(wide, narrow, 2, 0), /outside/);
+  assert.deepEqual(nextDifferingStudyPixel(wide, narrow, 2, 0), { x: 0, y: 0 },
+    'a cursor beyond the overlap but within the wide source re-enters at the first difference');
+  assert.deepEqual(previousDifferingStudyPixel(wide, narrow, 2, 0), { x: 1, y: 0 },
+    'reverse navigation re-enters at the last difference in the shared overlap');
+  assert.throws(() => nextDifferingStudyPixel(wide, narrow, 4, 0), /outside/);
+  assert.throws(() => previousDifferingStudyPixel(wide, narrow, -1, 0), /outside/);
   assert.throws(() => nextDifferingStudyPixel(a, { ...b, rgba: new Uint8Array(4) }, 0, 0), /outside/);
 });
 
