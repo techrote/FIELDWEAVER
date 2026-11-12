@@ -37,3 +37,16 @@ The software-rendered image was inspected after the second, stronger-gravity sco
 - **Depositions:** 85,804; checked-in PNG, `fw-export-provenance-v1` sidecar and qualification receipt are asserted byte-exact against fresh canonical output on every test run.
 
 The source is generated entirely through FIELDWEAVER's own authored vector-field/particle/LUT vocabulary; there are no third-party images, textures, fonts, music, or network assets. No historical specimen or shared model was modified.
+
+## Owner review through verified offline exhibition
+
+From this Draft checkout with Node 22 or 24:
+
+```sh
+npm run verify
+node gallery/originals/02-the-luminous-ledger/review.mjs
+```
+
+Open the printed local HTML file in Firefox, directly via `file://`. It uses the existing exact-CPU review generator, compares this candidate against accepted Operator Atlas and Timeline Pulse, and clearly labels **UNMERGED CANDIDATE** versus **ACCEPTED PRESET**. Every embedded PNG and recipe/provenance download is source-qualified; it is not a new viewer or accepted catalogue. Import Ledger's downloadable normalized recipe through `0Play.cmd`, reproduce **tick 168** at **448×448**, and compare decoded RGBA8 `3b821e3737598e0a`.
+
+Actual 448×448 native PNG inspection: four differentiated ivory/apricot/copper, slate-blue and jade comb curtains descend from tight upper registrations to the upper-middle of the frame, with extensive black ground below. Compared to #34's sweeping bilateral curves and #41's broken horizontal geological strata, this is a distinctive upright score. Its repeated falling-bundle motif and empty lower third-to-half are the main risks; additional small marks are not a substitute for stronger overall framing. **HOLD: owner ADMIT / REVISE FRAMING / REJECT.** No pixel, recipe or provenance was revised.

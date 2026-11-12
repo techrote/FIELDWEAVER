@@ -58,9 +58,11 @@ Then open `http://127.0.0.1:4173/` if you used `npm run serve`. `npm start`, `0P
 
 No package CDN, cloud service, telemetry endpoint, or other external network dependency is required. The local HTTP server exists so native browser modules run under normal browser security instead of relying on `file://` behaviour.
 
+The **Exhibition · accepted presets** panel can render an actual canonical CPU proof before loading a recipe. For independent comparison of unmerged original and mutation artworks without adding them to the accepted catalog, see [offline artwork review](./docs/GALLERY_REVIEW.md); its generated HTML opens directly in Firefox without a local server.
+
 ## First creative workflow
 
-1. In **Built-in presets**, select **First Weave** (or another shipped example) and choose **Load preset** for an immediate deterministic starting point. Preset selection itself does not mutate the work; loading adopts the validated recipe.
+1. In **Exhibition · accepted presets**, select **First Weave** (or another shipped example), choose **Render canonical proof** to inspect its real CPU output, and choose **Load preset** for an immediate deterministic starting point. Selection and rendering do not mutate the working recipe; loading explicitly adopts the validated recipe.
 2. Choose a field in **Field stack** or add one of the five field operators.
 3. Select **Paint [B]** and drag on the canvas. For keyboard-only authoring, focus the canvas and press **Enter** to apply one Paint/Erase brush stamp at the current view centre.
 4. Use **Place emitter [N]** to add an emitter, then assign Ink, Filament, Dust or Shard. The sidebar also exposes a keyboard-reachable add-at-view-centre path.
@@ -82,6 +84,7 @@ See [`docs/EDITOR.md`](./docs/EDITOR.md) for the editor/shortcut/determinism con
 | `npm run check` | Syntax checks plus version/module/CSP/local-resource policy checks |
 | `npm test` | Node built-in deterministic core/field/operator/simulation/editor/LUT/recipe/timeline/mutation/export/Infinite Plate/preset/renderer/GPU-research tests |
 | `npm run verify` | Full local correctness gate (`check` then `test`) |
+| `node scripts/review-gallery.mjs --out review.html --preset first-weave` | Produce a standalone offline canonical review page; accepts unmerged provenance/PNG pairs too |
 | `npm run benchmark:sim` | Headless canonical simulation timing/throughput diagnostics; timing is not a correctness gate |
 | `npm run benchmark:render` | ~64k-deposition interaction profile proving one geometry build followed by cached view transforms |
 | `npm run benchmark:release` | Repeated 30k-active-agent canonical simulation pressure profile with deterministic hash-equivalence assertions |

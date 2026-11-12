@@ -1,0 +1,223 @@
+import { canonicalHash, canonicalStringify } from '../core/canonical.js';
+import { getBuiltinPreset } from '../presets/index.js';
+import { recipeHash } from '../recipe/index.js';
+import { exhibitionEntries } from './exhibition-catalog.js';
+import { getAcceptedVisualIndexPng } from './exhibition-visual-index.js';
+import { verifyStudyPng } from './exhibition-pixel-probe.js';
+
+export const RECIPE_LEDGER_VERSION = 'fw-exhibition-recipe-ledger-v1';
+
+function row(key, title, value, description) {
+  return Object.freeze({ key, title, description, fingerprint: canonicalHash(value) });
+}
+
+function cropDescription(crop) {
+  const { center } = crop;
+  return crop.widthPx + '×' + crop.heightPx + ', Q16 units/px ' + crop.unitsPerPixelQ16 +
+    ', centre (' + [center.chunkX, center.chunkY, center.localX, center.localY].join(', ') + ')';
+}
+
+// Authoring facts only: no pixels, image similarity, or re-execution here.
+// Every source comes from the accepted immutable built-in preset catalog.
+export function acceptedRecipeLedger(id) {
+  const preset = getBuiltinPreset(id);
+  const recipe = preset.recipe;
+  if (recipeHash(recipe) !== preset.recipeHash) throw new Error('Accepted recipe identity mismatch.');
+  const fields = recipe.fields.layers;
+  const lut = recipe.lut;
+  const timeline = [...recipe.commands].sort((a, b) => a.tick - b.tick || a.id - b.id);
+  const score = Object.freeze([
+    row('compatibility', 'Recipe compatibility', [recipe.schemaVersion, recipe.engineVersion],
+      recipe.schemaVersion + ' · ' + recipe.engineVersion),
+    row('seed', 'Root seed', recipe.seed, String(recipe.seed >>> 0)),
+    row('tick', 'Canonical target tick', preset.targetTick, String(preset.targetTick)),
+    row('crop', 'Authored export crop', preset.exportCrop, cropDescription(preset.exportCrop)),
+    row('fields', 'Ordered field stack', recipe.fields,
+      fields.length + ' layers · ' + (fields.map((f) => '#' + f.id + ' ' + f.operator + (f.enabled ? '' : ' (off)')).join(' → ') || 'none')),
+    row('materials', 'Material behaviours', recipe.materials,
+      recipe.materials.length + ' materials · ' + recipe.materials.map((m) => '#' + m.id + ' ' + m.kind).join(', ')),
+    row('emitters', 'Emitter schedules', recipe.emitters,
+      recipe.emitters.length + ' emitters · ' + recipe.emitters.map((e) =>
+        '#' + e.id + ' material ' + e.materialId + ' t' + e.startTick + '–' + e.stopTick).join(', ')),
+    row('lut', 'LUT logic', lut,
+      lut.assets.length + ' assets · ' + lut.mappings.length + ' mappings'),
+    row('commands', 'Interventions', recipe.commands,
+      timeline.length + ' commands · ' + (timeline.length ? 'ticks ' +
+        [...new Set(timeline.map((c) => c.tick))].join(', ') : 'none')),
+    row('lineage', 'Lineage', recipe.lineage,
+      recipe.lineage ? 'Parent ' + recipe.lineage.parentRecipeHash +
+        ' · child seed ' + recipe.lineage.childSeed + ' · ' + recipe.lineage.operations.length + ' operations' : 'Original accepted preset')
+  ]);
+  return Object.freeze({
+    version: RECIPE_LEDGER_VERSION,
+    id: preset.id,
+    title: preset.name,
+    recipeHash: preset.recipeHash,
+    rows: score,
+    commands: Object.freeze(timeline.map((command) => Object.freeze({
+      tick: command.tick, id: command.id, type: command.type, canonical: canonicalStringify(command)
+    })))
+  });
+}
+
+export function compareAcceptedRecipeLedgers(a, b = null) {
+  if (!a || a.version !== RECIPE_LEDGER_VERSION ||
+      !Array.isArray(a.rows) || (b && (b.version !== RECIPE_LEDGER_VERSION || !Array.isArray(b.rows)))) {
+    throw new TypeError('Only accepted recipe ledgers may be compared.');
+  }
+  const other = b ? new Map(b.rows.map((entry) => [entry.key, entry])) : null;
+  if (other && (other.size !== a.rows.length || a.rows.some((entry) => !other.has(entry.key)))) {
+    throw new Error('Incompatible recipe ledger dimensions.');
+  }
+  return Object.freeze(a.rows.map((entry) => Object.freeze({
+    key: entry.key, title: entry.title, left: entry.description,
+    right: other ? other.get(entry.key).description : null,
+    relation: other ? (entry.fingerprint === other.get(entry.key).fingerprint ? 'Identical' : 'Different') : 'Single work',
+    leftFingerprint: entry.fingerprint,
+    rightFingerprint: other ? other.get(entry.key).fingerprint : null
+  })));
+}
+
+function el(tag, attributes = {}, text = '') {
+  const node = document.createElement(tag);
+  for (const [key, value] of Object.entries(attributes)) node.setAttribute(key, value);
+  node.textContent = text;
+  return node;
+}
+
+// The currently verified visual-index registry owns the proof source and its
+// lifetime. An image's DOM hash or a decoded <img> is not provenance.
+export function verifyLedgerCanonicalImage({ id, url, rawRgbaHash, png }) {
+  const entry = exhibitionEntries().find((item) => item.id === id);
+  if (!entry || typeof url !== 'string' || !url.startsWith('blob:')) {
+    throw new Error('An accepted live CPU image source is required.');
+  }
+  verifyStudyPng(png, entry.exportCrop.widthPx, entry.exportCrop.heightPx, rawRgbaHash);
+  return Object.freeze({ id: entry.id, rawRgbaHash });
+}
+
+function readStudyFrame(frame, prefix, accepted, panel) {
+  if (!frame || frame.hidden) return null;
+  const heading = frame.querySelector('h3')?.textContent ?? '';
+  if (!heading.startsWith(prefix + ' · ')) return null;
+  const entry = accepted.find((item) => item.name === heading.slice((prefix + ' · ').length));
+  const img = frame.querySelector('img');
+  const card = entry && panel.querySelector('[data-exhibition-id="' + entry.id + '"]');
+  const rawRgbaHash = card?.dataset.canonicalRgbaHash;
+  if (!entry || !img?.complete || img.naturalWidth !== entry.exportCrop.widthPx ||
+      img.naturalHeight !== entry.exportCrop.heightPx) return null;
+  try {
+    // The accessor rejects stale or misattributed blob URLs and forged hashes;
+    // the decoder independently rejects altered pixels, CRC and dimensions.
+    const png = getAcceptedVisualIndexPng(panel, entry.id, img.currentSrc, rawRgbaHash);
+    return verifyLedgerCanonicalImage({ id: entry.id, url: img.currentSrc, rawRgbaHash, png });
+  } catch {
+    return null;
+  }
+}
+
+export function mountExhibitionRecipeLedger(dialog) {
+  if (!(dialog instanceof HTMLDialogElement)) throw new TypeError('A gallery study dialog is required.');
+  if (dialog.querySelector('#exhibition-recipe-ledger')) return;
+  const status = dialog.querySelector('#exhibition-study-status');
+  const frames = dialog.querySelectorAll('.exhibition-study-frame');
+  if (!status || frames.length !== 2) throw new Error('The canonical study must mount before the recipe ledger.');
+
+  const accepted = exhibitionEntries();
+  const panel = document.querySelector('.preset-panel[data-visual-index-ready="true"]');
+  if (!panel) throw new Error('Verified canonical visual index required for recipe ledger.');
+  const wrapper = el('details', { id: 'exhibition-recipe-ledger', class: 'exhibition-recipe-ledger' });
+  wrapper.hidden = true;
+  wrapper.append(el('summary', {}, 'Inspect recipe score / differences'));
+  const intro = el('p', { class: 'workspace-note', id: 'exhibition-recipe-ledger-help' },
+    'Read-only authoring facts from accepted recipes. Fingerprints compare exact normalized settings, not artistic similarity. Images remain canonical CPU proofs.');
+  const table = el('table', { class: 'exhibition-ledger-table', 'aria-label': 'Accepted recipe A/B differences' });
+  const head = el('thead');
+  const headRow = el('tr');
+  for (const label of ['Dimension', 'A · accepted recipe', 'B · accepted recipe', 'Exact relation']) headRow.append(el('th', { scope: 'col' }, label));
+  head.append(headRow);
+  const body = el('tbody', { id: 'exhibition-recipe-ledger-rows' });
+  table.append(head, body);
+  const commands = el('div', { id: 'exhibition-recipe-ledger-commands', class: 'exhibition-ledger-commands' });
+  const download = el('button', { type: 'button', id: 'exhibition-recipe-ledger-download', class: 'button' },
+    'Save reproduction / comparison record (.json)');
+  const note = el('output', { id: 'exhibition-recipe-ledger-status', class: 'workspace-note', 'aria-live': 'polite' });
+  wrapper.append(intro, table, commands, download, note);
+  dialog.insertBefore(wrapper, status);
+
+  let report = null;
+  function render() {
+    if (!dialog.open) { wrapper.hidden = true; report = null; download.disabled = true; return; }
+    const left = readStudyFrame(frames[0], 'A', accepted, panel);
+    const right = readStudyFrame(frames[1], 'B', accepted, panel);
+    if (!left || (!frames[1].hidden && !right)) {
+      wrapper.hidden = true; report = null; download.disabled = true;
+      note.textContent = 'Verified CPU proof missing or stale. Rebuild visual index.';
+      return;
+    }
+    const a = acceptedRecipeLedger(left.id), b = right ? acceptedRecipeLedger(right.id) : null;
+    const comparison = compareAcceptedRecipeLedgers(a, b);
+    body.replaceChildren();
+    for (const entry of comparison) {
+      const tr = el('tr');
+      if (entry.relation === 'Different') tr.className = 'exhibition-ledger-different';
+      tr.append(el('th', { scope: 'row' }, entry.title),
+        el('td', {}, entry.left + ' · ' + entry.leftFingerprint),
+        el('td', {}, entry.right === null ? '—' : entry.right + ' · ' + entry.rightFingerprint),
+        el('td', {}, entry.relation));
+      body.append(tr);
+    }
+    commands.replaceChildren();
+    for (const [letter, score] of [['A', a], ['B', b]]) {
+      if (!score) continue;
+      const section = el('section');
+      section.append(el('h3', {}, letter + ' · ' + score.title + ' · intervention register'));
+      if (!score.commands.length) section.append(el('p', { class: 'workspace-note' }, 'No intervention commands.'));
+      else {
+        const list = el('ol');
+        for (const event of score.commands) list.append(el('li', {},
+          'tick ' + event.tick + ' · command #' + event.id + ' · ' + event.canonical));
+        section.append(list);
+      }
+      commands.append(section);
+    }
+    report = Object.freeze({
+      version: RECIPE_LEDGER_VERSION,
+      claim: 'Accepted local CPU proofs; authoring comparison only; no inferred visual similarity',
+      a: Object.freeze({ ...left, score: a }),
+      b: right ? Object.freeze({ ...right, score: b }) : null,
+      comparison
+    });
+    wrapper.hidden = false;
+    download.disabled = false;
+    note.textContent = right ? 'Two accepted recipes compared; images are individually framed.' : 'One accepted recipe inspected.';
+  }
+  const observer = new MutationObserver(render);
+  observer.observe(status, { childList: true, characterData: true, subtree: true });
+  dialog.addEventListener('close', render);
+  download.addEventListener('click', () => {
+    // Revalidate just before downloading; no stale cached provenance claims.
+    render();
+    if (!report || !dialog.open || download.disabled) return;
+    const blob = new Blob([JSON.stringify(report, null, 2) + '\n'], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = el('a', { href: url, download: 'fieldweaver-recipe-score-' + report.a.id +
+      (report.b ? '-vs-' + report.b.id : '') + '.json' });
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  });
+  window.addEventListener('pagehide', () => observer.disconnect(), { once: true });
+  render();
+}
+
+function mountWhenReady(attempt = 0) {
+  const dialog = document.querySelector('#exhibition-study-dialog');
+  if (dialog) return mountExhibitionRecipeLedger(dialog);
+  if (attempt < 180) requestAnimationFrame(() => mountWhenReady(attempt + 1));
+}
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') window.addEventListener('DOMContentLoaded', () => mountWhenReady(), { once: true });
+  else mountWhenReady();
+}
