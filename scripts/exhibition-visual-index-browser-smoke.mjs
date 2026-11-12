@@ -231,7 +231,7 @@ try {
   if (!previewFocused) throw new Error('A/B image disclosure not keyboard-focusable.');
   const pressEnter = async () => request('POST', '/session/' + sessionId + '/actions', {
     actions: [{type:'key',id:'keyboard',actions:[
-      {type:'keyDown',value:'\\uE007'},{type:'keyUp',value:'\\uE007'}
+      {type:'keyDown',value:'\uE007'},{type:'keyUp',value:'\uE007'}
     ]}]
   });
   await pressEnter();
