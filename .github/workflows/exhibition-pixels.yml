@@ -69,6 +69,8 @@ jobs:
             exhibition-pixels-${{ matrix.browser }}.png
             exhibition-pixels-${{ matrix.browser }}.json
             exhibition-pixel-difference-${{ matrix.browser }}.png
+            exhibition-pixel-summary-${{ matrix.browser }}.png
+            exhibition-pixel-summary-${{ matrix.browser }}.json
             exhibition-pixel-keyboard-${{ matrix.browser }}.png
             exhibition-pixel-keyboard-${{ matrix.browser }}.json
             exhibition-study-export-${{ matrix.browser }}.png

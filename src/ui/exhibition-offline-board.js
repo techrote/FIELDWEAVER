@@ -1,6 +1,7 @@
 import { decodePngRgba, rawRgbaHash } from '../export/index.js';
 import { parseRecipe, recipeHash, serializeRecipe } from '../recipe/index.js';
 import { exhibitionEntries } from './exhibition-catalog.js';
+import { verifyStudyPng, summarizeDifferingStudyPixels } from './exhibition-pixel-probe.js';
 
 export const OFFLINE_BOARD_VERSION = 'fw-exhibition-offline-board-v1';
 
@@ -118,6 +119,52 @@ export function buildOfflineExhibitionBoard(tiles) {
       '</p><details><summary>Inspect complete provenance and loadable recipe JSON</summary>' +
       '<pre>' + escapeHtml(tile.provenanceJson) + '</pre></details></article>';
   });
+  // The accepted offline board is also a literal A/B comparison record.
+  // Re-decode source PNGs after receipt validation; no screenshots, resampling,
+  // external images or assumptions that different crops are world-aligned.
+  const verifiedRaster = new Map(entries.map((entry) => {
+    const tile = byId.get(entry.id);
+    return [entry.id, verifyStudyPng(tile.png, entry.exportCrop.widthPx,
+      entry.exportCrop.heightPx, tile.rawRgbaHash)];
+  }));
+  const pairRows = [];
+  for (let a = 0; a < entries.length; a += 1) {
+    for (let b = a + 1; b < entries.length; b += 1) {
+      const first = entries[a], second = entries[b];
+      const stats = summarizeDifferingStudyPixels(
+        verifiedRaster.get(first.id), verifiedRaster.get(second.id));
+      const bounds = stats.bounds
+        ? '(' + stats.bounds.left + ',' + stats.bounds.top + ')–(' +
+          stats.bounds.right + ',' + stats.bounds.bottom + ')'
+        : 'None';
+      const alignment = sameCrop(first.exportCrop, second.exportCrop)
+        ? 'Same authored crop' : 'IMAGE-LOCAL ONLY / NOT world-aligned';
+      pairRows.push('<tr data-pair-a="' + escapeHtml(first.id) +
+        '" data-pair-b="' + escapeHtml(second.id) +
+        '" data-differences="' + stats.differentPixels +
+        '" data-overlap="' + stats.overlapPixels + '">' +
+        '<th scope="row"><a href="#work-' + escapeHtml(first.id) + '">' +
+        escapeHtml(first.name) + '</a> / <a href="#work-' + escapeHtml(second.id) +
+        '">' + escapeHtml(second.name) + '</a></th>' +
+        '<td>' + stats.width + '×' + stats.height + '</td>' +
+        '<td>' + stats.differentPixels + ' / ' + stats.overlapPixels + '</td>' +
+        '<td>' + bounds + '</td>' +
+        '<td>' + stats.channelMaxAbsDelta.join(', ') + '</td>' +
+        '<td>' + alignment + '</td></tr>');
+    }
+  }
+  const comparisonSection = '<section id="comparison-index" class="comparison-index" ' +
+    'aria-labelledby="comparison-heading"><h2 id="comparison-heading">Exact A/B comparison index</h2>' +
+    '<p>Every accepted pair is compared using original decoded CPU RGBA8 bytes ' +
+    'in its shared image-local rectangle. Changed means any RGBA channel differs; ' +
+    'bounds are inclusive. Different authored crops are not registered in world space. ' +
+    'These are not perceptual similarity scores.</p>' +
+    '<div id="comparison-scroll" class="comparison-scroll" tabindex="0" role="region" ' +
+    'aria-label="Scrollable A/B comparison table"><table><thead><tr>' +
+    '<th scope="col">Accepted works</th><th scope="col">Overlap (pixels)</th>' +
+    '<th scope="col">Changed RGBA8 pixels</th><th scope="col">Change bounds</th>' +
+    '<th scope="col">Maximum |ΔRGBA8| R, G, B, A</th><th scope="col">Coordinate meaning</th>' +
+    '</tr></thead><tbody>' + pairRows.join('') + '</tbody></table></div></section>';
   const nav = entries.map((entry, index) =>
     '<a href="#work-' + escapeHtml(entry.id) + '">' +
     String(index + 1).padStart(2, '0') + ' ' + escapeHtml(entry.name) + '</a>').join('');
@@ -126,13 +173,13 @@ export function buildOfflineExhibitionBoard(tiles) {
     '<meta name="referrer" content="no-referrer">' +
     '<meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; img-src data:; style-src &#39;unsafe-inline&#39;; object-src &#39;none&#39;; base-uri &#39;none&#39;; form-action &#39;none&#39;; connect-src &#39;none&#39;">' +
     '<title>FIELDWEAVER / Accepted canonical proofs</title>' +
-    '<style>*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#10140f;color:#e7e9d4;font:15px/1.55 system-ui,sans-serif}a{color:#b9e2c2}a:focus-visible,summary:focus-visible{outline:3px solid #e4b665;outline-offset:3px}.wrap{max-width:1420px;margin:auto;padding:clamp(16px,4vw,52px)}header{border-bottom:2px solid #738b6e}small,.overline,.work-index{font:700 12px/1.5 ui-monospace,monospace;letter-spacing:.12em;color:#b4c6a7}h1{font:600 clamp(30px,5vw,60px)/1.1 Georgia,serif;margin:.3em 0}header p{max-width:80ch}nav{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0}nav a{border:1px solid #6e856b;padding:8px 12px;text-decoration:none}nav a:hover{background:#283829}.gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.work{background:#1b241b;border:1px solid #6c8066;padding:clamp(14px,2vw,26px);min-width:0}.work h2{font:500 clamp(23px,3vw,35px)/1.2 Georgia,serif;margin:.3em 0 .8em}.work figure{margin:0}.work img{display:block;width:100%;height:auto;aspect-ratio:3/2;image-rendering:pixelated;object-fit:contain;background:#090b08;border:1px solid #5c6d55}.work figcaption{color:#b7bda8;font:12px ui-monospace,monospace;margin:7px 0 15px}.work dl{display:grid;grid-template-columns:110px minmax(0,1fr);gap:6px 12px;margin:0 0 20px}.work dt{color:#b0c19c}.work dd{margin:0;min-width:0;overflow-wrap:anywhere}.work code{font:12px ui-monospace,monospace}.work-actions{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 16px}.work-actions a{display:inline-block;border:1px solid #6e856b;padding:7px 10px;text-decoration:none}.work-actions a:hover{background:#283829}.work details{border-top:1px solid #6c8066;padding-top:12px}.work summary{cursor:pointer;color:#cde3bc}.work pre{font:11px/1.5 ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere;max-height:420px;overflow:auto;background:#10140f;padding:12px}footer{border-top:2px solid #738b6e;margin-top:30px;padding-top:18px;color:#b7bda8}@media(max-width:770px){.gallery{grid-template-columns:1fr}.work dl{grid-template-columns:85px minmax(0,1fr)}}@media print{body{background:#fff;color:#111}.work{break-inside:avoid;background:#fff;color:#111}.work dt,small,.overline,.work-index{color:#333}.work img{border:1px solid #555}.work figcaption,footer{color:#333}nav,details,.work-actions{display:none}.gallery{grid-template-columns:repeat(2,minmax(0,1fr))}}</style>' +
+    '<style>*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#10140f;color:#e7e9d4;font:15px/1.55 system-ui,sans-serif}a{color:#b9e2c2}a:focus-visible,summary:focus-visible{outline:3px solid #e4b665;outline-offset:3px}.wrap{max-width:1420px;margin:auto;padding:clamp(16px,4vw,52px)}header{border-bottom:2px solid #738b6e}small,.overline,.work-index{font:700 12px/1.5 ui-monospace,monospace;letter-spacing:.12em;color:#b4c6a7}h1{font:600 clamp(30px,5vw,60px)/1.1 Georgia,serif;margin:.3em 0}header p{max-width:80ch}nav{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0}nav a{border:1px solid #6e856b;padding:8px 12px;text-decoration:none}nav a:hover{background:#283829}.gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.work{background:#1b241b;border:1px solid #6c8066;padding:clamp(14px,2vw,26px);min-width:0}.work h2{font:500 clamp(23px,3vw,35px)/1.2 Georgia,serif;margin:.3em 0 .8em}.work figure{margin:0}.work img{display:block;width:100%;height:auto;aspect-ratio:3/2;image-rendering:pixelated;object-fit:contain;background:#090b08;border:1px solid #5c6d55}.work figcaption{color:#b7bda8;font:12px ui-monospace,monospace;margin:7px 0 15px}.work dl{display:grid;grid-template-columns:110px minmax(0,1fr);gap:6px 12px;margin:0 0 20px}.work dt{color:#b0c19c}.work dd{margin:0;min-width:0;overflow-wrap:anywhere}.work code{font:12px ui-monospace,monospace}.work-actions{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 16px}.work-actions a{display:inline-block;border:1px solid #6e856b;padding:7px 10px;text-decoration:none}.work-actions a:hover{background:#283829}.comparison-index{margin-top:26px;border-top:2px solid #738b6e;padding-top:16px}.comparison-index h2{font:500 30px Georgia,serif;margin:8px 0}.comparison-scroll{overflow-x:auto}.comparison-scroll:focus-visible{outline:3px solid #e4b665;outline-offset:3px}.comparison-index table{border-collapse:collapse;width:100%;min-width:770px}.comparison-index th,.comparison-index td{padding:9px 10px;border:1px solid #6c8066;text-align:left;vertical-align:top}.comparison-index thead{background:#263426}.comparison-index th{font-weight:600}.work details{border-top:1px solid #6c8066;padding-top:12px}.work summary{cursor:pointer;color:#cde3bc}.work pre{font:11px/1.5 ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere;max-height:420px;overflow:auto;background:#10140f;padding:12px}footer{border-top:2px solid #738b6e;margin-top:30px;padding-top:18px;color:#b7bda8}@media(max-width:770px){.gallery{grid-template-columns:1fr}.work dl{grid-template-columns:85px minmax(0,1fr)}}@media print{body{background:#fff;color:#111}.work{break-inside:avoid;background:#fff;color:#111}.work dt,small,.overline,.work-index{color:#333}.work img{border:1px solid #555}.work figcaption,footer{color:#333}nav,details,.work-actions{display:none}.gallery{grid-template-columns:repeat(2,minmax(0,1fr))}}</style>' +
     '</head><body><div class="wrap"><header><div class="overline">FIELDWEAVER / EXHIBITION RECORD / ' +
     OFFLINE_BOARD_VERSION + '</div><h1>Accepted canonical proofs</h1>' +
     '<p>Four independently replayed FW-012 CPU software-raster images. Every image, source recipe, seed, tick, crop and decoded RGBA8 identity was verified before export. No WebGL screenshots, unaccepted artworks or visual-similarity estimates.</p>' +
     '<p><small>STATIC / SELF-CONTAINED / OFFLINE / NO SCRIPTS OR REMOTE ASSETS</small></p></header>' +
-    '<nav aria-label="Jump to accepted work">' + nav + '</nav>' +
-    '<main class="gallery">' + cards.join('') + '</main>' +
+    '<nav aria-label="Jump to accepted work">' + nav + '<a href="#comparison-index">A/B comparison index</a></nav>' +
+    '<main class="gallery">' + cards.join('') + '</main>' + comparisonSection +
     '<footer>Each image is the original 96×64 canonical raster, enlarged for inspection. PNG bytes are not the pixel identity; raw decoded RGBA8 hashes are. Save each work’s unchanged canonical PNG, importable recipe and full provenance directly from this file; target tick and crop are in the provenance rather than the recipe. Browser downloads still require local file-manager confirmation. This board is a review record, not an artistic approval.</footer>' +
     '</div></body></html>\n';
   return Object.freeze({ version: OFFLINE_BOARD_VERSION, count: entries.length, html });

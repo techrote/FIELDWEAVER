@@ -1,5 +1,5 @@
 import { exhibitionEntries } from './exhibition-catalog.js';
-import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel, nextDifferingStudyPixel, previousDifferingStudyPixel, compareStudyPixelChannels, sameStudyCrop, buildStudyPixelReceipt } from './exhibition-pixel-probe.js';
+import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel, nextDifferingStudyPixel, previousDifferingStudyPixel, summarizeDifferingStudyPixels, compareStudyPixelChannels, sameStudyCrop, buildStudyPixelReceipt } from './exhibition-pixel-probe.js';
 import { getAcceptedVisualIndexPng, getAcceptedVisualIndexProvenance } from './exhibition-visual-index.js';
 import { verifyOfflineExhibitionTile } from './exhibition-offline-board.js';
 import { buildAcceptedRecipeHandoff } from './exhibition-recipe-handoff.js';
@@ -148,15 +148,21 @@ export function mountExhibitionStudy(panel) {
   const previousDifference = make('button', { id: 'exhibition-study-pixel-difference-prev',
     class: 'button', type: 'button' }, 'Previous A/B difference');
   previousDifference.disabled = true;
+  const summarizeDifference = make('button', { id: 'exhibition-study-pixel-summary',
+    class: 'button', type: 'button' }, 'Summarize A/B overlap');
+  summarizeDifference.disabled = true;
   const savePixel = make('button', { id: 'exhibition-study-pixel-save', class: 'button',
     type: 'button' }, 'Save exact pixel receipt (JSON)');
-  fields.append(sourceLabel, xLabel, yLabel, nextMark, previousDifference, nextDifference, savePixel);
+  fields.append(sourceLabel, xLabel, yLabel, nextMark, previousDifference, nextDifference, summarizeDifference, savePixel);
   const reading = make('output', { id: 'exhibition-study-pixel-reading',
     class: 'workspace-note', 'aria-live': 'polite' }, 'Choose a pixel.');
   reading.hidden = true;
   const compareReading = make('output', { id: 'exhibition-study-pixel-ab',
     class: 'workspace-note', 'aria-live': 'polite' });
   compareReading.hidden = true;
+  const compareSummary = make('output', { id: 'exhibition-study-pixel-summary-reading',
+    class: 'workspace-note', 'aria-live': 'polite' });
+  compareSummary.hidden = true;
   const gridPixels = make('div', { id: 'exhibition-study-pixel-neighbours',
     class: 'exhibition-study-pixel-neighbours', role: 'img',
     'aria-label': 'Nine by nine nearest-neighbour display; selected centre outlined' });
@@ -165,7 +171,7 @@ export function mountExhibitionStudy(panel) {
     class: 'workspace-note' }, 'No study open.');
   // Keep the exact source-pixel readout visible above large framed works,
   // including when A/B images stack at narrow viewport widths.
-  dialog.append(header, toolbar, description, reading, compareReading, gallery, desk, announce);
+  dialog.append(header, toolbar, description, reading, compareReading, compareSummary, gallery, desk, announce);
   document.body.append(dialog);
 
   let currentId = ids[0];
@@ -207,13 +213,22 @@ export function mountExhibitionStudy(panel) {
     frameNode.caption.textContent = record.label.details;
   }
   const pixelId = () => source.value === 'B' && pinnedId ? currentId : (pinnedId ?? currentId);
+  function clearSummary() {
+    compareSummary.textContent = '';
+    compareSummary.hidden = true;
+  }
   async function updatePixel(resetCoordinates = false, findNextMark = false) {
     if (!pixelOpen || !dialog.open) return;
     const token = ++pixelToken;
     compareReading.hidden = true;
     compareReading.textContent = '';
     const id = pixelId(), record = snapshot()?.get(id), entry = lookup.get(id);
-    if (!record) { reading.textContent = 'Verified CPU image unavailable.'; gridPixels.replaceChildren(); return; }
+    if (!record) {
+      clearSummary();
+      reading.textContent = 'Verified CPU image unavailable.';
+      gridPixels.replaceChildren();
+      return;
+    }
     try {
       // Renew the live proof lease on *every* sample, including cache hits.
       // A forged hash/rebuilt proof cannot retain an old decoded readout.
@@ -299,6 +314,7 @@ export function mountExhibitionStudy(panel) {
     } catch (error) {
       if (token !== pixelToken) return;
       reading.textContent = 'Cannot inspect this verified PNG: ' + (error?.message ?? String(error));
+      clearSummary();
       gridPixels.replaceChildren();
     }
   }
@@ -308,6 +324,7 @@ export function mountExhibitionStudy(panel) {
     desk.hidden = true; inspect.setAttribute('aria-expanded', 'false'); inspect.textContent = 'Inspect exact pixels';
     gridPixels.replaceChildren(); reading.textContent = 'Choose a pixel.'; reading.hidden = true;
     compareReading.hidden = true; compareReading.textContent = '';
+    clearSummary();
   }
   function openPixelDesk() {
     if (pixelOpen) return;
@@ -360,9 +377,52 @@ export function mountExhibitionStudy(panel) {
       reading.textContent = 'Cannot inspect verified A/B images: ' + (error?.message ?? String(error));
       compareReading.textContent = '';
       compareReading.hidden = true;
+      clearSummary();
       gridPixels.replaceChildren();
     }
   };
+  summarizeDifference.addEventListener('click', () => {
+    clearSummary(); // A failure must never preserve a previous A/B result.
+    if (!pixelOpen || !dialog.open || !pinnedId) return;
+    try {
+      const records = snapshot();
+      if (!records) throw new Error('Rebuild the verified accepted CPU index.');
+      const verified = (id) => {
+        const record = records.get(id), entry = lookup.get(id);
+        if (!record || !entry) throw new Error('A/B accepted source is unavailable.');
+        // Never trust the pixel desk cache: revalidate both live leases and
+        // independently decode their actual in-memory canonical PNG bytes.
+        const png = getAcceptedVisualIndexPng(panel, id, record.url, record.hash);
+        return verifyStudyPng(png,
+          entry.exportCrop.widthPx, entry.exportCrop.heightPx, record.hash);
+      };
+      const summary = summarizeDifferingStudyPixels(verified(pinnedId), verified(currentId));
+      const bounds = summary.bounds
+        ? '(' + summary.bounds.left + ', ' + summary.bounds.top + ')–(' +
+          summary.bounds.right + ', ' + summary.bounds.bottom + ')'
+        : 'none';
+      const cropLabel = sameStudyCrop(lookup.get(pinnedId).exportCrop, lookup.get(currentId).exportCrop)
+        ? 'same authored crop'
+        : 'IMAGE-LOCAL ONLY: authored crops differ; NOT world-aligned';
+      compareSummary.textContent = 'A/B exact RGBA8 overlap ' + summary.width + '×' + summary.height +
+        ' · differing pixels ' + summary.differentPixels + '/' + summary.overlapPixels +
+        ' · difference bounds ' + bounds +
+        ' · maximum |Δ(B−A)| RGBA8 ' + summary.channelMaxAbsDelta.join(', ') +
+        ' · ' + cropLabel;
+      compareSummary.hidden = false;
+    } catch (error) {
+      // A failed lease discredits previously displayed pixel and A/B evidence
+      // as well as the full-overlap summary.
+      ++pixelToken;
+      pixelCache.clear();
+      reading.textContent = 'Cannot inspect verified A/B images: ' + (error?.message ?? String(error));
+      compareReading.textContent = '';
+      compareReading.hidden = true;
+      gridPixels.replaceChildren();
+      compareSummary.textContent = 'A/B summary refused: ' + (error?.message ?? String(error));
+      compareSummary.hidden = false;
+    }
+  });
   nextDifference.addEventListener('click', () => navigateDifference(1));
   previousDifference.addEventListener('click', () => navigateDifference(-1));
   for (const [side, frameNode] of [['A', left], ['B', right]]) {
@@ -404,6 +464,7 @@ export function mountExhibitionStudy(panel) {
     });
   }
   function paint() {
+    clearSummary(); // The previous A/B source pair is no longer in view.
     const frames = snapshot();
     if (!frames) { close(); return; }
     present(left, frames.get(pinnedId ?? currentId));
@@ -413,6 +474,7 @@ export function mountExhibitionStudy(panel) {
     unpin.disabled = !pinnedId;
     nextDifference.disabled = !pinnedId;
     previousDifference.disabled = !pinnedId;
+    summarizeDifference.disabled = !pinnedId;
     pin.disabled = pinnedId === currentId;
     announce.textContent = 'Work ' + (ids.indexOf(currentId) + 1) + '/' + ids.length +
       ': ' + lookup.get(currentId).name +

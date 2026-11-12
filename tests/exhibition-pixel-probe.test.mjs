@@ -4,7 +4,7 @@ import { BUILTIN_PRESETS } from '../src/presets/index.js';
 import { recipeHash } from '../src/recipe/index.js';
 import { renderVisualIndexProof } from '../src/ui/exhibition-visual-index-model.js';
 import { exhibitionEntries } from '../src/ui/exhibition-catalog.js';
-import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel, nextDifferingStudyPixel, previousDifferingStudyPixel, compareStudyPixelChannels, sameStudyCrop, buildStudyPixelReceipt, STUDY_PIXEL_RECEIPT_VERSION } from '../src/ui/exhibition-pixel-probe.js';
+import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStudyPixel, nextDifferingStudyPixel, previousDifferingStudyPixel, summarizeDifferingStudyPixels, compareStudyPixelChannels, sameStudyCrop, buildStudyPixelReceipt, STUDY_PIXEL_RECEIPT_VERSION } from '../src/ui/exhibition-pixel-probe.js';
 
 test('inspection samples real verified CPU PNG bytes without changing accepted recipes', () => {
   const before = BUILTIN_PRESETS.map(p => recipeHash(p.recipe));
@@ -178,4 +178,53 @@ test('portable exact pixel receipt binds accepted CPU identity, tick/crop and de
   assert.throws(() => buildStudyPixelReceipt(a, b, 20, 35, 'unadmitted-work'), /not a current source/);
   assert.throws(() => buildStudyPixelReceipt({ ...a, hash: '0000000000000000' }, b, 20, 35, a.entry.id), /current accepted/);
   assert.throws(() => buildStudyPixelReceipt(a, { ...b, pixels: { ...b.pixels, width: 95 } }, 20, 35, a.entry.id), /current accepted/);
+});
+
+test('A/B summary scans exact decoded RGBA8 overlap, including alpha and independent row strides', () => {
+  const blank = (width, height) => ({ width, height, rgba: new Uint8Array(width * height * 4) });
+  const a = blank(4, 3), b = blank(2, 2);
+  a.rgba[(1 * 4 + 1) * 4] = 30;
+  b.rgba[(1 * 2 + 1) * 4] = 11;
+  b.rgba[(0 * 2 + 0) * 4 + 3] = 255; // Alpha-only mismatch.
+  a.rgba[(2 * 4 + 3) * 4] = 99; // Outside overlap; must not count.
+  assert.deepEqual(summarizeDifferingStudyPixels(a, b), {
+    width: 2, height: 2, overlapPixels: 4, differentPixels: 2,
+    bounds: { left: 0, top: 0, right: 1, bottom: 1 },
+    channelMaxAbsDelta: [19, 0, 0, 255]
+  });
+  const identical = summarizeDifferingStudyPixels(a, a);
+  assert.equal(identical.differentPixels, 0);
+  assert.equal(identical.bounds, null);
+  assert.deepEqual(identical.channelMaxAbsDelta, [0, 0, 0, 0]);
+  assert.ok(Object.isFrozen(identical) && Object.isFrozen(identical.channelMaxAbsDelta));
+  assert.throws(() => summarizeDifferingStudyPixels(a, { ...b, rgba: new Uint8Array(4) }), /outside/);
+  assert.throws(() => summarizeDifferingStudyPixels(blank(0, 1), b), /outside/);
+
+  const cpu = (id) => {
+    const proof = renderVisualIndexProof(id);
+    return verifyStudyPng(proof.png, proof.widthPx, proof.heightPx, proof.rawRgbaHash);
+  };
+  const first = cpu('operator-atlas'), second = cpu('timeline-pulse');
+  const stats = summarizeDifferingStudyPixels(first, second);
+  const expected = { count: 0, left: 96, top: 64, right: -1, bottom: -1, max: [0, 0, 0, 0] };
+  for (let row = 0; row < 64; row += 1) {
+    for (let col = 0; col < 96; col += 1) {
+      const at = (row * 96 + col) * 4;
+      const deltas = [0, 1, 2, 3].map(ch => Math.abs(first.rgba[at + ch] - second.rgba[at + ch]));
+      for (let ch = 0; ch < 4; ch += 1) expected.max[ch] = Math.max(expected.max[ch], deltas[ch]);
+      if (deltas.every(delta => delta === 0)) continue;
+      expected.count += 1;
+      expected.left = Math.min(expected.left, col);
+      expected.top = Math.min(expected.top, row);
+      expected.right = Math.max(expected.right, col);
+      expected.bottom = Math.max(expected.bottom, row);
+    }
+  }
+  assert.equal(stats.overlapPixels, 6144);
+  assert.equal(stats.differentPixels, expected.count);
+  assert.deepEqual(stats.channelMaxAbsDelta, expected.max);
+  assert.deepEqual(stats.bounds, {
+    left: expected.left, top: expected.top, right: expected.right, bottom: expected.bottom
+  });
+  assert.ok(stats.differentPixels > 0, 'actual accepted CPU proofs must differ');
 });

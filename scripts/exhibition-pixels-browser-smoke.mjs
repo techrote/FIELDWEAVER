@@ -328,6 +328,37 @@ try {
       !forwardAgain.ab.includes('Δ(B−A) RGBA8 ' + expectedNextDifference.delta)) {
     throw new Error('Keyboard A/B forward recovery failed decoded CPU oracle: ' + JSON.stringify(forwardAgain));
   }
+  // The summary is an independent full-overlap decoded-CPU measurement.
+  const expectedSummaryCount = (() => {
+    let count = 0;
+    for (let pixel = 0; pixel < comparisonA.length; pixel += 4) {
+      if ([0, 1, 2, 3].some(ch => comparisonA[pixel + ch] !== comparisonB[pixel + ch])) count += 1;
+    }
+    return count;
+  })();
+  await saveByKeyboard('exhibition-study-pixel-summary');
+  const overlapSummary = await execute("return {text:document.getElementById('exhibition-study-pixel-summary-reading').textContent,hidden:document.getElementById('exhibition-study-pixel-summary-reading').hidden}");
+  if (overlapSummary.hidden ||
+      !overlapSummary.text.includes('differing pixels ' + expectedSummaryCount + '/6144') ||
+      !overlapSummary.text.includes('maximum |Δ(B−A)| RGBA8')) {
+    throw new Error('A/B summary did not match independent canonical PNG byte oracle: ' +
+      JSON.stringify({overlapSummary,expectedSummaryCount}));
+  }
+  const summaryShot = await request('GET', '/session/' + sessionId + '/screenshot');
+  if (!summaryShot?.value) throw new Error('A/B summary screenshot unavailable.');
+  await writeFile('exhibition-pixel-summary-' + browser + '.png',
+    Buffer.from(summaryShot.value, 'base64'));
+  await writeFile('exhibition-pixel-summary-' + browser + '.json',
+    JSON.stringify({ browser, expectedDifferentPixels: expectedSummaryCount,
+      overlapPixels: 6144, observed: overlapSummary }, null, 2) + '\n');
+  const forgedSummary = await execute("const card=document.querySelector('[data-exhibition-id=operator-atlas]');const old=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-pixel-summary').click();const result={summary:document.getElementById('exhibition-study-pixel-summary-reading').textContent,reading:document.getElementById('exhibition-study-pixel-reading').textContent,abHidden:document.getElementById('exhibition-study-pixel-ab').hidden,ab:document.getElementById('exhibition-study-pixel-ab').textContent};card.dataset.canonicalRgbaHash=old;return result");
+  if (!forgedSummary.summary.startsWith('A/B summary refused:') ||
+      forgedSummary.summary.includes('differing pixels ' + expectedSummaryCount) ||
+      !forgedSummary.reading.startsWith('Cannot inspect verified A/B images:') ||
+      !forgedSummary.abHidden || forgedSummary.ab) {
+    throw new Error('A/B summary retained stale pixel or statistics with a forged proof: ' +
+      JSON.stringify(forgedSummary));
+  }
   // The new traversal must refuse a forged peer even if previously cached.
   const forgedDifference = await execute("const card=document.querySelector('[data-exhibition-id=operator-atlas]');const previous=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-pixel-difference').click();const evidence={reading:document.getElementById('exhibition-study-pixel-reading').textContent,abHidden:document.getElementById('exhibition-study-pixel-ab').hidden,ab:document.getElementById('exhibition-study-pixel-ab').textContent};card.dataset.canonicalRgbaHash=previous;return evidence");
   if (!forgedDifference.reading.includes('Cannot inspect verified A/B images:') ||
@@ -557,7 +588,11 @@ try {
   if (offlinePage.heading !== 'Accepted canonical proofs' ||
       !offlinePage.csp?.includes("default-src 'none'") ||
       !offlinePage.csp.includes("connect-src 'none'") ||
-      offlinePage.articleIds.length !== 4 || offlinePage.anchors.length !== 4 ||
+      offlinePage.articleIds.length !== 4 || offlinePage.anchors.length !== 5 ||
+      offlinePage.anchors.filter((anchor) => anchor.startsWith('#work-')).length !== 4 ||
+      !offlinePage.anchors.includes('#comparison-index') ||
+      offlinePage.anchors.some((anchor) => anchor !== '#comparison-index' &&
+        !offlinePage.articleIds.includes(anchor.slice(1))) ||
       offlinePage.scriptCount !== 0 || offlinePage.externalResources.length !== 0 ||
       encoded.some((match) => !offlinePage.articleIds.includes('work-' + match[1]) ||
         !offlinePage.bodyText.includes(offlineDecoded.find((p) => p.id === match[1]).hash)) ||
