@@ -694,13 +694,21 @@ try {
   const zipDownloads = [...boardHtml.matchAll(/<a download="([^"]+\.fwpack\.zip)" href="data:application\/zip;base64,([^"]+)">Save complete work bundle \(ZIP\)<\/a>/g)]
     .map((match) => ({ name: match[1], bytes: Buffer.from(match[2], 'base64') }));
   if (zipDownloads.length !== 4) throw new Error('Expected four portable accepted work ZIP bundles.');
-  const downloadTargets = [embeddedDownloads[0], embeddedDownloads[1], pngDownloads[0], zipDownloads[0]];
+  const collectionDownloads = [...boardHtml.matchAll(/<a download="(fieldweaver-accepted-canonical-collection-v1\\.zip)" href="data:application\\/zip;base64,([^"]+)">Save all accepted works \\(ZIP\\)<\\/a>/g)]
+    .map((match) => ({ name: match[1], bytes: Buffer.from(match[2], 'base64') }));
+  if (collectionDownloads.length !== 1) {
+    throw new Error('Expected one offline accepted-only collection archive.');
+  }
+  const downloadTargets = [embeddedDownloads[0], embeddedDownloads[1], pngDownloads[0],
+    zipDownloads[0], collectionDownloads[0]];
   const savedDownloads = [];
   for (const [index, expected] of downloadTargets.entries()) {
     const destination = join(downloadDir, expected.name);
-    const focused = await execute("const a=document.querySelectorAll('main article.work')[0].querySelectorAll('.work-actions a')[" + index + "];a.focus();return {active:document.activeElement===a,name:a.download}");
+    const focused = await execute(index === 4
+      ? "const a=document.querySelector('.collection-actions a');a.focus();return {active:document.activeElement===a,name:a.download}"
+      : "const a=document.querySelectorAll('main article.work')[0].querySelectorAll('.work-actions a')[" + index + "];a.focus();return {active:document.activeElement===a,name:a.download}");
     if (!focused.active || focused.name !== expected.name) {
-      throw new Error('Offline recipe/provenance/PNG/ZIP link cannot be activated by keyboard: ' + JSON.stringify(focused));
+      throw new Error('Offline recipe/provenance/PNG/work/collection ZIP link cannot be activated by keyboard: ' + JSON.stringify(focused));
     }
     await pressPixelKey('\uE007'); // Real WebDriver Enter; no synthetic click or CSP fetch.
     let contents = null;

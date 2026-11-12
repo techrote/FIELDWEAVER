@@ -190,6 +190,19 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
     assert.equal(rawRgbaHash(decodePngRgba(files.get(pngName)).rgba), tile.rawRgbaHash);
     assert.equal(recipeHash(parseRecipe(Buffer.from(files.get(recipeName)).toString('utf8'))), tile.recipeHash);
   }
+  const collectionLinks = [...board.html.matchAll(/<a download="(fieldweaver-accepted-canonical-collection-v1\\.zip)" href="data:application\\/zip;base64,([^"]+)">Save all accepted works \\(ZIP\\)<\\/a>/g)];
+  assert.equal(collectionLinks.length, 1, 'one collection download for the accepted set only');
+  const collection = readStoredZip(new Uint8Array(Buffer.from(collectionLinks[0][2], 'base64')));
+  assert.equal(collection.size, 12, 'four verified accepted works × three exact files');
+  for (let i = 0; i < zipLinks.length; i += 1) {
+    const single = readStoredZip(new Uint8Array(Buffer.from(zipLinks[i][2], 'base64')));
+    for (const [name, bytes] of single) {
+      assert.deepEqual(collection.get(name), bytes,
+        'collection member must equal its independently downloadable original: ' + name);
+    }
+  }
+  assert.equal(buildOfflineExhibitionBoard(tiles).html, board.html,
+    'collection and board bytes must be deterministic across repeated builds');
   const embedded = /src="data:image\/png;base64,([^"]+)"/.exec(board.html)?.[1];
   assert.deepEqual(Buffer.from(embedded, 'base64'), Buffer.from(tiles[0].png));
 });
