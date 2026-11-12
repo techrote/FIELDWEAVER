@@ -9,6 +9,48 @@ import { BUILTIN_PRESETS } from '../src/presets/index.js';
 import { exhibitionEntries, renderExhibitionProof } from '../src/ui/exhibition-catalog.js';
 import { renderVisualIndexProof, verifyVisualIndexProof } from '../src/ui/exhibition-visual-index-model.js';
 import { buildOfflineExhibitionBoard } from '../src/ui/exhibition-offline-board.js';
+import { createStoredZip } from '../src/ui/exhibition-work-bundle.js';
+
+// Independent reader of ZIP central/local directory entries. Do not use the
+// writer as the test oracle for a portable package's actual payload.
+function readStoredZip(bytes) {
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  const u16 = (at) => view.getUint16(at, true), u32 = (at) => view.getUint32(at, true);
+  const end = bytes.length - 22;
+  assert.equal(u32(end), 0x06054b50, 'ZIP end-of-central-directory signature');
+  assert.equal(u16(end + 4), 0, 'single disk');
+  assert.equal(u16(end + 6), 0, 'single central directory disk');
+  assert.equal(u16(end + 20), 0, 'no trailing ZIP comment');
+  const count = u16(end + 10);
+  assert.equal(u16(end + 8), count);
+  const centralSize = u32(end + 12);
+  let pos = u32(end + 16);
+  assert.equal(pos + centralSize, end, 'central directory must exactly precede EOCD');
+  const files = new Map();
+  for (let n = 0; n < count; n += 1) {
+    assert.equal(u32(pos), 0x02014b50, 'central directory entry signature');
+    assert.equal(u16(pos + 10), 0, 'lossless STORE method');
+    const size = u32(pos + 24);
+    assert.equal(u32(pos + 20), size, 'no compressed payload transformation');
+    const nameSize = u16(pos + 28);
+    const name = Buffer.from(bytes.subarray(pos + 46, pos + 46 + nameSize)).toString('ascii');
+    const local = u32(pos + 42);
+    assert.equal(u32(local), 0x04034b50, 'local header signature');
+    assert.equal(u16(local + 8), 0);
+    const localNameSize = u16(local + 26);
+    assert.equal(localNameSize, nameSize);
+    assert.equal(Buffer.from(bytes.subarray(local + 30, local + 30 + nameSize)).toString('ascii'), name);
+    const dataStart = local + 30 + localNameSize + u16(local + 28);
+    const data = bytes.slice(dataStart, dataStart + size);
+    assert.equal(data.length, size);
+    assert.equal(u32(local + 14), u32(pos + 16), 'local and central CRC must agree');
+    assert(!files.has(name), 'ZIP names must be unique');
+    files.set(name, data);
+    pos += 46 + nameSize + u16(pos + 30) + u16(pos + 32);
+  }
+  assert.equal(pos, end);
+  return files;
+}
 
 test('visual index decodes all accepted CPU proofs at golden tick/crop without editing recipes', async () => {
   const fixtures = JSON.parse(await readFile(new URL('../fixtures/fw-014-presets.json', import.meta.url), 'utf8'));
@@ -109,7 +151,24 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
     const images = [...board.html.matchAll(/src="data:image\/png;base64,([^"]+)"/g)];
     assert.equal(pngLinks[i][2], images[i][1], 'displayed and downloadable CPU PNG bytes must match');
   }
-  const embedded = /src="data:image\/png;base64,([^"]+)"/.exec(board.html)?.[1];
+  const zipLinks = [...board.html.matchAll(/<a download="([^"]+\\.fwpack\\.zip)" href="data:application\\/zip;base64,([^"]+)">Save complete work bundle \\(ZIP\\)<\\/a>/g)];
+  assert.equal(zipLinks.length, 4, 'one offline single-download package per accepted work');
+  for (let i = 0; i < zipLinks.length; i += 1) {
+    const tile = tiles[i], [ , filename, encoded ] = zipLinks[i];
+    assert.equal(filename, 'fieldweaver-' + tile.id + '-' + tile.rawRgbaHash + '.fwpack.zip');
+    const files = readStoredZip(new Uint8Array(Buffer.from(encoded, 'base64')));
+    assert.equal(files.size, 3, 'only canonical source PNG, recipe and provenance');
+    const pngName = 'fieldweaver-' + tile.id + '-' + tile.rawRgbaHash + '.canonical.png';
+    const recipeName = 'fieldweaver-' + tile.id + '-' + tile.recipeHash + '.fwrecipe.json';
+    const provenanceName = 'fieldweaver-' + tile.id + '-' + tile.rawRgbaHash + '.fwprovenance.json';
+    assert.deepEqual(files.get(pngName), tile.png, 'unaltered original canonical PNG bytes');
+    assert.equal(Buffer.from(files.get(recipeName)).toString('utf8'),
+      serializeRecipe(JSON.parse(tile.provenanceJson).recipe));
+    assert.equal(Buffer.from(files.get(provenanceName)).toString('utf8'), tile.provenanceJson);
+    assert.equal(rawRgbaHash(decodePngRgba(files.get(pngName)).rgba), tile.rawRgbaHash);
+    assert.equal(recipeHash(parseRecipe(Buffer.from(files.get(recipeName)).toString('utf8'))), tile.recipeHash);
+  }
+  const embedded = /src="data:image\\/png;base64,([^"]+)"/.exec(board.html)?.[1];
   assert.deepEqual(Buffer.from(embedded, 'base64'), Buffer.from(tiles[0].png));
 });
 
@@ -127,4 +186,13 @@ test('offline board rejects incomplete, duplicate, corrupted and forged canonica
   const badCrop = JSON.parse(tiles[0].provenanceJson);
   badCrop.crop.widthPx += 1;
   assert.throws(() => buildOfflineExhibitionBoard([{ ...tiles[0], provenanceJson: JSON.stringify(badCrop) }, ...tiles.slice(1)]), /provenance/);
+});
+
+test('ZIP transport refuses path traversal, duplicates and non-byte payloads', () => {
+  const bytes = new Uint8Array([0, 1, 127, 128, 255]);
+  assert.deepEqual(readStoredZip(createStoredZip([{ name: 'raw.bin', bytes }])).get('raw.bin'), bytes);
+  assert.throws(() => createStoredZip([]), /bounded/);
+  assert.throws(() => createStoredZip([{ name: '../escape', bytes }]), /safe filenames/);
+  assert.throws(() => createStoredZip([{ name: 'a', bytes }, { name: 'a', bytes }]), /unique safe/);
+  assert.throws(() => createStoredZip([{ name: 'a', bytes: 'not binary' }]), /byte arrays/);
 });
