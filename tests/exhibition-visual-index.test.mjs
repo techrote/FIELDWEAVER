@@ -172,8 +172,8 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
   // An independent raw-RGBA8 oracle must match every row of each complete
   // CSV, not merely the total, and its native disclosure count.
   const ledgers = [...board.html.matchAll(/<a download="([^"]+\.fwpixels\.csv)" href="data:text\/csv;base64,([^"]+)">Save exact pixel ledger \(CSV\)<\/a>/g)];
-  const ledgerDisclosures = [...board.html.matchAll(/<details class="pair-pixels" data-pair-a="([^"]+)" data-pair-b="([^"]+)" data-count="(\\d+)">/g)];
-  const locatorMaps = [...board.html.matchAll(/<svg class="pair-locator" data-pair-a="([^"]+)" data-pair-b="([^"]+)" data-diff-count="(\\d+)" viewBox="0 0 (\\d+) (\\d+)"[^>]*>([\\s\\S]*?)<\\/svg>/g)];
+  const ledgerDisclosures = [...board.html.matchAll(/<details class="pair-pixels" data-pair-a="([^"]+)" data-pair-b="([^"]+)" data-count="(\d+)">/g)];
+  const locatorMaps = [...board.html.matchAll(/<svg class="pair-locator" data-pair-a="([^"]+)" data-pair-b="([^"]+)" data-diff-count="(\d+)" viewBox="0 0 (\d+) (\d+)"[^>]*>([\s\S]*?)<\/svg>/g)];
   assert.equal(ledgers.length, 6, 'every accepted A/B pair exports exact changed pixels');
   assert.equal(ledgerDisclosures.length, 6, 'native keyboard inspection per accepted pair');
   assert.equal(locatorMaps.length, 6,
@@ -210,7 +210,7 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
       [aId, bId, changed, String(Math.min(a.widthPx, b.widthPx)),
         String(Math.min(a.heightPx, b.heightPx))],
       'locator dimensions, identities and counts bind the same accepted source pixels');
-    const marks = [...locator[6].matchAll(/<rect x="(\\d+)" y="(\\d+)" width="1" height="1" fill="#e4b665"\\/>/g)]
+    const marks = [...locator[6].matchAll(/<rect x="(\d+)" y="(\d+)" width="1" height="1" fill="#e4b665"\/>/g)]
       .map(([, x, y]) => [Number(x), Number(y)]);
     const expectedLocations = expected.slice(1).map((row) =>
       row.split(',').slice(0, 2).map(Number));
