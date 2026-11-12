@@ -348,6 +348,9 @@ try {
   if (!summaryShot?.value) throw new Error('A/B summary screenshot unavailable.');
   await writeFile('exhibition-pixel-summary-' + browser + '.png',
     Buffer.from(summaryShot.value, 'base64'));
+  await writeFile('exhibition-pixel-summary-' + browser + '.json',
+    JSON.stringify({ browser, expectedDifferentPixels: expectedSummaryCount,
+      overlapPixels: 6144, observed: overlapSummary }, null, 2) + '\n');
   const forgedSummary = await execute("const card=document.querySelector('[data-exhibition-id=operator-atlas]');const old=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-pixel-summary').click();const result=document.getElementById('exhibition-study-pixel-summary-reading').textContent;card.dataset.canonicalRgbaHash=old;return result");
   if (!forgedSummary.startsWith('A/B summary refused:') ||
       forgedSummary.includes('differing pixels ' + expectedSummaryCount)) {
