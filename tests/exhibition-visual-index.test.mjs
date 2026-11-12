@@ -169,6 +169,40 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
     assert.equal(Number(countText), expected, 'decoded CPU RGBA8 mismatch for ' + key);
     assert.equal(Number(totalText), width * height);
   }
+  // An independent raw-RGBA8 oracle must match every row of each complete
+  // CSV, not merely the total, and its native disclosure count.
+  const ledgers = [...board.html.matchAll(/<a download="([^"]+\.fwpixels\.csv)" href="data:text\/csv;base64,([^"]+)">Save exact pixel ledger \(CSV\)<\/a>/g)];
+  const ledgerDisclosures = [...board.html.matchAll(/<details class="pair-pixels" data-pair-a="([^"]+)" data-pair-b="([^"]+)" data-count="(\d+)">/g)];
+  assert.equal(ledgers.length, 6, 'every accepted A/B pair exports exact changed pixels');
+  assert.equal(ledgerDisclosures.length, 6, 'native keyboard inspection per accepted pair');
+  const ledgerHeader = 'x,y,a_r,a_g,a_b,a_a,b_r,b_g,b_b,b_a,delta_r,delta_g,delta_b,delta_a';
+  for (let i = 0; i < pairRows.length; i += 1) {
+    const [, aId, bId, changed] = pairRows[i];
+    assert.deepEqual(ledgerDisclosures[i].slice(1),
+      [aId, bId, changed], 'inline changed-pixel count matches exact source');
+    const a = decodedById.get(aId), b = decodedById.get(bId);
+    const expected = [ledgerHeader];
+    for (let y = 0; y < Math.min(a.heightPx, b.heightPx); y += 1) {
+      for (let x = 0; x < Math.min(a.widthPx, b.widthPx); x += 1) {
+        const ai = (y * a.widthPx + x) * 4;
+        const bi = (y * b.widthPx + x) * 4;
+        const left = Array.from(a.rgba.subarray(ai, ai + 4));
+        const right = Array.from(b.rgba.subarray(bi, bi + 4));
+        if (left.some((v, channel) => v !== right[channel])) {
+          expected.push([x, y, ...left, ...right,
+            ...right.map((v, channel) => v - left[channel])].join(','));
+        }
+      }
+    }
+    const [ , filename, encoded ] = ledgers[i];
+    assert.equal(filename, 'fieldweaver-ab-' + aId + '-vs-' + bId + '-' +
+      tiles.find(tile => tile.id === aId).rawRgbaHash + '-' +
+      tiles.find(tile => tile.id === bId).rawRgbaHash + '.fwpixels.csv');
+    const actual = Buffer.from(encoded, 'base64').toString('utf8');
+    assert.equal(actual, expected.join('\n') + '\n',
+      'CSV must enumerate all source-exact signed channel differences in row-major order');
+    assert.equal(expected.length - 1, Number(changed));
+  }
   // Six portable comparison receipts must bind exact verified source identities,
   // bounds and counts; independently scan raw pixels instead of reusing the
   // production overlap helper as the sole oracle.

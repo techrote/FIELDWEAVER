@@ -197,9 +197,10 @@ try {
       new Set(comparisons.map(row => row.a + '/' + row.b)).size !== 6 ||
       comparisons.some(row => !Number.isInteger(row.different) || row.different < 0 ||
         row.total !== 6144 || row.different > row.total ||
-        row.links.length !== 3 || row.links[0] !== '#work-' + row.a ||
+        row.links.length !== 4 || row.links[0] !== '#work-' + row.a ||
         row.links[1] !== '#work-' + row.b ||
-        !row.links[2].startsWith('data:application/json;base64,')) ||
+        !row.links[2].startsWith('data:application/json;base64,') ||
+        !row.links[3].startsWith('data:text/csv;base64,')) ||
       !comparisons.some(row => row.a === 'operator-atlas' &&
         row.b === 'timeline-pulse' && row.different === 118)) {
     throw new Error('Offline pairwise comparison did not match accepted CPU identities: ' +
@@ -207,7 +208,7 @@ try {
   }
   // Decode the real saved file:// page's receipt links inside Firefox/Chrome.
   // The page itself remains script-free; the WebDriver probe is external.
-  const comparisonReceipts = await execute("return [...document.querySelectorAll('#comparison-index a[download]')].map(a=>({name:a.download,data:JSON.parse(atob(a.href.split(',')[1]))}))");
+  const comparisonReceipts = await execute("return [...document.querySelectorAll('#comparison-index a[download$=".fwcompare.json"]')].map(a=>({name:a.download,data:JSON.parse(atob(a.href.split(',')[1]))}))");
   if (comparisonReceipts.length !== 6 ||
       comparisonReceipts.some(item => item.data.version !== 'fw-exhibition-ab-comparison-v1' ||
         !item.name.endsWith('.fwcompare.json') ||
@@ -259,6 +260,34 @@ try {
   await pressEnter();
   if (await execute("return document.querySelector('#comparison-index .pair-preview').open")) {
     throw new Error('Keyboard could not collapse A/B disclosure.');
+  }
+  // Real file:// keyboard inspection of the exact changed-pixel ledger.
+  // Independently check every embedded CSV line count against its pair receipt.
+  const ledgerLinks = await execute("return [...document.querySelectorAll('#comparison-index a[download$=\".fwpixels.csv\"]')].map(a=>({name:a.download,lines:atob(a.href.split(',')[1]).trimEnd().split('\\n')}))");
+  if (ledgerLinks.length !== 6 || ledgerLinks.some((item,i)=>
+      item.lines[0] !== 'x,y,a_r,a_g,a_b,a_a,b_r,b_g,b_b,b_a,delta_r,delta_g,delta_b,delta_a' ||
+      item.lines.length !== comparisons[i].different + 1 ||
+      item.lines.slice(1).some(line=>line.split(',').length !== 14))) {
+    throw new Error('Offline exact changed-pixel CSV differs from accepted comparison totals: ' +
+      JSON.stringify(ledgerLinks.map(item=>({name:item.name,count:item.lines.length-1}))));
+  }
+  const ledgerFocused = await execute("const summary=document.querySelector('#comparison-index .pair-pixels summary');summary.scrollIntoView({block:'center',behavior:'instant'});summary.focus();return document.activeElement===summary");
+  if (!ledgerFocused) throw new Error('Exact pixel ledger disclosure not keyboard-focusable.');
+  await pressEnter();
+  const ledgerOpen = await execute("const d=document.querySelector('#comparison-index .pair-pixels');return {open:d.open,rows:d.querySelectorAll('tbody tr[data-pixel-x]').length,expected:Number(d.dataset.count),first:d.querySelector('tbody tr')?.textContent,keyboardScroll:d.querySelector('[role=region]')?.tabIndex===0,origin:location.protocol}");
+  if (!ledgerOpen.open || ledgerOpen.rows !== comparisons[0].different ||
+      ledgerOpen.expected !== ledgerOpen.rows || !ledgerOpen.first ||
+      !ledgerOpen.keyboardScroll || ledgerOpen.origin !== 'file:') {
+    throw new Error('Real offline changed-pixel table failed keyboard inspection: ' +
+      JSON.stringify(ledgerOpen));
+  }
+  const ledgerShot=await request('GET','/session/'+sessionId+'/screenshot');
+  if (!ledgerShot?.value) throw new Error('Exact changed-pixel ledger screenshot absent.');
+  await writeFile('exhibition-offline-pixel-ledger-'+browser+'.png',
+    Buffer.from(ledgerShot.value,'base64'));
+  await pressEnter();
+  if (await execute("return document.querySelector('#comparison-index .pair-pixels').open")) {
+    throw new Error('Keyboard could not collapse exact pixel ledger.');
   }
   await request('POST', '/session/' + sessionId + '/window/rect', { width: 390, height: 790 });
   const comparisonNarrow = await execute("const section=document.getElementById('comparison-index');section.scrollIntoView({block:'start',behavior:'instant'});const region=document.getElementById('comparison-scroll');region.focus({preventScroll:true});return {protocol:location.protocol,viewport:document.documentElement.clientWidth,focused:document.activeElement===region,tableRows:region.querySelectorAll('tbody tr').length,horizontalOverflow:region.scrollWidth>region.clientWidth,top:Math.round(region.getBoundingClientRect().top),viewportHeight:innerHeight}");
