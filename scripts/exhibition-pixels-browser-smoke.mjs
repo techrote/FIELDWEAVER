@@ -219,12 +219,6 @@ try {
     } catch { return false; }
   });
   const pixelReceipt = JSON.parse(pixelReceiptBytes.toString('utf8'));
-  const forgedPixelReceipt = await execute("const card=document.querySelector('[data-exhibition-id=operator-atlas]');const old=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-pixel-save').click();const msg=document.getElementById('exhibition-study-status').textContent;card.dataset.canonicalRgbaHash=old;return msg");
-  if (!forgedPixelReceipt.includes('Pixel receipt refused: Current verified CPU proof is unavailable or mismatched')) {
-    throw new Error('Forged A source was allowed to export an A/B pixel receipt: ' + forgedPixelReceipt);
-  }
-  await writeFile('exhibition-pixel-receipt-' + browser + '.json',
-    JSON.stringify({browser,pixelReceiptName,pixelReceipt,forgedPixelReceipt},null,2) + '\n');
   // Invalidating only the *peer* proof must also refuse cached A/B readings.
   await execute("const card=document.querySelector('[data-exhibition-id=operator-atlas]');window.__studyPeerHash=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-pixel-x').dispatchEvent(new Event('input',{bubbles:true}))");
   let invalidPeer = '';
@@ -427,6 +421,14 @@ try {
   if (!keyboard.back.includes('Operator Atlas') || !keyboard.forward.includes('Timeline Pulse')) {
     throw new Error('Study keyboard navigation failed: ' + JSON.stringify(keyboard));
   }
+  // Check a forged A lease only after keyboard/status assertions: a refused
+  // download deliberately leaves the safety message visible for the owner.
+  const forgedPixelReceipt = await execute("const card=document.querySelector('[data-exhibition-id=operator-atlas]');const old=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-pixel-save').click();const msg=document.getElementById('exhibition-study-status').textContent;card.dataset.canonicalRgbaHash=old;return msg");
+  if (!forgedPixelReceipt.includes('Pixel receipt refused: Current verified CPU proof is unavailable or mismatched')) {
+    throw new Error('Forged A source was allowed to export an A/B pixel receipt: ' + forgedPixelReceipt);
+  }
+  await writeFile('exhibition-pixel-receipt-' + browser + '.json',
+    JSON.stringify({browser,pixelReceiptName,pixelReceipt,forgedPixelReceipt},null,2) + '\n');
   const loaded = await execute("document.getElementById('exhibition-study-load').click();return {dialogOpen:document.getElementById('exhibition-study-dialog').open,selected:document.getElementById('preset-select').value,status:document.getElementById('preset-status').textContent}");
   if (loaded.dialogOpen || loaded.selected !== 'timeline-pulse' || !loaded.status.startsWith('Loaded Timeline Pulse')) {
     throw new Error('Study did not invoke explicit recipe adoption: ' + JSON.stringify(loaded));
