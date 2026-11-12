@@ -328,6 +328,31 @@ try {
       !forwardAgain.ab.includes('Δ(B−A) RGBA8 ' + expectedNextDifference.delta)) {
     throw new Error('Keyboard A/B forward recovery failed decoded CPU oracle: ' + JSON.stringify(forwardAgain));
   }
+  // The summary is an independent full-overlap decoded-CPU measurement.
+  const expectedSummaryCount = (() => {
+    let count = 0;
+    for (let pixel = 0; pixel < comparisonA.length; pixel += 4) {
+      if ([0, 1, 2, 3].some(ch => comparisonA[pixel + ch] !== comparisonB[pixel + ch])) count += 1;
+    }
+    return count;
+  })();
+  await saveByKeyboard('exhibition-study-pixel-summary');
+  const overlapSummary = await execute("return {text:document.getElementById('exhibition-study-pixel-summary-reading').textContent,hidden:document.getElementById('exhibition-study-pixel-summary-reading').hidden}");
+  if (overlapSummary.hidden ||
+      !overlapSummary.text.includes('differing pixels ' + expectedSummaryCount + '/6144') ||
+      !overlapSummary.text.includes('maximum |Δ(B−A)| RGBA8')) {
+    throw new Error('A/B summary did not match independent canonical PNG byte oracle: ' +
+      JSON.stringify({overlapSummary,expectedSummaryCount}));
+  }
+  const summaryShot = await request('GET', '/session/' + sessionId + '/screenshot');
+  if (!summaryShot?.value) throw new Error('A/B summary screenshot unavailable.');
+  await writeFile('exhibition-pixel-summary-' + browser + '.png',
+    Buffer.from(summaryShot.value, 'base64'));
+  const forgedSummary = await execute("const card=document.querySelector('[data-exhibition-id=operator-atlas]');const old=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-pixel-summary').click();const result=document.getElementById('exhibition-study-pixel-summary-reading').textContent;card.dataset.canonicalRgbaHash=old;return result");
+  if (!forgedSummary.startsWith('A/B summary refused:') ||
+      forgedSummary.includes('differing pixels ' + expectedSummaryCount)) {
+    throw new Error('A/B summary retained stale statistics with a forged proof: ' + forgedSummary);
+  }
   // The new traversal must refuse a forged peer even if previously cached.
   const forgedDifference = await execute("const card=document.querySelector('[data-exhibition-id=operator-atlas]');const previous=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-pixel-difference').click();const evidence={reading:document.getElementById('exhibition-study-pixel-reading').textContent,abHidden:document.getElementById('exhibition-study-pixel-ab').hidden,ab:document.getElementById('exhibition-study-pixel-ab').textContent};card.dataset.canonicalRgbaHash=previous;return evidence");
   if (!forgedDifference.reading.includes('Cannot inspect verified A/B images:') ||
