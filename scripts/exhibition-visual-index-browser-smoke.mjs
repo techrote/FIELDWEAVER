@@ -2,6 +2,7 @@ import { spawn, spawnSync } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { decodePngRgba } from '../src/export/index.js';
 
 const browser = process.argv[2] ?? 'firefox';
 if (!['chrome', 'firefox'].includes(browser)) throw new Error('Expected chrome or firefox.');
@@ -45,7 +46,7 @@ try {
         prefs: { 'webgl.disabled': false, 'webgl.force-enabled': true,
           'gfx.webrender.software': true, 'browser.download.dir': downloadDir,
           'browser.download.folderList': 2, 'browser.download.useDownloadDir': true,
-          'browser.helperApps.neverAsk.saveToDisk': 'text/csv,application/zip,application/octet-stream',
+          'browser.helperApps.neverAsk.saveToDisk': 'text/csv,image/png,application/zip,application/octet-stream',
           'browser.download.alwaysOpenPanel': false }
       } } } };
   const created = await request('POST', '/session', desired);
@@ -210,11 +211,12 @@ try {
       new Set(comparisons.map(row => row.a + '/' + row.b)).size !== 6 ||
       comparisons.some(row => !Number.isInteger(row.different) || row.different < 0 ||
         row.total !== 6144 || row.different > row.total ||
-        row.links.length !== 5 || row.links[0] !== '#work-' + row.a ||
+        row.links.length !== 6 || row.links[0] !== '#work-' + row.a ||
         row.links[1] !== '#work-' + row.b ||
         !row.links[2].startsWith('data:application/json;base64,') ||
         !row.links[3].startsWith('data:text/csv;base64,') ||
-        !row.links[4].startsWith('data:application/zip;base64,')) ||
+        !row.links[4].startsWith('data:image/png;base64,') ||
+        !row.links[5].startsWith('data:application/zip;base64,')) ||
       !comparisons.some(row => row.a === 'operator-atlas' &&
         row.b === 'timeline-pulse' && row.different === 118)) {
     throw new Error('Offline pairwise comparison did not match accepted CPU identities: ' +
@@ -232,6 +234,59 @@ try {
           row.different === item.data.overlap.differentPixels))) {
     throw new Error('Offline comparison JSON receipts failed real-browser decoding: ' +
       JSON.stringify(comparisonReceipts));
+  }
+
+  // Real offline Firefox/Chrome Enter-key export of a lossless diagnostic
+  // PNG mask; do not substitute its image for either canonical CPU source.
+  const maskDownloads = await execute("return [...document.querySelectorAll('#comparison-index a[data-diagnostic=\"image-local-rgba8-mask\"]')].map(a=>({name:a.download,encoded:a.href.split(',')[1],mime:a.href.slice(0,a.href.indexOf(','))}))");
+  if (maskDownloads.length !== 6 || maskDownloads.some((item, i) =>
+      !item.name.includes(comparisons[i].a + '-vs-' + comparisons[i].b) ||
+      !item.name.endsWith('.fwdiffmask.png') || !item.encoded ||
+      item.mime !== 'data:image/png;base64')) {
+    throw new Error('Offline diagnostic PNG mask download links invalid.');
+  }
+  const maskFocused = await execute("const a=document.querySelector('#comparison-index a[data-diagnostic=\"image-local-rgba8-mask\"]');a.scrollIntoView({block:'center',behavior:'instant'});a.focus();return document.activeElement===a && location.protocol==='file:'");
+  if (!maskFocused) throw new Error('Offline diagnostic PNG mask is not keyboard-focusable.');
+  const maskScreenshot = await request('GET', '/session/' + sessionId + '/screenshot');
+  if (!maskScreenshot?.value) throw new Error('Focused diagnostic mask screenshot absent.');
+  await writeFile('exhibition-offline-diff-mask-'+browser+'.png',Buffer.from(maskScreenshot.value,'base64'));
+  await request('POST','/session/'+sessionId+'/actions',{actions:[{type:'key',id:'keyboard',actions:[
+    {type:'keyDown',value:'\\uE007'},{type:'keyUp',value:'\\uE007'}]}]});
+  await request('DELETE','/session/'+sessionId+'/actions');
+  const expectedMask = Buffer.from(maskDownloads[0].encoded, 'base64');
+  let downloadedMask = null;
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    try {
+      downloadedMask = await readFile(join(downloadDir, maskDownloads[0].name));
+      if (downloadedMask.equals(expectedMask)) break;
+    } catch {}
+    await sleep(100);
+  }
+  if (!downloadedMask?.equals(expectedMask)) {
+    throw new Error('Real offline keyboard diagnostic PNG download failed byte identity.');
+  }
+  const parsedMask = decodePngRgba(new Uint8Array(downloadedMask));
+  const markerCoords = await execute("return [...document.querySelector('#comparison-index .pair-locator').querySelectorAll('rect[fill=\"#e4b665\"]')].map(r=>Number(r.getAttribute('x'))+','+Number(r.getAttribute('y')))");
+  const expectedMarks = new Set(markerCoords);
+  if (expectedMarks.size !== comparisons[0].different ||
+      parsedMask.widthPx !== 96 || parsedMask.heightPx !== 64) {
+    throw new Error('Diagnostic mask dimensions or changed-pixel count mismatched the verified pair.');
+  }
+  let maskOpaque = 0;
+  for (let y = 0; y < parsedMask.heightPx; y += 1) {
+    for (let x = 0; x < parsedMask.widthPx; x += 1) {
+      const at = (y * parsedMask.widthPx + x) * 4;
+      const pixel = Array.from(parsedMask.rgba.subarray(at, at + 4));
+      const expectedPixel = expectedMarks.has(x + ',' + y) ?
+        [228, 182, 101, 255] : [0, 0, 0, 0];
+      if (pixel.some((byte, i) => byte !== expectedPixel[i])) {
+        throw new Error('Diagnostic mask differs from exact location map at '+x+','+y);
+      }
+      if (pixel[3] === 255) maskOpaque++;
+    }
+  }
+  if (maskOpaque !== comparisons[0].different) {
+    throw new Error('Diagnostic mask opacity does not equal decoded RGBA8 pair changes.');
   }
 
   // Genuine file:// Enter-key ZIP handoff, not just a decoded data URL.
@@ -485,6 +540,7 @@ try {
   await writeFile('exhibition-offline-board-' + browser + '.png', Buffer.from(boardScreenshot.value, 'base64'));
   await writeFile('exhibition-visual-index-' + browser + '.json', JSON.stringify({ browser, initial, result, board, selected, offline, comparisons,
       acceptedPairBundle: { name: pairBundleLinks[0].name, bytes: savedPairBytes.length, exactMatch: true },
+      diagnosticMask: { name: maskDownloads[0].name, pixels: maskOpaque, bytes: downloadedMask.length, exactMatch: true },
       comparisonReceipts: comparisonReceipts.map(item => ({
         name: item.name, a: item.data.a.id, b: item.data.b.id,
         changed: item.data.overlap.differentPixels
