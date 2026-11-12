@@ -395,6 +395,11 @@ export function mountExhibitionStudy(panel) {
     try {
       const entry = lookup.get(currentId), record = snapshot()?.get(currentId);
       if (!entry || !record) throw new Error('Rebuild the verified accepted CPU index.');
+      // Recipe identity alone does not establish that the displayed CPU proof
+      // still belongs to this live gallery generation. Match the same lease
+      // and re-decoded RGBA8 oracle required by PNG/provenance exports.
+      const png = getAcceptedVisualIndexPng(panel, currentId, record.url, record.hash);
+      verifyStudyPng(png, entry.exportCrop.widthPx, entry.exportCrop.heightPx, record.hash);
       // B is the currently browsed work when A is pinned. No editor adoption.
       const handoff = buildAcceptedRecipeHandoff(currentId);
       if (handoff.recipeHash !== entry.recipeHash) throw new Error('Accepted recipe identity mismatch.');
