@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { decodePngRgba, rawRgbaHash } from '../src/export/index.js';
 import test from 'node:test';
+
+import { decodePngRgba, rawRgbaHash } from '../src/export/index.js';
 
 import { parseRecipe, recipeHash, serializeRecipe } from '../src/recipe/index.js';
 import { BUILTIN_PRESETS } from '../src/presets/index.js';
