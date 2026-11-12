@@ -22,4 +22,6 @@ After **Render visual index (4 CPU proofs)** completes successfully, choose **Sa
 
 The button stays disabled until a full four-work pass succeeds. Starting a new pass, cancellation, error or page exit invalidates the pending board evidence. Partially refreshed images cannot be saved as one reviewed set. Board creation never adopts a recipe, modifies simulation state or admits pending gallery submissions.
 
+Each accepted work also offers **Save complete work bundle (ZIP)**, a single self-contained, dependency-free ZIP with its exact original PNG, importable recipe and full provenance as three separately extractable files. The ZIP is a deterministic transport only and is labelled separately from the canonical PNG; it never changes the artwork or its decoded RGBA identity. No additional gallery or editor functionality is introduced.
+
 The offline-board module checks accepted IDs, decoded PNG pixels, crop, receipt versions, recipe hash and seed before embedding them. Tests reject missing, duplicate, corrupted and forged evidence. The Chrome/Firefox browser smoke exercises an actual UI click and reads the resulting HTML download Blob for its four embedded canonical PNGs; it does **not** certify OS-level file persistence. The 96×64 images are review proofs rather than high-resolution exports. For larger output use **Canonical export**.
