@@ -83,6 +83,90 @@ try {
       !compared.status.includes('Timeline Pulse') || !compared.captions.every((x) => x.includes('decoded RGBA8') && x.includes('recipe '))) {
     throw new Error('Canonical two-up study was invalid: ' + JSON.stringify(compared));
   }
+  // Actual selected B native downloads: disk bytes, not merely a click.
+  const editorBeforeDirectExport = await execute("return {hash:document.documentElement.dataset.fieldweaverCanonicalRecipeHash,selected:document.getElementById('preset-select').value}");
+  const selectedHash = result.tiles.find((tile) => tile.id === 'timeline-pulse').hash;
+  const selectedEntry = exhibitionEntries().find((entry) => entry.id === 'timeline-pulse');
+  if (!selectedHash || !selectedEntry) throw new Error('Missing accepted selected B identity.');
+  // Separate real keyboard gestures: Chrome blocks two automatic downloads
+  // from a single synthetic JS task even though owners click these separately.
+  const saveByKeyboard = async (id) => {
+    const focused = await execute("const button=document.getElementById('" + id + "');button.focus();return document.activeElement===button");
+    if (!focused) throw new Error('Study download control is not keyboard focusable: ' + id);
+    await request('POST', '/session/' + sessionId + '/actions', {
+      actions: [{ type: 'key', id: 'study-export-keyboard', actions: [
+        { type: 'keyDown', value: '\uE007' }, { type: 'keyUp', value: '\uE007' }
+      ] }]
+    });
+    await request('DELETE', '/session/' + sessionId + '/actions');
+  };
+  const readSaved = async (name, validBytes) => {
+    // Firefox may expose the destination file before it has finished writing.
+    // Wait for a *complete parseable and identity-checked* file, not existence.
+    let last = 'not created';
+    for (let n = 0; n < 100; n++) {
+      try {
+        const bytes = await readFile(join(downloadDir, name));
+        if (validBytes(bytes)) return bytes;
+        last = 'incomplete or invalid (' + bytes.length + ' bytes)';
+      } catch (error) { last = error?.message ?? String(error); }
+      await sleep(100);
+    }
+    throw new Error('Browser did not finish verified study download ' + name + ': ' + last);
+  };
+  const pngName = 'fieldweaver-timeline-pulse-' + selectedHash + '.png';
+  const recipeName = 'fieldweaver-timeline-pulse-' + selectedEntry.recipeHash + '.fwrecipe.json';
+  await saveByKeyboard('exhibition-study-save-png');
+  const pngBytes = await readSaved(pngName, (bytes) => {
+    try {
+      const decoded = decodePngRgba(new Uint8Array(bytes));
+      return decoded.widthPx === 96 && decoded.heightPx === 64 &&
+        rawRgbaHash(decoded.rgba) === selectedHash;
+    } catch { return false; }
+  });
+  const savedPng = decodePngRgba(new Uint8Array(pngBytes));
+  await saveByKeyboard('exhibition-study-save-recipe');
+  const recipeBytes = await readSaved(recipeName, (bytes) => {
+    try {
+      const recipe = parseRecipe(bytes.toString('utf8'));
+      return recipeHash(recipe) === selectedEntry.recipeHash && recipe.seed === selectedEntry.seed;
+    } catch { return false; }
+  });
+  const studySavedRecipe = parseRecipe(recipeBytes.toString('utf8'));
+  const provenanceName = 'fieldweaver-timeline-pulse-' + selectedHash + '.fwprovenance.json';
+  await saveByKeyboard('exhibition-study-save-provenance');
+  const provenanceBytes = await readSaved(provenanceName, (bytes) => {
+    try {
+      const receipt = JSON.parse(bytes.toString('utf8'));
+      return receipt.version === 'fw-export-provenance-v1' &&
+        receipt.recipeHash === selectedEntry.recipeHash &&
+        receipt.seed === selectedEntry.seed &&
+        receipt.rawRgbaHash === selectedHash &&
+        receipt.targetTick === selectedEntry.targetTick &&
+        receipt.crop.widthPx === selectedEntry.exportCrop.widthPx &&
+        receipt.crop.heightPx === selectedEntry.exportCrop.heightPx &&
+        recipeHash(parseRecipe(JSON.stringify(receipt.recipe))) === selectedEntry.recipeHash;
+    } catch { return false; }
+  });
+  const studySavedProvenance = JSON.parse(provenanceBytes.toString('utf8'));
+  const editorAfterDirectExport = await execute("return {hash:document.documentElement.dataset.fieldweaverCanonicalRecipeHash,selected:document.getElementById('preset-select').value,open:document.getElementById('exhibition-study-dialog').open,status:document.getElementById('exhibition-study-status').textContent}");
+  if (savedPng.widthPx !== 96 || savedPng.heightPx !== 64 ||
+      rawRgbaHash(savedPng.rgba) !== selectedHash ||
+      recipeHash(studySavedRecipe) !== selectedEntry.recipeHash ||
+      studySavedRecipe.seed !== selectedEntry.seed ||
+      editorBeforeDirectExport.hash !== editorAfterDirectExport.hash ||
+      editorAfterDirectExport.selected !== 'operator-atlas' ||
+      !editorAfterDirectExport.open ||
+      !editorAfterDirectExport.status.includes('full canonical provenance for Timeline Pulse') ||
+      studySavedProvenance.rawRgbaHash !== selectedHash ||
+      studySavedProvenance.targetTick !== selectedEntry.targetTick) {
+    throw new Error('Selected B direct export was stale or changed the editor: ' + JSON.stringify(editorAfterDirectExport));
+  }
+  await writeFile('exhibition-study-selected-export-' + browser + '.json',
+    JSON.stringify({browser,pngName,recipeName,provenanceName,rgbaHash:rawRgbaHash(savedPng.rgba),
+      recipeHash:recipeHash(studySavedRecipe),receiptTick:studySavedProvenance.targetTick,
+      receiptRawRgbaHash:studySavedProvenance.rawRgbaHash,
+      editorBeforeDirectExport,editorAfterDirectExport},null,2)+'\n');
   await request('POST', '/session/' + sessionId + '/window/rect', { width: 1250, height: 900 });
   const studyScreenshot = await request('GET', '/session/' + sessionId + '/screenshot');
   if (!studyScreenshot?.value) throw new Error('Full-window study screenshot absent.');
@@ -98,6 +182,29 @@ try {
   if(!sampled.text.includes('(3, 7)') || !sampled.text.includes('RGBA8') ||
      sampled.neighbours!==81 || sampled.centres!==1 || !sampled.colour || sampled.expanded!=='true') {
     throw new Error('Exact decoded pixel inspection failed: '+JSON.stringify(sampled));
+  }
+  // Cached pixel reads must revalidate current registry custody, not trust
+  // a previously decoded PNG after a changed DOM identity.
+  await execute("const card=document.querySelector('[data-exhibition-id=timeline-pulse]');window.__originalStudyHash=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-pixel-x').dispatchEvent(new Event('input',{bubbles:true}))");
+  let forgedPixel = '';
+  for (let i = 0; i < 30; i++) {
+    forgedPixel = await execute("return document.getElementById('exhibition-study-pixel-reading').textContent");
+    if (forgedPixel.includes('Cannot inspect this verified PNG:')) break;
+    await sleep(100);
+  }
+  if (!forgedPixel.includes('Current verified CPU proof is unavailable or mismatched')) {
+    throw new Error('Stale cached canonical pixel escaped forged hash check: ' + forgedPixel);
+  }
+  await execute("const card=document.querySelector('[data-exhibition-id=timeline-pulse]');card.dataset.canonicalRgbaHash=window.__originalStudyHash;document.getElementById('exhibition-study-pixel-x').dispatchEvent(new Event('input',{bubbles:true}))");
+  let restoredPixel = '';
+  for (let i = 0; i < 30; i++) {
+    restoredPixel = await execute("return document.getElementById('exhibition-study-pixel-reading').textContent");
+    if (restoredPixel.includes('Timeline Pulse · (3, 7)') && restoredPixel.includes('image identity ' + selectedHash)) break;
+    await sleep(100);
+  }
+  if (!restoredPixel.includes('Timeline Pulse · (3, 7)') ||
+      !restoredPixel.includes('image identity ' + selectedHash)) {
+    throw new Error('Canonical pixel did not recover after restored hash: ' + restoredPixel);
   }
   await execute("const select=document.getElementById('exhibition-study-pixel-source');select.value='A';select.dispatchEvent(new Event('change',{bubbles:true}))");
   let aPixel='';
@@ -124,7 +231,7 @@ try {
   const pixelShot=await request('GET','/session/'+sessionId+'/screenshot');
   if(!pixelShot?.value) throw new Error('Decoded pixel screenshot not captured');
   await writeFile('exhibition-pixels-'+browser+'.png',Buffer.from(pixelShot.value,'base64'));
-  await writeFile('exhibition-pixels-'+browser+'.json',JSON.stringify({browser,sampled,aPixel,marked},null,2)+'\n');
+  await writeFile('exhibition-pixels-'+browser+'.json',JSON.stringify({browser,sampled,forgedPixel,restoredPixel,aPixel,marked},null,2)+'\n');
   // Real WebDriver key actions on focused canonical images; distinguish from
   // gallery Left/Right while retaining source-specific A/B coordinates.
   const pressPixelKey = async (value, shifted = false) => {

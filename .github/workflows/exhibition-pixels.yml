@@ -72,6 +72,7 @@ jobs:
             exhibition-pixel-keyboard-${{ matrix.browser }}.json
             exhibition-study-export-${{ matrix.browser }}.png
             exhibition-study-export-${{ matrix.browser }}.json
+            exhibition-study-selected-export-${{ matrix.browser }}.json
             exhibition-accepted-offline-${{ matrix.browser }}.html
             exhibition-accepted-offline-${{ matrix.browser }}.png
             exhibition-accepted-offline-narrow-${{ matrix.browser }}.png

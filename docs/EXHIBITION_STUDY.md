@@ -46,3 +46,15 @@ Source-level tests verify all four downloaded JSON byte streams against accepted
 
 
 The offline handoff regression additionally exercises **real Chrome/Firefox keyboard-initiated data: downloads** from the reopened `file://` board, checks the on-disk recipe and provenance bytes against the exact accepted payloads, and imports the saved recipe through the ordinary workbench file input. Its screenshot and JSON receipt are archived as `exhibition-offline-reimport-<browser>.*`. These are automated browser/OS-file checks, **not** owner physical Firefox or file-manager acceptance.
+
+### Direct selected-work export from the study
+
+After **Render visual index (4 CPU proofs)**, open **Study accepted works / compare**. Browse and optionally pin A; **Save selected CPU PNG** and **Save selected recipe** export the *currently browsed* work (B when A is pinned). The first revalidates the exact in-memory FW-012 PNG against the current accepted visual-index registry and decoded RGBA8 identity immediately before download. The second uses the existing normalized/roundtrip-checked accepted recipe handoff. Neither changes the editor or infers a shared world crop; the source tick/crop are shown separately. The browser is asked to save a file; actual owner file-manager persistence remains unverified.
+
+On every pixel movement the current proof lease is checked, including cached decoded pixels. A forged/revoked/stale source cannot retain a formerly valid colour reading. No `fetch(blob:)`, WebGL sampling, second gallery subsystem or unadmitted Draft artwork is involved. Chrome/Firefox regression now checks actual saved B PNG/recipe bytes, raw decoded identity, hash, editor immutability and forged-hash cache invalidation.
+
+### Export full provenance for only the selected work
+
+Use **Save selected provenance** alongside the existing selected CPU PNG and importable recipe actions. This requests a third file for the same currently browsed work (B while A is pinned), with the complete versioned FW-012 receipt: accepted recipe, seed, exact target tick, authored crop, decoded RGBA8 identity, and canonical replay/result hashes. The recipe file intentionally does **not** encode the exhibition tick/crop; the provenance file is the reproducible companion. No second replay or WebGL/framebuffer readback occurs.
+
+The download path renews the source-bound verified proof lease, independently decodes the held canonical CPU PNG, and applies the existing offline-board's full receipt/recipe verifier before requesting the file. A stale URL, mismatched pixel hash, altered PNG or forged tick/crop/recipe is refused. Only accepted work is exportable. Chrome/Firefox WebDriver checks real keyboard-initiated on-disk selected B PNG, recipe, and provenance downloads against exact receipts; these are automated browser checks, not physical owner acceptance.

@@ -100,3 +100,30 @@ test('Original 08: candidate enters offline accepted-preset exhibition with exac
     await rm(folder,{recursive:true,force:true});
   }
 });
+
+test('Original 08: archived crop edges match the disclosed upper-boundary clipping',async()=>{
+  const {readFile}=await import('node:fs/promises');
+  const {decodePngRgba}=await import('../../../src/export/index.js');
+  const archived=await readFile(new URL('./the-vacant-rooms.png',import.meta.url));
+  const {rgba,widthPx,heightPx}=decodePngRgba(archived);
+  assert.equal(widthPx,432);
+  assert.equal(heightPx,304);
+  const bg=[9,11,8,255];
+  const occupied=(x,y)=>{
+    const offset=(y*widthPx+x)*4;
+    return bg.some((value,channel)=>rgba[offset+channel]!==value);
+  };
+  // These ten pixels are real output, not a gallery CSS or thumbnail crop.
+  // Any reframe must be a separately reviewed artwork with new provenance.
+  const topHits=[];
+  for(let x=0;x<widthPx;x++){
+    if(occupied(x,0))topHits.push(x);
+    assert.equal(occupied(x,heightPx-1),false,'Unexpected bottom-edge pixel '+x);
+  }
+  for(let y=0;y<heightPx;y++){
+    assert.equal(occupied(0,y),false,'Unexpected left-edge pixel '+y);
+    assert.equal(occupied(widthPx-1,y),false,'Unexpected right-edge pixel '+y);
+  }
+  assert.deepEqual(topHits,[56,59,145,172,173,174,175,271,272,273],
+    'Canonical top-edge discontinuity changed; repeat the framing review');
+});
