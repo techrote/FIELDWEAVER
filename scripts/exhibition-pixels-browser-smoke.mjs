@@ -351,10 +351,13 @@ try {
   await writeFile('exhibition-pixel-summary-' + browser + '.json',
     JSON.stringify({ browser, expectedDifferentPixels: expectedSummaryCount,
       overlapPixels: 6144, observed: overlapSummary }, null, 2) + '\n');
-  const forgedSummary = await execute("const card=document.querySelector('[data-exhibition-id=operator-atlas]');const old=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-pixel-summary').click();const result=document.getElementById('exhibition-study-pixel-summary-reading').textContent;card.dataset.canonicalRgbaHash=old;return result");
-  if (!forgedSummary.startsWith('A/B summary refused:') ||
-      forgedSummary.includes('differing pixels ' + expectedSummaryCount)) {
-    throw new Error('A/B summary retained stale statistics with a forged proof: ' + forgedSummary);
+  const forgedSummary = await execute("const card=document.querySelector('[data-exhibition-id=operator-atlas]');const old=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-pixel-summary').click();const result={summary:document.getElementById('exhibition-study-pixel-summary-reading').textContent,reading:document.getElementById('exhibition-study-pixel-reading').textContent,abHidden:document.getElementById('exhibition-study-pixel-ab').hidden,ab:document.getElementById('exhibition-study-pixel-ab').textContent};card.dataset.canonicalRgbaHash=old;return result");
+  if (!forgedSummary.summary.startsWith('A/B summary refused:') ||
+      forgedSummary.summary.includes('differing pixels ' + expectedSummaryCount) ||
+      !forgedSummary.reading.startsWith('Cannot inspect verified A/B images:') ||
+      !forgedSummary.abHidden || forgedSummary.ab) {
+    throw new Error('A/B summary retained stale pixel or statistics with a forged proof: ' +
+      JSON.stringify(forgedSummary));
   }
   // The new traversal must refuse a forged peer even if previously cached.
   const forgedDifference = await execute("const card=document.querySelector('[data-exhibition-id=operator-atlas]');const previous=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-pixel-difference').click();const evidence={reading:document.getElementById('exhibition-study-pixel-reading').textContent,abHidden:document.getElementById('exhibition-study-pixel-ab').hidden,ab:document.getElementById('exhibition-study-pixel-ab').textContent};card.dataset.canonicalRgbaHash=previous;return evidence");
