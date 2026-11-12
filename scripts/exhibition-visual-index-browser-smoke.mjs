@@ -399,19 +399,34 @@ try {
   }
   // Exercise a physical WebDriver pointer click on the tiny real SVG marker,
   // rather than merely checking markup or dispatching a synthetic click.
-  const pointerDestination = await execute(`const link=[...document.querySelectorAll('#comparison-index .pair-pixels svg.pair-locator a')].at(-1);
-    link.scrollIntoView({block:'center',behavior:'instant'});
-    return link.getAttribute('href');`);
-  const elementReply = await request('POST','/session/'+sessionId+'/element',{
-    using:'css selector',value:'#comparison-index .pair-pixels svg.pair-locator a:last-child'});
-  const elementId = elementReply?.value?.['element-6066-11e4-a52e-4f735466cecf'];
-  if (!elementId) throw new Error('WebDriver did not locate physical SVG pixel marker.');
-  await request('POST','/session/'+sessionId+'/element/'+elementId+'/click', {});
+  // Scroll the full locator into view, not a 1x1 SVG subelement:
+  // headless drivers disagree on how to scroll tiny SVG anchors directly.
+  // Then send a genuine viewport-coordinate mouse press to its first mark.
+  const pointerDestination = await execute(`const svg=document.querySelector('#comparison-index .pair-pixels svg.pair-locator');
+    svg.scrollIntoView({block:'center',inline:'center',behavior:'instant'});
+    const link=svg.querySelector('a'),box=link.querySelector('rect').getBoundingClientRect();
+    return {href:link.getAttribute('href'),
+      x:Math.round(box.left+box.width/2),y:Math.round(box.top+box.height/2),
+      width:innerWidth,height:innerHeight,markerWidth:box.width,markerHeight:box.height};`);
+  if (pointerDestination.x<1 || pointerDestination.y<1 ||
+      pointerDestination.x>=pointerDestination.width ||
+      pointerDestination.y>=pointerDestination.height ||
+      pointerDestination.markerWidth<2 || pointerDestination.markerHeight<2) {
+    throw new Error('Physical SVG mark is not visible for browser pointer activation: '+
+      JSON.stringify(pointerDestination));
+  }
+  await request('POST','/session/'+sessionId+'/actions',{actions:[
+    {type:'pointer',id:'pixel-mouse',parameters:{pointerType:'mouse'},actions:[
+      {type:'pointerMove',duration:0,x:pointerDestination.x,y:pointerDestination.y},
+      {type:'pointerDown',button:0},{type:'pointerUp',button:0}
+    ]}
+  ]});
+  await request('DELETE','/session/'+sessionId+'/actions');
   const pointerResult = await execute(`const row=document.getElementById(location.hash.slice(1));
     return {hash:location.hash,valid:!!row&&row.matches(':target'),
       coordinates:row?.dataset.pixelX+','+row?.dataset.pixelY,
       file:location.protocol,scriptCount:document.scripts.length};`);
-  if (pointerResult.hash!==pointerDestination || !pointerResult.valid ||
+  if (pointerResult.hash!==pointerDestination.href || !pointerResult.valid ||
       pointerResult.file!=='file:' || pointerResult.scriptCount!==0) {
     throw new Error('Real marker pointer activation did not navigate to original pixel: '+
       JSON.stringify(pointerResult));
