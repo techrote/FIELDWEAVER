@@ -172,9 +172,12 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
   // An independent raw-RGBA8 oracle must match every row of each complete
   // CSV, not merely the total, and its native disclosure count.
   const ledgers = [...board.html.matchAll(/<a download="([^"]+\.fwpixels\.csv)" href="data:text\/csv;base64,([^"]+)">Save exact pixel ledger \(CSV\)<\/a>/g)];
-  const ledgerDisclosures = [...board.html.matchAll(/<details class="pair-pixels" data-pair-a="([^"]+)" data-pair-b="([^"]+)" data-count="(\d+)">/g)];
+  const ledgerDisclosures = [...board.html.matchAll(/<details class="pair-pixels" data-pair-a="([^"]+)" data-pair-b="([^"]+)" data-count="(\\d+)">/g)];
+  const locatorMaps = [...board.html.matchAll(/<svg class="pair-locator" data-pair-a="([^"]+)" data-pair-b="([^"]+)" data-diff-count="(\\d+)" viewBox="0 0 (\\d+) (\\d+)"[^>]*>([\\s\\S]*?)<\\/svg>/g)];
   assert.equal(ledgers.length, 6, 'every accepted A/B pair exports exact changed pixels');
   assert.equal(ledgerDisclosures.length, 6, 'native keyboard inspection per accepted pair');
+  assert.equal(locatorMaps.length, 6,
+    'each accepted pair exposes a script-free diagnostic locator, not substitute artwork');
   const ledgerHeader = 'x,y,a_r,a_g,a_b,a_a,b_r,b_g,b_b,b_a,delta_r,delta_g,delta_b,delta_a';
   for (let i = 0; i < pairRows.length; i += 1) {
     const [, aId, bId, changed] = pairRows[i];
@@ -202,6 +205,20 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
     assert.equal(actual, expected.join('\n') + '\n',
       'CSV must enumerate all source-exact signed channel differences in row-major order');
     assert.equal(expected.length - 1, Number(changed));
+    const locator = locatorMaps[i];
+    assert.deepEqual(locator.slice(1, 6),
+      [aId, bId, changed, String(Math.min(a.widthPx, b.widthPx)),
+        String(Math.min(a.heightPx, b.heightPx))],
+      'locator dimensions, identities and counts bind the same accepted source pixels');
+    const marks = [...locator[6].matchAll(/<rect x="(\\d+)" y="(\\d+)" width="1" height="1" fill="#e4b665"\\/>/g)]
+      .map(([, x, y]) => [Number(x), Number(y)]);
+    const expectedLocations = expected.slice(1).map((row) =>
+      row.split(',').slice(0, 2).map(Number));
+    assert.deepEqual(marks, expectedLocations,
+      'every diagnostic map mark must match one exact independently decoded RGBA8 change');
+    assert.match(locator[0], /role="img"[^>]+aria-label="Diagnostic image-local/);
+    assert.doesNotMatch(locator[0], /<script|<image|<foreignObject|onload=/i,
+      'the locator cannot introduce remote assets, script or alternative artwork');
   }
   // Six portable comparison receipts must bind exact verified source identities,
   // bounds and counts; independently scan raw pixels instead of reusing the
