@@ -11,6 +11,22 @@ import { renderVisualIndexProof, verifyVisualIndexProof } from '../src/ui/exhibi
 import { buildOfflineExhibitionBoard } from '../src/ui/exhibition-offline-board.js';
 import { createStoredZip } from '../src/ui/exhibition-work-bundle.js';
 
+// Independent table-driven CRC oracle (the writer uses per-bit long division).
+// The published ZIP CRC-32 check vector "123456789" must equal 0xcbf43926.
+function referenceZipCrc32(bytes) {
+  const table = new Uint32Array(256);
+  for (let i = 0; i < 256; i += 1) {
+    let value = i;
+    for (let bit = 0; bit < 8; bit += 1) {
+      value = value & 1 ? (value >>> 1) ^ 0xedb88320 : value >>> 1;
+    }
+    table[i] = value >>> 0;
+  }
+  let value = 0xffffffff;
+  for (const byte of bytes) value = table[(value ^ byte) & 255] ^ (value >>> 8);
+  return (value ^ 0xffffffff) >>> 0;
+}
+
 // Independent reader of ZIP central/local directory entries. Do not use the
 // writer as the test oracle for a portable package's actual payload.
 function readStoredZip(bytes) {
@@ -30,6 +46,8 @@ function readStoredZip(bytes) {
   for (let n = 0; n < count; n += 1) {
     assert.equal(u32(pos), 0x02014b50, 'central directory entry signature');
     assert.equal(u16(pos + 10), 0, 'lossless STORE method');
+    assert.equal(u16(pos + 12), 0, 'deterministic central DOS time');
+    assert.equal(u16(pos + 14), 0x0021, 'earliest valid ZIP DOS date (1980-01-01)');
     const size = u32(pos + 24);
     assert.equal(u32(pos + 20), size, 'no compressed payload transformation');
     const nameSize = u16(pos + 28);
@@ -37,6 +55,8 @@ function readStoredZip(bytes) {
     const local = u32(pos + 42);
     assert.equal(u32(local), 0x04034b50, 'local header signature');
     assert.equal(u16(local + 8), 0);
+    assert.equal(u16(local + 10), 0, 'deterministic local DOS time');
+    assert.equal(u16(local + 12), 0x0021, 'valid local DOS date matches central');
     const localNameSize = u16(local + 26);
     assert.equal(localNameSize, nameSize);
     assert.equal(Buffer.from(bytes.subarray(local + 30, local + 30 + nameSize)).toString('ascii'), name);
@@ -44,6 +64,8 @@ function readStoredZip(bytes) {
     const data = bytes.slice(dataStart, dataStart + size);
     assert.equal(data.length, size);
     assert.equal(u32(local + 14), u32(pos + 16), 'local and central CRC must agree');
+    assert.equal(u32(pos + 16), referenceZipCrc32(data),
+      'independent ZIP CRC32 must protect the actual extracted source bytes');
     assert(!files.has(name), 'ZIP names must be unique');
     files.set(name, data);
     pos += 46 + nameSize + u16(pos + 30) + u16(pos + 32);
@@ -189,7 +211,11 @@ test('offline board rejects incomplete, duplicate, corrupted and forged canonica
 });
 
 test('ZIP transport refuses path traversal, duplicates and non-byte payloads', () => {
+  assert.equal(referenceZipCrc32(Buffer.from('123456789')), 0xcbf43926,
+    'published CRC32 check vector guards the independent test oracle');
   const bytes = new Uint8Array([0, 1, 127, 128, 255]);
+  assert.deepEqual(createStoredZip([{ name: 'raw.bin', bytes }]),
+    createStoredZip([{ name: 'raw.bin', bytes }]), 'work bundles are deterministic');
   assert.deepEqual(readStoredZip(createStoredZip([{ name: 'raw.bin', bytes }])).get('raw.bin'), bytes);
   assert.throws(() => createStoredZip([]), /bounded/);
   assert.throws(() => createStoredZip([{ name: '../escape', bytes }]), /safe filenames/);
