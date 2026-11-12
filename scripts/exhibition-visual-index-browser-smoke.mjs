@@ -351,6 +351,75 @@ try {
     throw new Error('Real offline changed-pixel table failed keyboard inspection: ' +
       JSON.stringify(ledgerOpen));
   }
+  // The locator is now an actual navigation surface: every real decoded
+  // change has one local fragment linking back to the original ledger row.
+  // A bounded five-item strongest-change list provides a keyboard route
+  // without creating hundreds of one-pixel Tab stops inside the SVG.
+  const navigationSource = await execute(`const d=document.querySelector('#comparison-index .pair-pixels');
+    const rows=[...d.querySelectorAll('tbody tr[data-pixel-x]')];
+    const mapLinks=[...d.querySelectorAll('svg.pair-locator a')];
+    const hotspots=[...d.querySelectorAll('.pair-hotspots a')];
+    const rowIds=new Set(rows.map(row=>row.id));
+    const validMap=mapLinks.length===rows.length && mapLinks.every((link,i)=>{
+      const mark=link.querySelector('rect');
+      return link.getAttribute('href')==='#'+rows[i].id &&
+        link.getAttribute('tabindex')==='-1' &&
+        mark?.getAttribute('x')===rows[i].dataset.pixelX &&
+        mark?.getAttribute('y')===rows[i].dataset.pixelY;
+    });
+    return {origin:location.protocol,scripts:document.scripts.length,
+      rows:rows.length,markerLinks:mapLinks.length,hotspots:hotspots.length,
+      validMap,validHotspots:hotspots.every(link=>rowIds.has(link.hash.slice(1))),
+      navigationRole:d.querySelector('.pair-hotspots').getAttribute('role')};`);
+  if (navigationSource.origin!=='file:' || navigationSource.scripts!==0 ||
+      !navigationSource.validMap || !navigationSource.validHotspots ||
+      navigationSource.markerLinks!==comparisons[0].different ||
+      navigationSource.hotspots!==5 || navigationSource.navigationRole!=='navigation') {
+    throw new Error('Source-exact offline jump links did not bind original ledger rows: '+
+      JSON.stringify(navigationSource));
+  }
+  const jumpFocus = await execute(`const link=document.querySelector('#comparison-index .pair-pixels .pair-hotspots a');
+    link.scrollIntoView({block:'center',behavior:'instant'});link.focus();
+    return {focused:document.activeElement===link,hash:link.hash,protocol:location.protocol};`);
+  if (!jumpFocus.focused || !jumpFocus.hash.startsWith('#ab-') || jumpFocus.protocol!=='file:') {
+    throw new Error('Strongest exact change not reachable by keyboard: '+JSON.stringify(jumpFocus));
+  }
+  await pressEnter();
+  const jumpResult = await execute(`const target=document.getElementById(location.hash.slice(1));
+    const scroll=target?.closest('.pair-pixel-scroll');
+    const rect=target?.getBoundingClientRect(), viewport=scroll?.getBoundingClientRect();
+    return {hash:location.hash,row:!!target,selected:target?.matches(':target'),
+      changedColor:target?getComputedStyle(target).backgroundColor:'',
+      inScrollableLedger:!!scroll,withinViewport:!!rect&&!!viewport &&
+        rect.top>=viewport.top-3 && rect.top<viewport.bottom+3,origin:location.protocol};`);
+  if (jumpResult.hash!==jumpFocus.hash || !jumpResult.row ||
+      !jumpResult.selected || !jumpResult.inScrollableLedger ||
+      !jumpResult.withinViewport || jumpResult.origin!=='file:') {
+    throw new Error('Real keyboard jump did not reveal source RGBA8 row: '+JSON.stringify(jumpResult));
+  }
+  // Exercise a physical WebDriver pointer click on the tiny real SVG marker,
+  // rather than merely checking markup or dispatching a synthetic click.
+  const pointerDestination = await execute(`const link=[...document.querySelectorAll('#comparison-index .pair-pixels svg.pair-locator a')].at(-1);
+    link.scrollIntoView({block:'center',behavior:'instant'});
+    return link.getAttribute('href');`);
+  const elementReply = await request('POST','/session/'+sessionId+'/element',{
+    using:'css selector',value:'#comparison-index .pair-pixels svg.pair-locator a:last-child'});
+  const elementId = elementReply?.value?.['element-6066-11e4-a52e-4f735466cecf'];
+  if (!elementId) throw new Error('WebDriver did not locate physical SVG pixel marker.');
+  await request('POST','/session/'+sessionId+'/element/'+elementId+'/click');
+  const pointerResult = await execute(`const row=document.getElementById(location.hash.slice(1));
+    return {hash:location.hash,valid:!!row&&row.matches(':target'),
+      coordinates:row?.dataset.pixelX+','+row?.dataset.pixelY,
+      file:location.protocol,scriptCount:document.scripts.length};`);
+  if (pointerResult.hash!==pointerDestination || !pointerResult.valid ||
+      pointerResult.file!=='file:' || pointerResult.scriptCount!==0) {
+    throw new Error('Real marker pointer activation did not navigate to original pixel: '+
+      JSON.stringify(pointerResult));
+  }
+  const navigationShot=await request('GET','/session/'+sessionId+'/screenshot');
+  if (!navigationShot?.value) throw new Error('Exact pixel navigation screenshot absent.');
+  await writeFile('exhibition-offline-pixel-navigation-'+browser+'.png',
+    Buffer.from(navigationShot.value,'base64'));
   // Validate swatch custody against accessible numeric bytes in actual offline
   // Firefox/Chrome, not only in a generated HTML string.
   const swatchBrowser = await execute(`const disclosures=[...document.querySelectorAll('#comparison-index .pair-pixels')];
