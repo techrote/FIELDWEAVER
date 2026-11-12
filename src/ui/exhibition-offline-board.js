@@ -99,6 +99,8 @@ export function buildOfflineExhibitionBoard(tiles) {
     byId.set(tile.id, tile);
   }
   const collectionFiles = [];
+  // Reuse the verified source triplets for each exact A/B handoff.
+  const sourceFilesById = new Map();
   const cards = entries.map((entry, index) => {
     const tile = byId.get(entry.id);
     const receipt = verifyOfflineExhibitionTile(entry, tile);
@@ -116,6 +118,7 @@ export function buildOfflineExhibitionBoard(tiles) {
       { name: receiptFile, bytes: new TextEncoder().encode(tile.provenanceJson) }
     ];
     collectionFiles.push(...exactFiles);
+    sourceFilesById.set(entry.id, exactFiles);
     const bundleBytes = createStoredZip(exactFiles);
     const canonicalPng = base64Bytes(tile.png);
     const workBundle = base64Bytes(bundleBytes);
@@ -222,6 +225,17 @@ export function buildOfflineExhibitionBoard(tiles) {
       const ledgerCsv = [ledgerHeader, ...changes.map(change => [
         change.x, change.y, ...change.left, ...change.right, ...change.delta
       ].join(','))].join('\n') + '\n';
+      // One portable A/B review handoff: both unchanged canonical work
+      // triplets, exact comparison receipt and complete changed-pixel ledger.
+      const pairBundleFile = 'fieldweaver-ab-' + first.id + '-vs-' + second.id +
+        '-' + byId.get(first.id).rawRgbaHash + '-' +
+        byId.get(second.id).rawRgbaHash + '.fwabpack.zip';
+      const pairBundle = base64Bytes(createStoredZip([
+        ...sourceFilesById.get(first.id), ...sourceFilesById.get(second.id),
+        { name: comparisonFile,
+          bytes: new TextEncoder().encode(JSON.stringify(comparisonReceipt, null, 2) + '\n') },
+        { name: ledgerFile, bytes: new TextEncoder().encode(ledgerCsv) }
+      ]));
       const pixelDisclosure = '<details class="pair-pixels" data-pair-a="' +
         escapeHtml(first.id) + '" data-pair-b="' + escapeHtml(second.id) +
         '" data-count="' + changes.length + '">' +
@@ -278,7 +292,10 @@ export function buildOfflineExhibitionBoard(tiles) {
         '">Save A/B receipt (JSON)</a> ' +
         '<a download="' + escapeHtml(ledgerFile) +
         '" href="data:text/csv;base64,' + base64Utf8(ledgerCsv) +
-        '">Save exact pixel ledger (CSV)</a></td></tr>');
+        '">Save exact pixel ledger (CSV)</a> ' +
+        '<a download="' + escapeHtml(pairBundleFile) +
+        '" href="data:application/zip;base64,' + pairBundle +
+        '">Save complete A/B evidence (ZIP)</a></td></tr>');
     }
   }
   const comparisonSection = '<section id="comparison-index" class="comparison-index" ' +
@@ -312,7 +329,7 @@ export function buildOfflineExhibitionBoard(tiles) {
     '" href="data:application/zip;base64,' + collectionZip +
     '">Save all accepted works (ZIP)</a> <small>12 original files / 4 verified works / offline</small></p>' +
     '<main class="gallery">' + cards.join('') + '</main>' + comparisonSection +
-    '<footer>Each optional A/B disclosure shows two unchanged CPU PNGs and a separately downloadable exact changed-pixel CSV ledger without registering different crops; each receipt records verified accepted identities and literal image-local RGBA8 difference statistics. No world-space alignment is inferred. Each image is the original 96×64 canonical raster, enlarged for inspection. PNG bytes are not the pixel identity; raw decoded RGBA8 hashes are. Save each work’s unchanged canonical PNG, importable recipe and full provenance separately, as one ZIP per work, or as a twelve-file accepted collection ZIP directly from this file; target tick and crop are in the provenance rather than the recipe. Browser downloads still require local file-manager confirmation. This board is a review record, not an artistic approval.</footer>' +
+    '<footer>Each optional A/B disclosure shows two unchanged CPU PNGs and a separately downloadable exact changed-pixel CSV ledger without registering different crops; the complete A/B ZIP carries both original works, the pair receipt and that exact CSV together; each receipt records verified accepted identities and literal image-local RGBA8 difference statistics. No world-space alignment is inferred. Each image is the original 96×64 canonical raster, enlarged for inspection. PNG bytes are not the pixel identity; raw decoded RGBA8 hashes are. Save each work’s unchanged canonical PNG, importable recipe and full provenance separately, as one ZIP per work, or as a twelve-file accepted collection ZIP directly from this file; target tick and crop are in the provenance rather than the recipe. Browser downloads still require local file-manager confirmation. This board is a review record, not an artistic approval.</footer>' +
     '</div></body></html>\n';
   return Object.freeze({ version: OFFLINE_BOARD_VERSION, count: entries.length, html });
 }

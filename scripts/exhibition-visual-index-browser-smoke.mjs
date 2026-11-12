@@ -45,7 +45,7 @@ try {
         prefs: { 'webgl.disabled': false, 'webgl.force-enabled': true,
           'gfx.webrender.software': true, 'browser.download.dir': downloadDir,
           'browser.download.folderList': 2, 'browser.download.useDownloadDir': true,
-          'browser.helperApps.neverAsk.saveToDisk': 'text/csv,application/octet-stream',
+          'browser.helperApps.neverAsk.saveToDisk': 'text/csv,application/zip,application/octet-stream',
           'browser.download.alwaysOpenPanel': false }
       } } } };
   const created = await request('POST', '/session', desired);
@@ -210,10 +210,11 @@ try {
       new Set(comparisons.map(row => row.a + '/' + row.b)).size !== 6 ||
       comparisons.some(row => !Number.isInteger(row.different) || row.different < 0 ||
         row.total !== 6144 || row.different > row.total ||
-        row.links.length !== 4 || row.links[0] !== '#work-' + row.a ||
+        row.links.length !== 5 || row.links[0] !== '#work-' + row.a ||
         row.links[1] !== '#work-' + row.b ||
         !row.links[2].startsWith('data:application/json;base64,') ||
-        !row.links[3].startsWith('data:text/csv;base64,')) ||
+        !row.links[3].startsWith('data:text/csv;base64,') ||
+        !row.links[4].startsWith('data:application/zip;base64,')) ||
       !comparisons.some(row => row.a === 'operator-atlas' &&
         row.b === 'timeline-pulse' && row.different === 118)) {
     throw new Error('Offline pairwise comparison did not match accepted CPU identities: ' +
@@ -233,6 +234,39 @@ try {
       JSON.stringify(comparisonReceipts));
   }
 
+  // Genuine file:// Enter-key ZIP handoff, not just a decoded data URL.
+  const pairBundleLinks = await execute("return [...document.querySelectorAll('#comparison-index a[download$=\".fwabpack.zip\"]')].map(a=>({name:a.download,base64:a.href.split(',')[1],mime:a.href.slice(0,a.href.indexOf(','))}))");
+  if (pairBundleLinks.length !== 6 || pairBundleLinks.some((item,i)=>
+      item.mime !== 'data:application/zip;base64' ||
+      !item.name.includes(comparisons[i].a + '-vs-' + comparisons[i].b) ||
+      !item.base64)) {
+    throw new Error('Incomplete accepted A/B ZIP handoff in actual offline document.');
+  }
+  const packFocus = await execute("const a=document.querySelector('#comparison-index a[download$=\".fwabpack.zip\"]');a.scrollIntoView({block:'center',behavior:'instant'});a.focus();return document.activeElement===a && location.protocol==='file:'");
+  if (!packFocus) throw new Error('Offline A/B archive export not keyboard-focusable.');
+  const packShot = await request('GET','/session/'+sessionId+'/screenshot');
+  if (!packShot?.value) throw new Error('Focused A/B archive screenshot missing.');
+  await writeFile('exhibition-offline-ab-bundle-'+browser+'.png',Buffer.from(packShot.value,'base64'));
+  await request('POST','/session/'+sessionId+'/actions',{actions:[{type:'key',id:'keyboard',actions:[
+    {type:'keyDown',value:'\uE007'},{type:'keyUp',value:'\uE007'}]}]});
+  await request('DELETE','/session/'+sessionId+'/actions');
+  const expectedPairBytes = Buffer.from(pairBundleLinks[0].base64,'base64');
+  let savedPairBytes = null;
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    try {
+      savedPairBytes = await readFile(join(downloadDir,pairBundleLinks[0].name));
+      if (savedPairBytes.equals(expectedPairBytes)) break;
+    } catch {}
+    await sleep(100);
+  }
+  if (!savedPairBytes?.equals(expectedPairBytes)) {
+    throw new Error('Real offline keyboard ZIP download failed source-byte identity.');
+  }
+  const zipView = new DataView(savedPairBytes.buffer,savedPairBytes.byteOffset,savedPairBytes.byteLength);
+  if (zipView.getUint32(savedPairBytes.length-22,true)!==0x06054b50 ||
+      zipView.getUint16(savedPairBytes.length-12,true)!==8) {
+    throw new Error('Saved offline A/B ZIP lacks eight exact review members.');
+  }
   // Keyboard-open the optional exact A/B images in a real offline file:
   // the two visible backgrounds must reuse their own canonical work PNGs.
   const previewSummaries = await execute("return [...document.querySelectorAll('#comparison-index .pair-preview')].map(d=>({a:d.dataset.pairA,b:d.dataset.pairB,summary:d.querySelector('summary')?.textContent,rasters:d.querySelectorAll('.pair-raster').length}))");
@@ -362,6 +396,7 @@ try {
   if (!boardScreenshot?.value) throw new Error('Offline board screenshot absent.');
   await writeFile('exhibition-offline-board-' + browser + '.png', Buffer.from(boardScreenshot.value, 'base64'));
   await writeFile('exhibition-visual-index-' + browser + '.json', JSON.stringify({ browser, initial, result, board, selected, offline, comparisons,
+      acceptedPairBundle: { name: pairBundleLinks[0].name, bytes: savedPairBytes.length, exactMatch: true },
       comparisonReceipts: comparisonReceipts.map(item => ({
         name: item.name, a: item.data.a.id, b: item.data.b.id,
         changed: item.data.overlap.differentPixels

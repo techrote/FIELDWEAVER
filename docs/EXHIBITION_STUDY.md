@@ -102,3 +102,10 @@ Both the numeric table and downloadable CSV are computed only from independently
 In **A/B comparison index**, use **Save A/B receipt (JSON)** for any of the six accepted pairs. Each offline `.fwcompare.json` binds both already-verified canonical CPU PNG identities to their immutable recipe hash, root seed, tick and exact authored crop, plus the decoded image-local overlap, changed RGBA8 pixel count, inclusive bounds and maximum absolute channel differences. The receipt explicitly distinguishes identical authored crops from *image-local only / not world-aligned* comparisons. It contains no perceptual inference, recoloured preview, new canonical identity, or unadmitted artwork. Its local `data:` download works under the existing script-free `file://` CSP.
 
 Node independently recomputes raw RGBA8 bounds and deltas for all six receipts. Both Chrome and Firefox decode the links from the actual offline document and keyboard-download a receipt to disk, then compare the saved payload to the accepted source proof identities. Physical owner filesystem acceptance remains separate.
+
+
+### Complete two-work A/B evidence download (offline board)
+
+In any row of the accepted-only A/B comparison index, choose **Save complete A/B evidence (ZIP)**. This is one deterministic uncompressed eight-file archive: two original verified CPU PNGs, both normalized importable recipes, both complete FW-012 provenance receipts, the exact pair comparison JSON and the full changed-pixel CSV. Member bytes match the individual source downloads. Crops are not silently world-aligned. The page remains script-free, strict-CSP, offline, accepted-only; there is no new raster, gallery, renderer or admission decision.
+
+Node tests independently parse and CRC-check all six archives against original sources. Chrome/Firefox WebDriver tests keyboard activation and an actual saved ZIP from the offline file, with screenshot evidence. Physical Windows owner acceptance remains a separate gate.
