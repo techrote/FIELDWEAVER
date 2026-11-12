@@ -262,6 +262,53 @@ try {
     throw new Error('Non-background A/B pixel delta was not source exact: ' +
       JSON.stringify({visibleDifference,visibleDelta}));
   }
+  // Actual browser action: find the next differing source pixel, not merely
+  // check the known nonzero delta at the initial position.
+  const expectedNextDifference = (() => {
+    const count = 96 * 64, start = 35 * 96 + 20;
+    for (let step = 1; step <= count; step += 1) {
+      const pos = (start + step) % count, offset = pos * 4;
+      if ([0, 1, 2, 3].some(ch => comparisonA[offset + ch] !== comparisonB[offset + ch])) {
+        return { x: pos % 96, y: Math.floor(pos / 96),
+          delta: Array.from({length: 4}, (_, ch) =>
+            comparisonB[offset + ch] - comparisonA[offset + ch]).join(', ') };
+      }
+    }
+    return null;
+  })();
+  if (!expectedNextDifference || expectedNextDifference.delta === '0, 0, 0, 0') {
+    throw new Error('Accepted canonical A/B oracle has no next differing pixel.');
+  }
+  const differenceEnabled = await execute("return !document.getElementById('exhibition-study-pixel-difference').disabled");
+  if (!differenceEnabled) throw new Error('A/B difference navigation disabled despite pinned A and current B.');
+  await execute("document.getElementById('exhibition-study-pixel-difference').click()");
+  let nextDifference = null;
+  for (let i = 0; i < 35; i += 1) {
+    nextDifference = await execute("return {text:document.getElementById('exhibition-study-pixel-reading').textContent,ab:document.getElementById('exhibition-study-pixel-ab').textContent,x:Number(document.getElementById('exhibition-study-pixel-x').value),y:Number(document.getElementById('exhibition-study-pixel-y').value)}");
+    if (nextDifference.x === expectedNextDifference.x &&
+        nextDifference.y === expectedNextDifference.y &&
+        nextDifference.ab.includes('Δ(B−A) RGBA8 ' + expectedNextDifference.delta)) break;
+    await sleep(100);
+  }
+  if (nextDifference.x !== expectedNextDifference.x || nextDifference.y !== expectedNextDifference.y ||
+      !nextDifference.text.includes('Timeline Pulse') ||
+      !nextDifference.ab.includes('Δ(B−A) RGBA8 ' + expectedNextDifference.delta) ||
+      !nextDifference.ab.match(/same authored crop|IMAGE-LOCAL ONLY/)) {
+    throw new Error('Next A/B difference failed decoded CPU oracle: ' +
+      JSON.stringify({nextDifference,expectedNextDifference}));
+  }
+  const differenceShot = await request('GET', '/session/' + sessionId + '/screenshot');
+  if (!differenceShot?.value) throw new Error('Exact A/B difference screenshot unavailable.');
+  await writeFile('exhibition-pixel-difference-' + browser + '.png',
+    Buffer.from(differenceShot.value, 'base64'));
+  // The new traversal must refuse a forged peer even if previously cached.
+  const forgedDifference = await execute("const card=document.querySelector('[data-exhibition-id=operator-atlas]');const previous=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-pixel-difference').click();const evidence={reading:document.getElementById('exhibition-study-pixel-reading').textContent,abHidden:document.getElementById('exhibition-study-pixel-ab').hidden,ab:document.getElementById('exhibition-study-pixel-ab').textContent};card.dataset.canonicalRgbaHash=previous;return evidence");
+  if (!forgedDifference.reading.includes('Cannot inspect verified A/B images:') ||
+      !forgedDifference.reading.includes('Current verified CPU proof is unavailable or mismatched') ||
+      !forgedDifference.abHidden || forgedDifference.ab) {
+    throw new Error('Next-difference traversal retained a forged A/B proof: ' +
+      JSON.stringify(forgedDifference));
+  }
   // Restore the previous source coordinate for cache-forgery and recovery gates.
   await execute("const x=document.getElementById('exhibition-study-pixel-x');const y=document.getElementById('exhibition-study-pixel-y');x.value='3';y.value='7';x.dispatchEvent(new Event('input',{bubbles:true}))");
   // Cached pixel reads must revalidate current registry custody, not trust
