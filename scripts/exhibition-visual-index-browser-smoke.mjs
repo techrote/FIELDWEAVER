@@ -197,12 +197,26 @@ try {
       new Set(comparisons.map(row => row.a + '/' + row.b)).size !== 6 ||
       comparisons.some(row => !Number.isInteger(row.different) || row.different < 0 ||
         row.total !== 6144 || row.different > row.total ||
-        row.links.length !== 2 || row.links[0] !== '#work-' + row.a ||
-        row.links[1] !== '#work-' + row.b) ||
+        row.links.length !== 3 || row.links[0] !== '#work-' + row.a ||
+        row.links[1] !== '#work-' + row.b ||
+        !row.links[2].startsWith('data:application/json;base64,')) ||
       !comparisons.some(row => row.a === 'operator-atlas' &&
         row.b === 'timeline-pulse' && row.different === 118)) {
     throw new Error('Offline pairwise comparison did not match accepted CPU identities: ' +
       JSON.stringify(comparisons));
+  }
+  // Decode the real saved file:// page's receipt links inside Firefox/Chrome.
+  // The page itself remains script-free; the WebDriver probe is external.
+  const comparisonReceipts = await execute("return [...document.querySelectorAll('#comparison-index a[download]')].map(a=>({name:a.download,data:JSON.parse(atob(a.href.split(',')[1]))}))");
+  if (comparisonReceipts.length !== 6 ||
+      comparisonReceipts.some(item => item.data.version !== 'fw-exhibition-ab-comparison-v1' ||
+        !item.name.endsWith('.fwcompare.json') ||
+        item.data.a.rawRgbaHash.length !== 16 || item.data.b.rawRgbaHash.length !== 16 ||
+        item.data.overlap.pixels !== 6144 ||
+        !comparisons.some(row => row.a === item.data.a.id && row.b === item.data.b.id &&
+          row.different === item.data.overlap.differentPixels))) {
+    throw new Error('Offline comparison JSON receipts failed real-browser decoding: ' +
+      JSON.stringify(comparisonReceipts));
   }
   await request('POST', '/session/' + sessionId + '/window/rect', { width: 390, height: 790 });
   const comparisonNarrow = await execute("const section=document.getElementById('comparison-index');section.scrollIntoView({block:'start',behavior:'instant'});const region=document.getElementById('comparison-scroll');region.focus({preventScroll:true});return {protocol:location.protocol,viewport:document.documentElement.clientWidth,focused:document.activeElement===region,tableRows:region.querySelectorAll('tbody tr').length,horizontalOverflow:region.scrollWidth>region.clientWidth,top:Math.round(region.getBoundingClientRect().top),viewportHeight:innerHeight}");
@@ -222,7 +236,11 @@ try {
   const boardScreenshot = await request('GET', '/session/' + sessionId + '/screenshot');
   if (!boardScreenshot?.value) throw new Error('Offline board screenshot absent.');
   await writeFile('exhibition-offline-board-' + browser + '.png', Buffer.from(boardScreenshot.value, 'base64'));
-  await writeFile('exhibition-visual-index-' + browser + '.json', JSON.stringify({ browser, initial, result, board, selected, offline, comparisons, comparisonNarrow }, null, 2) + '\n');
+  await writeFile('exhibition-visual-index-' + browser + '.json', JSON.stringify({ browser, initial, result, board, selected, offline, comparisons,
+      comparisonReceipts: comparisonReceipts.map(item => ({
+        name: item.name, a: item.data.a.id, b: item.data.b.id,
+        changed: item.data.overlap.differentPixels
+      })), comparisonNarrow }, null, 2) + '\n');
   console.log(JSON.stringify({ browser, status:'four actual decoded canonical CPU images', hashes:result.tiles.map((tile) => tile.hash), selected:selected.id }, null, 2));
 } finally {
   if (sessionId) { try { await request('DELETE', '/session/' + sessionId); } catch { /* cleanup */ } }

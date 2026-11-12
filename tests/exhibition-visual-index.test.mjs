@@ -149,6 +149,64 @@ test('offline board embeds four real CPU PNGs and complete provenance, with no s
     assert.equal(Number(countText), expected, 'decoded CPU RGBA8 mismatch for ' + key);
     assert.equal(Number(totalText), width * height);
   }
+  // Six portable comparison receipts must bind exact verified source identities,
+  // bounds and counts; independently scan raw pixels instead of reusing the
+  // production overlap helper as the sole oracle.
+  const comparisonDownloads = [...board.html.matchAll(/<a download="([^"]+\.fwcompare\.json)" href="data:application\/json;base64,([^"]+)">Save A\/B receipt \(JSON\)<\/a>/g)];
+  assert.equal(comparisonDownloads.length, 6);
+  for (let i = 0; i < pairRows.length; i += 1) {
+    const [, aId, bId, changed, overlap] = pairRows[i];
+    const [ , filename, encoded ] = comparisonDownloads[i];
+    const receipt = JSON.parse(Buffer.from(encoded, 'base64').toString('utf8'));
+    const aTile = tiles.find(tile => tile.id === aId);
+    const bTile = tiles.find(tile => tile.id === bId);
+    const aEntry = exhibitionEntries().find(entry => entry.id === aId);
+    const bEntry = exhibitionEntries().find(entry => entry.id === bId);
+    assert.equal(receipt.version, 'fw-exhibition-ab-comparison-v1');
+    assert.equal(receipt.coordinateSpace, 'image-local-top-left');
+    assert.equal(receipt.a.id, aId);
+    assert.equal(receipt.b.id, bId);
+    assert.equal(receipt.a.recipeHash, aTile.recipeHash);
+    assert.equal(receipt.b.recipeHash, bTile.recipeHash);
+    assert.equal(receipt.a.rawRgbaHash, aTile.rawRgbaHash);
+    assert.equal(receipt.b.rawRgbaHash, bTile.rawRgbaHash);
+    assert.equal(receipt.a.seed, aEntry.seed);
+    assert.equal(receipt.b.targetTick, bEntry.targetTick);
+    assert.deepEqual(receipt.a.crop, aEntry.exportCrop);
+    assert.deepEqual(receipt.b.crop, bEntry.exportCrop);
+    assert.equal(receipt.overlap.differentPixels, Number(changed));
+    assert.equal(receipt.overlap.pixels, Number(overlap));
+    assert.deepEqual([receipt.overlap.widthPx, receipt.overlap.heightPx], [96, 64]);
+    assert.equal(receipt.alignment,
+      JSON.stringify(aEntry.exportCrop) === JSON.stringify(bEntry.exportCrop)
+        ? 'same-authored-crop' : 'image-local-only-not-world-aligned');
+    assert.equal(filename, 'fieldweaver-ab-' + aId + '-vs-' + bId + '-' +
+      aTile.rawRgbaHash + '-' + bTile.rawRgbaHash + '.fwcompare.json');
+    const a = decodedById.get(aId), b = decodedById.get(bId);
+    const maximum = [0, 0, 0, 0];
+    let bounds = null;
+    for (let y = 0; y < Math.min(a.heightPx, b.heightPx); y++) {
+      for (let x = 0; x < Math.min(a.widthPx, b.widthPx); x++) {
+        const ai = (y * a.widthPx + x) * 4;
+        const bi = (y * b.widthPx + x) * 4;
+        let different = false;
+        for (let ch = 0; ch < 4; ch++) {
+          const absDelta = Math.abs(a.rgba[ai + ch] - b.rgba[bi + ch]);
+          maximum[ch] = Math.max(maximum[ch], absDelta);
+          if (absDelta) different = true;
+        }
+        if (different) {
+          bounds ??= { left: x, top: y, right: x, bottom: y };
+          bounds.left = Math.min(bounds.left, x);
+          bounds.top = Math.min(bounds.top, y);
+          bounds.right = Math.max(bounds.right, x);
+          bounds.bottom = Math.max(bounds.bottom, y);
+        }
+      }
+    }
+    assert.deepEqual(receipt.overlap.boundsInclusive, bounds);
+    assert.deepEqual(receipt.overlap.maxAbsDeltaRgba8, maximum);
+  }
   // Offline data: downloads are user-initiated, self-contained and importable
   // without script execution or a network request.
   const recipeLinks = [...board.html.matchAll(/<a download="([^"]+\.fwrecipe\.json)" href="data:application\/json;base64,([^"]+)">Save importable recipe<\/a>/g)];

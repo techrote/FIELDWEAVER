@@ -155,8 +155,36 @@ export function buildOfflineExhibitionBoard(tiles) {
         ? '(' + stats.bounds.left + ',' + stats.bounds.top + ')–(' +
           stats.bounds.right + ',' + stats.bounds.bottom + ')'
         : 'None';
-      const alignment = sameCrop(first.exportCrop, second.exportCrop)
+      const authoredCropMatches = sameCrop(first.exportCrop, second.exportCrop);
+      const alignment = authoredCropMatches
         ? 'Same authored crop' : 'IMAGE-LOCAL ONLY / NOT world-aligned';
+      // Portable evidence for the exact two accepted source identities. This
+      // records literal decoded RGBA8 overlap, not perceptual similarity or
+      // an inferred world-space registration.
+      const comparisonReceipt = {
+        version: 'fw-exhibition-ab-comparison-v1',
+        coordinateSpace: 'image-local-top-left',
+        alignment: authoredCropMatches ? 'same-authored-crop' : 'image-local-only-not-world-aligned',
+        a: {
+          id: first.id, name: first.name, recipeHash: first.recipeHash,
+          rawRgbaHash: byId.get(first.id).rawRgbaHash, seed: first.seed,
+          targetTick: first.targetTick, crop: first.exportCrop
+        },
+        b: {
+          id: second.id, name: second.name, recipeHash: second.recipeHash,
+          rawRgbaHash: byId.get(second.id).rawRgbaHash, seed: second.seed,
+          targetTick: second.targetTick, crop: second.exportCrop
+        },
+        overlap: {
+          widthPx: stats.width, heightPx: stats.height,
+          pixels: stats.overlapPixels, differentPixels: stats.differentPixels,
+          boundsInclusive: stats.bounds,
+          maxAbsDeltaRgba8: stats.channelMaxAbsDelta
+        }
+      };
+      const comparisonFile = 'fieldweaver-ab-' + first.id + '-vs-' + second.id +
+        '-' + byId.get(first.id).rawRgbaHash + '-' +
+        byId.get(second.id).rawRgbaHash + '.fwcompare.json';
       pairRows.push('<tr data-pair-a="' + escapeHtml(first.id) +
         '" data-pair-b="' + escapeHtml(second.id) +
         '" data-differences="' + stats.differentPixels +
@@ -168,7 +196,11 @@ export function buildOfflineExhibitionBoard(tiles) {
         '<td>' + stats.differentPixels + ' / ' + stats.overlapPixels + '</td>' +
         '<td>' + bounds + '</td>' +
         '<td>' + stats.channelMaxAbsDelta.join(', ') + '</td>' +
-        '<td>' + alignment + '</td></tr>');
+        '<td>' + alignment + '</td>' +
+        '<td><a download="' + escapeHtml(comparisonFile) +
+        '" href="data:application/json;base64,' +
+        base64Utf8(JSON.stringify(comparisonReceipt, null, 2) + '\n') +
+        '">Save A/B receipt (JSON)</a></td></tr>');
     }
   }
   const comparisonSection = '<section id="comparison-index" class="comparison-index" ' +
@@ -182,6 +214,7 @@ export function buildOfflineExhibitionBoard(tiles) {
     '<th scope="col">Accepted works</th><th scope="col">Overlap (pixels)</th>' +
     '<th scope="col">Changed RGBA8 pixels</th><th scope="col">Change bounds</th>' +
     '<th scope="col">Maximum |ΔRGBA8| R, G, B, A</th><th scope="col">Coordinate meaning</th>' +
+    '<th scope="col">Evidence</th>' +
     '</tr></thead><tbody>' + pairRows.join('') + '</tbody></table></div></section>';
   const nav = entries.map((entry, index) =>
     '<a href="#work-' + escapeHtml(entry.id) + '">' +
@@ -201,7 +234,7 @@ export function buildOfflineExhibitionBoard(tiles) {
     '" href="data:application/zip;base64,' + collectionZip +
     '">Save all accepted works (ZIP)</a> <small>12 original files / 4 verified works / offline</small></p>' +
     '<main class="gallery">' + cards.join('') + '</main>' + comparisonSection +
-    '<footer>Each image is the original 96×64 canonical raster, enlarged for inspection. PNG bytes are not the pixel identity; raw decoded RGBA8 hashes are. Save each work’s unchanged canonical PNG, importable recipe and full provenance separately, as one ZIP per work, or as a twelve-file accepted collection ZIP directly from this file; target tick and crop are in the provenance rather than the recipe. Browser downloads still require local file-manager confirmation. This board is a review record, not an artistic approval.</footer>' +
+    '<footer>Each A/B receipt records the two verified accepted identities and literal image-local RGBA8 difference statistics; no world-space alignment is inferred. Each image is the original 96×64 canonical raster, enlarged for inspection. PNG bytes are not the pixel identity; raw decoded RGBA8 hashes are. Save each work’s unchanged canonical PNG, importable recipe and full provenance separately, as one ZIP per work, or as a twelve-file accepted collection ZIP directly from this file; target tick and crop are in the provenance rather than the recipe. Browser downloads still require local file-manager confirmation. This board is a review record, not an artistic approval.</footer>' +
     '</div></body></html>\n';
   return Object.freeze({ version: OFFLINE_BOARD_VERSION, count: entries.length, html });
 }

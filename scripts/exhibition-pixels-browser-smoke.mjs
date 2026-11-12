@@ -685,8 +685,20 @@ try {
   // permit a file to reach disk before the editor can re-import its bytes.
   const embeddedDownloads = [...boardHtml.matchAll(/<a download="([^"]+)" href="data:application\/json;base64,([^"]+)"/g)]
     .map((match) => ({ name: match[1], bytes: Buffer.from(match[2], 'base64') }));
-  if (embeddedDownloads.length !== 8) {
-    throw new Error('Expected eight independent accepted JSON downloads.');
+  const acceptedJsonDownloads = embeddedDownloads.filter(item =>
+    /\.(?:fwrecipe|fwprovenance)\.json$/.test(item.name));
+  if (acceptedJsonDownloads.length !== 8) {
+    throw new Error('Expected eight independent accepted recipe/provenance JSON downloads.');
+  }
+  const comparisonDownloads = embeddedDownloads.filter(item => item.name.endsWith('.fwcompare.json'));
+  if (comparisonDownloads.length !== 6) {
+    throw new Error('Expected six source-bound A/B comparison JSON downloads.');
+  }
+  const comparison = JSON.parse(comparisonDownloads[0].bytes.toString('utf8'));
+  if (comparison.version !== 'fw-exhibition-ab-comparison-v1' ||
+      comparison.overlap.pixels !== 6144 ||
+      ![88, 111, 83, 118, 103, 125].includes(comparison.overlap.differentPixels)) {
+    throw new Error('Offline comparison export did not encode accepted exact RGBA8 evidence.');
   }
   const pngDownloads = [...boardHtml.matchAll(/<a download="([^"]+\.canonical\.png)" href="data:image\/png;base64,([^"]+)">Save canonical PNG<\/a>/g)]
     .map((match) => ({ name: match[1], bytes: Buffer.from(match[2], 'base64') }));
@@ -699,14 +711,16 @@ try {
   if (collectionDownloads.length !== 1) {
     throw new Error('Expected one offline accepted-only collection archive.');
   }
-  const downloadTargets = [embeddedDownloads[0], embeddedDownloads[1], pngDownloads[0],
-    zipDownloads[0], collectionDownloads[0]];
+  const downloadTargets = [acceptedJsonDownloads[0], acceptedJsonDownloads[1], pngDownloads[0],
+    zipDownloads[0], collectionDownloads[0], comparisonDownloads[0]];
   const savedDownloads = [];
   for (const [index, expected] of downloadTargets.entries()) {
     const destination = join(downloadDir, expected.name);
     const focused = await execute(index === 4
       ? "const a=document.querySelector('.collection-actions a');a.focus();return {active:document.activeElement===a,name:a.download}"
-      : "const a=document.querySelectorAll('main article.work')[0].querySelectorAll('.work-actions a')[" + index + "];a.focus();return {active:document.activeElement===a,name:a.download}");
+      : index === 5
+        ? "const a=document.querySelector('#comparison-index a[download]');a.focus();return {active:document.activeElement===a,name:a.download}"
+        : "const a=document.querySelectorAll('main article.work')[0].querySelectorAll('.work-actions a')[" + index + "];a.focus();return {active:document.activeElement===a,name:a.download}");
     if (!focused.active || focused.name !== expected.name) {
       throw new Error('Offline recipe/provenance/PNG/work/collection ZIP link cannot be activated by keyboard: ' + JSON.stringify(focused));
     }
@@ -729,7 +743,13 @@ try {
   }
   // Reopen the real workbench and import the file that the browser actually
   // saved, rather than regenerating or injecting the recipe JSON from Node.
-  const savedRecipePath = join(downloadDir, embeddedDownloads[0].name);
+  const savedComparison = JSON.parse(await readFile(join(downloadDir, comparisonDownloads[0].name), 'utf8'));
+  if (savedComparison.a.rawRgbaHash !== offlineDecoded.find(tile => tile.id === savedComparison.a.id)?.hash ||
+      savedComparison.b.rawRgbaHash !== offlineDecoded.find(tile => tile.id === savedComparison.b.id)?.hash ||
+      savedComparison.overlap.differentPixels !== comparison.overlap.differentPixels) {
+    throw new Error('Keyboard-downloaded comparison receipt lost canonical source binding.');
+  }
+  const savedRecipePath = join(downloadDir, acceptedJsonDownloads[0].name);
   const savedRecipe = await readFile(savedRecipePath, 'utf8');
   const acceptedRecipeHash = recipeHash(parseRecipe(savedRecipe));
   const firstAccepted = exhibitionEntries().find((entry) => entry.id === offlineDownloads[0].id);
