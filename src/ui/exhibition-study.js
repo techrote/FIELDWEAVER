@@ -3,6 +3,7 @@ import { verifyStudyPng, sampleStudyPixel, studyImageClickPixel, nextVisibleStud
 import { getAcceptedVisualIndexPng, getAcceptedVisualIndexProvenance } from './exhibition-visual-index.js';
 import { verifyOfflineExhibitionTile } from './exhibition-offline-board.js';
 import { buildAcceptedRecipeHandoff } from './exhibition-recipe-handoff.js';
+import { createStoredZip } from './exhibition-work-bundle.js';
 
 // Read-only exhibition navigation. The gallery's existing visual-index
 // verifier owns CPU replay, PNG decoding, provenance and image URL lifetime.
@@ -52,6 +53,31 @@ export function studyArtworkLabel(entry, rawRgbaHash) {
       ' · centre chunk ' + crop.center.chunkX + ',' + crop.center.chunkY +
       ' · recipe ' + entry.recipeHash + ' · decoded RGBA8 ' + rawRgbaHash +
       ' · ' + (entry.lineage ? 'parent ' + entry.lineage.parentRecipeHash : 'original accepted preset')
+  });
+}
+
+// Source-exact selected-work transport, shared with the offline board's
+// receipt verifier and deterministic ZIP/STORE writer.
+export function buildStudySelectedWorkBundle(entry, tile) {
+  const receipt = verifyOfflineExhibitionTile(entry, tile);
+  const handoff = buildAcceptedRecipeHandoff(entry.id);
+  if (handoff.recipeHash !== entry.recipeHash || handoff.seed !== entry.seed ||
+      handoff.targetTick !== entry.targetTick ||
+      handoff.crop.widthPx !== entry.exportCrop.widthPx ||
+      handoff.crop.heightPx !== entry.exportCrop.heightPx) {
+    throw new Error('Study bundle refused mismatched accepted recipe identity.');
+  }
+  const prefix = 'fieldweaver-' + entry.id + '-';
+  const files = [
+    { name: prefix + tile.rawRgbaHash + '.canonical.png', bytes: tile.png },
+    { name: handoff.filename, bytes: new TextEncoder().encode(handoff.json) },
+    { name: prefix + tile.rawRgbaHash + '.fwprovenance.json',
+      bytes: new TextEncoder().encode(tile.provenanceJson) }
+  ];
+  if (receipt.rawRgbaHash !== tile.rawRgbaHash) throw new Error('Stale canonical receipt.');
+  return Object.freeze({
+    filename: prefix + tile.rawRgbaHash + '.fwpack.zip',
+    bytes: createStoredZip(files)
   });
 }
 
@@ -107,9 +133,11 @@ export function mountExhibitionStudy(panel) {
     'Save selected recipe');
   const exportProvenance = make('button', { id: 'exhibition-study-save-provenance', type: 'button', class: 'button' },
     'Save selected provenance');
+  const exportBundle = make('button', { id: 'exhibition-study-save-bundle', type: 'button', class: 'button' },
+    'Save selected work bundle (ZIP)');
   const exportBoard = make('button', { id: 'exhibition-study-save-board', type: 'button', class: 'button' },
     'Save accepted board (HTML)');
-  toolbar.append(back, forward, pin, unpin, load, inspect, exportPng, exportRecipe, exportProvenance, exportBoard);
+  toolbar.append(back, forward, pin, unpin, load, inspect, exportPng, exportRecipe, exportProvenance, exportBundle, exportBoard);
   const description = make('p', { class: 'workspace-note', id: 'exhibition-study-help' },
     'Left/Right: browse when outside images · P: pin A · Tab to image, Enter: inspect centre, arrows: move one source pixel, Shift+arrows: move ten · Escape: close. Canonical CPU only.');
   const gallery = make('div', { class: 'exhibition-study-frames', role: 'group',
@@ -610,6 +638,27 @@ export function mountExhibitionStudy(panel) {
         '; file delivery is browser-controlled.';
     } catch (error) {
       announce.textContent = 'Provenance export refused: ' + (error?.message ?? String(error));
+    }
+  });
+  exportBundle.addEventListener('click', () => {
+    try {
+      const entry = lookup.get(currentId), record = snapshot()?.get(currentId);
+      if (!entry || !record) throw new Error('Rebuild the verified accepted CPU index.');
+      // Browse selection B owns this download even when A remains pinned.
+      // Fresh lease checks reject cancelled, rebuilt or falsified CPU proofs.
+      const png = getAcceptedVisualIndexPng(panel, currentId, record.url, record.hash);
+      const provenanceJson = getAcceptedVisualIndexProvenance(panel, currentId, record.url, record.hash);
+      const bundle = buildStudySelectedWorkBundle(entry, {
+        id: entry.id, name: entry.name, seed: entry.seed,
+        recipeHash: entry.recipeHash, targetTick: entry.targetTick,
+        rawRgbaHash: record.hash, widthPx: entry.exportCrop.widthPx,
+        heightPx: entry.exportCrop.heightPx, png, provenanceJson
+      });
+      saveSelectedBytes(bundle.bytes, 'application/zip', bundle.filename);
+      announce.textContent = 'Requested exact three-file work bundle for ' + entry.name +
+        '; file delivery is browser-controlled.';
+    } catch (error) {
+      announce.textContent = 'Work bundle refused: ' + (error?.message ?? String(error));
     }
   });
   exportBoard.addEventListener('click', () => {

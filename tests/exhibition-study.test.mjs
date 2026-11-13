@@ -4,8 +4,8 @@ import { BUILTIN_PRESETS } from '../src/presets/index.js';
 import { recipeHash } from '../src/recipe/index.js';
 import { exhibitionEntries } from '../src/ui/exhibition-catalog.js';
 import { renderVisualIndexProof } from '../src/ui/exhibition-visual-index-model.js';
-import { studyNextId, studyArtworkLabel, studyPixelCursor } from '../src/ui/exhibition-study.js';
-import { verifyOfflineExhibitionTile } from '../src/ui/exhibition-offline-board.js';
+import { studyNextId, studyArtworkLabel, studyPixelCursor, buildStudySelectedWorkBundle } from '../src/ui/exhibition-study.js';
+import { verifyOfflineExhibitionTile, buildOfflineExhibitionBoard } from '../src/ui/exhibition-offline-board.js';
 
 test('canonical study cycles the accepted catalog in both directions without introducing other works', () => {
   const ids = exhibitionEntries().map((entry) => entry.id);
@@ -75,4 +75,33 @@ test('selected study provenance is a full verified CPU receipt, not an unframed 
     }), /canonical PNG|mismatched accepted proof/);
   }
   assert.deepEqual(BUILTIN_PRESETS.map((preset) => recipeHash(preset.recipe)), before);
+});
+
+test('live selected-work bundle uses exactly the accepted offline three-file ZIP', () => {
+  const entries = exhibitionEntries();
+  const tiles = entries.map((entry) => renderVisualIndexProof(entry.id));
+  const board = buildOfflineExhibitionBoard(tiles);
+  const links = [...board.html.matchAll(/<a download="([^"]+\.fwpack\.zip)" href="data:application\/zip;base64,([^"]+)">Save complete work bundle \(ZIP\)<\/a>/g)];
+  assert.equal(links.length, entries.length);
+  const expected = new Map(links.map(([, name, base64]) =>
+    [name, Buffer.from(base64, 'base64')]));
+  const unchangedHashes = BUILTIN_PRESETS.map((preset) => recipeHash(preset.recipe));
+  for (const [index, entry] of entries.entries()) {
+    const tile = tiles[index];
+    const bundle = buildStudySelectedWorkBundle(entry, tile);
+    assert.equal(bundle.filename, 'fieldweaver-' + entry.id + '-' + tile.rawRgbaHash + '.fwpack.zip');
+    assert(bundle.bytes instanceof Uint8Array);
+    assert.deepEqual(Buffer.from(bundle.bytes), expected.get(bundle.filename),
+      'ZIP must exactly preserve canonical PNG, importable recipe and FW-012 provenance');
+    assert.deepEqual(buildStudySelectedWorkBundle(entry, tile).bytes, bundle.bytes);
+    assert.throws(() => buildStudySelectedWorkBundle(entry, {
+      ...tile, rawRgbaHash: '0000000000000000'
+    }), /canonical PNG|mismatched accepted proof/);
+    assert.throws(() => buildStudySelectedWorkBundle(entry, {
+      ...tile, provenanceJson: JSON.stringify({
+        ...JSON.parse(tile.provenanceJson), targetTick: tile.targetTick + 1
+      })
+    }), /mismatched canonical provenance/);
+  }
+  assert.deepEqual(BUILTIN_PRESETS.map((preset) => recipeHash(preset.recipe)), unchangedHashes);
 });

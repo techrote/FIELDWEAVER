@@ -4,6 +4,7 @@ import { join, resolve } from 'node:path';
 import { parseRecipe, recipeHash } from '../src/recipe/index.js';
 import { exhibitionEntries } from '../src/ui/exhibition-catalog.js';
 import { renderVisualIndexProof } from '../src/ui/exhibition-visual-index-model.js';
+import { buildStudySelectedWorkBundle } from '../src/ui/exhibition-study.js';
 import { pathToFileURL } from 'node:url';
 import { decodePngRgba, rawRgbaHash } from '../src/export/index.js';
 
@@ -157,6 +158,17 @@ try {
     } catch { return false; }
   });
   const studySavedProvenance = JSON.parse(provenanceBytes.toString('utf8'));
+  // Save a real selected-B package with an Enter key, after rejecting a
+  // forged current lease. Compare the disk file to independently replayed CPU.
+  const forgedBundleExport = await execute("const card=document.querySelector('[data-exhibition-id=timeline-pulse]');const original=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-save-bundle').click();const status=document.getElementById('exhibition-study-status').textContent;card.dataset.canonicalRgbaHash=original;return status");
+  if (!forgedBundleExport.includes('Work bundle refused: Current verified CPU proof is unavailable or mismatched.')) {
+    throw new Error('Selected bundle accepted a forged CPU proof: ' + forgedBundleExport);
+  }
+  const expectedBundle = buildStudySelectedWorkBundle(selectedEntry, renderVisualIndexProof(selectedEntry.id));
+  await saveByKeyboard('exhibition-study-save-bundle');
+  const savedBundle = await readSaved(expectedBundle.filename, (bytes) =>
+    bytes.equals(Buffer.from(expectedBundle.bytes)));
+  if (savedBundle.length !== expectedBundle.bytes.length) throw new Error('Downloaded selected bundle was incomplete.');
   const editorAfterDirectExport = await execute("return {hash:document.documentElement.dataset.fieldweaverCanonicalRecipeHash,selected:document.getElementById('preset-select').value,open:document.getElementById('exhibition-study-dialog').open,status:document.getElementById('exhibition-study-status').textContent}");
   if (savedPng.widthPx !== 96 || savedPng.heightPx !== 64 ||
       rawRgbaHash(savedPng.rgba) !== selectedHash ||
@@ -165,7 +177,7 @@ try {
       editorBeforeDirectExport.hash !== editorAfterDirectExport.hash ||
       editorAfterDirectExport.selected !== 'operator-atlas' ||
       !editorAfterDirectExport.open ||
-      !editorAfterDirectExport.status.includes('full canonical provenance for Timeline Pulse') ||
+      !editorAfterDirectExport.status.includes('exact three-file work bundle for Timeline Pulse') ||
       studySavedProvenance.rawRgbaHash !== selectedHash ||
       studySavedProvenance.targetTick !== selectedEntry.targetTick) {
     throw new Error('Selected B direct export was stale or changed the editor: ' + JSON.stringify(editorAfterDirectExport));
@@ -174,6 +186,7 @@ try {
     JSON.stringify({browser,pngName,recipeName,provenanceName,forgedRecipeExport,rgbaHash:rawRgbaHash(savedPng.rgba),
       recipeHash:recipeHash(studySavedRecipe),receiptTick:studySavedProvenance.targetTick,
       receiptRawRgbaHash:studySavedProvenance.rawRgbaHash,
+      bundleName:expectedBundle.filename,bundleBytes:savedBundle.length,forgedBundleExport,
       editorBeforeDirectExport,editorAfterDirectExport},null,2)+'\n');
   await request('POST', '/session/' + sessionId + '/window/rect', { width: 1250, height: 900 });
   const studyScreenshot = await request('GET', '/session/' + sessionId + '/screenshot');
