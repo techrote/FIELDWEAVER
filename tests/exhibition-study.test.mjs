@@ -4,7 +4,7 @@ import { BUILTIN_PRESETS } from '../src/presets/index.js';
 import { recipeHash } from '../src/recipe/index.js';
 import { exhibitionEntries } from '../src/ui/exhibition-catalog.js';
 import { renderVisualIndexProof } from '../src/ui/exhibition-visual-index-model.js';
-import { studyNextId, studyArtworkLabel, studyPixelCursor, buildStudySelectedWorkBundle } from '../src/ui/exhibition-study.js';
+import { studyNextId, studyArtworkLabel, studyPixelCursor, buildStudySelectedWorkBundle, buildStudyPinnedPairBundle } from '../src/ui/exhibition-study.js';
 import { verifyOfflineExhibitionTile, buildOfflineExhibitionBoard } from '../src/ui/exhibition-offline-board.js';
 
 test('canonical study cycles the accepted catalog in both directions without introducing other works', () => {
@@ -104,4 +104,82 @@ test('live selected-work bundle uses exactly the accepted offline three-file ZIP
     }), /mismatched canonical provenance/);
   }
   assert.deepEqual(BUILTIN_PRESETS.map((preset) => recipeHash(preset.recipe)), unchangedHashes);
+});
+
+test('pinned live A/B ZIP agrees byte-for-byte with all six script-free accepted board pairs', () => {
+  const entries = exhibitionEntries();
+  const tiles = entries.map(entry => renderVisualIndexProof(entry.id));
+  const board = buildOfflineExhibitionBoard(tiles);
+  const expectedLinks = [...board.html.matchAll(
+    /<a download="([^"]+\.fwabpack\.zip)" href="data:application\/zip;base64,([^"]+)">Save complete A\/B evidence \(ZIP\)<\/a>/g
+  )];
+  assert.equal(expectedLinks.length, 6);
+  const expected = new Map(expectedLinks.map(([, filename, base64]) =>
+    [filename, Buffer.from(base64, 'base64')]));
+  const recipeHashes = BUILTIN_PRESETS.map(preset => recipeHash(preset.recipe));
+  for (let a = 0; a < tiles.length; a += 1) {
+    for (let b = a + 1; b < tiles.length; b += 1) {
+      const pack = buildStudyPinnedPairBundle(tiles[a], tiles[b]);
+      assert.deepEqual(Buffer.from(pack.bytes), expected.get(pack.filename),
+        'The live and offline board must transport the same A/B originals and exact ledger');
+      assert.deepEqual(buildStudyPinnedPairBundle(tiles[a], tiles[b]).bytes, pack.bytes);
+      assert.throws(() => buildStudyPinnedPairBundle(tiles[a], {
+        ...tiles[b], rawRgbaHash: '0000000000000000'
+      }), /canonical PNG|mismatched accepted proof/);
+      assert.throws(() => buildStudyPinnedPairBundle({
+        ...tiles[a], provenanceJson: JSON.stringify({
+          ...JSON.parse(tiles[a].provenanceJson), targetTick: tiles[a].targetTick + 1
+        })
+      }, tiles[b]), /mismatched canonical provenance/);
+    }
+  }
+  assert.deepEqual(BUILTIN_PRESETS.map(preset => recipeHash(preset.recipe)), recipeHashes);
+});
+
+test('reverse pinned A/B is intentionally directional, refuses duplicate or unadmitted works', () => {
+  const [a, b] = exhibitionEntries().slice(0, 2).map(entry => renderVisualIndexProof(entry.id));
+  assert.throws(() => buildStudyPinnedPairBundle(a, a), /different B/);
+  assert.throws(() => buildStudyPinnedPairBundle({
+    ...a, id: 'unadmitted-original-art'
+  }, b), /accepted canonical source/);
+  const forward = buildStudyPinnedPairBundle(a, b);
+  const reverse = buildStudyPinnedPairBundle(b, a);
+  assert.notEqual(forward.filename, reverse.filename);
+  assert.equal(forward.changedPixels, reverse.changedPixels);
+  function files(bytes) {
+    const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    const files = new Map();
+    let p = 0;
+    while (p + 30 < bytes.byteLength && view.getUint32(p, true) === 0x04034b50) {
+      assert.equal(view.getUint16(p + 8, true), 0);
+      const size = view.getUint32(p + 18, true);
+      const nameSize = view.getUint16(p + 26, true);
+      const extraSize = view.getUint16(p + 28, true);
+      const name = new TextDecoder().decode(bytes.subarray(p + 30, p + 30 + nameSize));
+      const begin = p + 30 + nameSize + extraSize;
+      files.set(name, bytes.subarray(begin, begin + size));
+      p = begin + size;
+    }
+    assert.equal(files.size, 8);
+    return files;
+  }
+  const f = files(forward.bytes), g = files(reverse.bytes);
+  const fCompare = JSON.parse(new TextDecoder().decode([...f].find(([name]) => name.endsWith('.fwcompare.json'))[1]));
+  const gCompare = JSON.parse(new TextDecoder().decode([...g].find(([name]) => name.endsWith('.fwcompare.json'))[1]));
+  assert.equal(fCompare.a.id, a.id);
+  assert.equal(fCompare.b.id, b.id);
+  assert.equal(gCompare.a.id, b.id);
+  assert.equal(gCompare.b.id, a.id);
+  assert.equal(gCompare.overlap.differentPixels, fCompare.overlap.differentPixels);
+  const rows = pack => new TextDecoder().decode([...pack].find(([name]) => name.endsWith('.fwpixels.csv'))[1])
+    .trim().split('\n').slice(1).map(line => line.split(',').map(Number));
+  const forwardRows = rows(f), reverseRows = rows(g);
+  assert.equal(forwardRows.length, forward.changedPixels);
+  assert.equal(reverseRows.length, reverse.changedPixels);
+  for (let i = 0; i < forwardRows.length; i += 1) {
+    assert.deepEqual(forwardRows[i].slice(0, 2), reverseRows[i].slice(0, 2));
+    assert.deepEqual(forwardRows[i].slice(2, 6), reverseRows[i].slice(6, 10));
+    assert.deepEqual(forwardRows[i].slice(6, 10), reverseRows[i].slice(2, 6));
+    assert.deepEqual(forwardRows[i].slice(10), reverseRows[i].slice(10).map(v => -v));
+  }
 });
