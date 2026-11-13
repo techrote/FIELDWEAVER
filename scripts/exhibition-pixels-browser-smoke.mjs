@@ -4,7 +4,7 @@ import { join, resolve } from 'node:path';
 import { parseRecipe, recipeHash } from '../src/recipe/index.js';
 import { exhibitionEntries } from '../src/ui/exhibition-catalog.js';
 import { renderVisualIndexProof } from '../src/ui/exhibition-visual-index-model.js';
-import { buildStudySelectedWorkBundle } from '../src/ui/exhibition-study.js';
+import { buildStudySelectedWorkBundle, buildStudyPinnedPairBundle } from '../src/ui/exhibition-study.js';
 import { pathToFileURL } from 'node:url';
 import { decodePngRgba, rawRgbaHash } from '../src/export/index.js';
 
@@ -182,11 +182,37 @@ try {
       studySavedProvenance.targetTick !== selectedEntry.targetTick) {
     throw new Error('Selected B direct export was stale or changed the editor: ' + JSON.stringify(editorAfterDirectExport));
   }
+  // Real browser keyboard save of the currently displayed pinned-A/current-B
+  // canonical evidence, with both source leases independently rechecked.
+  const expectPair = buildStudyPinnedPairBundle(
+    renderVisualIndexProof('operator-atlas'), renderVisualIndexProof('timeline-pulse'));
+  const pairEnabled = await execute("return !document.getElementById('exhibition-study-save-ab-bundle').disabled");
+  if (!pairEnabled) throw new Error('Pair export is disabled despite two different accepted works.');
+  const forgedPinnedA = await execute("const card=document.querySelector('[data-exhibition-id=operator-atlas]');const h=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-save-ab-bundle').click();const status=document.getElementById('exhibition-study-status').textContent;card.dataset.canonicalRgbaHash=h;return status");
+  if (!forgedPinnedA.includes('A/B evidence refused: Current verified CPU proof is unavailable or mismatched.')) {
+    throw new Error('Pinned A forgery was not rejected: ' + forgedPinnedA);
+  }
+  const forgedCurrentB = await execute("const card=document.querySelector('[data-exhibition-id=timeline-pulse]');const h=card.dataset.canonicalRgbaHash;card.dataset.canonicalRgbaHash='0000000000000000';document.getElementById('exhibition-study-save-ab-bundle').click();const status=document.getElementById('exhibition-study-status').textContent;card.dataset.canonicalRgbaHash=h;return status");
+  if (!forgedCurrentB.includes('A/B evidence refused: Current verified CPU proof is unavailable or mismatched.')) {
+    throw new Error('Current B forgery was not rejected: ' + forgedCurrentB);
+  }
+  await saveByKeyboard('exhibition-study-save-ab-bundle');
+  const savedPair = await readSaved(expectPair.filename, bytes =>
+    bytes.equals(Buffer.from(expectPair.bytes)));
+  const afterPair = await execute("return {open:document.getElementById('exhibition-study-dialog').open,editor:document.documentElement.dataset.fieldweaverCanonicalRecipeHash,selected:document.getElementById('preset-select').value,status:document.getElementById('exhibition-study-status').textContent}");
+  if (!afterPair.open || afterPair.editor !== editorBeforeDirectExport.hash ||
+      afterPair.selected !== 'operator-atlas' ||
+      !afterPair.status.includes('exact pinned A/B evidence for Operator Atlas vs Timeline Pulse') ||
+      savedPair.length !== expectPair.bytes.length) {
+    throw new Error('Downloaded A/B evidence is stale or mutated editor: ' + JSON.stringify(afterPair));
+  }
   await writeFile('exhibition-study-selected-export-' + browser + '.json',
     JSON.stringify({browser,pngName,recipeName,provenanceName,forgedRecipeExport,rgbaHash:rawRgbaHash(savedPng.rgba),
       recipeHash:recipeHash(studySavedRecipe),receiptTick:studySavedProvenance.targetTick,
       receiptRawRgbaHash:studySavedProvenance.rawRgbaHash,
       bundleName:expectedBundle.filename,bundleBytes:savedBundle.length,forgedBundleExport,
+      pairBundleName:expectPair.filename,pairBundleBytes:savedPair.length,
+      forgedPinnedA,forgedCurrentB,afterPair,
       editorBeforeDirectExport,editorAfterDirectExport},null,2)+'\n');
   await request('POST', '/session/' + sessionId + '/window/rect', { width: 1250, height: 900 });
   const studyScreenshot = await request('GET', '/session/' + sessionId + '/screenshot');
