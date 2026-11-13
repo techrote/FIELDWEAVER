@@ -180,6 +180,6 @@ test('reverse pinned A/B is intentionally directional, refuses duplicate or unad
     assert.deepEqual(forwardRows[i].slice(0, 2), reverseRows[i].slice(0, 2));
     assert.deepEqual(forwardRows[i].slice(2, 6), reverseRows[i].slice(6, 10));
     assert.deepEqual(forwardRows[i].slice(6, 10), reverseRows[i].slice(2, 6));
-    assert.deepEqual(forwardRows[i].slice(10), reverseRows[i].slice(10).map(v => -v));
+    assert.deepEqual(forwardRows[i].slice(10), reverseRows[i].slice(10).map(v => v === 0 ? 0 : -v));
   }
 });
