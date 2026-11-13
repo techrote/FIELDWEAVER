@@ -81,6 +81,88 @@ export function buildStudySelectedWorkBundle(entry, tile) {
   });
 }
 
+/**
+ * Export the exact pinned-A/current-B study as the eight-file accepted A/B
+ * evidence package. A and B retain the user's displayed order: in particular
+ * signed B-A deltas must reverse when the pin/browse order reverses.
+ * All data derive from accepted CPU PNGs and complete FW-012 receipts.
+ */
+export function buildStudyPinnedPairBundle(aTile, bTile) {
+  const accepted = exhibitionEntries();
+  const source = (tile) => {
+    const entry = accepted.find((candidate) => candidate.id === tile?.id);
+    if (!entry) throw new Error('Pair evidence requires an accepted canonical source.');
+    const receipt = verifyOfflineExhibitionTile(entry, tile);
+    const handoff = buildAcceptedRecipeHandoff(entry.id);
+    if (handoff.recipeHash !== entry.recipeHash || handoff.seed !== entry.seed ||
+        handoff.targetTick !== entry.targetTick ||
+        handoff.crop.widthPx !== entry.exportCrop.widthPx ||
+        handoff.crop.heightPx !== entry.exportCrop.heightPx) {
+      throw new Error('Pair evidence rejected inconsistent accepted recipe.');
+    }
+    const pixels = verifyStudyPng(tile.png, entry.exportCrop.widthPx,
+      entry.exportCrop.heightPx, tile.rawRgbaHash);
+    const prefix = 'fieldweaver-' + entry.id + '-';
+    const files = [
+      { name: prefix + tile.rawRgbaHash + '.canonical.png', bytes: tile.png },
+      { name: handoff.filename, bytes: new TextEncoder().encode(handoff.json) },
+      { name: prefix + tile.rawRgbaHash + '.fwprovenance.json',
+        bytes: new TextEncoder().encode(tile.provenanceJson) }
+    ];
+    return { entry, tile, receipt, pixels, files };
+  };
+  if (aTile?.id === bTile?.id) {
+    throw new Error('Pin one accepted work as A and browse a different B.');
+  }
+  const a = source(aTile), b = source(bTile);
+  const stats = summarizeDifferingStudyPixels(a.pixels, b.pixels);
+  const changes = [];
+  for (let y = 0; y < stats.height; y += 1) {
+    for (let x = 0; x < stats.width; x += 1) {
+      const ai = (y * a.pixels.width + x) * 4;
+      const bi = (y * b.pixels.width + x) * 4;
+      const left = Array.from(a.pixels.rgba.subarray(ai, ai + 4));
+      const right = Array.from(b.pixels.rgba.subarray(bi, bi + 4));
+      const delta = right.map((value, i) => value - left[i]);
+      if (delta.some(Boolean)) changes.push([x, y, ...left, ...right, ...delta].join(','));
+    }
+  }
+  if (changes.length !== stats.differentPixels) {
+    throw new Error('Pair evidence ledger and exact decoded statistics disagree.');
+  }
+  const cropMatch = sameStudyCrop(a.entry.exportCrop, b.entry.exportCrop);
+  const item = ({ entry, tile }) => ({
+    id: entry.id, name: entry.name, recipeHash: entry.recipeHash,
+    rawRgbaHash: tile.rawRgbaHash, seed: entry.seed,
+    targetTick: entry.targetTick, crop: entry.exportCrop
+  });
+  const comparison = {
+    version: 'fw-exhibition-ab-comparison-v1',
+    coordinateSpace: 'image-local-top-left',
+    alignment: cropMatch ? 'same-authored-crop' : 'image-local-only-not-world-aligned',
+    a: item(a), b: item(b),
+    overlap: {
+      widthPx: stats.width, heightPx: stats.height,
+      pixels: stats.overlapPixels, differentPixels: stats.differentPixels,
+      boundsInclusive: stats.bounds, maxAbsDeltaRgba8: stats.channelMaxAbsDelta
+    }
+  };
+  const prefix = 'fieldweaver-ab-' + a.entry.id + '-vs-' + b.entry.id +
+    '-' + a.tile.rawRgbaHash + '-' + b.tile.rawRgbaHash;
+  const header = 'x,y,a_r,a_g,a_b,a_a,b_r,b_g,b_b,b_a,delta_r,delta_g,delta_b,delta_a';
+  return Object.freeze({
+    filename: prefix + '.fwabpack.zip',
+    bytes: createStoredZip([
+      ...a.files, ...b.files,
+      { name: prefix + '.fwcompare.json',
+        bytes: new TextEncoder().encode(JSON.stringify(comparison, null, 2) + '\n') },
+      { name: prefix + '.fwpixels.csv',
+        bytes: new TextEncoder().encode([header, ...changes].join('\n') + '\n') }
+    ]),
+    changedPixels: changes.length
+  });
+}
+
 function make(tag, options = {}, text = '') {
   const node = document.createElement(tag);
   for (const [key, value] of Object.entries(options)) node.setAttribute(key, value);
@@ -135,9 +217,12 @@ export function mountExhibitionStudy(panel) {
     'Save selected provenance');
   const exportBundle = make('button', { id: 'exhibition-study-save-bundle', type: 'button', class: 'button' },
     'Save selected work bundle (ZIP)');
+  const exportPair = make('button', { id: 'exhibition-study-save-ab-bundle', type: 'button', class: 'button' },
+    'Save pinned A/B evidence (ZIP)');
+  exportPair.disabled = true;
   const exportBoard = make('button', { id: 'exhibition-study-save-board', type: 'button', class: 'button' },
     'Save accepted board (HTML)');
-  toolbar.append(back, forward, pin, unpin, load, inspect, exportPng, exportRecipe, exportProvenance, exportBundle, exportBoard);
+  toolbar.append(back, forward, pin, unpin, load, inspect, exportPng, exportRecipe, exportProvenance, exportBundle, exportPair, exportBoard);
   const description = make('p', { class: 'workspace-note', id: 'exhibition-study-help' },
     'Left/Right: browse when outside images · P: pin A · Tab to image, Enter: inspect centre, arrows: move one source pixel, Shift+arrows: move ten · Escape: close. Canonical CPU only.');
   const gallery = make('div', { class: 'exhibition-study-frames', role: 'group',
@@ -504,6 +589,7 @@ export function mountExhibitionStudy(panel) {
     previousDifference.disabled = !pinnedId;
     summarizeDifference.disabled = !pinnedId;
     pin.disabled = pinnedId === currentId;
+    exportPair.disabled = !pinnedId || pinnedId === currentId;
     announce.textContent = 'Work ' + (ids.indexOf(currentId) + 1) + '/' + ids.length +
       ': ' + lookup.get(currentId).name +
       (pinnedId ? ' · A pinned: ' + lookup.get(pinnedId).name + ' · B: current selection' : ' · single artwork study');
@@ -659,6 +745,34 @@ export function mountExhibitionStudy(panel) {
         '; file delivery is browser-controlled.';
     } catch (error) {
       announce.textContent = 'Work bundle refused: ' + (error?.message ?? String(error));
+    }
+  });
+  exportPair.addEventListener('click', () => {
+    try {
+      if (!pinnedId || pinnedId === currentId) throw new Error('Pin A, then browse a different B.');
+      const records = snapshot();
+      if (!records) throw new Error('Rebuild the verified accepted CPU index.');
+      const liveTile = (id) => {
+        const entry = lookup.get(id), record = records.get(id);
+        if (!entry || !record) throw new Error('Accepted pair source is unavailable.');
+        const png = getAcceptedVisualIndexPng(panel, id, record.url, record.hash);
+        const provenanceJson = getAcceptedVisualIndexProvenance(panel, id, record.url, record.hash);
+        return {
+          id, name: entry.name, seed: entry.seed, recipeHash: entry.recipeHash,
+          targetTick: entry.targetTick, rawRgbaHash: record.hash,
+          widthPx: entry.exportCrop.widthPx, heightPx: entry.exportCrop.heightPx,
+          png, provenanceJson
+        };
+      };
+      // Resolve both live leases at activation; changing only A or B's DOM
+      // hash must reject the complete package rather than exporting stale data.
+      const bundle = buildStudyPinnedPairBundle(liveTile(pinnedId), liveTile(currentId));
+      saveSelectedBytes(bundle.bytes, 'application/zip', bundle.filename);
+      announce.textContent = 'Requested exact pinned A/B evidence for ' +
+        lookup.get(pinnedId).name + ' vs ' + lookup.get(currentId).name +
+        ' (' + bundle.changedPixels + ' changed RGBA8 pixels); file delivery is browser-controlled.';
+    } catch (error) {
+      announce.textContent = 'A/B evidence refused: ' + (error?.message ?? String(error));
     }
   });
   exportBoard.addEventListener('click', () => {
